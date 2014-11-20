@@ -1,0 +1,469 @@
+
+<!DOCTYPE html
+  PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html><head>
+      <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+   <!--
+This HTML was auto-generated from MATLAB code.
+To make changes, update the MATLAB code and republish this document.
+      --><title>Solid cylinder/taper/sphere&#8212;-temperature loading; quadratic brick mesh</title><meta name="generator" content="MATLAB 8.0"><link rel="schema.DC" href="http://purl.org/dc/elements/1.1/"><meta name="DC.date" content="2012-12-20"><meta name="DC.source" content="pub_LE11NAFEMS_H20.m"><style type="text/css">
+html,body,div,span,applet,object,iframe,h1,h2,h3,h4,h5,h6,p,blockquote,pre,a,abbr,acronym,address,big,cite,code,del,dfn,em,font,img,ins,kbd,q,s,samp,small,strike,strong,sub,sup,tt,var,b,u,i,center,dl,dt,dd,ol,ul,li,fieldset,form,label,legend,table,caption,tbody,tfoot,thead,tr,th,td{margin:0;padding:0;border:0;outline:0;font-size:100%;vertical-align:baseline;background:transparent}body{line-height:1}ol,ul{list-style:none}blockquote,q{quotes:none}blockquote:before,blockquote:after,q:before,q:after{content:'';content:none}:focus{outine:0}ins{text-decoration:none}del{text-decoration:line-through}table{border-collapse:collapse;border-spacing:0}
+
+html { min-height:100%; margin-bottom:1px; }
+html body { height:100%; margin:0px; font-family:Arial, Helvetica, sans-serif; font-size:10px; color:#000; line-height:140%; background:#fff none; overflow-y:scroll; }
+html body td { vertical-align:top; text-align:left; }
+
+h1 { padding:0px; margin:0px 0px 25px; font-family:Arial, Helvetica, sans-serif; font-size:1.5em; color:#d55000; line-height:100%; font-weight:normal; }
+h2 { padding:0px; margin:0px 0px 8px; font-family:Arial, Helvetica, sans-serif; font-size:1.2em; color:#000; font-weight:bold; line-height:140%; border-bottom:1px solid #d6d4d4; display:block; }
+h3 { padding:0px; margin:0px 0px 5px; font-family:Arial, Helvetica, sans-serif; font-size:1.1em; color:#000; font-weight:bold; line-height:140%; }
+
+a { color:#005fce; text-decoration:none; }
+a:hover { color:#005fce; text-decoration:underline; }
+a:visited { color:#004aa0; text-decoration:none; }
+
+p { padding:0px; margin:0px 0px 20px; }
+img { padding:0px; margin:0px 0px 20px; border:none; }
+p img, pre img, tt img, li img { margin-bottom:0px; } 
+
+ul { padding:0px; margin:0px 0px 20px 23px; list-style:square; }
+ul li { padding:0px; margin:0px 0px 7px 0px; }
+ul li ul { padding:5px 0px 0px; margin:0px 0px 7px 23px; }
+ul li ol li { list-style:decimal; }
+ol { padding:0px; margin:0px 0px 20px 0px; list-style:decimal; }
+ol li { padding:0px; margin:0px 0px 7px 23px; list-style-type:decimal; }
+ol li ol { padding:5px 0px 0px; margin:0px 0px 7px 0px; }
+ol li ol li { list-style-type:lower-alpha; }
+ol li ul { padding-top:7px; }
+ol li ul li { list-style:square; }
+
+.content { font-size:1.2em; line-height:140%; padding: 20px; }
+
+pre, tt, code { font-size:12px; }
+pre { margin:0px 0px 20px; }
+pre.error { color:red; }
+pre.codeinput { padding:10px; border:1px solid #d3d3d3; background:#f7f7f7; }
+pre.codeoutput { padding:10px 11px; margin:0px 0px 20px; color:#4c4c4c; }
+
+@media print { pre.codeinput, pre.codeoutput { word-wrap:break-word; width:100%; } }
+
+span.keyword { color:#0000FF }
+span.comment { color:#228B22 }
+span.string { color:#A020F0 }
+span.untermstring { color:#B20000 }
+span.syscmd { color:#B28C00 }
+
+.footer { width:auto; padding:10px 0px; margin:25px 0px 0px; border-top:1px dotted #878787; font-size:0.8em; line-height:140%; font-style:italic; color:#878787; text-align:left; float:none; }
+.footer p { margin:0px; }
+.footer a { color:#878787; }
+.footer a:hover { color:#878787; text-decoration:underline; }
+.footer a:visited { color:#878787; }
+
+table th { padding:7px 5px; text-align:left; vertical-align:middle; border: 1px solid #d6d4d4; font-weight:bold; }
+table td { padding:7px 5px; text-align:left; vertical-align:top; border:1px solid #d6d4d4; }
+
+
+
+
+
+  </style></head><body><div class="content"><h1>Solid cylinder/taper/sphere&#8212;-temperature loading; quadratic brick mesh</h1><!--introduction--><!--/introduction--><h2>Contents</h2><div><ul><li><a href="#2">Description</a></li><li><a href="#6">Solution</a></li><li><a href="#37">Discussion</a></li></ul></div><p>Link to the  <a href="matlab:edit('pub_LE11NAFEMS_H20')">m-file</a>.</p><h2>Description<a name="2"></a></h2><p>The solid cylinder/taper/sphere axially-symmetric part represented in Figure 1 is exposed to linearly varying temperature in the plane of the cross-section. The temperature in the coordinates <img src="pub_LE11NAFEMS_H20_eq25861.png" alt="$r$">  (the coordinate) and <img src="pub_LE11NAFEMS_H20_eq88768.png" alt="$z$"> (the axial ccoordinate)  is given as <img src="pub_LE11NAFEMS_H20_eq20286.png" alt="$T=r+z$">. The goal is to find the mechanical stress at the point A induced by the thermal expansion.</p><p> <table border=0><tr><td> <img
+src="../docs/pub_LE11NAFEMS_Q8_2.jpg"> </td></tr> <tr><td>Figure 1.
+Definition of the geometry of the part</td></tr> </table> </p><p>The part is constrained against axial expansion along the faces of HIH'I' and ABA'B'. The Young's modulus is 210 GPa, the Poisson's ratio is .3, and the coefficient of thermal expansion is 2.3e-4/degree Celsius.</p><p>This is a test recommended by the National Agency for Finite Element Methods and Standards (U.K.): Test LE11 from NAFEMS Publication TNSB, Rev. 3, &#8220;The Standard NAFEMS Benchmarks,&#8221; October 1990.</p><p>Target solution: Compressive  axial stress <img src="pub_LE11NAFEMS_H20_eq80373.png" alt="$\sigma_z$">  = &#8211;105 MPa along the circle passing through point A.</p><h2>Solution<a name="6"></a></h2><pre class="codeinput"><span class="keyword">function</span>  pub_LE11NAFEMS_H20
+</pre><p>The toolkit has a helpful physical-units facility.  The variable <tt>pu</tt> is a structure with fields that define basic  units and basic multipliers (for instance, mega).</p><pre class="codeinput">    pu= physical_units_struct;
+</pre><p>Set the material properties.</p><pre class="codeinput">    Ea= 210000*pu.MEGA*pu.PA;<span class="comment">% Young's modulus</span>
+    nua= 0.3;<span class="comment">% Poisson ratio</span>
+    alphaa=2.3e-4;<span class="comment">% coefficient of thermal expansion</span>
+</pre><p>This is the target stress value.</p><pre class="codeinput">    sigma_z_A_ref=-105*pu.MEGA*pu.PA;
+</pre><p>The mesh  will be created in a very coarse representation from the key points in the drawing. The first coordinate is radial, the second coordinate is axial.</p><pre class="codeinput">    rz=[1.    , 0.;<span class="comment">%A</span>
+        1.4   , 0.;<span class="comment">%B</span>
+        0.995184726672197   0.098017140329561;
+        1.393258617341076 0.137223996461385;
+        0.980785,0.195090;<span class="comment">%</span>
+        1.37309939,0.27312645;
+        0.956940335732209   0.290284677254462
+        1.339716470025092 0.406398548156247
+        0.9238795, 0.38268;<span class="comment">%C</span>
+        1.2124, 0.7;<span class="comment">%D</span>
+        0.7071, 0.7071;<span class="comment">%E</span>
+        1.1062, 1.045;<span class="comment">%F</span>
+        0.7071, (0.7071+1.79)/2;<span class="comment">%(E+H)/2</span>
+        1.    , 1.39;<span class="comment">%G</span>
+        0.7071, 1.79;<span class="comment">%H</span>
+        1.    , 1.79;<span class="comment">%I</span>
+        ]*pu.M;
+    tolerance =1e-3*pu.M;<span class="comment">% geometrical tolerance</span>
+    fens=fenode_set(struct(<span class="string">'xyz'</span>,rz));
+    <span class="comment">% The finite elements in the cross-section as quadrilaterals</span>
+    fes=fe_set_Q4(struct(<span class="string">'conn'</span>,[1,2,4,3;3,4,6,5;5,6,8,7;7,8,10,9;<span class="keyword">...</span>
+        9,10,12,11;11,12,14,13;13,14,16,15]));
+</pre><p>If needed, the initial mesh  can be refined by bisection.  Just set <tt>nref</tt> greater than zero.  Note that  the nodes located along the edges are moved onto the  spherical surface when they <i>should be</i> on the spherical surface.  This is important in order to ensure convergence to the proper value of the stress.  Just refining  the initial mesh without repositioning of the nodes onto the spherical surface would mean that the refinement would preserve a concave corner where in reality there is none.  The stress would be artificially raised and convergence would not be guaranteed.</p><pre class="codeinput">    nref= 0;
+    <span class="keyword">for</span> ref=1:nref
+        [fens,fes]=Q4_refine(fens,fes);
+        list=fenode_select(fens,struct(<span class="string">'distance'</span>,1.0+0.1/2^nref,<span class="string">'from'</span>,[0,0],<span class="keyword">...</span>
+            <span class="string">'inflate'</span>, tolerance));
+        fens= onto_sphere(fens,1.0,list);
+    <span class="keyword">end</span>
+</pre><p>The mesh is extruded by sweeping around the axis of symmetry. Only a single layer of elements is generated of internal angle <tt>angslice</tt>.</p><pre class="codeinput">    nLayers=1;
+    angslice =pi/16;
+</pre><p>First the mesh is extruded to a block whose third dimension represents the angular coordinate.</p><pre class="codeinput">    [fens,fes] = H8_extrude_Q4(fens,fes,nLayers,@(rz,k)[rz,0]-(k-1/2)/nLayers*[0,0,angslice]);
+</pre><p>The mesh is now converted to the serendipity 20-node elements. We will reposition the nodes later.</p><pre class="codeinput">    [fens,fes]=H8_to_H20(fens,fes);
+</pre><p>The boundary of the block is extracted and the faces of the mesh on the bounding cross-sections are identified. Recall that this is just about the topology (connectivity), the geometry does not matter at this point.</p><pre class="codeinput">    bfes=mesh_boundary(fes);
+    f1l=fe_select (fens,bfes,<span class="keyword">...</span>
+        struct(<span class="string">'box'</span>,[-inf,inf,-inf,inf,-angslice/2,-angslice/2],<span class="string">'inflate'</span>,100*eps));
+    f2l=fe_select (fens,bfes,<span class="keyword">...</span>
+        struct(<span class="string">'box'</span>,[-inf,inf,-inf,inf,angslice/2,angslice/2],<span class="string">'inflate'</span>,100*eps));
+</pre><p>The block is now converted  to the actual geometry by using the third (angular) coordinate  to sweep out  an axially symmetric domain. The ccoordinates of the nodes at this point are <tt>rza</tt>,  radial distance, Z-coordinate, angle.</p><pre class="codeinput">    fens = transform_apply(fens,<span class="keyword">...</span>
+        @(rza,~)[-rza(1)*sin(rza(3)),rza(1)*cos(rza(3)),rza(2)], []);
+</pre><p>The mesh is now drawn as a check.  The volume elements are drawn in wireframe, and the two bounding cross-sections are in solid color.</p><pre class="codeinput">    gv=drawmesh({fens,fes},<span class="string">'fes'</span>,<span class="string">'facecolor'</span>,<span class="string">'none'</span>);
+    gv=drawmesh({fens,subset(bfes,f1l)},<span class="string">'gv'</span>,gv,<span class="string">'fes'</span>,<span class="string">'facecolor'</span>,<span class="string">'y'</span>);
+    gv=drawmesh({fens,subset(bfes,f2l)},<span class="string">'gv'</span>,gv,<span class="string">'fes'</span>,<span class="string">'facecolor'</span>,<span class="string">'r'</span>);
+    labels  ([])
+</pre><img vspace="5" hspace="5" src="pub_LE11NAFEMS_H20_01.png" alt=""> <p>The nodes within the radial distance of 1.0 of the origin (i. e. those on the spherical surface)  are repositioned one more time to be located on the spherical surface for sure. (Recall  that we have inserted additional nodes at the midpoints of the edges when the mesh was converted to quadratic elements.)</p><pre class="codeinput">    list=fenode_select(fens,struct(<span class="string">'distance'</span>,1.0+0.1/2^nref, <span class="string">'from'</span>,[0,0,0],<span class="keyword">...</span>
+        <span class="string">'inflate'</span>, tolerance));
+    fens= onto_sphere(fens,1.0,list);
+</pre><p>The mesh is drawn again as a check.</p><pre class="codeinput">    drawmesh({fens,fes},<span class="string">'fes'</span>,<span class="string">'facecolor'</span>,<span class="string">'red'</span>);
+    view(3)
+    labels
+</pre><img vspace="5" hspace="5" src="pub_LE11NAFEMS_H20_02.png" alt=""> <p>We are ready to create the  finite element model machine and to use it to construct  the global system for the displacements.</p><p>The material is created from the property object.  Note that the <tt>alpha</tt> attribute is the thermal expansion coefficient.</p><pre class="codeinput">    propa = property_deformation_linear_iso <span class="keyword">...</span>
+        (struct(<span class="string">'E'</span>,Ea,<span class="string">'nu'</span>,nua,<span class="string">'alpha'</span>, alphaa));
+    matera = material_deformation_linear_triax (struct(<span class="string">'property'</span>,propa));
+</pre><p>The finite element  model machine puts together the material, the finite elements,  and the integration rule. The Gauss quadrature with 3x3x3 points  gives good accuracy in this case. Compare it with 2x2x2 quadrature to appreciate the difference.</p><pre class="codeinput">    femma = femm_deformation_linear (struct (<span class="string">'material'</span>,matera,<span class="keyword">...</span>
+        <span class="string">'fes'</span>,fes,<span class="keyword">...</span>
+        <span class="string">'integration_rule'</span>,gauss_rule (struct(<span class="string">'dim'</span>,3, <span class="string">'order'</span>,3))));
+</pre><p>The geometry nodal field is created from the node set.   The displacement field is created by cloning the geometry and then zeroing out the nodal parameters.</p><pre class="codeinput">    geom = nodal_field(struct (<span class="string">'name'</span>,[<span class="string">'geom'</span>], <span class="string">'dim'</span>, 3, <span class="string">'fens'</span>,fens));
+    u   = clone(geom,<span class="string">'u'</span>);
+    u   = u*0; <span class="comment">% zero out</span>
+</pre><p>The EBCs are applied  next.  Only the axial (Z) degrees of freedom at the bottom and top are fixed to zero.</p><pre class="codeinput">    ebc_fenids=[fenode_select(fens,struct(<span class="string">'box'</span>,[-inf inf -inf inf 0 0],<span class="string">'inflate'</span>, tolerance)),<span class="keyword">...</span>
+        fenode_select(fens,struct(<span class="string">'box'</span>,[-inf inf -inf inf 1.79 1.79],<span class="string">'inflate'</span>, tolerance))];
+    ebc_fixed=true;<span class="comment">% The degrees of freedom are being fixed.</span>
+    ebc_comp=3;<span class="comment">% The axial (Z) component is being fixed</span>
+    ebc_val=0;<span class="comment">% Set to zero for the prescribed degrees of freedom.</span>
+    u   = set_ebc(u, ebc_fenids, ebc_fixed, ebc_comp, ebc_val);
+</pre><p>The restraints of the nodes on the bounding cross-sections in the direction of the normal to the plane of the cross-section  in the circumferential direction are introduced using a penalty formulation. For that purpose we introduce  a finite element model machine for the surface  finite elements on the cross-sections.</p><pre class="codeinput">    spring_coefficient =1 / ((abs(sigma_z_A_ref)/1e12)/Ea)
+    sfemma = femm_deformation_linear (struct (<span class="string">'material'</span>,matera,<span class="keyword">...</span>
+        <span class="string">'fes'</span>,subset(bfes,[f1l,f2l]),<span class="keyword">...</span>
+        <span class="string">'integration_rule'</span>,gauss_rule (struct(<span class="string">'dim'</span>,2, <span class="string">'order'</span>,3)),<span class="keyword">...</span>
+        <span class="string">'surface_normal_spring_coefficient'</span>,spring_coefficient));
+</pre><pre class="codeoutput">
+spring_coefficient =
+
+   2.0000e+15
+
+</pre><p>The EBCs are applied and the degrees of freedom are numbered.</p><pre class="codeinput">    u   = apply_ebc (u);
+    u   = numberdofs (u);
+</pre><p>We create the temperature field using the formula <img src="pub_LE11NAFEMS_H20_eq20286.png" alt="$T=r+z$">.</p><pre class="codeinput">    x=fens.xyz;
+    dT = nodal_field(struct (<span class="string">'name'</span>,[<span class="string">'dT'</span>], <span class="string">'dim'</span>, 1, <span class="keyword">...</span>
+        <span class="string">'data'</span>,sqrt(x(:,1).^2+x(:,3).^2)+x(:,2)));
+</pre><p>And we are ready to assemble the system matrix. Both the elastic stiffness of the hexahedral... elements key&#8230;</p><pre class="codeinput">    K = stiffness(femma, sysmat_assembler_sparse, geom, u);
+</pre><p>...  and the elastic stiffness    of the springs on the contact surfaces of the cross-sections.</p><pre class="codeinput">    H = surface_normal_spring_stiffness(sfemma, sysmat_assembler_sparse, geom, u);
+</pre><p>The mechanical loads are computed from the thermal strains.</p><pre class="codeinput">    F = thermal_strain_loads(femma, sysvec_assembler, geom, u, dT);
+</pre><p>And  the solution for the free degrees of freedom is obtained.</p><pre class="codeinput">    u = scatter_sysvec(u, (K+H)\F);
+</pre><p>The stress  is recovered from the stress calculated at the integration points.  The method <tt>field_from_integration_points_spr</tt> uses the Super convergent Patch Recovery (SPR) to compute the nodal stress from the quadrature-point stresses.</p><pre class="codeinput">    cmpn=3;<span class="comment">% this is the axial stress (sigma_Z)</span>
+    flda = field_from_integration_points_spr(femma, geom, u, dT, <span class="string">'Cauchy'</span>, cmpn);
+</pre><p>Now that we have the nodal field  for the axial stress, we can plot the axial stress painted on the deformed geometry.</p><pre class="codeinput">    figure(<span class="string">'visible'</span>, <span class="string">'off'</span>)
+    gv=graphic_viewer;
+    gv=reset (gv,struct (<span class="string">'limits'</span>, [-0.2, 0.2, 0, 1.5, 0, 1.8]));
+    nvalsa=flda.values/(pu.MEGA*pu.PA);
+    dcm=data_colormap(struct (<span class="string">'range'</span>,[min(nvalsa),max(nvalsa)], <span class="string">'colormap'</span>,jet));
+    colorfield=nodal_field(struct (<span class="string">'name'</span>, [<span class="string">'colorfield'</span>], <span class="string">'data'</span>,map_data(dcm, nvalsa)));
+    draw(femma, gv, struct (<span class="string">'x'</span>,geom,<span class="string">'u'</span>, 100*u, <span class="string">'colorfield'</span>,colorfield, <span class="string">'shrink'</span>,1));
+</pre><img vspace="5" hspace="5" src="pub_LE11NAFEMS_H20_03.png" alt=""> <p>The undeformed geometry is shown using an outline.</p><pre class="codeinput">    draw(mesh_boundary(femma.fes,[]), gv, struct (<span class="string">'x'</span>,geom,<span class="string">'u'</span>, 0*u, <span class="string">'facecolor'</span>,<span class="string">'none'</span>,<span class="string">'edgecolor'</span>,<span class="string">'r'</span>));
+
+    draw_colorbar(gv,struct(<span class="string">'position'</span>,[0.72 0.33 0.05 0.5],<span class="keyword">...</span>
+        <span class="string">'minmax'</span>,dcm.range,<span class="string">'label'</span>,<span class="string">'\sigma_{z}'</span>));
+    view (3)
+    labels
+    set(gcf,<span class="string">'visible'</span>, <span class="string">'on'</span>)
+</pre><img vspace="5" hspace="5" src="pub_LE11NAFEMS_H20_04.png" alt=""> <p>The  computed stress at the node that is located at the point A  is going to be now extracted from the nodal field for the stress.</p><pre class="codeinput">    l1=fenode_select(fens,struct(<span class="string">'distance'</span>,1.0+0.1/2^nref, <span class="string">'from'</span>,[0,0,0],<span class="keyword">...</span>
+        <span class="string">'inflate'</span>, tolerance));
+    l2 =fenode_select(fens,struct(<span class="string">'box'</span>,[-inf inf -inf inf 0 0],<span class="string">'inflate'</span>, tolerance));;
+    nA =intersect(l1,l2);
+    sigmaA =mean(nvalsa(nA));
+    disp([<span class="string">'Stress at point A: '</span> num2str(sigmaA) <span class="string">', i. e.  '</span> num2str(sigmaA*pu.MEGA*pu.PA/sigma_z_A_ref*100) <span class="string">' %'</span>])
+</pre><pre class="codeoutput">Stress at point A: -94.927, i. e.  90.4067 %
+</pre><h2>Discussion<a name="37"></a></h2><p>The 3-D solution corresponds well to the 2-D axially symmetric model. We also see good correspondence to other published solutions for comparable finite element models.  For instance, Abaqus 6.11 Benchmark manual lists very similar numbers.</p><pre class="codeinput"><span class="keyword">end</span>
+</pre><p class="footer"><br><a href="http://www.mathworks.com/products/matlab/">Published with MATLAB&reg; R2012b</a><br></p></div><!--
+##### SOURCE BEGIN #####
+%% Solid cylinder/taper/sphere—-temperature loading; quadratic brick mesh
+%
+
+%%
+% Link to the  <matlab:edit('pub_LE11NAFEMS_H20') m-file>.
+%
+
+%% Description
+%
+% The solid cylinder/taper/sphere axially-symmetric part represented in
+% Figure 1 is exposed to linearly varying temperature in the plane of the
+% cross-section. The temperature in the coordinates $r$  (the coordinate)
+% and $z$ (the axial ccoordinate)  is given as $T=r+z$. The goal is to find
+% the mechanical stress at the point A induced by the thermal expansion.
+%
+
+%%
+%
+% <html> <table border=0><tr><td> <img
+% src="../docs/pub_LE11NAFEMS_Q8_2.jpg"> </td></tr> <tr><td>Figure 1.
+% Definition of the geometry of the part</td></tr> </table> </html>
+
+%%
+% The part is constrained against axial expansion along the faces of HIH'I'
+% and ABA'B'. The Young's modulus is 210 GPa, the Poisson's ratio is .3,
+% and the coefficient of thermal expansion is 2.3e-4/degree Celsius.
+%%
+%
+% This is a test recommended by the National Agency for Finite Element
+% Methods and Standards (U.K.): Test LE11 from NAFEMS Publication TNSB,
+% Rev. 3, “The Standard NAFEMS Benchmarks,” October 1990.
+%
+% Target solution: Compressive  axial stress $\sigma_z$  = –105 MPa along
+% the circle passing through point A.
+
+
+
+%% Solution
+%
+function  pub_LE11NAFEMS_H20
+    %%
+    % The toolkit has a helpful physical-units facility.  The variable |pu|
+    % is a structure with fields that define basic  units and basic
+    % multipliers (for instance, mega).
+    pu= physical_units_struct;
+    %%
+    % Set the material properties.
+    Ea= 210000*pu.MEGA*pu.PA;% Young's modulus
+    nua= 0.3;% Poisson ratio
+    alphaa=2.3e-4;% coefficient of thermal expansion
+    
+    %%
+    % This is the target stress value.
+    sigma_z_A_ref=-105*pu.MEGA*pu.PA;
+    
+    %%
+    % The mesh  will be created in a very coarse representation from the
+    % key points in the drawing. The first coordinate is radial, the second coordinate is axial.
+    rz=[1.    , 0.;%A
+        1.4   , 0.;%B
+        0.995184726672197   0.098017140329561;
+        1.393258617341076 0.137223996461385;
+        0.980785,0.195090;%
+        1.37309939,0.27312645;
+        0.956940335732209   0.290284677254462
+        1.339716470025092 0.406398548156247
+        0.9238795, 0.38268;%C
+        1.2124, 0.7;%D
+        0.7071, 0.7071;%E
+        1.1062, 1.045;%F
+        0.7071, (0.7071+1.79)/2;%(E+H)/2
+        1.    , 1.39;%G
+        0.7071, 1.79;%H
+        1.    , 1.79;%I
+        ]*pu.M;
+    tolerance =1e-3*pu.M;% geometrical tolerance
+    fens=fenode_set(struct('xyz',rz));
+    % The finite elements in the cross-section as quadrilaterals
+    fes=fe_set_Q4(struct('conn',[1,2,4,3;3,4,6,5;5,6,8,7;7,8,10,9;...
+        9,10,12,11;11,12,14,13;13,14,16,15]));
+    
+    %%
+    % If needed, the initial mesh  can be refined by bisection.  Just set
+    % |nref| greater than zero.  Note that  the nodes located along the
+    % edges are moved onto the  spherical surface when they _should be_ on
+    % the spherical surface.  This is important in order to ensure
+    % convergence to the proper value of the stress.  Just refining  the
+    % initial mesh without repositioning of the nodes onto the spherical surface would mean that the
+    % refinement would preserve a concave corner where in reality there is
+    % none.  The stress would be artificially raised and convergence would
+    % not be guaranteed.
+    
+    nref= 0;
+    for ref=1:nref
+        [fens,fes]=Q4_refine(fens,fes);
+        list=fenode_select(fens,struct('distance',1.0+0.1/2^nref,'from',[0,0],...
+            'inflate', tolerance));
+        fens= onto_sphere(fens,1.0,list);
+    end
+    
+    %%
+    % The mesh is extruded by sweeping around the axis of symmetry.
+    % Only a single layer of elements is generated of internal angle
+    % |angslice|.
+    nLayers=1;
+    angslice =pi/16;
+    
+    %%
+    % First the mesh is extruded to a block whose third dimension
+    % represents the angular coordinate.
+    [fens,fes] = H8_extrude_Q4(fens,fes,nLayers,@(rz,k)[rz,0]-(k-1/2)/nLayers*[0,0,angslice]);
+    
+    %%
+    % The mesh is now converted to the serendipity 20-node elements.
+    % We will reposition the nodes later.
+    [fens,fes]=H8_to_H20(fens,fes);
+    
+    %%
+    % The boundary of the block is extracted and the faces of the mesh on
+    % the bounding cross-sections are identified. Recall that this is just
+    % about the topology (connectivity), the geometry does not matter at
+    % this point.
+    bfes=mesh_boundary(fes);
+    f1l=fe_select (fens,bfes,...
+        struct('box',[-inf,inf,-inf,inf,-angslice/2,-angslice/2],'inflate',100*eps));
+    f2l=fe_select (fens,bfes,...
+        struct('box',[-inf,inf,-inf,inf,angslice/2,angslice/2],'inflate',100*eps));
+    
+    %%
+    % The block is now converted  to the actual geometry by using the third (angular)
+    % coordinate  to sweep out  an axially symmetric domain. The
+    % ccoordinates of the nodes at this point are |rza|,  radial distance,
+    % Z-coordinate, angle.
+    fens = transform_apply(fens,...
+        @(rza,~)[-rza(1)*sin(rza(3)),rza(1)*cos(rza(3)),rza(2)], []);
+    
+    %%
+    %
+    %%
+    % The mesh is now drawn as a check.  The volume elements are drawn in wireframe,
+    % and the two bounding cross-sections are in solid color.
+    gv=drawmesh({fens,fes},'fes','facecolor','none');
+    gv=drawmesh({fens,subset(bfes,f1l)},'gv',gv,'fes','facecolor','y');
+    gv=drawmesh({fens,subset(bfes,f2l)},'gv',gv,'fes','facecolor','r');
+    labels  ([])
+    
+    %%
+    % The nodes within the radial distance of 1.0 of the origin (i. e.
+    % those on the spherical surface)  are repositioned one more time to be
+    % located on the spherical surface for sure. (Recall  that we have
+    % inserted additional nodes at the midpoints of the edges when the mesh
+    % was converted to quadratic elements.)
+    list=fenode_select(fens,struct('distance',1.0+0.1/2^nref, 'from',[0,0,0],...
+        'inflate', tolerance));
+    fens= onto_sphere(fens,1.0,list);
+    
+    %%
+    % The mesh is drawn again as a check.
+    drawmesh({fens,fes},'fes','facecolor','red');
+    view(3)
+    labels
+    
+    %%
+    % We are ready to create the  finite element model machine and to use
+    % it to construct  the global system for the displacements.
+    %%
+    % The material is created from the property object.  Note that the
+    % |alpha| attribute is the thermal expansion coefficient.
+    propa = property_deformation_linear_iso ...
+        (struct('E',Ea,'nu',nua,'alpha', alphaa));
+    matera = material_deformation_linear_triax (struct('property',propa));
+    
+    
+    %%
+    % The finite element  model machine puts together the material, the
+    % finite elements,  and the integration rule. The Gauss quadrature with
+    % 3x3x3 points  gives good accuracy in this case. Compare it with 2x2x2
+    % quadrature to appreciate the difference.
+    femma = femm_deformation_linear (struct ('material',matera,...
+        'fes',fes,...
+        'integration_rule',gauss_rule (struct('dim',3, 'order',3))));
+    
+    %%
+    % The geometry nodal field is created from the node set.   The
+    % displacement field is created by cloning the geometry and then
+    % zeroing out the nodal parameters.
+    geom = nodal_field(struct ('name',['geom'], 'dim', 3, 'fens',fens));
+    u   = clone(geom,'u');
+    u   = u*0; % zero out
+    
+    %%
+    % The EBCs are applied  next.  Only the axial (Z) degrees of freedom at
+    % the bottom and top are fixed to zero.
+    ebc_fenids=[fenode_select(fens,struct('box',[-inf inf -inf inf 0 0],'inflate', tolerance)),...
+        fenode_select(fens,struct('box',[-inf inf -inf inf 1.79 1.79],'inflate', tolerance))];
+    ebc_fixed=true;% The degrees of freedom are being fixed.
+    ebc_comp=3;% The axial (Z) component is being fixed
+    ebc_val=0;% Set to zero for the prescribed degrees of freedom.
+    u   = set_ebc(u, ebc_fenids, ebc_fixed, ebc_comp, ebc_val);
+    
+    %%
+    % The restraints of the nodes on the bounding cross-sections in the direction of the normal to the plane of the cross-section  in the
+    % circumferential direction are introduced using a penalty formulation.
+    % For that purpose we introduce  a finite element model machine for the
+    % surface  finite elements on the cross-sections.
+    spring_coefficient =1 / ((abs(sigma_z_A_ref)/1e12)/Ea)
+    sfemma = femm_deformation_linear (struct ('material',matera,...
+        'fes',subset(bfes,[f1l,f2l]),...
+        'integration_rule',gauss_rule (struct('dim',2, 'order',3)),...
+        'surface_normal_spring_coefficient',spring_coefficient));
+    %%
+    % The EBCs are applied and the degrees of freedom are numbered.
+    u   = apply_ebc (u);
+    u   = numberdofs (u);
+    
+    %%
+    % We create the temperature field using the formula $T=r+z$.
+    x=fens.xyz;
+    dT = nodal_field(struct ('name',['dT'], 'dim', 1, ...
+        'data',sqrt(x(:,1).^2+x(:,3).^2)+x(:,2)));
+    
+    %%
+    % And we are ready to assemble the system matrix. Both the elastic stiffness of the hexahedral... elements key…
+    K = stiffness(femma, sysmat_assembler_sparse, geom, u);
+    %%
+    % ...  and the elastic stiffness    of the springs on the contact surfaces of the cross-sections.
+    H = surface_normal_spring_stiffness(sfemma, sysmat_assembler_sparse, geom, u);
+    
+    %%
+    % The mechanical loads are computed from the thermal strains.
+    F = thermal_strain_loads(femma, sysvec_assembler, geom, u, dT);
+    
+    %%
+    % And  the solution for the free degrees of freedom is obtained.
+    u = scatter_sysvec(u, (K+H)\F);
+    
+    
+    %%
+    % The stress  is recovered from the stress calculated at the
+    % integration points.  The method |field_from_integration_points_spr| uses
+    % the Super convergent Patch Recovery (SPR) to compute the nodal stress from the
+    % quadrature-point stresses.
+    cmpn=3;% this is the axial stress (sigma_Z)
+    flda = field_from_integration_points_spr(femma, geom, u, dT, 'Cauchy', cmpn);
+    
+    %%
+    % Now that we have the nodal field  for the axial stress, we can plot
+    % the axial stress painted on the deformed geometry.
+    figure('visible', 'off')
+    gv=graphic_viewer;
+    gv=reset (gv,struct ('limits', [-0.2, 0.2, 0, 1.5, 0, 1.8]));
+    nvalsa=flda.values/(pu.MEGA*pu.PA);
+    dcm=data_colormap(struct ('range',[min(nvalsa),max(nvalsa)], 'colormap',jet));
+    colorfield=nodal_field(struct ('name', ['colorfield'], 'data',map_data(dcm, nvalsa)));
+    draw(femma, gv, struct ('x',geom,'u', 100*u, 'colorfield',colorfield, 'shrink',1));
+    %%
+    % The undeformed geometry is shown using an outline.
+    draw(mesh_boundary(femma.fes,[]), gv, struct ('x',geom,'u', 0*u, 'facecolor','none','edgecolor','r'));
+    
+    draw_colorbar(gv,struct('position',[0.72 0.33 0.05 0.5],...
+        'minmax',dcm.range,'label','\sigma_{z}'));
+    view (3)
+    labels
+    set(gcf,'visible', 'on')
+    %%
+    % The  computed stress at the node that is located at the point A  is
+    % going to be now extracted from the nodal field for the stress.
+    l1=fenode_select(fens,struct('distance',1.0+0.1/2^nref, 'from',[0,0,0],...
+        'inflate', tolerance));
+    l2 =fenode_select(fens,struct('box',[-inf inf -inf inf 0 0],'inflate', tolerance));;
+    nA =intersect(l1,l2);
+    sigmaA =mean(nvalsa(nA));
+    disp(['Stress at point A: ' num2str(sigmaA) ', i. e.  ' num2str(sigmaA*pu.MEGA*pu.PA/sigma_z_A_ref*100) ' %'])
+    
+    %% Discussion
+    %
+    %%
+    % The 3-D solution corresponds well to the 2-D axially symmetric model.
+    % We also see good correspondence to other published solutions for
+    % comparable finite element models.  For instance, Abaqus 6.11
+    % Benchmark manual lists very similar numbers.
+end
+##### SOURCE END #####
+--></body></html>

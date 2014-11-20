@@ -1,0 +1,82 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FAVORITESROOT version="2">
+   
+   
+   
+   <title>My Shortcuts</title>
+   
+   
+   
+   <FAVORITECATEGORY>
+      
+      
+      
+      <name>Help Browser Favorites</name>
+      
+      
+      
+      <FAVORITE>
+         
+         
+         
+         <label>Help Using the Desktop</label>
+         
+         
+         
+         <icon>Help icon</icon>
+         
+         
+         
+         <callback>helpview([docroot '/mapfiles/matlab_env.map'], 'matlabenvironment_desktop');</callback>
+         
+         
+         
+         <editable>true</editable>
+      
+      
+      
+      </FAVORITE>
+   
+   
+   
+   </FAVORITECATEGORY>
+
+   
+   
+   <FAVORITE>
+      
+      
+      <label>close all</label>
+      
+      
+      <icon>Upper Case C</icon>
+      
+      
+      <callback>close all</callback>
+      
+      
+      <editable>true</editable>
+   
+   
+   </FAVORITE>
+
+   
+   <FAVORITE>
+      
+      <label>URLs</label>
+      
+      <icon>Standard icon</icon>
+      
+      <callback>contents_urls</callback>
+      
+      <editable>true</editable>
+   
+   </FAVORITE>
+
+   <FAVORITE>
+      <label>doc/fineale</label>
+      <icon>Standard icon</icon>
+      <callback>doc fineale</callback>
+      <editable>true</editable>
+   </FAVORITE>
+</FAVORITESROOT>

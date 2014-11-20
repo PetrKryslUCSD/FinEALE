@@ -1,0 +1,307 @@
+
+<!DOCTYPE html
+  PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html><head>
+      <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+   <!--
+This HTML was auto-generated from MATLAB code.
+To make changes, update the MATLAB code and republish this document.
+      --><title>Vibration analysis of laminated composite plate</title><meta name="generator" content="MATLAB 8.0"><link rel="schema.DC" href="http://purl.org/dc/elements/1.1/"><meta name="DC.date" content="2012-12-20"><meta name="DC.source" content="pub_KS_sandwich_vibration_ss.m"><style type="text/css">
+html,body,div,span,applet,object,iframe,h1,h2,h3,h4,h5,h6,p,blockquote,pre,a,abbr,acronym,address,big,cite,code,del,dfn,em,font,img,ins,kbd,q,s,samp,small,strike,strong,sub,sup,tt,var,b,u,i,center,dl,dt,dd,ol,ul,li,fieldset,form,label,legend,table,caption,tbody,tfoot,thead,tr,th,td{margin:0;padding:0;border:0;outline:0;font-size:100%;vertical-align:baseline;background:transparent}body{line-height:1}ol,ul{list-style:none}blockquote,q{quotes:none}blockquote:before,blockquote:after,q:before,q:after{content:'';content:none}:focus{outine:0}ins{text-decoration:none}del{text-decoration:line-through}table{border-collapse:collapse;border-spacing:0}
+
+html { min-height:100%; margin-bottom:1px; }
+html body { height:100%; margin:0px; font-family:Arial, Helvetica, sans-serif; font-size:10px; color:#000; line-height:140%; background:#fff none; overflow-y:scroll; }
+html body td { vertical-align:top; text-align:left; }
+
+h1 { padding:0px; margin:0px 0px 25px; font-family:Arial, Helvetica, sans-serif; font-size:1.5em; color:#d55000; line-height:100%; font-weight:normal; }
+h2 { padding:0px; margin:0px 0px 8px; font-family:Arial, Helvetica, sans-serif; font-size:1.2em; color:#000; font-weight:bold; line-height:140%; border-bottom:1px solid #d6d4d4; display:block; }
+h3 { padding:0px; margin:0px 0px 5px; font-family:Arial, Helvetica, sans-serif; font-size:1.1em; color:#000; font-weight:bold; line-height:140%; }
+
+a { color:#005fce; text-decoration:none; }
+a:hover { color:#005fce; text-decoration:underline; }
+a:visited { color:#004aa0; text-decoration:none; }
+
+p { padding:0px; margin:0px 0px 20px; }
+img { padding:0px; margin:0px 0px 20px; border:none; }
+p img, pre img, tt img, li img { margin-bottom:0px; } 
+
+ul { padding:0px; margin:0px 0px 20px 23px; list-style:square; }
+ul li { padding:0px; margin:0px 0px 7px 0px; }
+ul li ul { padding:5px 0px 0px; margin:0px 0px 7px 23px; }
+ul li ol li { list-style:decimal; }
+ol { padding:0px; margin:0px 0px 20px 0px; list-style:decimal; }
+ol li { padding:0px; margin:0px 0px 7px 23px; list-style-type:decimal; }
+ol li ol { padding:5px 0px 0px; margin:0px 0px 7px 0px; }
+ol li ol li { list-style-type:lower-alpha; }
+ol li ul { padding-top:7px; }
+ol li ul li { list-style:square; }
+
+.content { font-size:1.2em; line-height:140%; padding: 20px; }
+
+pre, tt, code { font-size:12px; }
+pre { margin:0px 0px 20px; }
+pre.error { color:red; }
+pre.codeinput { padding:10px; border:1px solid #d3d3d3; background:#f7f7f7; }
+pre.codeoutput { padding:10px 11px; margin:0px 0px 20px; color:#4c4c4c; }
+
+@media print { pre.codeinput, pre.codeoutput { word-wrap:break-word; width:100%; } }
+
+span.keyword { color:#0000FF }
+span.comment { color:#228B22 }
+span.string { color:#A020F0 }
+span.untermstring { color:#B20000 }
+span.syscmd { color:#B28C00 }
+
+.footer { width:auto; padding:10px 0px; margin:25px 0px 0px; border-top:1px dotted #878787; font-size:0.8em; line-height:140%; font-style:italic; color:#878787; text-align:left; float:none; }
+.footer p { margin:0px; }
+.footer a { color:#878787; }
+.footer a:hover { color:#878787; text-decoration:underline; }
+.footer a:visited { color:#878787; }
+
+table th { padding:7px 5px; text-align:left; vertical-align:middle; border: 1px solid #d6d4d4; font-weight:bold; }
+table td { padding:7px 5px; text-align:left; vertical-align:top; border:1px solid #d6d4d4; }
+
+
+
+
+
+  </style></head><body><div class="content"><h1>Vibration analysis of laminated composite plate</h1><!--introduction--><!--/introduction--><h2>Contents</h2><div><ul><li><a href="#2">Description</a></li><li><a href="#5">Solution</a></li><li><a href="#21">Discussion</a></li></ul></div><p>Link to the  <a href="matlab:edit('pub_KS_sandwich_vibration_ss')">m-file</a>.</p><h2>Description<a name="2"></a></h2><p>Free-vibration problem is solved for laminated composite square plate, simply-supported on the circumference.</p><p>Reference: Analytical solutions for free vibration of laminated composite and sandwich plates based on the higher-order refined theory, T. Kant and K. Swaminathan, Composite Structures 53  (2001) 73-85.</p><p>The plate lamination considered here is one particular case from the cited reference, <img src="pub_KS_sandwich_vibration_ss_eq77006.png" alt="$(0/90)_2$">, and we consider orthotropic material properties for individual layers with <img src="pub_KS_sandwich_vibration_ss_eq95389.png" alt="$E_1/E_2=3$">, <img src="pub_KS_sandwich_vibration_ss_eq87913.png" alt="$E_3 =E_2$">, <img src="pub_KS_sandwich_vibration_ss_eq69279.png" alt="$G_{12}=G_{13}=0.6E_2$">, <img src="pub_KS_sandwich_vibration_ss_eq68038.png" alt="$G_{23}=0.5E_2$">, <img src="pub_KS_sandwich_vibration_ss_eq94737.png" alt="$\nu_{12}=\nu_{13}=\nu_{23}= 0.25$">.</p><p>The plate is discretized with solid elements. The simple support condition is approximated by distributed rollers on the boundary.</p><h2>Solution<a name="5"></a></h2><pre class="codeinput"><span class="keyword">function</span> pub_KS_sandwich_vibration_ss
+</pre><p>Material: The data from the above cited article. The ratio of the Young's moduli is variable, and the number of layers also varies. Here we consider E1/E2 = 3, and four layers with a layup (0/90)_2.</p><pre class="codeinput">    L_t =5;<span class="comment">% span to thickness ratio (a/h in the paper)</span>
+    E1_E2 = 3;<span class="comment">% this ratio is variable</span>
+    angles =[0 90 0 90];<span class="comment">% Anti-symmetric layup</span>
+</pre><p>The analytical formula gives the non-dimensional fundamental frequency from a 3-D elasticity solution as (Table 2):</p><pre class="codeinput">    omega_bar=6.5455; <span class="comment">% the fundamental frequency multiplier</span>
+</pre><p>Compute  all the other input parameters. Because the reference solution is given in terms of a non-dimensional fundamental frequency, we are free to choose the numerical values of the input parameters as long as we observe the given ratios.</p><pre class="codeinput">    E1=181000; E2=E1/E1_E2; E3=E2; G12=0.6*E2;  G13=0.6*E2; G23=0.5*E2;<span class="comment">% MPa</span>
+    nu12= 0.25; nu13= 0.25; nu23= 0.25; rho =1.5e-9;
+    L=200; W=200; t=L/L_t;<span class="comment">% mm</span>
+</pre><p>Fundamental frequency in hertz</p><pre class="codeinput">    omega_fundamental =omega_bar*t/W^2*sqrt(E2/rho);
+    f_fundamental =omega_fundamental/2/pi
+</pre><pre class="codeoutput">
+f_fundamental =
+
+   6.6069e+03
+
+</pre><p>The chosen mesh parameters.</p><pre class="codeinput">    nLayers =length(angles);
+    [nL,nW] =adeal(2*[4,4]);<span class="comment">% in-plane numbers of elements</span>
+    nts= 1*ones(length(angles));<span class="comment">% number of elements per layer</span>
+    ts= t/length(angles)*ones(length(angles));<span class="comment">% layer thicknesses</span>
+</pre><p>The mesh is generated using the specialized function <tt>H8_composite_plate</tt> which generates the solid elements within the plate layer-by-layer and marks the elements of each layer with the layer number as their label.</p><pre class="codeinput">     [fens,fes] = H8_composite_plate(L,W,ts,nL,nW,nts);;
+</pre><p>The chosen elements are the serendipity hexahedra.</p><pre class="codeinput">    [fens,fes] = H8_to_H20(fens,fes);
+</pre><p>The material orientation matrix is determined by the layer number.</p><pre class="codeinput">    <span class="keyword">function</span> Rm = LayerRm(XYZ, ts, label)<span class="comment">% label equals the layer number here</span>
+        Rm= rotmat(angles(label)/180*pi* [0,0,1]);
+    <span class="keyword">end</span>
+</pre><p>We are ready to bundle up the model data so they can be passed to the solver.</p><pre class="codeinput">    clear <span class="string">model_data</span>
+    model_data.fens =fens;<span class="comment">% the finite element node set</span>
+</pre><p>Note that we are specifying the material parameters and the material orientation matrix. The integration rule is going to be used for both the stiffness matrix and the mass matrix.</p><pre class="codeinput">    clear <span class="string">region</span>
+    region.property = <span class="string">'orthotropic'</span>;
+    region.rho =rho;
+    region.E1 =E1;
+    region.E2 =E2;
+    region.E3 =E3;
+    region.G12=G12;
+    region.G13=G13;
+    region.G23=G23;
+    region.nu12=nu12;
+    region.nu13=nu13;
+    region.nu23=nu23;
+    region.fes= fes;<span class="comment">% set of finite elements for the interior of the domain</span>
+    region.integration_rule = gauss_rule (struct(<span class="string">'dim'</span>, 3, <span class="string">'order'</span>, 2));
+    region.Rm =@LayerRm;
+    model_data.region{1} =region;
+</pre><p>The support conditions approximate simply-supported edges.  In particular, the reference paper stipulates that plate edges parallel to the X-axis are not allowed any displacement perpendicular to the plane of the plate (Z displacement) and no displacement tangential to the edge (Y displacement).</p><pre class="codeinput">    clear <span class="string">essential</span>
+    essential.component= [2,3];
+    essential.fixed_value= 0;
+    essential.node_list = [fenode_select(fens, struct(<span class="string">'box'</span>, [0,0,-Inf,Inf,-Inf,Inf],<span class="keyword">...</span>
+        <span class="string">'inflate'</span>,0.001*t)),fenode_select(fens, struct(<span class="string">'box'</span>, [L,L,-Inf,Inf,-Inf,Inf],<span class="keyword">...</span>
+        <span class="string">'inflate'</span>,0.001*t))];
+    model_data.boundary_conditions.essential{1} = essential;
+</pre><p>The plate edges parallel to the Y-axis are not allowed any displacement perpendicular to the plane of the plate (Z displacement) and no displacement tangential to the edge (X displacement).</p><pre class="codeinput">    clear <span class="string">essential</span>
+    essential.component= [1,3];
+    essential.fixed_value= 0;
+    essential.node_list = [fenode_select(fens, struct(<span class="string">'box'</span>, [0,L,0,0,-Inf,Inf],<span class="keyword">...</span>
+        <span class="string">'inflate'</span>,0.001*t)),fenode_select(fens, struct(<span class="string">'box'</span>, [0,L,W,W,-Inf,Inf],<span class="keyword">...</span>
+        <span class="string">'inflate'</span>,0.001*t))];
+    model_data.boundary_conditions.essential{2} = essential;
+</pre><p>The modal analysis solver is now ready to be invoked.</p><pre class="codeinput">    model_data = deformation_linear_modal_analysis(model_data);
+</pre><p>The modal-plot algorithm can be called to produce the plot of the fundamental mode.</p><pre class="codeinput">    model_data.postprocessing.u_scale= 2;
+    model_data.postprocessing.modelist= 1;
+    mmodel_data=deformation_plot_modes(model_data);
+</pre><pre class="codeoutput">Mode 1, frequency 6566.0502
+</pre><img vspace="5" hspace="5" src="pub_KS_sandwich_vibration_ss_01.png" alt=""> <h2>Discussion<a name="21"></a></h2><p>The fundamental frequency is extracted from the updated <tt>model_data</tt> data structure.</p><pre class="codeinput">    f=model_data.Omega(1)/2/pi;
+    disp([<span class="string">'Fundamental frequency '</span> num2str(1) <span class="string">': '</span> num2str(f) <span class="string">' [Hz]'</span> <span class="string">', f/f_analytical='</span> num2str(100*f/f_fundamental) <span class="string">'%'</span>]);
+</pre><pre class="codeoutput">Fundamental frequency 1: 6566.0502 [Hz], f/f_analytical=99.3821%
+</pre><p>The accuracy of less than 1% error seems to be quite adequate. However, if we refine the mesh our results will converge to a frequency that is approximately .62% lower than the reference solution. Since all the cited numbers in the Reference article are in fact lower (around 1% lower) than the 3-D elasticity solution,  and since our numerical method is in agreement with the other three  cited solutions, we may venture a guess that the 3-D elasticity solution may be in error.</p><pre class="codeinput"><span class="keyword">end</span>
+</pre><p class="footer"><br><a href="http://www.mathworks.com/products/matlab/">Published with MATLAB&reg; R2012b</a><br></p></div><!--
+##### SOURCE BEGIN #####
+%% Vibration analysis of laminated composite plate
+%
+
+%%
+% Link to the  <matlab:edit('pub_KS_sandwich_vibration_ss') m-file>.
+%
+
+%% Description
+%
+% Free-vibration problem is solved for laminated composite square plate,
+% simply-supported on the circumference.
+%
+% Reference:
+% Analytical solutions for free vibration of laminated composite and sandwich
+% plates based on the higher-order refined theory, T. Kant and K. Swaminathan,
+% Composite Structures 53  (2001) 73-85.
+
+
+%% 
+% The plate lamination considered here is one particular case from the
+% cited reference, $(0/90)_2$, and we consider orthotropic material
+% properties for individual layers with $E_1/E_2=3$, $E_3 =E_2$,
+% $G_{12}=G_{13}=0.6E_2$, $G_{23}=0.5E_2$, $\nu_{12}=\nu_{13}=\nu_{23}=
+% 0.25$.
+
+%% 
+% The plate is discretized with solid elements. The simple support
+% condition is approximated by distributed rollers on the boundary.
+
+%% Solution
+% 
+function pub_KS_sandwich_vibration_ss
+    
+%% 
+% 
+    % Material: The data from the above cited article. The ratio of the Young's
+    % moduli is variable, and the number of layers also varies.
+    % Here we consider E1/E2 = 3, and four layers with a layup (0/90)_2.
+    %
+    L_t =5;% span to thickness ratio (a/h in the paper)
+    E1_E2 = 3;% this ratio is variable
+    angles =[0 90 0 90];% Anti-symmetric layup
+%% 
+% The analytical formula gives the non-dimensional fundamental frequency
+% from a 3-D elasticity solution as (Table 2):
+    omega_bar=6.5455; % the fundamental frequency multiplier
+    
+%% 
+% Compute  all the other input parameters. Because the reference solution
+% is given in terms of a non-dimensional fundamental frequency, we are free
+% to choose the numerical values of the input parameters as long as we
+% observe the given ratios.
+    E1=181000; E2=E1/E1_E2; E3=E2; G12=0.6*E2;  G13=0.6*E2; G23=0.5*E2;% MPa
+    nu12= 0.25; nu13= 0.25; nu23= 0.25; rho =1.5e-9;
+    L=200; W=200; t=L/L_t;% mm
+    
+%% 
+% Fundamental frequency in hertz
+    omega_fundamental =omega_bar*t/W^2*sqrt(E2/rho);
+    f_fundamental =omega_fundamental/2/pi
+    
+%% 
+% The chosen mesh parameters.
+    nLayers =length(angles);
+    [nL,nW] =adeal(2*[4,4]);% in-plane numbers of elements
+    nts= 1*ones(length(angles));% number of elements per layer
+    ts= t/length(angles)*ones(length(angles));% layer thicknesses
+    
+    
+
+%% 
+% The mesh is generated using the specialized function |H8_composite_plate|
+% which generates the solid elements within the plate layer-by-layer and marks the elements
+% of each layer with the layer number as their label.
+     [fens,fes] = H8_composite_plate(L,W,ts,nL,nW,nts);;
+     
+%% 
+% The chosen elements are the serendipity hexahedra.
+    [fens,fes] = H8_to_H20(fens,fes);
+    
+%% 
+% The material orientation matrix is determined by the layer number.
+    function Rm = LayerRm(XYZ, ts, label)% label equals the layer number here
+        Rm= rotmat(angles(label)/180*pi* [0,0,1]);
+    end
+
+    
+%% 
+% We are ready to bundle up the model data so they can be passed to the solver.
+    clear model_data
+    model_data.fens =fens;% the finite element node set
+    
+%% 
+% Note that we are specifying the material parameters and the material
+% orientation matrix. The integration rule is going to be used for both the
+% stiffness matrix and the mass matrix.
+    clear region
+    region.property = 'orthotropic';
+    region.rho =rho;
+    region.E1 =E1;
+    region.E2 =E2;
+    region.E3 =E3;
+    region.G12=G12;
+    region.G13=G13;
+    region.G23=G23;
+    region.nu12=nu12;
+    region.nu13=nu13;
+    region.nu23=nu23;
+    region.fes= fes;% set of finite elements for the interior of the domain
+    region.integration_rule = gauss_rule (struct('dim', 3, 'order', 2));
+    region.Rm =@LayerRm;
+    model_data.region{1} =region;
+     
+%% 
+% 
+% The support conditions approximate simply-supported edges.  In
+% particular, the reference paper stipulates that plate edges parallel to
+% the X-axis are not allowed any displacement perpendicular to the plane of
+% the plate (Z displacement) and no displacement tangential to the edge (Y displacement).
+    clear essential
+    essential.component= [2,3];
+    essential.fixed_value= 0;
+    essential.node_list = [fenode_select(fens, struct('box', [0,0,-Inf,Inf,-Inf,Inf],...
+        'inflate',0.001*t)),fenode_select(fens, struct('box', [L,L,-Inf,Inf,-Inf,Inf],...
+        'inflate',0.001*t))];
+    model_data.boundary_conditions.essential{1} = essential;
+    
+%% 
+% The plate edges parallel to
+% the Y-axis are not allowed any displacement perpendicular to the plane of
+% the plate (Z displacement) and no displacement tangential to the edge (X displacement).
+
+    clear essential
+    essential.component= [1,3];
+    essential.fixed_value= 0;
+    essential.node_list = [fenode_select(fens, struct('box', [0,L,0,0,-Inf,Inf],...
+        'inflate',0.001*t)),fenode_select(fens, struct('box', [0,L,W,W,-Inf,Inf],...
+        'inflate',0.001*t))];
+    model_data.boundary_conditions.essential{2} = essential;
+    
+%% 
+% The modal analysis solver is now ready to be invoked.
+    model_data = deformation_linear_modal_analysis(model_data);
+   
+
+    
+%% 
+% The modal-plot algorithm can be called to produce the plot of the
+% fundamental mode.
+    model_data.postprocessing.u_scale= 2;
+    model_data.postprocessing.modelist= 1;
+    mmodel_data=deformation_plot_modes(model_data);
+        
+%% Discussion
+% 
+%% 
+% The fundamental frequency is extracted from the updated |model_data| data
+% structure.
+    f=model_data.Omega(1)/2/pi;
+    disp(['Fundamental frequency ' num2str(1) ': ' num2str(f) ' [Hz]' ', f/f_analytical=' num2str(100*f/f_fundamental) '%']);
+
+%% 
+% The accuracy of less than 1% error seems to be quite adequate.
+% However, if we refine the mesh our results will converge to a frequency
+% that is approximately .62% lower than the reference solution. Since all
+% the cited numbers in the Reference article are in fact lower (around 1%
+% lower) than the 3-D elasticity solution,  and since our numerical method is in
+% agreement with the other three  cited solutions, we may venture a guess that the
+% 3-D elasticity solution may be in error.
+    
+end
+##### SOURCE END #####
+--></body></html>

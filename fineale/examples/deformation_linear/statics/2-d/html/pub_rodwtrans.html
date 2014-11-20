@@ -1,0 +1,561 @@
+
+<!DOCTYPE html
+  PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html><head>
+      <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+   <!--
+This HTML was auto-generated from MATLAB code.
+To make changes, update the MATLAB code and republish this document.
+      --><title>Stress  calculation in a tension rod with shoulder fillet.</title><meta name="generator" content="MATLAB 8.0"><link rel="schema.DC" href="http://purl.org/dc/elements/1.1/"><meta name="DC.date" content="2012-12-23"><meta name="DC.source" content="pub_rodwtrans.m"><style type="text/css">
+html,body,div,span,applet,object,iframe,h1,h2,h3,h4,h5,h6,p,blockquote,pre,a,abbr,acronym,address,big,cite,code,del,dfn,em,font,img,ins,kbd,q,s,samp,small,strike,strong,sub,sup,tt,var,b,u,i,center,dl,dt,dd,ol,ul,li,fieldset,form,label,legend,table,caption,tbody,tfoot,thead,tr,th,td{margin:0;padding:0;border:0;outline:0;font-size:100%;vertical-align:baseline;background:transparent}body{line-height:1}ol,ul{list-style:none}blockquote,q{quotes:none}blockquote:before,blockquote:after,q:before,q:after{content:'';content:none}:focus{outine:0}ins{text-decoration:none}del{text-decoration:line-through}table{border-collapse:collapse;border-spacing:0}
+
+html { min-height:100%; margin-bottom:1px; }
+html body { height:100%; margin:0px; font-family:Arial, Helvetica, sans-serif; font-size:10px; color:#000; line-height:140%; background:#fff none; overflow-y:scroll; }
+html body td { vertical-align:top; text-align:left; }
+
+h1 { padding:0px; margin:0px 0px 25px; font-family:Arial, Helvetica, sans-serif; font-size:1.5em; color:#d55000; line-height:100%; font-weight:normal; }
+h2 { padding:0px; margin:0px 0px 8px; font-family:Arial, Helvetica, sans-serif; font-size:1.2em; color:#000; font-weight:bold; line-height:140%; border-bottom:1px solid #d6d4d4; display:block; }
+h3 { padding:0px; margin:0px 0px 5px; font-family:Arial, Helvetica, sans-serif; font-size:1.1em; color:#000; font-weight:bold; line-height:140%; }
+
+a { color:#005fce; text-decoration:none; }
+a:hover { color:#005fce; text-decoration:underline; }
+a:visited { color:#004aa0; text-decoration:none; }
+
+p { padding:0px; margin:0px 0px 20px; }
+img { padding:0px; margin:0px 0px 20px; border:none; }
+p img, pre img, tt img, li img { margin-bottom:0px; } 
+
+ul { padding:0px; margin:0px 0px 20px 23px; list-style:square; }
+ul li { padding:0px; margin:0px 0px 7px 0px; }
+ul li ul { padding:5px 0px 0px; margin:0px 0px 7px 23px; }
+ul li ol li { list-style:decimal; }
+ol { padding:0px; margin:0px 0px 20px 0px; list-style:decimal; }
+ol li { padding:0px; margin:0px 0px 7px 23px; list-style-type:decimal; }
+ol li ol { padding:5px 0px 0px; margin:0px 0px 7px 0px; }
+ol li ol li { list-style-type:lower-alpha; }
+ol li ul { padding-top:7px; }
+ol li ul li { list-style:square; }
+
+.content { font-size:1.2em; line-height:140%; padding: 20px; }
+
+pre, tt, code { font-size:12px; }
+pre { margin:0px 0px 20px; }
+pre.error { color:red; }
+pre.codeinput { padding:10px; border:1px solid #d3d3d3; background:#f7f7f7; }
+pre.codeoutput { padding:10px 11px; margin:0px 0px 20px; color:#4c4c4c; }
+
+@media print { pre.codeinput, pre.codeoutput { word-wrap:break-word; width:100%; } }
+
+span.keyword { color:#0000FF }
+span.comment { color:#228B22 }
+span.string { color:#A020F0 }
+span.untermstring { color:#B20000 }
+span.syscmd { color:#B28C00 }
+
+.footer { width:auto; padding:10px 0px; margin:25px 0px 0px; border-top:1px dotted #878787; font-size:0.8em; line-height:140%; font-style:italic; color:#878787; text-align:left; float:none; }
+.footer p { margin:0px; }
+.footer a { color:#878787; }
+.footer a:hover { color:#878787; text-decoration:underline; }
+.footer a:visited { color:#878787; }
+
+table th { padding:7px 5px; text-align:left; vertical-align:middle; border: 1px solid #d6d4d4; font-weight:bold; }
+table td { padding:7px 5px; text-align:left; vertical-align:top; border:1px solid #d6d4d4; }
+
+
+
+
+
+  </style></head><body><div class="content"><h1>Stress  calculation in a tension rod with shoulder fillet.</h1><!--introduction--><!--/introduction--><h2>Contents</h2><div><ul><li><a href="#2">Description</a></li><li><a href="#6">Solution</a></li><li><a href="#68">Appendix</a></li></ul></div><p>Link to the  <a href="matlab:edit('pub_rodwtrans')">m-file</a>.</p><h2>Description<a name="2"></a></h2><p>Circular tension rod with a transition in  cross-sectional area is to be analyzed for maximum tensile stress. The rod is made of steel. The geometry is defined in Figure 1.</p><p>
+<table border=0><tr><td>
+<img src="../docs/rodwtrans.png" width = "30%">
+</td></tr>
+<tr><td>Figure 1. Definition of the geometry of the tension rod.</td></tr>
+</table>
+</p><p>Because of the symmetry the axial-symmetry model reduction will be applied and quadratic triangles will be used to discretize the generating section.</p><p>The effect of the choice of the boundary conditions applied  to the rod in the axial direction will be explored with four different settings.</p><h2>Solution<a name="6"></a></h2><pre class="codeinput"><span class="keyword">function</span> pub_rodwtrans
+</pre><pre class="codeinput">pu=physical_units_struct;
+</pre><p>Material parameters:</p><pre class="codeinput">    E = 210e3*pu.MEGA*pu.PA;
+    nu = 0.3;
+</pre><p>Geometrical dimensions:</p><pre class="codeinput">R1= 20*pu.MM;
+Rf=5*pu.MM;<span class="comment">% Fillet radius</span>
+R2=R1-Rf;
+L1=40*pu.MM;
+L2=L1;
+
+gv=[];
+</pre><p>Total transmitted tensile force in the rod.   This amounts to tensile stress of 200 MPa in the part with the larger radius.</p><pre class="codeinput">forc=pi*R1^2*200*pu.MEGA*pu.PA;
+</pre><p>Create the mesh using the automatic triangulation program targe2. The background (default) mesh size is given as:</p><pre class="codeinput">mesh_size=3*pu.MM;
+</pre><p>Call the mesh or with the specification of the domain and the mesh gradation.   Note that the gradation anticipates the results,  but a uniform mesh would show the features we wish to demonstrate almost as well.</p><pre class="codeinput">[fens,fes,groups,edge_fes,edge_groups]=targe2_mesher({<span class="keyword">...</span>
+    [<span class="string">'curve 1 line 0 0 '</span> num2str([R1,0])],<span class="keyword">...</span>
+    [<span class="string">'curve 2 line '</span> num2str([R1,0]) <span class="string">' '</span> num2str([R1,L1]) ],<span class="keyword">...</span>
+    [<span class="string">'curve 3 arc '</span> num2str([R1,L1]) <span class="string">' '</span> num2str([R2,L1+Rf])<span class="keyword">...</span>
+                                     <span class="string">' center '</span> num2str([R1,L1+Rf])],<span class="keyword">...</span>
+    [<span class="string">'curve 4 line '</span> num2str([R2,L1+Rf]) <span class="string">'  '</span> num2str([R2,L1+L2])],<span class="keyword">...</span>
+    [<span class="string">'curve 5 line '</span> num2str([R2,L1+L2]) <span class="string">' '</span> num2str([0,L1+L2])],<span class="keyword">...</span>
+    [<span class="string">'curve 6 line '</span>  num2str([0,L1+L2])  <span class="string">' '</span> num2str([0,0])],<span class="keyword">...</span>
+    [<span class="string">'subregion 1  property 1 boundary 1 2 3 4 5 6'</span>],<span class="keyword">...</span>
+    [<span class="string">'m-ctl-point constant '</span> num2str(mesh_size)],<span class="keyword">...</span>
+    [<span class="string">'m-ctl-point 1 xy '</span> num2str([R1,L1+Rf]) <span class="keyword">...</span>
+    <span class="string">' near '</span> num2str(mesh_size/200) <span class="string">' influence '</span> num2str(mesh_size/10)],<span class="keyword">...</span>
+    [<span class="string">'m-ctl-point 2 xy '</span> num2str([R1,0]) <span class="keyword">...</span>
+    <span class="string">' near '</span> num2str(mesh_size/300) <span class="string">' influence '</span> num2str(mesh_size/60)],<span class="keyword">...</span>
+    }, 1.0, struct(<span class="string">'axisymm'</span>,true,<span class="string">'quadratic'</span>,true));
+<span class="comment">% drawmesh({fens,fes},'fes','facecolor','red')</span>
+</pre><p>Geometrical tolerance is best taken as a fraction of the mesh size.</p><pre class="codeinput">tolerance = mesh_size/100000;
+</pre><p>Create the property and the material object.</p><pre class="codeinput">prop = property_deformation_linear_iso (struct(<span class="string">'E'</span>,E,<span class="string">'nu'</span>,nu));
+mater = material_deformation_linear_biax (struct(<span class="string">'property'</span>,prop, <span class="keyword">...</span>
+    <span class="string">'reduction'</span>,<span class="string">'axisymm'</span>));
+</pre><p>Create the finite element model machine for the interior (volume).</p><pre class="codeinput">femm = femm_deformation_linear(struct (<span class="string">'material'</span>,mater, <span class="string">'fes'</span>,fes,<span class="keyword">...</span>
+    <span class="string">'integration_rule'</span>,tri_rule (struct(<span class="string">'npts'</span>,3))));
+</pre><p>Define the geometry and displacement fields.</p><pre class="codeinput">geom = nodal_field(struct (<span class="string">'name'</span>,[<span class="string">'geom'</span>], <span class="string">'dim'</span>, 2, <span class="string">'fens'</span>,fens));
+u   = 0*clone(geom,<span class="string">'u'</span>);
+</pre><p>In the first scenario we will transmit the force by distributed force in one cross-section, and the reaction will be generated in the other cross-section which will be clamped  (all degrees of freedom fixed at zero).</p><p><b>1. One cross-section loaded with force, the other clamped</b></p><p>Apply EBC's:  The larger-diameter circular cross-section is clamped (all degrees of freedom are fixed).</p><pre class="codeinput">ebc_fenids=fenode_select (fens,struct(<span class="string">'box'</span>,[0 R1 0 0],<span class="string">'inflate'</span>,tolerance));
+u   = set_ebc(u, ebc_fenids, true, [], 0.0);
+</pre><p>The radial degrees of freedom on  the axis of symmetry  are suppressed:</p><pre class="codeinput">ebc_fenids=fenode_select (fens,struct(<span class="string">'box'</span>,[0 0 0 L1+L2],<span class="string">'inflate'</span>,tolerance));
+u   = set_ebc(u, ebc_fenids, true, 1, 0.0);
+</pre><p>Apply the essential boundary conditions to the displacement field.</p><pre class="codeinput">u   = apply_ebc (u);
+</pre><p>Number the free degrees of freedom.</p><pre class="codeinput">u   = numberdofs (u);
+</pre><p>Assemble the system matrix.</p><pre class="codeinput">K = stiffness(femm, sysmat_assembler_sparse,    geom, u);
+</pre><p>Create the force intensity object for the loaded cross-section.</p><pre class="codeinput">fi=force_intensity(struct(<span class="string">'magn'</span>,[0;forc/(pi*R2^2)]));
+</pre><p>Create the finite element model machine  for the cross-section with the applied force.  In this case it is the edge 5.</p><pre class="codeinput">efemm = femm_deformation_linear (struct (<span class="string">'material'</span>,mater, <span class="keyword">...</span>
+    <span class="string">'fes'</span>,subset(edge_fes,edge_groups{5}),<span class="keyword">...</span>
+    <span class="string">'integration_rule'</span>,gauss_rule (struct(<span class="string">'dim'</span>,1,<span class="string">'order'</span>, 2))));
+</pre><p>Assembled the distributed load in the loaded cross-section.</p><pre class="codeinput">F =  distrib_loads(efemm, sysvec_assembler, geom, u, fi, 2);
+</pre><p>Solve for the displacement.</p><pre class="codeinput">u = scatter_sysvec(u, K\F);
+</pre><p>Visualize the results.</p><pre class="codeinput">visualize();
+</pre><img vspace="5" hspace="5" src="pub_rodwtrans_01.png" alt=""> <p>Zoom in on the edge that is  clamped.</p><pre class="codeinput">camset(gv, [1.9184e+01   4.5610e-01   1.4488e+04 1.9184e+01   <span class="keyword">...</span>
+    4.5610e-01   1.0000e+03 0   1.0000e+00            0 1.7460e-01]);
+</pre><img vspace="5" hspace="5" src="pub_rodwtrans_02.png" alt=""> <p>The color confirms that the high stress occurs at the corner of the domain where the clamped condition in the cross-section changes into the free surface of the rod. The limit of the analytical solution is actually known to be an infinite stress at that location.  This is a location of the stress singularity.</p><p>The singularity is probably not real (unless one end of the bar is actually clamped as above, with a 90&deg; angle corner, which is somewhat unlikely: there would be at least a fillet to remove the infinite stress).  Therefore we should replace the clamped condition with something more realistic.   In fact the singularity is due to the fact that we are not allowing for the cross-section to react to the tensile stress by contracting  (as described mathematically by the nonzero Poisson ratio). So, if we allow the radial displacement to occur freely and take away only the axial displacement, which is what might be called a roller support, we will be likely closer to reality.</p><p><b>2. One cross-section loaded with force, the other supported on rollers</b></p><p>We have to force the displacement field to be re-created.</p><pre class="codeinput">u   = 0*clone(geom,<span class="string">'u'</span>);
+</pre><p>As before, on the axis of symmetry we remove the radial  degree of freedom.</p><pre class="codeinput">ebc_fenids=fenode_select (fens,struct(<span class="string">'box'</span>,[0 0 0 L1+L2],<span class="string">'inflate'</span>,tolerance));
+u   = set_ebc(u, ebc_fenids, true, 1, 0.0);
+</pre><p>Now we apply axial (and axial only!) restraint on the  larger cross-section.</p><pre class="codeinput">ebc_fenids=fenode_select (fens,struct(<span class="string">'box'</span>,[0 R1 0 0],<span class="string">'inflate'</span>,tolerance));
+u   = set_ebc(u, ebc_fenids, true, 2, 0.0);
+</pre><p>Apply the new boundary conditions.</p><pre class="codeinput">u   = apply_ebc (u);
+</pre><p>Number the free degrees of freedom. We have to do this because they have changed due to the new set of boundary conditions.</p><pre class="codeinput">u   = numberdofs (u);
+</pre><p>That is also why we have to reassemble the stiffness matrix and the load vector.</p><pre class="codeinput">K = stiffness(femm, sysmat_assembler_sparse,    geom, u);
+</pre><p>Create the finite element model machine  for the cross-section with the applied force.  In this case it is the edge 5.</p><pre class="codeinput">efemm = femm_deformation_linear (struct (<span class="string">'material'</span>,mater, <span class="keyword">...</span>
+    <span class="string">'fes'</span>,subset(edge_fes,edge_groups{5}),<span class="keyword">...</span>
+    <span class="string">'integration_rule'</span>,gauss_rule (struct(<span class="string">'dim'</span>,1,<span class="string">'order'</span>, 2))));
+</pre><p>The load vector is as before.</p><pre class="codeinput">fi=force_intensity(struct(<span class="string">'magn'</span>,[0;forc/(pi*R2^2)]));
+F = distrib_loads(efemm, sysvec_assembler, geom, u, fi, 2);
+</pre><p>Solve for the displacements and visualize the results.</p><pre class="codeinput">u = scatter_sysvec(u, K\F);
+visualize();
+</pre><img vspace="5" hspace="5" src="pub_rodwtrans_03.png" alt=""> <p>Now this is better.  This is really what we would expect: essentially uniform tensile stress in the cylindrical parts of the rod, and  the variation around the fillet.  The shoulder fillet is a stress concentrator (raiser) and we can see that the stress is indeed raised quite a bit at the surface of the fillet.</p><p>One might be tempted to apply the axial restraint at a point (node). This should be avoided for the following reasons.</p><p><b>3. One cross-section loaded with force, the other pinned at a point</b></p><p>Force the displacement field to be re-created.</p><pre class="codeinput">u   = 0*clone(geom,<span class="string">'u'</span>);
+</pre><p>Now we apply axial restraint at the node at [0,0].</p><pre class="codeinput">ebc_fenids=fenode_select (fens,struct(<span class="string">'box'</span>,[0 0 0 0],<span class="string">'inflate'</span>,tolerance));
+u   = set_ebc(u, ebc_fenids, true, 2, 0.0);
+</pre><p>As before, on the axis of symmetry we remove the radial  degree of freedom.</p><pre class="codeinput">ebc_fenids=fenode_select (fens,struct(<span class="string">'box'</span>,[0 0 0 L1+L2],<span class="string">'inflate'</span>,tolerance));
+u   = set_ebc(u, ebc_fenids, true, 1, 0.0);
+</pre><p>Apply the new boundary conditions.</p><pre class="codeinput">u   = apply_ebc (u);
+</pre><p>Number the free degrees of freedom. We have to do this because they have changed due to the new set of boundary conditions.</p><pre class="codeinput">u   = numberdofs (u);
+</pre><p>That is also why we have to reassemble the stiffness matrix and the load vector.</p><pre class="codeinput">K = stiffness(femm, sysmat_assembler_sparse,    geom, u);
+</pre><p>Create the finite element model machine  for the cross-section with the applied force.  In this case it is the edge 5.</p><pre class="codeinput">efemm = femm_deformation_linear (struct (<span class="string">'material'</span>,mater, <span class="keyword">...</span>
+    <span class="string">'fes'</span>,subset(edge_fes,edge_groups{5}),<span class="keyword">...</span>
+    <span class="string">'integration_rule'</span>,gauss_rule (struct(<span class="string">'dim'</span>,1,<span class="string">'order'</span>, 2))));
+</pre><p>The load vector is as before.</p><pre class="codeinput">fi=force_intensity(struct(<span class="string">'magn'</span>,[0;forc/(pi*R2^2)]));
+F = distrib_loads(efemm, sysvec_assembler, geom, u, fi, 2);
+</pre><p>Solve for the displacements and visualize the results.</p><pre class="codeinput">u = scatter_sysvec(u, K\F);
+visualize();
+</pre><img vspace="5" hspace="5" src="pub_rodwtrans_04.png" alt=""> <p>The distribution of stress is evidently wrong.  Pinning the cross-section at a single point generates the same result as a concentrated force: not allowed in the solid-element based stress analysis model.</p><p>This concentrated force is the reaction. This reaction may be removed if the cross-section  is loaded by an equivalent distributed force that replaces the concentrated reaction.   So in addition to the pin, we will also apply balancing distributed load in the same cross-section.</p><p><b>4. Both cross-sections loaded with balancing forces, one pinned at a point</b></p><p>Force the displacement field to be re-created.</p><pre class="codeinput">u   = 0*clone(geom,<span class="string">'u'</span>);
+</pre><p>Now we apply axial restraint at the node at [0,0].</p><pre class="codeinput">ebc_fenids=fenode_select (fens,struct(<span class="string">'box'</span>,[0 0 0 0],<span class="string">'inflate'</span>,tolerance));
+u   = set_ebc(u, ebc_fenids, true, 2, 0.0);
+</pre><p>As before, on the axis of symmetry we remove the radial  degree of freedom.</p><pre class="codeinput">ebc_fenids=fenode_select (fens,struct(<span class="string">'box'</span>,[0 0 0 L1+L2],<span class="string">'inflate'</span>,tolerance));
+u   = set_ebc(u, ebc_fenids, true, 1, 0.0);
+</pre><p>Apply the new boundary conditions.</p><pre class="codeinput">u   = apply_ebc (u);
+</pre><p>Number the free degrees of freedom. We have to do this because they have changed due to the new set of boundary conditions.</p><pre class="codeinput">u   = numberdofs (u);
+</pre><p>That is also why we have to reassemble the stiffness matrix and the load vector.</p><pre class="codeinput">K = stiffness(femm, sysmat_assembler_sparse,    geom, u);
+</pre><p>Create the finite element model machine  for the cross-section with the applied force.  In this case it is the edge 5.</p><pre class="codeinput">efemm = femm_deformation_linear (struct (<span class="string">'material'</span>,mater, <span class="keyword">...</span>
+    <span class="string">'fes'</span>,subset(edge_fes,edge_groups{5}),<span class="keyword">...</span>
+    <span class="string">'integration_rule'</span>,gauss_rule (struct(<span class="string">'dim'</span>,1,<span class="string">'order'</span>, 2))));
+</pre><p>The load vector is as before.</p><pre class="codeinput">fi=force_intensity(struct(<span class="string">'magn'</span>,[0;forc/(pi*R2^2)]));
+F = distrib_loads(efemm, sysvec_assembler, geom, u, fi, 2);
+</pre><p>Create the finite element model machine  for the cross-section with the applied force.  In this case it is the edge 5.</p><pre class="codeinput">efemm = femm_deformation_linear (struct (<span class="string">'material'</span>,mater, <span class="keyword">...</span>
+    <span class="string">'fes'</span>,subset(edge_fes,edge_groups{1}),<span class="keyword">...</span>
+    <span class="string">'integration_rule'</span>,gauss_rule (struct(<span class="string">'dim'</span>,1,<span class="string">'order'</span>, 2))));
+</pre><p>The load vector is as before.</p><pre class="codeinput">fi=force_intensity(struct(<span class="string">'magn'</span>,[0;-forc/(pi*R1^2)]));
+F = F + distrib_loads(efemm, sysvec_assembler, geom, u, fi, 2);
+</pre><p>Solve for the displacements and visualize the results.</p><pre class="codeinput">u = scatter_sysvec(u, K\F);
+visualize();
+</pre><img vspace="5" hspace="5" src="pub_rodwtrans_05.png" alt=""> <h2>Appendix<a name="68"></a></h2><p>The visualization function.  It draws the Outline of the cross-section in red color, the surface of the  principal stress raised into the third dimension, and the color bar.</p><pre class="codeinput"><span class="keyword">function</span>  visualize
+gv=graphic_viewer;
+gv=reset (gv,struct (<span class="string">'limits'</span>,[0 1.06*R1 0 1.1*(L1+L2)]/pu.MM));
+set_graphics_defaults;
+scale=1;
+cmap = jet;
+fld = field_from_integration_points(femm, geom, u, [], <span class="string">'princCauchy'</span>,1);
+nvals=fld.values/(pu.MEGA*pu.PA);
+nvalsrange=[0,600];
+dcm=data_colormap(struct (<span class="string">'range'</span>,nvalsrange, <span class="string">'colormap'</span>,cmap));
+colorfield=nodal_field(struct (<span class="string">'name'</span>, [<span class="string">'colorfield'</span>], <span class="string">'data'</span>,map_data(dcm, nvals)));
+geom3=nodal_field(struct (<span class="string">'name'</span>, [<span class="string">'geom3'</span>], <span class="keyword">...</span>
+    <span class="string">'data'</span>,[geom.values/(pu.MM),nvals]));
+u3=nodal_field(struct (<span class="string">'name'</span>, [<span class="string">'u3'</span>], <span class="keyword">...</span>
+    <span class="string">'data'</span>,[u.values,0*nvals]));
+draw(femm,gv, struct (<span class="string">'x'</span>, geom3, <span class="string">'u'</span>, +scale*u3,<span class="string">'colorfield'</span>,colorfield, <span class="string">'shrink'</span>,1.0));
+draw(mesh_boundary(femm.fes),gv, struct (<span class="string">'x'</span>, (1/pu.MM)*geom, <span class="string">'u'</span>, +0*u,<span class="string">'edgecolor'</span>,<span class="string">'r'</span>, <span class="string">'shrink'</span>,1.0));
+draw_colorbar(gv, struct(<span class="string">'colormap'</span>,cmap,<span class="string">'position'</span>,[0.8 0.15 0.025 0.7],<span class="keyword">...</span>
+    <span class="string">'minmax'</span>,nvalsrange,<span class="string">'label'</span>,<span class="string">'\sigma_1 [MPa]'</span>));
+set(gca,<span class="string">'DataAspectRatio'</span>, [1, 1, 20])
+camset(gv, [7.0004e+02   6.4737e+02   9.9063e+03  -1.6194e-01  3.6204e+01   2.4266e+02  -3.4811e-01  -3.0263e-01  1.7745e+01   4.9266e+00])
+labels <span class="string">x</span> <span class="string">y</span> <span class="string">'Principal stress'</span>
+interact(gv);
+<span class="keyword">end</span>
+</pre><pre class="codeinput"><span class="keyword">end</span>
+</pre><p class="footer"><br><a href="http://www.mathworks.com/products/matlab/">Published with MATLAB&reg; R2012b</a><br></p></div><!--
+##### SOURCE BEGIN #####
+%% Stress  calculation in a tension rod with shoulder fillet.
+%
+
+%%
+% Link to the  <matlab:edit('pub_rodwtrans') m-file>.
+%
+
+%% Description
+%
+% Circular tension rod with a transition in  cross-sectional area is to be
+% analyzed for maximum tensile stress. The rod is made of steel.
+% The geometry is defined in Figure 1.
+
+
+%%
+%
+% <html>
+% <table border=0><tr><td>
+% <img src="../docs/rodwtrans.png" width = "30%">
+% </td></tr>
+% <tr><td>Figure 1. Definition of the geometry of the tension rod.</td></tr>
+% </table>
+% </html>
+
+%% 
+% Because of the symmetry the axial-symmetry model
+% reduction will be applied and quadratic triangles will be used
+% to discretize the generating section.
+%% 
+% The effect of the choice of the boundary conditions applied  to the rod
+% in the axial direction will be explored with four different settings.
+
+%% Solution
+%
+function pub_rodwtrans
+pu=physical_units_struct;
+%% 
+% Material parameters:
+    E = 210e3*pu.MEGA*pu.PA;
+    nu = 0.3;
+
+%% 
+% Geometrical dimensions:
+R1= 20*pu.MM;
+Rf=5*pu.MM;% Fillet radius
+R2=R1-Rf;
+L1=40*pu.MM;
+L2=L1; 
+
+gv=[];
+
+%% 
+% Total transmitted tensile force in the rod.   This amounts to tensile
+% stress of 200 MPa in the part with the larger radius.
+forc=pi*R1^2*200*pu.MEGA*pu.PA;
+
+%% 
+% Create the mesh using the automatic triangulation program targe2. The
+% background (default) mesh size is given as:
+mesh_size=3*pu.MM;
+
+%% 
+% Call the mesh or with the specification of the domain and the mesh
+% gradation.   Note that the gradation anticipates the results,  but a
+% uniform mesh would show the features we wish to demonstrate almost as
+% well.
+[fens,fes,groups,edge_fes,edge_groups]=targe2_mesher({...
+    ['curve 1 line 0 0 ' num2str([R1,0])],...
+    ['curve 2 line ' num2str([R1,0]) ' ' num2str([R1,L1]) ],...
+    ['curve 3 arc ' num2str([R1,L1]) ' ' num2str([R2,L1+Rf])...
+                                     ' center ' num2str([R1,L1+Rf])],...
+    ['curve 4 line ' num2str([R2,L1+Rf]) '  ' num2str([R2,L1+L2])],...
+    ['curve 5 line ' num2str([R2,L1+L2]) ' ' num2str([0,L1+L2])],...
+    ['curve 6 line '  num2str([0,L1+L2])  ' ' num2str([0,0])],...
+    ['subregion 1  property 1 boundary 1 2 3 4 5 6'],...
+    ['m-ctl-point constant ' num2str(mesh_size)],...
+    ['m-ctl-point 1 xy ' num2str([R1,L1+Rf]) ...
+    ' near ' num2str(mesh_size/200) ' influence ' num2str(mesh_size/10)],...
+    ['m-ctl-point 2 xy ' num2str([R1,0]) ...
+    ' near ' num2str(mesh_size/300) ' influence ' num2str(mesh_size/60)],...
+    }, 1.0, struct('axisymm',true,'quadratic',true));
+% drawmesh({fens,fes},'fes','facecolor','red')
+
+%% 
+% Geometrical tolerance is best taken as a fraction of the mesh size.
+tolerance = mesh_size/100000;
+
+%% 
+% Create the property and the material object.
+prop = property_deformation_linear_iso (struct('E',E,'nu',nu));
+mater = material_deformation_linear_biax (struct('property',prop, ...
+    'reduction','axisymm'));
+%% 
+% Create the finite element model machine for the interior (volume).
+femm = femm_deformation_linear(struct ('material',mater, 'fes',fes,...
+    'integration_rule',tri_rule (struct('npts',3))));
+%% 
+% Define the geometry and displacement fields.
+geom = nodal_field(struct ('name',['geom'], 'dim', 2, 'fens',fens));
+u   = 0*clone(geom,'u');
+
+%% 
+% In the first scenario we will transmit the force by distributed force in
+% one cross-section, and the reaction will be generated in the other
+% cross-section which will be clamped  (all degrees of freedom fixed at zero).
+
+%% 
+% *1. One cross-section loaded with force, the other clamped*
+%% 
+% Apply EBC's:  The larger-diameter circular cross-section is clamped (all
+% degrees of freedom are fixed).
+ebc_fenids=fenode_select (fens,struct('box',[0 R1 0 0],'inflate',tolerance));
+u   = set_ebc(u, ebc_fenids, true, [], 0.0);
+%% 
+% The radial degrees of freedom on  the axis of symmetry  are suppressed:
+ebc_fenids=fenode_select (fens,struct('box',[0 0 0 L1+L2],'inflate',tolerance));
+u   = set_ebc(u, ebc_fenids, true, 1, 0.0);
+%% 
+% Apply the essential boundary conditions to the displacement field.
+u   = apply_ebc (u);
+%% 
+% Number the free degrees of freedom.
+u   = numberdofs (u);
+%% 
+% Assemble the system matrix.
+K = stiffness(femm, sysmat_assembler_sparse,    geom, u);
+%% 
+% Create the force intensity object for the loaded cross-section.
+fi=force_intensity(struct('magn',[0;forc/(pi*R2^2)]));
+%% 
+% Create the finite element model machine  for the cross-section with the
+% applied force.  In this case it is the edge 5.
+efemm = femm_deformation_linear (struct ('material',mater, ...
+    'fes',subset(edge_fes,edge_groups{5}),...
+    'integration_rule',gauss_rule (struct('dim',1,'order', 2))));
+%% 
+% Assembled the distributed load in the loaded cross-section.
+F =  distrib_loads(efemm, sysvec_assembler, geom, u, fi, 2);
+
+%% 
+% Solve for the displacement.
+u = scatter_sysvec(u, K\F);
+
+%% 
+% Visualize the results.
+visualize();
+
+%% 
+% Zoom in on the edge that is  clamped.
+camset(gv, [1.9184e+01   4.5610e-01   1.4488e+04 1.9184e+01   ...
+    4.5610e-01   1.0000e+03 0   1.0000e+00            0 1.7460e-01]);
+
+%% 
+% The color confirms that the high stress occurs at the corner of the
+% domain where the clamped condition in the cross-section changes into the
+% free surface of the rod. The limit of the analytical solution is actually
+% known to be an infinite stress at that location.  This is a location of
+% the stress singularity.
+
+%% 
+% The singularity is probably not real (unless one end of the bar is
+% actually clamped as above, with a 90° angle corner, which is somewhat
+% unlikely: there would be at least a fillet to remove the infinite
+% stress).  Therefore we should replace the clamped condition with
+% something more realistic.   In fact the singularity is due to the fact
+% that we are not allowing for the cross-section to react to the tensile
+% stress by contracting  (as described mathematically by the nonzero
+% Poisson ratio). So, if we allow the radial displacement to occur freely
+% and take away only the axial displacement, which is what might be called
+% a roller support, we will be likely closer to reality.
+
+%% 
+% *2. One cross-section loaded with force, the other supported on rollers*
+%% 
+% We have to force the displacement field to be re-created.
+u   = 0*clone(geom,'u');
+%% 
+% As before, on the axis of symmetry we remove the radial  degree of freedom.
+ebc_fenids=fenode_select (fens,struct('box',[0 0 0 L1+L2],'inflate',tolerance));
+u   = set_ebc(u, ebc_fenids, true, 1, 0.0);
+%% 
+% Now we apply axial (and axial only!) restraint on the  larger cross-section.
+ebc_fenids=fenode_select (fens,struct('box',[0 R1 0 0],'inflate',tolerance));
+u   = set_ebc(u, ebc_fenids, true, 2, 0.0);
+%% 
+% Apply the new boundary conditions.
+u   = apply_ebc (u);
+%% 
+% Number the free degrees of freedom. We have to do this because they have
+% changed due to the new set of boundary conditions.
+u   = numberdofs (u);
+%% 
+% That is also why we have to reassemble the stiffness matrix and the load
+% vector.
+K = stiffness(femm, sysmat_assembler_sparse,    geom, u);
+%% 
+% Create the finite element model machine  for the cross-section with the
+% applied force.  In this case it is the edge 5.
+efemm = femm_deformation_linear (struct ('material',mater, ...
+    'fes',subset(edge_fes,edge_groups{5}),...
+    'integration_rule',gauss_rule (struct('dim',1,'order', 2))));
+%% 
+% The load vector is as before.
+fi=force_intensity(struct('magn',[0;forc/(pi*R2^2)]));
+F = distrib_loads(efemm, sysvec_assembler, geom, u, fi, 2);
+
+%% 
+% Solve for the displacements and visualize the results.
+u = scatter_sysvec(u, K\F);
+visualize();
+
+%% 
+% Now this is better.  This is really what we would expect: essentially
+% uniform tensile stress in the cylindrical parts of the rod, and  the
+% variation around the fillet.  The shoulder fillet is a stress
+% concentrator (raiser) and we can see that the stress is indeed raised
+% quite a bit at the surface of the fillet.
+
+%% 
+% One might be tempted to apply the axial restraint at a point (node).
+% This should be avoided for the following reasons.
+%% 
+% *3. One cross-section loaded with force, the other pinned at a point*
+%% 
+% Force the displacement field to be re-created.
+u   = 0*clone(geom,'u');
+%% 
+% Now we apply axial restraint at the node at [0,0].
+ebc_fenids=fenode_select (fens,struct('box',[0 0 0 0],'inflate',tolerance));
+u   = set_ebc(u, ebc_fenids, true, 2, 0.0);
+%% 
+% As before, on the axis of symmetry we remove the radial  degree of freedom.
+ebc_fenids=fenode_select (fens,struct('box',[0 0 0 L1+L2],'inflate',tolerance));
+u   = set_ebc(u, ebc_fenids, true, 1, 0.0);
+%% 
+% Apply the new boundary conditions.
+u   = apply_ebc (u);
+%% 
+% Number the free degrees of freedom. We have to do this because they have
+% changed due to the new set of boundary conditions.
+u   = numberdofs (u);
+%% 
+% That is also why we have to reassemble the stiffness matrix and the load
+% vector.
+K = stiffness(femm, sysmat_assembler_sparse,    geom, u);
+%% 
+% Create the finite element model machine  for the cross-section with the
+% applied force.  In this case it is the edge 5.
+efemm = femm_deformation_linear (struct ('material',mater, ...
+    'fes',subset(edge_fes,edge_groups{5}),...
+    'integration_rule',gauss_rule (struct('dim',1,'order', 2))));
+%% 
+% The load vector is as before.
+fi=force_intensity(struct('magn',[0;forc/(pi*R2^2)]));
+F = distrib_loads(efemm, sysvec_assembler, geom, u, fi, 2);
+
+%% 
+% Solve for the displacements and visualize the results.
+u = scatter_sysvec(u, K\F);
+visualize();
+
+
+%% 
+% The distribution of stress is evidently wrong.  Pinning the cross-section
+% at a single point generates the same result as a concentrated force: not
+% allowed in the solid-element based stress analysis model. 
+
+%% 
+% This concentrated force is the reaction. This reaction may be removed if
+% the cross-section  is loaded by an equivalent distributed force that
+% replaces the concentrated reaction.   So in addition to the pin, we will
+% also apply balancing distributed load in the same cross-section.
+
+%% 
+% *4. Both cross-sections loaded with balancing forces, one pinned at a point*
+%% 
+% Force the displacement field to be re-created.
+u   = 0*clone(geom,'u');
+%% 
+% Now we apply axial restraint at the node at [0,0].
+ebc_fenids=fenode_select (fens,struct('box',[0 0 0 0],'inflate',tolerance));
+u   = set_ebc(u, ebc_fenids, true, 2, 0.0);
+%% 
+% As before, on the axis of symmetry we remove the radial  degree of freedom.
+ebc_fenids=fenode_select (fens,struct('box',[0 0 0 L1+L2],'inflate',tolerance));
+u   = set_ebc(u, ebc_fenids, true, 1, 0.0);
+%% 
+% Apply the new boundary conditions.
+u   = apply_ebc (u);
+%% 
+% Number the free degrees of freedom. We have to do this because they have
+% changed due to the new set of boundary conditions.
+u   = numberdofs (u);
+%% 
+% That is also why we have to reassemble the stiffness matrix and the load
+% vector.
+K = stiffness(femm, sysmat_assembler_sparse,    geom, u);
+%% 
+% Create the finite element model machine  for the cross-section with the
+% applied force.  In this case it is the edge 5.
+efemm = femm_deformation_linear (struct ('material',mater, ...
+    'fes',subset(edge_fes,edge_groups{5}),...
+    'integration_rule',gauss_rule (struct('dim',1,'order', 2))));
+%% 
+% The load vector is as before.
+fi=force_intensity(struct('magn',[0;forc/(pi*R2^2)]));
+F = distrib_loads(efemm, sysvec_assembler, geom, u, fi, 2);
+%% 
+% Create the finite element model machine  for the cross-section with the
+% applied force.  In this case it is the edge 5.
+efemm = femm_deformation_linear (struct ('material',mater, ...
+    'fes',subset(edge_fes,edge_groups{1}),...
+    'integration_rule',gauss_rule (struct('dim',1,'order', 2))));
+%% 
+% The load vector is as before.
+fi=force_intensity(struct('magn',[0;-forc/(pi*R1^2)]));
+F = F + distrib_loads(efemm, sysvec_assembler, geom, u, fi, 2);
+
+%% 
+% Solve for the displacements and visualize the results.
+u = scatter_sysvec(u, K\F);
+visualize();
+
+
+%% Appendix
+% 
+%% 
+% The visualization function.  It draws the Outline of the cross-section in
+% red color, the surface of the  principal stress raised into the third
+% dimension, and the color bar.
+function  visualize
+gv=graphic_viewer;
+gv=reset (gv,struct ('limits',[0 1.06*R1 0 1.1*(L1+L2)]/pu.MM));
+set_graphics_defaults;
+scale=1;
+cmap = jet;
+fld = field_from_integration_points(femm, geom, u, [], 'princCauchy',1);
+nvals=fld.values/(pu.MEGA*pu.PA);
+nvalsrange=[0,600];
+dcm=data_colormap(struct ('range',nvalsrange, 'colormap',cmap));
+colorfield=nodal_field(struct ('name', ['colorfield'], 'data',map_data(dcm, nvals)));
+geom3=nodal_field(struct ('name', ['geom3'], ...
+    'data',[geom.values/(pu.MM),nvals]));
+u3=nodal_field(struct ('name', ['u3'], ...
+    'data',[u.values,0*nvals]));
+draw(femm,gv, struct ('x', geom3, 'u', +scale*u3,'colorfield',colorfield, 'shrink',1.0));
+draw(mesh_boundary(femm.fes),gv, struct ('x', (1/pu.MM)*geom, 'u', +0*u,'edgecolor','r', 'shrink',1.0));
+draw_colorbar(gv, struct('colormap',cmap,'position',[0.8 0.15 0.025 0.7],...
+    'minmax',nvalsrange,'label','\sigma_1 [MPa]'));
+set(gca,'DataAspectRatio', [1, 1, 20])
+camset(gv, [7.0004e+02   6.4737e+02   9.9063e+03  -1.6194e-01  3.6204e+01   2.4266e+02  -3.4811e-01  -3.0263e-01  1.7745e+01   4.9266e+00])
+labels x y 'Principal stress'
+interact(gv);
+end
+
+end
+##### SOURCE END #####
+--></body></html>

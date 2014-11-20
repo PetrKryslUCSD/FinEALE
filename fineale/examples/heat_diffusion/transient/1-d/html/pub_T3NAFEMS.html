@@ -1,0 +1,297 @@
+
+<!DOCTYPE html
+  PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html><head>
+      <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+   <!--
+This HTML was auto-generated from MATLAB code.
+To make changes, update the MATLAB code and republish this document.
+      --><title>One-dimensional transient heat transfer. T3NAFEMS  Benchmark.</title><meta name="generator" content="MATLAB 8.0"><link rel="schema.DC" href="http://purl.org/dc/elements/1.1/"><meta name="DC.date" content="2012-12-20"><meta name="DC.source" content="pub_T3NAFEMS.m"><style type="text/css">
+html,body,div,span,applet,object,iframe,h1,h2,h3,h4,h5,h6,p,blockquote,pre,a,abbr,acronym,address,big,cite,code,del,dfn,em,font,img,ins,kbd,q,s,samp,small,strike,strong,sub,sup,tt,var,b,u,i,center,dl,dt,dd,ol,ul,li,fieldset,form,label,legend,table,caption,tbody,tfoot,thead,tr,th,td{margin:0;padding:0;border:0;outline:0;font-size:100%;vertical-align:baseline;background:transparent}body{line-height:1}ol,ul{list-style:none}blockquote,q{quotes:none}blockquote:before,blockquote:after,q:before,q:after{content:'';content:none}:focus{outine:0}ins{text-decoration:none}del{text-decoration:line-through}table{border-collapse:collapse;border-spacing:0}
+
+html { min-height:100%; margin-bottom:1px; }
+html body { height:100%; margin:0px; font-family:Arial, Helvetica, sans-serif; font-size:10px; color:#000; line-height:140%; background:#fff none; overflow-y:scroll; }
+html body td { vertical-align:top; text-align:left; }
+
+h1 { padding:0px; margin:0px 0px 25px; font-family:Arial, Helvetica, sans-serif; font-size:1.5em; color:#d55000; line-height:100%; font-weight:normal; }
+h2 { padding:0px; margin:0px 0px 8px; font-family:Arial, Helvetica, sans-serif; font-size:1.2em; color:#000; font-weight:bold; line-height:140%; border-bottom:1px solid #d6d4d4; display:block; }
+h3 { padding:0px; margin:0px 0px 5px; font-family:Arial, Helvetica, sans-serif; font-size:1.1em; color:#000; font-weight:bold; line-height:140%; }
+
+a { color:#005fce; text-decoration:none; }
+a:hover { color:#005fce; text-decoration:underline; }
+a:visited { color:#004aa0; text-decoration:none; }
+
+p { padding:0px; margin:0px 0px 20px; }
+img { padding:0px; margin:0px 0px 20px; border:none; }
+p img, pre img, tt img, li img { margin-bottom:0px; } 
+
+ul { padding:0px; margin:0px 0px 20px 23px; list-style:square; }
+ul li { padding:0px; margin:0px 0px 7px 0px; }
+ul li ul { padding:5px 0px 0px; margin:0px 0px 7px 23px; }
+ul li ol li { list-style:decimal; }
+ol { padding:0px; margin:0px 0px 20px 0px; list-style:decimal; }
+ol li { padding:0px; margin:0px 0px 7px 23px; list-style-type:decimal; }
+ol li ol { padding:5px 0px 0px; margin:0px 0px 7px 0px; }
+ol li ol li { list-style-type:lower-alpha; }
+ol li ul { padding-top:7px; }
+ol li ul li { list-style:square; }
+
+.content { font-size:1.2em; line-height:140%; padding: 20px; }
+
+pre, tt, code { font-size:12px; }
+pre { margin:0px 0px 20px; }
+pre.error { color:red; }
+pre.codeinput { padding:10px; border:1px solid #d3d3d3; background:#f7f7f7; }
+pre.codeoutput { padding:10px 11px; margin:0px 0px 20px; color:#4c4c4c; }
+
+@media print { pre.codeinput, pre.codeoutput { word-wrap:break-word; width:100%; } }
+
+span.keyword { color:#0000FF }
+span.comment { color:#228B22 }
+span.string { color:#A020F0 }
+span.untermstring { color:#B20000 }
+span.syscmd { color:#B28C00 }
+
+.footer { width:auto; padding:10px 0px; margin:25px 0px 0px; border-top:1px dotted #878787; font-size:0.8em; line-height:140%; font-style:italic; color:#878787; text-align:left; float:none; }
+.footer p { margin:0px; }
+.footer a { color:#878787; }
+.footer a:hover { color:#878787; text-decoration:underline; }
+.footer a:visited { color:#878787; }
+
+table th { padding:7px 5px; text-align:left; vertical-align:middle; border: 1px solid #d6d4d4; font-weight:bold; }
+table td { padding:7px 5px; text-align:left; vertical-align:top; border:1px solid #d6d4d4; }
+
+
+
+
+
+  </style></head><body><div class="content"><h1>One-dimensional transient heat transfer. T3NAFEMS  Benchmark.</h1><!--introduction--><!--/introduction--><h2>Contents</h2><div><ul><li><a href="#2">Description</a></li><li><a href="#9">Solution</a></li><li><a href="#29">Discussion</a></li></ul></div><p>Link to the  <a href="matlab:edit('pub_T3NAFEMS')">m-file</a>.</p><h2>Description<a name="2"></a></h2><p>The geometry is shown in Figure 1. A uniform mesh with 5 elements along the thickness of the wall is used.</p><p>A transient simulation is performed. The total simulation time is 32 seconds. The time step of two seconds is used.</p><p>Material: thermal conductivity = 35.0 W/m&deg;C, specific heat = 440.5 J/kg&deg;C, density = 7200 kg/m^3 .</p><p>Boundary conditions: Temperature prescribed as 0&deg;C at the right-hand side surface, and as 100*sin(pi*t/40) &deg;C at the left-hand side surface, where t is time in seconds. No heat flux parallel to the bounding surfaces of the wall is present. There is no internal heat generation. Initial conditions: All temperatures = 0&deg;C.</p><p> <table border=0><tr><td> <img src="../docs/pub_T3NAFEMS.jpg" width
+="30%"> </td></tr> <tr><td>Figure 1. Definition of the geometry of the
+heated brick</td></tr> </table> </p><p>Target solution: Temperature of 36.60&deg;C at the depth of 0.02 m from the left-hand side surface at 32 secs.</p><p>Reference: This is a test recommended by the National Agency for Finite Element Methods and Standards (U.K.): Test T3 from NAFEMS publication TNSB, Rev. 3, &#8220;The Standard NAFEMS Benchmarks,&#8221; October 1990.</p><h2>Solution<a name="9"></a></h2><pre class="codeinput"><span class="keyword">function</span> pub_T3NAFEMS
+</pre><pre class="codeinput">    pu= physical_units_struct;
+</pre><p>Thickness of the wall.</p><pre class="codeinput">    L=0.1*pu.M;<span class="comment">% thickness</span>
+</pre><p>Target depth..</p><pre class="codeinput">    d=0.02*pu.M;<span class="comment">% thickness</span>
+</pre><p>Material properties.</p><pre class="codeinput">    kappa=[35.0]*pu.W/pu.M/pu.K; <span class="comment">% conductivity matrix</span>
+    cm = 440.5*pu.J/pu.KG/pu.K;<span class="comment">% specific heat per unit mass</span>
+    rho=7200*pu.KG/pu.M^3;<span class="comment">% mass density</span>
+    cv =cm* rho;<span class="comment">% specific heat per unit volume</span>
+</pre><p>Prescribed temperature.</p><pre class="codeinput">    Tampl=100*pu.K;
+    Tamb=0*pu.K;<span class="comment">%  temperature at the right-hand side face</span>
+    Tbar =@(t)(Tampl*sin(pi*t/40)+ Tamb);<span class="comment">%hot face temperature</span>
+</pre><p>Length of time interval and time step.</p><pre class="codeinput">    tend= 32; <span class="comment">% length of the time interval</span>
+    dt=2*pu.SEC; <span class="comment">% time step</span>
+</pre><p>Number of elements.</p><pre class="codeinput">    n=5;
+</pre><p>Make sure the nodal locations include the target depth for the output.</p><pre class="codeinput">    xs=unique([linspace(0,L,n+1), d])';;
+    [fens,fes] = L2_blockx(xs,1.0); <span class="comment">% Mesh</span>
+</pre><p>Display the mesh</p><pre class="codeinput">    gv=drawmesh({fens,fes},<span class="string">'nodes'</span>,<span class="string">'fes'</span>,<span class="string">'facecolor'</span>,<span class="string">'r'</span>, <span class="string">'shrink'</span>, 0.9, <span class="string">'offset'</span>,0);
+     view(2);
+    labels
+</pre><img vspace="5" hspace="5" src="pub_T3NAFEMS_01.png" alt=""> <p>Package up the model data.</p><pre class="codeinput">    clear <span class="string">model_data</span>
+    model_data.fens =fens;
+</pre><p>The one-dimensional region uses trapezoidal rule.  This leads to lumped (diagonal) capacity matrix. Other  rules may be employed, for instance Gauss  rule.</p><pre class="codeinput">    clear <span class="string">region</span>
+    region.conductivity =kappa;
+    region.specific_heat =cv;
+    region.fes= fes;
+    region.integration_rule =trapezoidal_rule(struct(<span class="string">'dim'</span>,1));
+    model_data.region{1} =region;
+</pre><p>Prescribed temperature at the left-hand side surface.</p><pre class="codeinput">    clear <span class="string">essential</span>
+    essential.temperature=Tbar;
+    essential.node_list = fenode_select(fens,struct(<span class="string">'distance'</span>,L/1e6,<span class="string">'from'</span>,[0]));;
+    model_data.boundary_conditions.essential{1} = essential;
+</pre><p>Prescribed temperature at the right-hand side surface.</p><pre class="codeinput">    clear <span class="string">essential</span>
+    essential.temperature=Tamb;
+    essential.node_list = fenode_select(fens,struct(<span class="string">'distance'</span>,L/1e6,<span class="string">'from'</span>,[L]));;
+    model_data.boundary_conditions.essential{2} = essential;
+</pre><p>Initially the wall is at the temperature fixed at the right-hand side surface.</p><pre class="codeinput">    clear <span class="string">initial_condition</span>
+    initial_condition.temperature=Tamb;
+    model_data.initial_condition =initial_condition;
+</pre><p>Now we describe the control parameters.   The time interval for the integration and the time step.</p><pre class="codeinput">    model_data.dt= dt;
+    model_data.tend= tend;
+</pre><p>And we define an observer function that gets called every time  the algorithm  for transient time stepping finishes a time step.  We are going to collect the temperature at the target depth into an array and the corresponding time.</p><pre class="codeinput">    targetn  =fenode_select(fens,struct(<span class="string">'distance'</span>,L/1e6,<span class="string">'from'</span>,[d]));;
+
+    <span class="keyword">function</span> observer (t,  model_data)
+        Tn =gather_values(model_data.temp, targetn);
+        Tfifth = [Tfifth Tn];
+        ts=[ts,t];
+    <span class="keyword">end</span>
+    model_data.observer = @observer;
+</pre><p>Run the transient solver.</p><pre class="codeinput">    Tfifth = []; ts=[];
+    model_data =heat_diffusion_transient(model_data);
+</pre><p>Plot the results and report the temperature at the target depth at the end of the time interval.</p><pre class="codeinput">    figure;
+    plot(ts,Tfifth,<span class="string">'linewidth'</span>, 3)
+    set(gca,<span class="string">'FontSize'</span>, 14); grid <span class="string">on</span>
+    xlabel(<span class="string">'Time in seconds'</span>)
+    ylabel(<span class="string">'Temperature in degrees Celsius'</span>)
+    title ([<span class="string">'Time ='</span> num2str(tend)]);
+    disp([<span class="string">'The temperature at the target depth is '</span> num2str(Tfifth(end)) <span class="string">' at the time '</span> num2str(ts(end)) <span class="string">' seconds'</span>])
+</pre><pre class="codeoutput">The temperature at the target depth is 34.202 at the time 32 seconds
+</pre><img vspace="5" hspace="5" src="pub_T3NAFEMS_02.png" alt=""> <p>The reference is 36.6 degrees Celsius.</p><h2>Discussion<a name="29"></a></h2><p>The  coarse mesh with the time step of two seconds produces  error of approximately 7%. The error decreases with both  the space-direction refinement and the reduction in the time step.  Just change the variables <tt>n</tt> and <tt>dt</tt> to explore.</p><pre class="codeinput"><span class="keyword">end</span>
+</pre><p class="footer"><br><a href="http://www.mathworks.com/products/matlab/">Published with MATLAB&reg; R2012b</a><br></p></div><!--
+##### SOURCE BEGIN #####
+%% One-dimensional transient heat transfer. T3NAFEMS  Benchmark.
+%
+
+%%
+% Link to the  <matlab:edit('pub_T3NAFEMS') m-file>.
+%
+
+%% Description
+%
+% The geometry is shown in Figure 1. A uniform mesh with 5 elements along
+% the thickness of the wall is used.
+%%
+% A transient simulation is performed. The total simulation time is 32
+% seconds. The time step of two seconds is used.
+
+%%
+% Material: thermal conductivity = 35.0 W/m°C, specific heat = 440.5
+% J/kg°C, density = 7200 kg/m^3 .
+
+%%
+% Boundary conditions: Temperature prescribed as 0°C at the right-hand side
+% surface, and as 100*sin(pi*t/40) °C at the left-hand side surface, where
+% t is time in seconds. No heat flux parallel to the bounding surfaces of
+% the wall is present. There is no internal heat generation. Initial
+% conditions: All temperatures = 0°C.
+%
+%%
+%
+% <html> <table border=0><tr><td> <img src="../docs/pub_T3NAFEMS.jpg" width
+% ="30%"> </td></tr> <tr><td>Figure 1. Definition of the geometry of the
+% heated brick</td></tr> </table> </html>
+
+%%
+% Target solution: Temperature of 36.60°C at the depth of 0.02 m from the
+% left-hand side surface at 32 secs.
+%%
+% Reference: This is a test recommended by the National Agency for Finite
+% Element Methods and Standards (U.K.): Test T3 from NAFEMS publication
+% TNSB, Rev. 3, “The Standard NAFEMS Benchmarks,” October 1990.
+
+%% Solution
+%
+function pub_T3NAFEMS
+    pu= physical_units_struct;
+    
+    %%
+    % Thickness of the wall.
+    L=0.1*pu.M;% thickness
+    %%
+    % Target depth..
+    d=0.02*pu.M;% thickness
+    %%
+    % Material properties.
+    kappa=[35.0]*pu.W/pu.M/pu.K; % conductivity matrix
+    cm = 440.5*pu.J/pu.KG/pu.K;% specific heat per unit mass
+    rho=7200*pu.KG/pu.M^3;% mass density
+    cv =cm* rho;% specific heat per unit volume
+    %%
+    % Prescribed temperature.
+    Tampl=100*pu.K;
+    Tamb=0*pu.K;%  temperature at the right-hand side face
+    Tbar =@(t)(Tampl*sin(pi*t/40)+ Tamb);%hot face temperature
+    %%
+    % Length of time interval and time step.
+    tend= 32; % length of the time interval
+    dt=2*pu.SEC; % time step
+    %%
+    % Number of elements.
+    n=5;
+    
+    %%
+    % Make sure the nodal locations include the target depth for the
+    % output.
+    xs=unique([linspace(0,L,n+1), d])';;
+    [fens,fes] = L2_blockx(xs,1.0); % Mesh
+    
+    
+%% 
+% Display the mesh
+    gv=drawmesh({fens,fes},'nodes','fes','facecolor','r', 'shrink', 0.9, 'offset',0);
+     view(2);
+    labels
+    %%
+    % Package up the model data.
+    clear model_data
+    model_data.fens =fens;
+    
+    %%
+    % The one-dimensional region uses trapezoidal rule.  This leads to
+    % lumped (diagonal) capacity matrix. Other  rules may be employed, for
+    % instance Gauss  rule.
+    clear region
+    region.conductivity =kappa;
+    region.specific_heat =cv;
+    region.fes= fes;
+    region.integration_rule =trapezoidal_rule(struct('dim',1));
+    model_data.region{1} =region;
+    
+    %%
+    % Prescribed temperature at the left-hand side surface.
+    clear essential
+    essential.temperature=Tbar;
+    essential.node_list = fenode_select(fens,struct('distance',L/1e6,'from',[0]));;
+    model_data.boundary_conditions.essential{1} = essential;
+    
+    %%
+    % Prescribed temperature at the right-hand side surface.
+    clear essential
+    essential.temperature=Tamb;
+    essential.node_list = fenode_select(fens,struct('distance',L/1e6,'from',[L]));;
+    model_data.boundary_conditions.essential{2} = essential;
+    
+    %%
+    % Initially the wall is at the temperature fixed at the right-hand side
+    % surface.
+    clear initial_condition
+    initial_condition.temperature=Tamb;
+    model_data.initial_condition =initial_condition;
+    
+    %%
+    % Now we describe the control parameters.   The time interval for the
+    % integration and the time step.
+    model_data.dt= dt;
+    model_data.tend= tend;
+    
+    %%
+    % And we define an observer function that gets called every time  the
+    % algorithm  for transient time stepping finishes a time step.  We are
+    % going to collect the temperature at the target depth into an array
+    % and the corresponding time.
+    targetn  =fenode_select(fens,struct('distance',L/1e6,'from',[d]));;
+    
+    function observer (t,  model_data)
+        Tn =gather_values(model_data.temp, targetn);
+        Tfifth = [Tfifth Tn];
+        ts=[ts,t];
+    end
+    model_data.observer = @observer;
+    
+    %%
+    % Run the transient solver.
+    Tfifth = []; ts=[];
+    model_data =heat_diffusion_transient(model_data);
+    
+    %%
+    % Plot the results and report the temperature at the target depth at
+    % the end of the time interval.
+    figure;
+    plot(ts,Tfifth,'linewidth', 3)
+    set(gca,'FontSize', 14); grid on
+    xlabel('Time in seconds')
+    ylabel('Temperature in degrees Celsius')
+    title (['Time =' num2str(tend)]);
+    disp(['The temperature at the target depth is ' num2str(Tfifth(end)) ' at the time ' num2str(ts(end)) ' seconds'])
+    
+    %%
+    % The reference is 36.6 degrees Celsius.
+    %% Discussion
+    %
+    
+%% 
+% The  coarse mesh with the time step of two seconds produces  error of
+% approximately 7%. The error decreases with both  the space-direction
+% refinement and the reduction in the time step.  Just change the variables |n| and |dt| to explore.
+end
+##### SOURCE END #####
+--></body></html>

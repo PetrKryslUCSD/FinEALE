@@ -1,0 +1,338 @@
+
+<!DOCTYPE html
+  PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html><head>
+      <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+   <!--
+This HTML was auto-generated from MATLAB code.
+To make changes, update the MATLAB code and republish this document.
+      --><title>Suddenly applied harmonic load on a bar; 3-D model with implicit integration</title><meta name="generator" content="MATLAB 8.0"><link rel="schema.DC" href="http://purl.org/dc/elements/1.1/"><meta name="DC.date" content="2012-12-20"><meta name="DC.source" content="pub_sin_rod_impl_3D.m"><style type="text/css">
+html,body,div,span,applet,object,iframe,h1,h2,h3,h4,h5,h6,p,blockquote,pre,a,abbr,acronym,address,big,cite,code,del,dfn,em,font,img,ins,kbd,q,s,samp,small,strike,strong,sub,sup,tt,var,b,u,i,center,dl,dt,dd,ol,ul,li,fieldset,form,label,legend,table,caption,tbody,tfoot,thead,tr,th,td{margin:0;padding:0;border:0;outline:0;font-size:100%;vertical-align:baseline;background:transparent}body{line-height:1}ol,ul{list-style:none}blockquote,q{quotes:none}blockquote:before,blockquote:after,q:before,q:after{content:'';content:none}:focus{outine:0}ins{text-decoration:none}del{text-decoration:line-through}table{border-collapse:collapse;border-spacing:0}
+
+html { min-height:100%; margin-bottom:1px; }
+html body { height:100%; margin:0px; font-family:Arial, Helvetica, sans-serif; font-size:10px; color:#000; line-height:140%; background:#fff none; overflow-y:scroll; }
+html body td { vertical-align:top; text-align:left; }
+
+h1 { padding:0px; margin:0px 0px 25px; font-family:Arial, Helvetica, sans-serif; font-size:1.5em; color:#d55000; line-height:100%; font-weight:normal; }
+h2 { padding:0px; margin:0px 0px 8px; font-family:Arial, Helvetica, sans-serif; font-size:1.2em; color:#000; font-weight:bold; line-height:140%; border-bottom:1px solid #d6d4d4; display:block; }
+h3 { padding:0px; margin:0px 0px 5px; font-family:Arial, Helvetica, sans-serif; font-size:1.1em; color:#000; font-weight:bold; line-height:140%; }
+
+a { color:#005fce; text-decoration:none; }
+a:hover { color:#005fce; text-decoration:underline; }
+a:visited { color:#004aa0; text-decoration:none; }
+
+p { padding:0px; margin:0px 0px 20px; }
+img { padding:0px; margin:0px 0px 20px; border:none; }
+p img, pre img, tt img, li img { margin-bottom:0px; } 
+
+ul { padding:0px; margin:0px 0px 20px 23px; list-style:square; }
+ul li { padding:0px; margin:0px 0px 7px 0px; }
+ul li ul { padding:5px 0px 0px; margin:0px 0px 7px 23px; }
+ul li ol li { list-style:decimal; }
+ol { padding:0px; margin:0px 0px 20px 0px; list-style:decimal; }
+ol li { padding:0px; margin:0px 0px 7px 23px; list-style-type:decimal; }
+ol li ol { padding:5px 0px 0px; margin:0px 0px 7px 0px; }
+ol li ol li { list-style-type:lower-alpha; }
+ol li ul { padding-top:7px; }
+ol li ul li { list-style:square; }
+
+.content { font-size:1.2em; line-height:140%; padding: 20px; }
+
+pre, tt, code { font-size:12px; }
+pre { margin:0px 0px 20px; }
+pre.error { color:red; }
+pre.codeinput { padding:10px; border:1px solid #d3d3d3; background:#f7f7f7; }
+pre.codeoutput { padding:10px 11px; margin:0px 0px 20px; color:#4c4c4c; }
+
+@media print { pre.codeinput, pre.codeoutput { word-wrap:break-word; width:100%; } }
+
+span.keyword { color:#0000FF }
+span.comment { color:#228B22 }
+span.string { color:#A020F0 }
+span.untermstring { color:#B20000 }
+span.syscmd { color:#B28C00 }
+
+.footer { width:auto; padding:10px 0px; margin:25px 0px 0px; border-top:1px dotted #878787; font-size:0.8em; line-height:140%; font-style:italic; color:#878787; text-align:left; float:none; }
+.footer p { margin:0px; }
+.footer a { color:#878787; }
+.footer a:hover { color:#878787; text-decoration:underline; }
+.footer a:visited { color:#878787; }
+
+table th { padding:7px 5px; text-align:left; vertical-align:middle; border: 1px solid #d6d4d4; font-weight:bold; }
+table td { padding:7px 5px; text-align:left; vertical-align:top; border:1px solid #d6d4d4; }
+
+
+
+
+
+  </style></head><body><div class="content"><h1>Suddenly applied harmonic load on a bar; 3-D model with implicit integration</h1><!--introduction--><!--/introduction--><h2>Contents</h2><div><ul><li><a href="#2">Description</a></li><li><a href="#7">Solution</a></li><li><a href="#30">Discussion</a></li></ul></div><p>Link to the  <a href="matlab:edit('pub_sin_rod_impl_3D')">m-file</a>.</p><h2>Description<a name="2"></a></h2><p>The structure is a clamped bar that consists of two materials, a short section at the free end of stiff material,  and a long section of flexible material adjacent to the clamped end (see Figure 1).</p><p>The free end is loaded by a suddenly-applied harmonically varying concentrated force of  4.0 N. The deflection of the tip is sought at the time 0.01 seconds.  The deflection of 0.3558 mm is the reference solution described by Bathe, "Finite Element Procedures," Prentice Hall, Englewood Cliffs, New Jersey, 1996, pp.818-821.</p><p>The equation of motion will be integrated with the trapezoidal time integration rule, and  the time step will be taken as 0.0004 seconds.</p><p>The bar is assumed to have a circular cross-section and the finite element mesh is generated to orient the cylinder along the X axis.  Refer to Figure 1.</p><p>
+<table border=0><tr><td>
+<img src="../docs/pub_sin_rod_3D.jpg" width = "60%">
+</td></tr>
+<tr><td>Figure 1. Definition of the geometry of the two-material rod with
+a harmonic force suddenly applied at the free tip</td></tr>
+</table>
+</p><h2>Solution<a name="7"></a></h2><pre class="codeinput"><span class="keyword">function</span> pub_sin_rod_impl_3D
+</pre><pre class="codeinput">    u=physical_units_struct;
+</pre><p>Define the material properties of the stiff and flexible sections.</p><pre class="codeinput">    E1=2e5*u.MEGA*u.PA;<span class="comment">%  stiff (short) section</span>
+    nu1=0.3;
+    rho1  = 7800*u.KG/u.M^3;
+    E2=4.432*u.MEGA*u.PA;<span class="comment">% flexible (long) section of the rod</span>
+    nu2=0.3;
+    rho2  = 1560*u.KG/u.M^3;
+</pre><p>Geometrical dimensions of the rod.</p><pre class="codeinput">    L = 1.0*u.M;<span class="comment">% total length of the rod</span>
+    L1= 0.05*u.M;<span class="comment">%length of the stiff section of the rod</span>
+    A=0.0004*u.M^2; <span class="comment">% cross-sectional area</span>
+    R = sqrt(A/pi);<span class="comment">% radius of the cross-section</span>
+    tolerance  =R/100;<span class="comment">% geometrical tolerance</span>
+</pre><p>Applied axial force (with sinusoidal time variation).</p><pre class="codeinput">    P=   4.0*u.NT;<span class="comment">% total applied force</span>
+</pre><pre>The target time is defined.</pre><pre class="codeinput">    tend = 0.01*u.SEC;
+</pre><pre>The time step is defined.</pre><pre class="codeinput">    dt = 0.0004*u.SEC;
+</pre><p>The mesh is going to consist of 20 elements longitudinally and two elements radially.</p><pre class="codeinput">    nL=20; nR=2;
+    [fens,fes] = H8_cylinder_n(R, L, nR, nL);
+</pre><p>The default orientation of the cylinder is to align its axis with the Z direction.  Therefore we need to rotate the mesh by 90&deg; to align the axis of the cylinder with the X-axis.</p><pre class="codeinput">    [fens] = rotate_mesh(fens, [0;90/180*pi;0], [0;0;0]);;
+</pre><p>If desired, the mesh may be rendered.       drawmesh({fens,fes},'fes','facecolor','red');  labels</p><p>Now we prepare the model data.</p><pre class="codeinput">    clear <span class="string">model_data</span>
+    model_data.fens =fens;
+</pre><p>The first, stiff, section of the rod consists of finite elements between 0 and the length of the stiff section.</p><pre class="codeinput">    clear <span class="string">region</span>
+    region.property = <span class="string">'isotropic'</span>;
+    region.E =E1;
+    region.nu=nu1;
+    region.rho=rho1;
+    rl1=fe_select (fens,fes,struct(<span class="string">'box'</span>,[0,L1,-inf,inf,-inf,inf],<span class="string">'inflate'</span>,tolerance));
+    region.fes= subset(fes,rl1);
+    region.integration_rule = gauss_rule (struct(<span class="string">'dim'</span>, 3, <span class="string">'order'</span>, 2));
+    model_data.region{1} =region;
+</pre><p>The flexible section of the rod consists of the finite elements that remain.</p><pre class="codeinput">    clear <span class="string">region</span>
+    region.property = <span class="string">'isotropic'</span>;
+    region.E =E2;
+    region.nu=nu2;
+    region.rho=rho2;
+    region.fes= subset(fes,setdiff(1:count(fes),rl1));
+    region.integration_rule = gauss_rule (struct(<span class="string">'dim'</span>, 3, <span class="string">'order'</span>, 2));
+    model_data.region{2} =region;
+</pre><p>The essential boundary condition at the clamped end. We select all the nodes  near the plane <img src="pub_sin_rod_impl_3D_eq76225.png" alt="$x=L$">.</p><pre class="codeinput">    clear <span class="string">essential</span>
+    essential.component= [];
+    essential.fixed_value= 0;
+    essential.node_list = fenode_select (fens,struct(<span class="string">'box'</span>,[L,L,-inf,inf,-inf,inf],<span class="string">'inflate'</span>,tolerance));
+    model_data.boundary_conditions.essential{1} = essential;
+</pre><p>The traction boundary condition at the free end.  Given that the total force is to be 4.0 Newton the traction (force density) is computed from the cross-sectional area.</p><pre class="codeinput">    clear <span class="string">traction</span>
+    traction.traction= @(t)[P/A*sin(150*t);0;0];
+</pre><p>The finite elements on the boundary are quadrilaterals.</p><pre class="codeinput">    bfes=mesh_boundary(fes) ;
+    ll=fe_select (fens,bfes,struct(<span class="string">'box'</span>,[0,0,-inf,inf,-inf,inf],<span class="string">'inflate'</span>,tolerance));
+    traction.fes=subset(bfes,ll);
+    traction.integration_rule = gauss_rule (struct(<span class="string">'dim'</span>, 2, <span class="string">'order'</span>, 2));
+    model_data.boundary_conditions.traction{1} = traction;
+</pre><p>The rod is initially at rest, no deformation.</p><pre class="codeinput">    clear <span class="string">initial_condition</span>
+    initial_condition.u_fixed_value= @(x)0*x;
+    initial_condition.v_fixed_value= @(x)0*x;
+    model_data.initial_condition = initial_condition;
+</pre><p>Finally we set the control parameters.</p><pre class="codeinput">    model_data.tend = tend;;
+    model_data.dt = 0.0004*u.SEC;
+</pre><p>The observer function collects the displacement at the tip of the rod as a function of time.</p><pre class="codeinput">    tip=fenode_select (fens,struct(<span class="string">'box'</span>,[0,0,-inf,inf,-inf,inf],<span class="string">'inflate'</span>,tolerance));
+    tipu  = []; ts=[];
+    <span class="keyword">function</span> output(t, model_data)
+        cutip=gather_values(model_data.u,tip);
+        tipu=[tipu,cutip(:,1)]; ts=[ts,t];
+    <span class="keyword">end</span>
+    model_data.observer  =@output;;
+</pre><p>Now we call the transient trapezoidal-rule solver. Only an implicit method can deal with their given time step as it is above the critical time step for  explicit methods (as determined by the stiff portion of the rod).</p><pre class="codeinput">    model_data =deformation_linear_direct_implicit_TRAP_Rayleigh(model_data);
+</pre><p>The displacement at the end of the monitored time interval is:</p><pre class="codeinput">    mean(tipu(:,end))/u.MM
+</pre><pre class="codeoutput">
+ans =
+
+    0.3522
+
+</pre><p>which is to be compared with the reference deflection of 0.3558 mm.</p><p>The deflection curve at the end of the time interval is plotted:</p><pre class="codeinput">    plot(model_data.geom.values(:,1),model_data.u.values(:,1),<span class="string">'+'</span>, <span class="string">'linewidth'</span>,2);
+    set(gca,<span class="string">'xlim'</span>,[-eps,L]);
+    set(gca,<span class="string">'ylim'</span>,[0,4e-4]*1);
+    labels(  <span class="string">'Axial location of node [m]'</span>, <span class="string">'Axial displacement at node [m]'</span>)
+</pre><img vspace="5" hspace="5" src="pub_sin_rod_impl_3D_01.png" alt=""> <h2>Discussion<a name="30"></a></h2><p>In addition to the longitudinal discretization and  the time step, the 3-D model is also affected by the discretization of the cross-section.  The relatively crude  mesh in the cross-section affects the total applied force, and therefore the deflection is underestimated.  This error would be reduced by using more elements through the cross-section.</p><pre class="codeinput"><span class="keyword">end</span>
+</pre><p class="footer"><br><a href="http://www.mathworks.com/products/matlab/">Published with MATLAB&reg; R2012b</a><br></p></div><!--
+##### SOURCE BEGIN #####
+%% Suddenly applied harmonic load on a bar; 3-D model with implicit integration
+%
+
+%%
+% Link to the  <matlab:edit('pub_sin_rod_impl_3D') m-file>.
+
+%% Description
+% The structure is a clamped bar that consists of two materials, a short section at the free
+% end of stiff material,  and a long section of flexible material adjacent
+% to the clamped end (see Figure 1).
+%%
+% The free end is loaded by a suddenly-applied harmonically varying
+% concentrated force of  4.0 N. The deflection of the tip is sought at the time 0.01
+% seconds.  The deflection of 0.3558 mm is the reference solution described
+% by Bathe, "Finite Element Procedures," Prentice Hall, Englewood Cliffs,
+% New Jersey, 1996, pp.818-821.
+
+
+%%
+% The equation of motion will be integrated with the trapezoidal
+% time integration rule, and  the time step will be taken as 0.0004 seconds.
+
+%%
+% The bar is assumed to have a circular cross-section and the finite
+% element mesh is generated to orient the cylinder along the X axis.  Refer
+% to Figure 1.
+%%
+%
+% <html>
+% <table border=0><tr><td>
+% <img src="../docs/pub_sin_rod_3D.jpg" width = "60%">
+% </td></tr>
+% <tr><td>Figure 1. Definition of the geometry of the two-material rod with
+% a harmonic force suddenly applied at the free tip</td></tr>
+% </table>
+% </html>
+
+
+%% Solution
+%
+function pub_sin_rod_impl_3D
+    u=physical_units_struct;
+    %%
+    % Define the material properties of the stiff and flexible sections.
+    E1=2e5*u.MEGA*u.PA;%  stiff (short) section
+    nu1=0.3;
+    rho1  = 7800*u.KG/u.M^3;
+    E2=4.432*u.MEGA*u.PA;% flexible (long) section of the rod
+    nu2=0.3;
+    rho2  = 1560*u.KG/u.M^3;
+    %%
+    % Geometrical dimensions of the rod.
+    L = 1.0*u.M;% total length of the rod
+    L1= 0.05*u.M;%length of the stiff section of the rod
+    A=0.0004*u.M^2; % cross-sectional area
+    R = sqrt(A/pi);% radius of the cross-section
+    tolerance  =R/100;% geometrical tolerance
+    
+    %%
+    % Applied axial force (with sinusoidal time variation).
+    P=   4.0*u.NT;% total applied force
+    
+    %%
+    %  The target time is defined.
+    tend = 0.01*u.SEC;
+    
+    %%
+    %  The time step is defined.
+    dt = 0.0004*u.SEC;
+    
+    %%
+    % The mesh is going to consist of 20 elements longitudinally and two elements radially.
+    nL=20; nR=2;
+    [fens,fes] = H8_cylinder_n(R, L, nR, nL);
+    %%
+    % The default orientation of the cylinder is to align its axis with the Z
+    % direction.  Therefore we need to rotate the mesh by 90° to align the axis
+    % of the cylinder with the X-axis.
+    [fens] = rotate_mesh(fens, [0;90/180*pi;0], [0;0;0]);;
+    
+    %%
+    % If desired, the mesh may be rendered.
+    %       drawmesh({fens,fes},'fes','facecolor','red');  labels
+    %%
+    % Now we prepare the model data.
+    clear model_data
+    model_data.fens =fens;
+    
+    %%
+    % The first, stiff, section of the rod consists of finite elements between
+    % 0 and the length of the stiff section.
+    clear region
+    region.property = 'isotropic';
+    region.E =E1;
+    region.nu=nu1;
+    region.rho=rho1;
+    rl1=fe_select (fens,fes,struct('box',[0,L1,-inf,inf,-inf,inf],'inflate',tolerance));
+    region.fes= subset(fes,rl1);
+    region.integration_rule = gauss_rule (struct('dim', 3, 'order', 2));
+    model_data.region{1} =region;
+    
+    %%
+    % The flexible section of the rod consists of the finite elements that remain.
+    clear region
+    region.property = 'isotropic';
+    region.E =E2;
+    region.nu=nu2;
+    region.rho=rho2;
+    region.fes= subset(fes,setdiff(1:count(fes),rl1));
+    region.integration_rule = gauss_rule (struct('dim', 3, 'order', 2));
+    model_data.region{2} =region;
+    
+    %%
+    % The essential boundary condition at the clamped end. We select all the nodes  near the plane $x=L$.
+    clear essential
+    essential.component= [];
+    essential.fixed_value= 0;
+    essential.node_list = fenode_select (fens,struct('box',[L,L,-inf,inf,-inf,inf],'inflate',tolerance));
+    model_data.boundary_conditions.essential{1} = essential;
+    
+    %%
+    % The traction boundary condition at the free end.  Given that the total
+    % force is to be 4.0 Newton the traction (force density) is computed from the
+    % cross-sectional area.
+    clear traction
+    traction.traction= @(t)[P/A*sin(150*t);0;0];
+    
+    %%
+    % The finite elements on the boundary are quadrilaterals.
+    bfes=mesh_boundary(fes) ;
+    ll=fe_select (fens,bfes,struct('box',[0,0,-inf,inf,-inf,inf],'inflate',tolerance));
+    traction.fes=subset(bfes,ll);
+    traction.integration_rule = gauss_rule (struct('dim', 2, 'order', 2));
+    model_data.boundary_conditions.traction{1} = traction;
+    
+    %%
+    % The rod is initially at rest, no deformation.
+    clear initial_condition
+    initial_condition.u_fixed_value= @(x)0*x;
+    initial_condition.v_fixed_value= @(x)0*x;
+    model_data.initial_condition = initial_condition;
+    
+    %%
+    % Finally we set the control parameters.
+    model_data.tend = tend;;
+    model_data.dt = 0.0004*u.SEC;
+    %%
+    % The observer function collects the displacement at the tip of the rod as
+    % a function of time.
+    tip=fenode_select (fens,struct('box',[0,0,-inf,inf,-inf,inf],'inflate',tolerance));
+    tipu  = []; ts=[];
+    function output(t, model_data)
+        cutip=gather_values(model_data.u,tip);
+        tipu=[tipu,cutip(:,1)]; ts=[ts,t];
+    end
+    model_data.observer  =@output;;
+    
+    %%
+    % Now we call the transient trapezoidal-rule solver. Only an implicit
+    % method can deal with their given time step as it is above the critical
+    % time step for  explicit methods (as determined by the stiff portion of
+    % the rod).
+    model_data =deformation_linear_direct_implicit_TRAP_Rayleigh(model_data);
+    
+    %%
+    % The displacement at the end of the monitored time interval is:
+    mean(tipu(:,end))/u.MM
+    
+    %%
+    % which is to be compared with the reference deflection of 0.3558 mm.
+    %%
+    % The deflection curve at the end of the time interval is plotted:
+    plot(model_data.geom.values(:,1),model_data.u.values(:,1),'+', 'linewidth',2);
+    set(gca,'xlim',[-eps,L]);
+    set(gca,'ylim',[0,4e-4]*1);
+    labels(  'Axial location of node [m]', 'Axial displacement at node [m]')
+    %% Discussion
+    %
+    % In addition to the longitudinal discretization and  the time step,
+    % the 3-D model is also affected by the discretization of the
+    % cross-section.  The relatively crude  mesh in the cross-section
+    % affects the total applied force, and therefore the deflection is
+    % underestimated.  This error would be reduced by using more elements
+    % through the cross-section.
+end
+##### SOURCE END #####
+--></body></html>

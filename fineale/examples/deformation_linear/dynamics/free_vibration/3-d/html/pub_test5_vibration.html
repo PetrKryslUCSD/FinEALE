@@ -1,0 +1,570 @@
+
+<!DOCTYPE html
+  PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html><head>
+      <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+   <!--
+This HTML was auto-generated from MATLAB code.
+To make changes, update the MATLAB code and republish this document.
+      --><title>Free harmonic vibration of a deep beam.</title><meta name="generator" content="MATLAB 8.0"><link rel="schema.DC" href="http://purl.org/dc/elements/1.1/"><meta name="DC.date" content="2012-12-24"><meta name="DC.source" content="pub_test5_vibration.m"><style type="text/css">
+html,body,div,span,applet,object,iframe,h1,h2,h3,h4,h5,h6,p,blockquote,pre,a,abbr,acronym,address,big,cite,code,del,dfn,em,font,img,ins,kbd,q,s,samp,small,strike,strong,sub,sup,tt,var,b,u,i,center,dl,dt,dd,ol,ul,li,fieldset,form,label,legend,table,caption,tbody,tfoot,thead,tr,th,td{margin:0;padding:0;border:0;outline:0;font-size:100%;vertical-align:baseline;background:transparent}body{line-height:1}ol,ul{list-style:none}blockquote,q{quotes:none}blockquote:before,blockquote:after,q:before,q:after{content:'';content:none}:focus{outine:0}ins{text-decoration:none}del{text-decoration:line-through}table{border-collapse:collapse;border-spacing:0}
+
+html { min-height:100%; margin-bottom:1px; }
+html body { height:100%; margin:0px; font-family:Arial, Helvetica, sans-serif; font-size:10px; color:#000; line-height:140%; background:#fff none; overflow-y:scroll; }
+html body td { vertical-align:top; text-align:left; }
+
+h1 { padding:0px; margin:0px 0px 25px; font-family:Arial, Helvetica, sans-serif; font-size:1.5em; color:#d55000; line-height:100%; font-weight:normal; }
+h2 { padding:0px; margin:0px 0px 8px; font-family:Arial, Helvetica, sans-serif; font-size:1.2em; color:#000; font-weight:bold; line-height:140%; border-bottom:1px solid #d6d4d4; display:block; }
+h3 { padding:0px; margin:0px 0px 5px; font-family:Arial, Helvetica, sans-serif; font-size:1.1em; color:#000; font-weight:bold; line-height:140%; }
+
+a { color:#005fce; text-decoration:none; }
+a:hover { color:#005fce; text-decoration:underline; }
+a:visited { color:#004aa0; text-decoration:none; }
+
+p { padding:0px; margin:0px 0px 20px; }
+img { padding:0px; margin:0px 0px 20px; border:none; }
+p img, pre img, tt img, li img { margin-bottom:0px; } 
+
+ul { padding:0px; margin:0px 0px 20px 23px; list-style:square; }
+ul li { padding:0px; margin:0px 0px 7px 0px; }
+ul li ul { padding:5px 0px 0px; margin:0px 0px 7px 23px; }
+ul li ol li { list-style:decimal; }
+ol { padding:0px; margin:0px 0px 20px 0px; list-style:decimal; }
+ol li { padding:0px; margin:0px 0px 7px 23px; list-style-type:decimal; }
+ol li ol { padding:5px 0px 0px; margin:0px 0px 7px 0px; }
+ol li ol li { list-style-type:lower-alpha; }
+ol li ul { padding-top:7px; }
+ol li ul li { list-style:square; }
+
+.content { font-size:1.2em; line-height:140%; padding: 20px; }
+
+pre, tt, code { font-size:12px; }
+pre { margin:0px 0px 20px; }
+pre.error { color:red; }
+pre.codeinput { padding:10px; border:1px solid #d3d3d3; background:#f7f7f7; }
+pre.codeoutput { padding:10px 11px; margin:0px 0px 20px; color:#4c4c4c; }
+
+@media print { pre.codeinput, pre.codeoutput { word-wrap:break-word; width:100%; } }
+
+span.keyword { color:#0000FF }
+span.comment { color:#228B22 }
+span.string { color:#A020F0 }
+span.untermstring { color:#B20000 }
+span.syscmd { color:#B28C00 }
+
+.footer { width:auto; padding:10px 0px; margin:25px 0px 0px; border-top:1px dotted #878787; font-size:0.8em; line-height:140%; font-style:italic; color:#878787; text-align:left; float:none; }
+.footer p { margin:0px; }
+.footer a { color:#878787; }
+.footer a:hover { color:#878787; text-decoration:underline; }
+.footer a:visited { color:#878787; }
+
+table th { padding:7px 5px; text-align:left; vertical-align:middle; border: 1px solid #d6d4d4; font-weight:bold; }
+table td { padding:7px 5px; text-align:left; vertical-align:top; border:1px solid #d6d4d4; }
+
+
+
+
+
+  </style></head><body><div class="content"><h1>Free harmonic vibration of a deep beam.</h1><!--introduction--><!--/introduction--><h2>Contents</h2><div><ul><li><a href="#2">Description</a></li><li><a href="#10">Solution</a></li><li><a href="#26">Discussion</a></li></ul></div><p>Link to the  <a href="matlab:edit('pub_test5_vibration')">m-file</a>.</p><h2>Description<a name="2"></a></h2><p>This is a test recommended by the National Agency for Finite Element Methods and Standards (U.K.): Test 5 from NAFEMS &#8220;Selected Benchmarks for Forced Vibration,&#8221; R0016, March 1993.</p><p>The beam is going to be modeled as a three-dimensional solid, with solid elements. The beam geometry is given as</p><p><img vspace="5" hspace="5" src="../docs/pub_test5_harmonic_1.jpg" alt=""> </p><p>The beam is assumed to be simply supported at the ends transversely. The cross-section at <img src="pub_test5_vibration_eq02368.png" alt="$x=0$"> is also pinned in the axial direction and rotation about the axis of the beam is prevented. In the cross-section at <img src="pub_test5_vibration_eq76225.png" alt="$x=L$"> both the axial rotation and the axial displacement are allowed.</p><p>For the solid 3-D beam this seems impossible to achieve just the mechanism of essential boundary conditions.   In this tutorial we will apply multi point constraints (MPCs) to construct the pinned conditions.</p><p>The transverse and axial-rotation constrains at <img src="pub_test5_vibration_eq02368.png" alt="$x=0$"> is implemented by attaching rollers in the direction of the axes perpendicular to the beam in both directions on the entire cross-sectional area.</p><p>The axial constraint at <img src="pub_test5_vibration_eq02368.png" alt="$x=0$"> is implemented with a multi-point constraint of the form</p><p><img src="pub_test5_vibration_eq23358.png" alt="$\sum u_{ix}=0$"></p><h2>Solution<a name="10"></a></h2><p>The code is placed inside a Matlab function in order to be able to define the simulation in a nested function.</p><pre class="codeinput"><span class="keyword">function</span> pub_test5_vibration
+</pre><p>Define the material properties.</p><pre class="codeinput">    pu=physical_units_struct;
+    <span class="comment">% Parameters:</span>
+    E = 200e3*pu.MEGA*pu.PA;
+    nu = 0.3;
+    rho= 8000*pu.KG/pu.M^3;
+</pre><p>Define the geometry and the geometrical tolerance.</p><pre class="codeinput">    a=2.00*pu.M; b=2.00*pu.M; L= 10*pu.M;
+    tolerance =a/1000;
+</pre><p>The reference solutions for the natural frequencies are:</p><pre class="codeinput">    f_fundamental =[ 42.6580   42.6580   71.2610  125.0000  <span class="keyword">...</span>
+        148.7200  148.7200  213.8900  287.8400  <span class="keyword">...</span>
+        287.8400];
+    f_fundamental_kind={<span class="string">'flexural'</span>,<span class="string">'flexural'</span>,<span class="string">'torsional'</span>,<span class="string">'extensional'</span>,<span class="keyword">...</span>
+        <span class="string">'flexural'</span>,<span class="string">'flexural'</span>,<span class="string">'torsional'</span>,<span class="string">'flexural'</span>,<span class="keyword">...</span>
+        <span class="string">'flexural'</span>};
+</pre><p>Mesh parameters are defined here: number of element edges per dimension.</p><pre class="codeinput">    na= 2; nb=  2; nL =10;
+</pre><p>These are the material properties for an isotropic homogeneous material.</p><pre class="codeinput">    prop=property_deformation_linear_iso(struct(<span class="string">'E'</span>,E,<span class="string">'nu'</span>,nu,<span class="string">'rho'</span>,rho));
+    mater = material_deformation_linear_triax (struct(<span class="string">'property'</span>,prop ));
+</pre><pre class="codeoutput">Warning: The class file for 'material_deformation_linear_triax'
+has been changed, but the change cannot be applied because
+objects based on the old class file still exist. If you use
+those objects, you might get unexpected results. You can use the
+'clear' command to remove those objects. See 'help clear' for
+information on how to remove those objects. 
+</pre><p>The simulation will be carried out for selected element types using this function.  It sets up the model, runs the free vibration analysis, and reports the results.</p><pre class="codeinput">    <span class="keyword">function</span>  simulate(description, mf, femmf,  mode_to_show)
+        <span class="comment">% Create the mesh and initialize the geometry</span>
+        [fens,fes]= mf(L,a,b,nL,na,nb);
+        <span class="comment">%      Shift the geometry so that the axis of the beam is along the</span>
+        <span class="comment">%      X-axis of the global coordinate system.</span>
+        fens = transform_apply(fens,@(x,d)(x-[0,a/2,b/2]), []);
+        <span class="comment">% Select the boundary faces for the application of the transverse load.</span>
+        bfes= mesh_boundary(fes,[]);
+        topl =fe_select (fens,bfes,struct(<span class="string">'box'</span>, [0,L,-Inf,Inf,b/2,b/2],<span class="keyword">...</span>
+            <span class="string">'inflate'</span>,tolerance));
+        <span class="comment">% Compose the model data</span>
+        clear <span class="string">model_data</span>
+        model_data.fens =fens;
+        <span class="comment">% Set the finite element model machine</span>
+        clear <span class="string">region</span>
+        region.femm= femmf(fes);
+        model_data.region{1} =region;
+
+        <span class="comment">% Both cross-sections of the beam are</span>
+        <span class="comment">% supported by rollers. In the 3-D solid this will be accomplished by</span>
+        <span class="comment">% restraining translation in the direction of the support at all nodes</span>
+        <span class="comment">% in the cross-section.</span>
+        clear <span class="string">essential</span>
+        essential.component= [2,3];<span class="comment">%restrain both cross-sections with rollers</span>
+        essential.fixed_value= 0;
+        essential.node_list = [<span class="keyword">...</span>
+            fenode_select(fens, struct(<span class="string">'box'</span>, [0,0,-Inf,Inf,-Inf,Inf],<span class="keyword">...</span>
+            <span class="string">'inflate'</span>,tolerance))];
+        model_data.boundary_conditions.essential{1} = essential;
+
+        <span class="comment">% Define the essential boundary conditions. At least one point needs to</span>
+        <span class="comment">% be restrained axially.</span>
+        clear <span class="string">mpc</span>
+        mpc.node_list = [fenode_select(fens, <span class="keyword">...</span>
+            struct(<span class="string">'box'</span>, [0,0,-Inf,Inf,-Inf,Inf],<span class="string">'inflate'</span>,tolerance))];
+        mpc.dof_list=1+zeros(size(mpc.node_list));
+        mpc.umultipliers=ones(size(mpc.node_list));
+        mpc.penfact=1e16;
+        model_data.mpc{1} = mpc;
+         clear <span class="string">mpc</span>
+        mpc.node_list = [fenode_select(fens, <span class="keyword">...</span>
+            struct(<span class="string">'box'</span>, [L,L,-Inf,Inf,-Inf,Inf],<span class="string">'inflate'</span>,tolerance))];
+        mpc.dof_list=2+zeros(size(mpc.node_list));
+        mpc.umultipliers=ones(size(mpc.node_list));
+        mpc.penfact=1e16;
+        model_data.mpc{2} = mpc;
+        clear <span class="string">mpc</span>
+        mpc.node_list = [fenode_select(fens, <span class="keyword">...</span>
+            struct(<span class="string">'box'</span>, [L,L,-Inf,Inf,-Inf,Inf],<span class="string">'inflate'</span>,tolerance))];
+        mpc.dof_list=3+zeros(size(mpc.node_list));
+        mpc.umultipliers=ones(size(mpc.node_list));
+        mpc.penfact=1e16;
+        model_data.mpc{3} = mpc;
+
+        model_data.neigvs= 20;
+        model_data.omega_shift=0;
+        model_data.use_factorization= true;
+        <span class="comment">% Solve</span>
+        model_data = deformation_linear_modal_analysis(model_data);
+        <span class="comment">% These are the natural frequencies in hertz</span>
+        f=model_data.Omega(1:9)'/2/pi;
+        disp ([description  <span class="string">': '</span>])
+        <span class="keyword">for</span> j=1:length(f)
+            disp([<span class="string">'Natural frequency '</span> num2str(j) <span class="string">' = '</span> <span class="keyword">...</span>
+                num2str(f(j)) <span class="string">' [Hz]'</span> ]);
+            disp([<span class="string">' f/f_analytical='</span> num2str(f(j)./f_fundamental(j)*100)<span class="keyword">...</span>
+                <span class="string">'% ('</span> f_fundamental_kind{j} <span class="string">')'</span>]);
+        <span class="keyword">end</span>
+        <span class="comment">% Plot the resulting mode shape(s) requested.</span>
+        model_data.postprocessing.u_scale= 2;
+        <span class="keyword">for</span> j=1:length(mode_to_show)
+            disp(<span class="string">'===================================================='</span>)
+            disp([<span class="string">'Natural frequency '</span> num2str(j) <span class="string">' = '</span> <span class="keyword">...</span>
+                num2str(f(j)) <span class="string">' [Hz]'</span> ]);
+            disp([<span class="string">' f/f_analytical='</span> num2str(f(j)./f_fundamental(j)*100)<span class="keyword">...</span>
+                <span class="string">'% ('</span> f_fundamental_kind{j} <span class="string">')'</span>]);
+            model_data.postprocessing.modelist= mode_to_show(j);
+            model_data=deformation_plot_modes(model_data);
+            snapnow;
+        <span class="keyword">end</span>
+    <span class="keyword">end</span>
+</pre><p>The 20-node serendipity hexahedron which is  a very accurate element in general yields good results here.</p><pre class="codeinput">    description =<span class="string">'H20R'</span>;
+    mf =@H20_block;
+</pre><p>Note that we are specifying integration rule for both the stiffness and the mass matrix.  Hence the mass matrix will be singular.</p><pre class="codeinput">    femmf =@(fes)femm_deformation_linear(struct(<span class="string">'fes'</span>,fes, <span class="keyword">...</span>
+        <span class="string">'material'</span>,mater,<span class="keyword">...</span>
+        <span class="string">'integration_rule'</span>,gauss_rule(struct(<span class="string">'dim'</span>,3, <span class="string">'order'</span>,2))));
+    simulate(description, mf, femmf, 1:8);
+</pre><pre class="codeoutput">H20R: 
+Natural frequency 1 = 42.5683 [Hz]
+ f/f_analytical=99.7897% (flexural)
+Natural frequency 2 = 42.5683 [Hz]
+ f/f_analytical=99.7897% (flexural)
+Natural frequency 3 = 71.4701 [Hz]
+ f/f_analytical=100.2935% (torsional)
+Natural frequency 4 = 119.2502 [Hz]
+ f/f_analytical=95.4001% (extensional)
+Natural frequency 5 = 147.4046 [Hz]
+ f/f_analytical=99.1155% (flexural)
+Natural frequency 6 = 147.4046 [Hz]
+ f/f_analytical=99.1155% (flexural)
+Natural frequency 7 = 214.395 [Hz]
+ f/f_analytical=100.2361% (torsional)
+Natural frequency 8 = 281.2767 [Hz]
+ f/f_analytical=97.7198% (flexural)
+Natural frequency 9 = 281.2767 [Hz]
+ f/f_analytical=97.7198% (flexural)
+====================================================
+Natural frequency 1 = 42.5683 [Hz]
+ f/f_analytical=99.7897% (flexural)
+Mode 1, frequency 42.5683
+</pre><img vspace="5" hspace="5" src="pub_test5_vibration_01.png" alt=""> <pre class="codeoutput">====================================================
+Natural frequency 2 = 42.5683 [Hz]
+ f/f_analytical=99.7897% (flexural)
+Mode 2, frequency 42.5683
+</pre><img vspace="5" hspace="5" src="pub_test5_vibration_02.png" alt=""> <pre class="codeoutput">====================================================
+Natural frequency 3 = 71.4701 [Hz]
+ f/f_analytical=100.2935% (torsional)
+Mode 3, frequency 71.4701
+</pre><img vspace="5" hspace="5" src="pub_test5_vibration_03.png" alt=""> <pre class="codeoutput">====================================================
+Natural frequency 4 = 119.2502 [Hz]
+ f/f_analytical=95.4001% (extensional)
+Mode 4, frequency 119.2502
+</pre><img vspace="5" hspace="5" src="pub_test5_vibration_04.png" alt=""> <pre class="codeoutput">====================================================
+Natural frequency 5 = 147.4046 [Hz]
+ f/f_analytical=99.1155% (flexural)
+Mode 5, frequency 147.4046
+</pre><img vspace="5" hspace="5" src="pub_test5_vibration_05.png" alt=""> <pre class="codeoutput">====================================================
+Natural frequency 6 = 147.4046 [Hz]
+ f/f_analytical=99.1155% (flexural)
+Mode 6, frequency 147.4046
+</pre><img vspace="5" hspace="5" src="pub_test5_vibration_06.png" alt=""> <pre class="codeoutput">====================================================
+Natural frequency 7 = 214.395 [Hz]
+ f/f_analytical=100.2361% (torsional)
+Mode 7, frequency 214.395
+</pre><img vspace="5" hspace="5" src="pub_test5_vibration_07.png" alt=""> <pre class="codeoutput">====================================================
+Natural frequency 8 = 281.2767 [Hz]
+ f/f_analytical=97.7198% (flexural)
+Mode 8, frequency 281.2767
+</pre><img vspace="5" hspace="5" src="pub_test5_vibration_08.png" alt=""> <p>For this material (compressible)  and this type of structure  (massive) the fully-integrated hexahedron would also work well.  We can therefore use the same element with Gauss rule one order higher. The consistent mass matrix will no longer be singular. Note that the accuracy of the third mode (torsional) improved.</p><pre class="codeinput">femmf =@(fes)femm_deformation_linear(struct(<span class="string">'fes'</span>,fes, <span class="keyword">...</span>
+        <span class="string">'material'</span>,mater,<span class="keyword">...</span>
+        <span class="string">'integration_rule'</span>,gauss_rule(struct(<span class="string">'dim'</span>,3, <span class="string">'order'</span>,3))));
+    simulate(description, mf, femmf, 3);
+</pre><pre class="codeoutput">H20R: 
+Natural frequency 1 = 42.607 [Hz]
+ f/f_analytical=99.8804% (flexural)
+Natural frequency 2 = 42.607 [Hz]
+ f/f_analytical=99.8804% (flexural)
+Natural frequency 3 = 71.7167 [Hz]
+ f/f_analytical=100.6394% (torsional)
+Natural frequency 4 = 120.7623 [Hz]
+ f/f_analytical=96.6099% (extensional)
+Natural frequency 5 = 147.8394 [Hz]
+ f/f_analytical=99.4079% (flexural)
+Natural frequency 6 = 147.8394 [Hz]
+ f/f_analytical=99.4079% (flexural)
+Natural frequency 7 = 215.2345 [Hz]
+ f/f_analytical=100.6286% (torsional)
+Natural frequency 8 = 282.8189 [Hz]
+ f/f_analytical=98.2556% (flexural)
+Natural frequency 9 = 282.8189 [Hz]
+ f/f_analytical=98.2556% (flexural)
+====================================================
+Natural frequency 1 = 42.607 [Hz]
+ f/f_analytical=99.8804% (flexural)
+Mode 3, frequency 71.7167
+</pre><img vspace="5" hspace="5" src="pub_test5_vibration_09.png" alt=""> <p>Here we look specifically at the third, torsional, mode.</p><pre class="codeinput"> femmf =@(fes)femm_deformation_linear(struct(<span class="string">'fes'</span>,fes, <span class="keyword">...</span>
+        <span class="string">'material'</span>,mater,<span class="keyword">...</span>
+        <span class="string">'integration_rule'</span>,gauss_rule(struct(<span class="string">'dim'</span>,3, <span class="string">'order'</span>,3))));
+    simulate(description, mf, femmf, 3);
+</pre><pre class="codeoutput">H20R: 
+Natural frequency 1 = 42.607 [Hz]
+ f/f_analytical=99.8804% (flexural)
+Natural frequency 2 = 42.607 [Hz]
+ f/f_analytical=99.8804% (flexural)
+Natural frequency 3 = 71.7167 [Hz]
+ f/f_analytical=100.6394% (torsional)
+Natural frequency 4 = 120.7623 [Hz]
+ f/f_analytical=96.6099% (extensional)
+Natural frequency 5 = 147.8394 [Hz]
+ f/f_analytical=99.4079% (flexural)
+Natural frequency 6 = 147.8394 [Hz]
+ f/f_analytical=99.4079% (flexural)
+Natural frequency 7 = 215.2345 [Hz]
+ f/f_analytical=100.6286% (torsional)
+Natural frequency 8 = 282.8189 [Hz]
+ f/f_analytical=98.2556% (flexural)
+Natural frequency 9 = 282.8189 [Hz]
+ f/f_analytical=98.2556% (flexural)
+====================================================
+Natural frequency 1 = 42.607 [Hz]
+ f/f_analytical=99.8804% (flexural)
+Mode 3, frequency 71.7167
+</pre><img vspace="5" hspace="5" src="pub_test5_vibration_10.png" alt=""> <p>Here we look specifically at the third, torsional, mode.</p><pre class="codeinput"> femmf =@(fes)femm_deformation_linear(struct(<span class="string">'fes'</span>,fes, <span class="keyword">...</span>
+        <span class="string">'material'</span>,mater,<span class="keyword">...</span>
+        <span class="string">'integration_rule'</span>,gauss_rule(struct(<span class="string">'dim'</span>,3, <span class="string">'order'</span>,2))));
+    simulate(description, mf, femmf, 3);
+</pre><pre class="codeoutput">H20R: 
+Natural frequency 1 = 42.5683 [Hz]
+ f/f_analytical=99.7897% (flexural)
+Natural frequency 2 = 42.5683 [Hz]
+ f/f_analytical=99.7897% (flexural)
+Natural frequency 3 = 71.4701 [Hz]
+ f/f_analytical=100.2935% (torsional)
+Natural frequency 4 = 119.2502 [Hz]
+ f/f_analytical=95.4001% (extensional)
+Natural frequency 5 = 147.4046 [Hz]
+ f/f_analytical=99.1155% (flexural)
+Natural frequency 6 = 147.4046 [Hz]
+ f/f_analytical=99.1155% (flexural)
+Natural frequency 7 = 214.395 [Hz]
+ f/f_analytical=100.2361% (torsional)
+Natural frequency 8 = 281.2767 [Hz]
+ f/f_analytical=97.7198% (flexural)
+Natural frequency 9 = 281.2767 [Hz]
+ f/f_analytical=97.7198% (flexural)
+====================================================
+Natural frequency 1 = 42.5683 [Hz]
+ f/f_analytical=99.7897% (flexural)
+Mode 3, frequency 71.4701
+</pre><img vspace="5" hspace="5" src="pub_test5_vibration_11.png" alt=""> <p>It is also possible to  use different quadrature rules for stiffness and mass calculations.  The tutorial pub_test5_vibration_sep explains how to do this.</p><p>The quadratic tetrahedron, the workhorse of many linear stress analysis packages, produces good-quality results.</p><pre class="codeinput">    description =<span class="string">'T10'</span>;<span class="comment">% tetrahedron</span>
+    mf =@T10_block;
+    femmf =@(fes)femm_deformation_linear(struct(<span class="string">'fes'</span>,fes,<span class="keyword">...</span>
+        <span class="string">'material'</span>,mater,<span class="keyword">...</span>
+        <span class="string">'integration_rule'</span>,tet_rule(struct(<span class="string">'npts'</span>,4))));
+    simulate(description, mf, femmf, 3);
+</pre><pre class="codeoutput">T10: 
+Natural frequency 1 = 42.6894 [Hz]
+ f/f_analytical=100.0737% (flexural)
+Natural frequency 2 = 42.6957 [Hz]
+ f/f_analytical=100.0885% (flexural)
+Natural frequency 3 = 72.5197 [Hz]
+ f/f_analytical=101.7663% (torsional)
+Natural frequency 4 = 123.6338 [Hz]
+ f/f_analytical=98.907% (extensional)
+Natural frequency 5 = 148.8174 [Hz]
+ f/f_analytical=100.0655% (flexural)
+Natural frequency 6 = 148.8808 [Hz]
+ f/f_analytical=100.1081% (flexural)
+Natural frequency 7 = 218.4128 [Hz]
+ f/f_analytical=102.1145% (torsional)
+Natural frequency 8 = 286.401 [Hz]
+ f/f_analytical=99.5001% (flexural)
+Natural frequency 9 = 286.6502 [Hz]
+ f/f_analytical=99.5866% (flexural)
+====================================================
+Natural frequency 1 = 42.6894 [Hz]
+ f/f_analytical=100.0737% (flexural)
+Mode 3, frequency 72.5197
+</pre><img vspace="5" hspace="5" src="pub_test5_vibration_12.png" alt=""> <h2>Discussion<a name="26"></a></h2><p>To compare vibration results produced by different finite element models needs to be done  both numerically and visually.  Even  though the frequencies may seem close, the mode shapes may be different.</p><pre class="codeinput"><span class="keyword">end</span>
+</pre><p class="footer"><br><a href="http://www.mathworks.com/products/matlab/">Published with MATLAB&reg; R2012b</a><br></p></div><!--
+##### SOURCE BEGIN #####
+%% Free harmonic vibration of a deep beam.
+%
+
+%%
+% Link to the  <matlab:edit('pub_test5_vibration') m-file>.
+%
+
+%% Description
+%
+% This is a test recommended by the National Agency for Finite Element
+% Methods and Standards (U.K.): Test 5 from NAFEMS “Selected Benchmarks
+% for Forced Vibration,” R0016, March 1993.
+%
+
+%%
+% The beam is going to be modeled as a three-dimensional solid, with solid
+% elements. The beam geometry is given as
+
+%%
+% <<../docs/pub_test5_harmonic_1.jpg>>
+
+%%
+% The beam is assumed to be simply supported at the ends transversely. The
+% cross-section at $x=0$ is also pinned in the axial direction and rotation
+% about the axis of the beam is prevented. In the cross-section at $x=L$
+% both the axial rotation and the axial displacement are allowed.
+%% 
+% For the solid 3-D beam this seems impossible to achieve just the
+% mechanism of essential boundary conditions.   In this tutorial we will
+% apply multi point constraints (MPCs) to construct the pinned conditions.
+
+%% 
+% The transverse and axial-rotation constrains at $x=0$ is implemented by
+% attaching rollers in the direction of the axes perpendicular to the beam
+% in both directions on the entire cross-sectional area.
+%% 
+% The axial constraint at $x=0$ is implemented with a multi-point constraint of the form
+
+%% 
+% $\sum u_{ix}=0$
+%% Solution
+%
+
+%%
+% The code is placed inside a Matlab function in order to be able to define
+% the simulation in a nested function.
+function pub_test5_vibration
+    
+    %%
+    % Define the material properties.
+    pu=physical_units_struct;
+    % Parameters:
+    E = 200e3*pu.MEGA*pu.PA;
+    nu = 0.3;
+    rho= 8000*pu.KG/pu.M^3;
+    
+    %%
+    % Define the geometry and the geometrical tolerance.
+    a=2.00*pu.M; b=2.00*pu.M; L= 10*pu.M;
+    tolerance =a/1000;
+    
+    %%
+    % The reference solutions for the natural frequencies are:
+    f_fundamental =[ 42.6580   42.6580   71.2610  125.0000  ...
+        148.7200  148.7200  213.8900  287.8400  ...
+        287.8400];
+    f_fundamental_kind={'flexural','flexural','torsional','extensional',...
+        'flexural','flexural','torsional','flexural',...
+        'flexural'};
+    
+    %%
+    % Mesh parameters are defined here: number of element edges per dimension.
+    na= 2; nb=  2; nL =10;
+    
+    
+    %%
+    % These are the material properties for an isotropic homogeneous material.
+    prop=property_deformation_linear_iso(struct('E',E,'nu',nu,'rho',rho));
+    mater = material_deformation_linear_triax (struct('property',prop ));
+    
+    %%
+    % The simulation will be carried out for selected element types using this
+    % function.  It sets up the model, runs the free vibration analysis, and
+    % reports the results.
+    function  simulate(description, mf, femmf,  mode_to_show)
+        % Create the mesh and initialize the geometry
+        [fens,fes]= mf(L,a,b,nL,na,nb);
+        %      Shift the geometry so that the axis of the beam is along the
+        %      X-axis of the global coordinate system.
+        fens = transform_apply(fens,@(x,d)(x-[0,a/2,b/2]), []);
+        % Select the boundary faces for the application of the transverse load.
+        bfes= mesh_boundary(fes,[]);
+        topl =fe_select (fens,bfes,struct('box', [0,L,-Inf,Inf,b/2,b/2],...
+            'inflate',tolerance));
+        % Compose the model data
+        clear model_data
+        model_data.fens =fens;
+        % Set the finite element model machine
+        clear region
+        region.femm= femmf(fes);
+        model_data.region{1} =region;
+        
+        % Both cross-sections of the beam are
+        % supported by rollers. In the 3-D solid this will be accomplished by
+        % restraining translation in the direction of the support at all nodes
+        % in the cross-section.
+        clear essential
+        essential.component= [2,3];%restrain both cross-sections with rollers
+        essential.fixed_value= 0;
+        essential.node_list = [...
+            fenode_select(fens, struct('box', [0,0,-Inf,Inf,-Inf,Inf],...
+            'inflate',tolerance))];
+        model_data.boundary_conditions.essential{1} = essential;
+        
+        % Define the essential boundary conditions. At least one point needs to
+        % be restrained axially.
+        clear mpc
+        mpc.node_list = [fenode_select(fens, ...
+            struct('box', [0,0,-Inf,Inf,-Inf,Inf],'inflate',tolerance))];
+        mpc.dof_list=1+zeros(size(mpc.node_list));
+        mpc.umultipliers=ones(size(mpc.node_list));
+        mpc.penfact=1e16;
+        model_data.mpc{1} = mpc;
+         clear mpc
+        mpc.node_list = [fenode_select(fens, ...
+            struct('box', [L,L,-Inf,Inf,-Inf,Inf],'inflate',tolerance))];
+        mpc.dof_list=2+zeros(size(mpc.node_list));
+        mpc.umultipliers=ones(size(mpc.node_list));
+        mpc.penfact=1e16;
+        model_data.mpc{2} = mpc;
+        clear mpc
+        mpc.node_list = [fenode_select(fens, ...
+            struct('box', [L,L,-Inf,Inf,-Inf,Inf],'inflate',tolerance))];
+        mpc.dof_list=3+zeros(size(mpc.node_list));
+        mpc.umultipliers=ones(size(mpc.node_list));
+        mpc.penfact=1e16;
+        model_data.mpc{3} = mpc;
+        
+        model_data.neigvs= 20;
+        model_data.omega_shift=0;
+        model_data.use_factorization= true;
+        % Solve
+        model_data = deformation_linear_modal_analysis(model_data);
+        % These are the natural frequencies in hertz
+        f=model_data.Omega(1:9)'/2/pi;
+        disp ([description  ': '])
+        for j=1:length(f)
+            disp(['Natural frequency ' num2str(j) ' = ' ...
+                num2str(f(j)) ' [Hz]' ]);
+            disp([' f/f_analytical=' num2str(f(j)./f_fundamental(j)*100)...
+                '% (' f_fundamental_kind{j} ')']);
+        end
+        % Plot the resulting mode shape(s) requested.
+        model_data.postprocessing.u_scale= 2;
+        for j=1:length(mode_to_show)
+            disp('====================================================')
+            disp(['Natural frequency ' num2str(j) ' = ' ...
+                num2str(f(j)) ' [Hz]' ]);
+            disp([' f/f_analytical=' num2str(f(j)./f_fundamental(j)*100)...
+                '% (' f_fundamental_kind{j} ')']);
+            model_data.postprocessing.modelist= mode_to_show(j);
+            model_data=deformation_plot_modes(model_data);
+            snapnow;
+        end
+    end
+    
+    
+    %%
+    % The 20-node serendipity hexahedron which is  a very accurate element in
+    % general yields good results here.
+    description ='H20R';
+    mf =@H20_block;
+    %%
+    % Note that we are specifying integration rule for both the stiffness and
+    % the mass matrix.  Hence the mass matrix will be singular.
+    femmf =@(fes)femm_deformation_linear(struct('fes',fes, ...
+        'material',mater,...
+        'integration_rule',gauss_rule(struct('dim',3, 'order',2))));
+    simulate(description, mf, femmf, 1:8);
+    
+%% 
+% For this material (compressible)  and this type of structure  (massive)
+% the fully-integrated hexahedron would also work well.  We can therefore
+% use the same element with Gauss rule one order higher. The consistent
+% mass matrix will no longer be singular. Note that the accuracy of the
+% third mode (torsional) improved.
+femmf =@(fes)femm_deformation_linear(struct('fes',fes, ...
+        'material',mater,...
+        'integration_rule',gauss_rule(struct('dim',3, 'order',3))));
+    simulate(description, mf, femmf, 3);
+    
+%% 
+% Here we look specifically at the third, torsional, mode.
+ femmf =@(fes)femm_deformation_linear(struct('fes',fes, ...
+        'material',mater,...
+        'integration_rule',gauss_rule(struct('dim',3, 'order',3))));
+    simulate(description, mf, femmf, 3);   
+        
+%% 
+% Here we look specifically at the third, torsional, mode.
+ femmf =@(fes)femm_deformation_linear(struct('fes',fes, ...
+        'material',mater,...
+        'integration_rule',gauss_rule(struct('dim',3, 'order',2))));
+    simulate(description, mf, femmf, 3);   
+    
+%% 
+% It is also possible to  use different quadrature rules for stiffness and
+% mass calculations.  The tutorial pub_test5_vibration_sep explains how to
+% do this.
+    %%
+    % The quadratic tetrahedron, the workhorse of many linear stress analysis
+    % packages, produces good-quality results.
+    description ='T10';% tetrahedron
+    mf =@T10_block;
+    femmf =@(fes)femm_deformation_linear(struct('fes',fes,...
+        'material',mater,...
+        'integration_rule',tet_rule(struct('npts',4))));
+    simulate(description, mf, femmf, 3);
+    
+    %% Discussion
+    %
+    
+%% 
+% To compare vibration results produced by different finite element models
+% needs to be done  both numerically and visually.  Even  though the
+% frequencies may seem close, the mode shapes may be different.
+end
+##### SOURCE END #####
+--></body></html>

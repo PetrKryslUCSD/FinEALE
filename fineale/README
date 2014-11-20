@@ -1,0 +1,125 @@
+fineale: Finite Element Analysis Learning Environment
+    fineale 4.0 (C) 09/13/2014, Petr Krysl.
+    fineale 3.0 (C) 02/13/2014, Petr Krysl.
+    fineale 2.0 (C) 12/13/2013, Petr Krysl.
+    fineale 1.0 (C) 12/03/2012, Petr Krysl.
+
+
+fineale is open source; you can redistribute it and/or modify
+it under the terms of the GNU General Public License as published by 
+the Free Software Foundation; either version 2 of the License or 
+(at your option) any later version. Refer to fineale/documentation/COPYING.
+
+DESCRIPTION
+=================================================================
+The fineale toolkit is a companion of the book
+
+   Thermal and Stress Analysis with the  Finite Element Method
+
+published online (2014) with Lulu.com.
+
+The fineale toolkit and PDF versions of the book are
+distributed as open-source from
+
+    http://fineale.googlecode.com
+    =============================
+
+The toolkit includes finite element tools for linear steady-state and 
+transient thermal analysis and linear static, transient or modal stress 
+analysis. 
+
+The finite elements include linear and quadratic triangles and
+tetrahedra, linear to cubic quadrangles and hexahedra, and of 
+course linear to cubic curve elements. 
+
+The author appreciates feedback and interaction/collaboration. 
+Please don't hesitate to e-mail pkrysl@ucsd.edu.
+
+Enjoy!
+
+CONTRIBUTORS
+=================================================================
+Petr Krysl
+
+These are the contributors to the toolkit FAESOR  which was the source
+for the current toolkit (alphabetically):
+
+Jemuel Balangco
+Giovanni Castellazzi
+Richard Crozier
+Carolina Jauregui
+Henry Kagey
+Christopher Lifgren
+Tamara Martinez
+Poorya Mirkhosravi
+Luis Monterrrubio-Salazar     
+Steve Oberrecht
+
+USAGE
+=================================================================
+To use, type "fineale_init" at the Matlab prompt (your working 
+directory must be the folder where fineale_init() resides).
+It is also possible to start by running the batch file
+start.bat (assuming Windows XP or Windows 7): double-click it.
+
+To get started with fineale, explore the "examples" directory. Each 
+simulation has its own script/function file. There is no graphical user 
+interface that can be used to run the simulations: They are executed 
+as regular Matlab scripts/functions.
+
+The toolkit comes with a suite of tutorials (over 30 as of December 2013). 
+Use the command "doc fineale"  and follow the "tutorials" link. The 
+tutorials themselves are published Matlab functions or scripts, 
+and the published versions are included in the distribution of the toolkit.
+
+The verification suite of the toolkit consists of the directories
+listed in the function run_verification(). 
+
+Help is available, just type help fineale (or, doc fineale).
+
+THIRD-PARTY SOURCE
+=================================================================
+The following Matlab resources are being distributed with
+fineale:
+- The code for drawing of arrows (as part of the draw_arrow method)
+    Copyright (c) 1995-2002, Dr. Erik A. Johnson
+- The Gaussian quadrature utility by Peter J. Acklam
+- Progress bar widget, Leutenegger Marcel (C) September 2004,
+     improved by Petr Krysl.
+- MYAA Render figure with anti-aliasing.  Version 1, 2008-08-05
+     Author: Anders Brun.
+- timetic -timer object,  David Gleich, 2006
+- exportfig: by Oliver Woodford (2009, Updated 10 Apr 2012)
+
+COMPATIBILITY NOTES
+=================================================================
+The toolkit itself is pure Matlab, developed in its current form 
+with R2011b, R2012b, and R2013b. 
+
+The executable for the automatic generator of triangle
+meshes is at this point distributed only for 
+–Windows (computer==PCWIN: XP, Vista), 
+–Intel-based Mac (computer==MACI), and 
+–Linux (computer==GLNX86); 
+however, the generator may be built from the sources, since it too 
+is open-source (http://hogwarts.ucsd.edu/~pkrysl/software.html).
+
+
+Tested in 2014 on systems:
+
+-- Windows 7  64-bit
+Fully functional with R2013b.
+
+Tested in 2013 on systems:
+
+-- Windows 7  64-bit
+Fully functional with R2012b, R2013b.
+
+Tested in 2012 on systems:
+
+-- Windows 7  64-bit
+Fully functional with R2011b, R2012b.
+
+BUG REPORTS AND FEEDBACK
+=================================================================
+Please report any problems and/or bugs to: pkrysl@ucsd.edu

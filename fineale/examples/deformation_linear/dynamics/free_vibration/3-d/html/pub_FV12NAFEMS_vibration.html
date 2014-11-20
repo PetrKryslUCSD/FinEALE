@@ -1,0 +1,318 @@
+
+<!DOCTYPE html
+  PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html><head>
+      <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+   <!--
+This HTML was auto-generated from MATLAB code.
+To make changes, update the MATLAB code and republish this document.
+      --><title>Vibration analysis of free thin square plate</title><meta name="generator" content="MATLAB 8.0"><link rel="schema.DC" href="http://purl.org/dc/elements/1.1/"><meta name="DC.date" content="2012-12-20"><meta name="DC.source" content="pub_FV12NAFEMS_vibration.m"><style type="text/css">
+html,body,div,span,applet,object,iframe,h1,h2,h3,h4,h5,h6,p,blockquote,pre,a,abbr,acronym,address,big,cite,code,del,dfn,em,font,img,ins,kbd,q,s,samp,small,strike,strong,sub,sup,tt,var,b,u,i,center,dl,dt,dd,ol,ul,li,fieldset,form,label,legend,table,caption,tbody,tfoot,thead,tr,th,td{margin:0;padding:0;border:0;outline:0;font-size:100%;vertical-align:baseline;background:transparent}body{line-height:1}ol,ul{list-style:none}blockquote,q{quotes:none}blockquote:before,blockquote:after,q:before,q:after{content:'';content:none}:focus{outine:0}ins{text-decoration:none}del{text-decoration:line-through}table{border-collapse:collapse;border-spacing:0}
+
+html { min-height:100%; margin-bottom:1px; }
+html body { height:100%; margin:0px; font-family:Arial, Helvetica, sans-serif; font-size:10px; color:#000; line-height:140%; background:#fff none; overflow-y:scroll; }
+html body td { vertical-align:top; text-align:left; }
+
+h1 { padding:0px; margin:0px 0px 25px; font-family:Arial, Helvetica, sans-serif; font-size:1.5em; color:#d55000; line-height:100%; font-weight:normal; }
+h2 { padding:0px; margin:0px 0px 8px; font-family:Arial, Helvetica, sans-serif; font-size:1.2em; color:#000; font-weight:bold; line-height:140%; border-bottom:1px solid #d6d4d4; display:block; }
+h3 { padding:0px; margin:0px 0px 5px; font-family:Arial, Helvetica, sans-serif; font-size:1.1em; color:#000; font-weight:bold; line-height:140%; }
+
+a { color:#005fce; text-decoration:none; }
+a:hover { color:#005fce; text-decoration:underline; }
+a:visited { color:#004aa0; text-decoration:none; }
+
+p { padding:0px; margin:0px 0px 20px; }
+img { padding:0px; margin:0px 0px 20px; border:none; }
+p img, pre img, tt img, li img { margin-bottom:0px; } 
+
+ul { padding:0px; margin:0px 0px 20px 23px; list-style:square; }
+ul li { padding:0px; margin:0px 0px 7px 0px; }
+ul li ul { padding:5px 0px 0px; margin:0px 0px 7px 23px; }
+ul li ol li { list-style:decimal; }
+ol { padding:0px; margin:0px 0px 20px 0px; list-style:decimal; }
+ol li { padding:0px; margin:0px 0px 7px 23px; list-style-type:decimal; }
+ol li ol { padding:5px 0px 0px; margin:0px 0px 7px 0px; }
+ol li ol li { list-style-type:lower-alpha; }
+ol li ul { padding-top:7px; }
+ol li ul li { list-style:square; }
+
+.content { font-size:1.2em; line-height:140%; padding: 20px; }
+
+pre, tt, code { font-size:12px; }
+pre { margin:0px 0px 20px; }
+pre.error { color:red; }
+pre.codeinput { padding:10px; border:1px solid #d3d3d3; background:#f7f7f7; }
+pre.codeoutput { padding:10px 11px; margin:0px 0px 20px; color:#4c4c4c; }
+
+@media print { pre.codeinput, pre.codeoutput { word-wrap:break-word; width:100%; } }
+
+span.keyword { color:#0000FF }
+span.comment { color:#228B22 }
+span.string { color:#A020F0 }
+span.untermstring { color:#B20000 }
+span.syscmd { color:#B28C00 }
+
+.footer { width:auto; padding:10px 0px; margin:25px 0px 0px; border-top:1px dotted #878787; font-size:0.8em; line-height:140%; font-style:italic; color:#878787; text-align:left; float:none; }
+.footer p { margin:0px; }
+.footer a { color:#878787; }
+.footer a:hover { color:#878787; text-decoration:underline; }
+.footer a:visited { color:#878787; }
+
+table th { padding:7px 5px; text-align:left; vertical-align:middle; border: 1px solid #d6d4d4; font-weight:bold; }
+table td { padding:7px 5px; text-align:left; vertical-align:top; border:1px solid #d6d4d4; }
+
+
+
+
+
+  </style></head><body><div class="content"><h1>Vibration analysis of free thin square plate</h1><!--introduction--><!--/introduction--><h2>Contents</h2><div><ul><li><a href="#2">Description</a></li><li><a href="#6">Solution</a></li><li><a href="#21">Discussion</a></li></ul></div><p>Link to the  <a href="matlab:edit('pub_FV12NAFEMS_vibration')">m-file</a>.</p><h2>Description<a name="2"></a></h2><p>Free-vibration problem is solved for a homogeneous free-floating (unsupported) square plate. This is the NAFEMS Benchmark, Test No. FV12.</p><p>The plate is discretized with solid elements. Because no displacements are prevented, the structure has six rigid body modes (six zero vibration frequencies).</p><p>
+<table border=0><tr><td>
+<img src="../docs/pub_FV12NAFEMS_vibration.jpg">
+</td></tr>
+<tr><td>Figure 1. Definition of the geometry of the free square plate</td></tr>
+</table>
+</p><p>The nonzero benchmark frequencies are (in hertz):  1.622, 2.360, 2.922, 4.190, 4.190,  7.356, 7.356, 7.668.</p><h2>Solution<a name="6"></a></h2><pre class="codeinput"><span class="keyword">function</span> pub_FV52NAFEMS_vibration
+</pre><p>Define the material properties.</p><pre class="codeinput">    pu=physical_units_struct;
+    <span class="comment">% Parameters:</span>
+    E = 200e3*pu.MEGA*pu.PA;
+    nu = 0.3;
+    rho= 8000*pu.KG/pu.M^3;
+</pre><pre class="codeinput">    L =10*pu.M;<span class="comment">% span of the plate</span>
+    t =0.05*pu.M;<span class="comment">% thickness of the plate</span>
+</pre><p>The chosen mesh parameters. This is the  coarse mesh as specified in the benchmark.</p><pre class="codeinput">    nL= 8;<span class="comment">% number of elements span wise</span>
+    nt = 1;<span class="comment">% number of elements through the thickness</span>
+</pre><p>The mesh is generated</p><pre class="codeinput">    [fens,fes] = H8_block(L,L,t,nL,nL,nt);;
+</pre><p>The chosen elements are the quadratic Lagrange hexahedra.</p><pre class="codeinput">    [fens,fes] = H8_to_H27(fens,fes);
+</pre><p>We are ready to bundle up the model data so they can be passed to the solver.</p><pre class="codeinput">    clear <span class="string">model_data</span>
+    model_data.fens =fens;<span class="comment">% the finite element node set</span>
+</pre><p>Note that we are specifying the material parameters and the material orientation matrix. The integration rule is going to be used for both the stiffness matrix and the mass matrix.</p><pre class="codeinput">    clear <span class="string">region</span>
+    region.rho =rho;
+    region.E=E;
+    region.nu=nu;
+    region.fes= fes;<span class="comment">% set of finite elements for the interior of the domain</span>
+    region.integration_rule = gauss_rule (struct(<span class="string">'dim'</span>, 3, <span class="string">'order'</span>, 3));
+    model_data.region{1} =region;
+</pre><p>How many natural frequencies should be calculated?</p><pre class="codeinput">    model_data.neigvs= 14;
+</pre><p>Six rigid body modes are to be expected with the present free-floating structure.  We have to use mass shifting. 1 Hz appears to be a good frequency between the first nonzero natural frequency  and the rigid body mode frequency of zero.</p><pre class="codeinput">    model_data.omega_shift= 1*2*pi;
+</pre><p>The modal analysis solver is now ready to be invoked.</p><pre class="codeinput">    model_data = deformation_linear_modal_analysis(model_data);
+</pre><p>Due to the mass-shifting,  the frequencies may come out  with  nonzero (but hopefully small) imaginary parts.  Remove the imaginary parts as they have no meaning.</p><pre class="codeinput">    format <span class="string">short</span> <span class="string">e</span>
+    model_data.Omega'
+    model_data.Omega  = real(model_data.Omega);
+    model_data.W  = real(model_data.W);
+</pre><pre class="codeoutput">
+ans =
+
+  Columns 1 through 2
+
+            0 - 2.8301e-03i            0 - 2.2551e-03i
+
+  Columns 3 through 4
+
+            0 - 6.2207e-04i   2.3968e-03              
+
+  Columns 5 through 6
+
+   2.5789e-03                 2.6146e-03              
+
+  Columns 7 through 8
+
+   1.0213e+01                 1.4934e+01              
+
+  Columns 9 through 10
+
+   1.8573e+01                 2.6513e+01              
+
+  Columns 11 through 12
+
+   2.6513e+01                 4.7826e+01              
+
+  Columns 13 through 14
+
+   4.7826e+01                 4.8630e+01              
+
+</pre><p>Furthermore, let us get rid of the rigid body modes (first six).</p><pre class="codeinput">model_data.Omega  = model_data.Omega(7:end);
+    model_data.W  = model_data.W(:,7:end);
+</pre><p>The modal-plot algorithm can be called to produce the plot of the first eight frequency modes.</p><pre class="codeinput">    model_data.postprocessing.u_scale= 2;
+    <span class="keyword">for</span> mode=1:8
+        model_data.postprocessing.modelist=mode;
+        model_data=deformation_plot_modes(model_data);
+        snapnow;<span class="comment">% produce an image for the published output now</span>
+    <span class="keyword">end</span>
+</pre><pre class="codeoutput">Mode 1, frequency 1.6254
+</pre><img vspace="5" hspace="5" src="pub_FV12NAFEMS_vibration_01.png" alt=""> <pre class="codeoutput">Mode 2, frequency 2.3768
+</pre><img vspace="5" hspace="5" src="pub_FV12NAFEMS_vibration_02.png" alt=""> <pre class="codeoutput">Mode 3, frequency 2.956
+</pre><img vspace="5" hspace="5" src="pub_FV12NAFEMS_vibration_03.png" alt=""> <pre class="codeoutput">Mode 4, frequency 4.2197
+</pre><img vspace="5" hspace="5" src="pub_FV12NAFEMS_vibration_04.png" alt=""> <pre class="codeoutput">Mode 5, frequency 4.2197
+</pre><img vspace="5" hspace="5" src="pub_FV12NAFEMS_vibration_05.png" alt=""> <pre class="codeoutput">Mode 6, frequency 7.6117
+</pre><img vspace="5" hspace="5" src="pub_FV12NAFEMS_vibration_06.png" alt=""> <pre class="codeoutput">Mode 7, frequency 7.6117
+</pre><img vspace="5" hspace="5" src="pub_FV12NAFEMS_vibration_07.png" alt=""> <pre class="codeoutput">Mode 8, frequency 7.7397
+</pre><img vspace="5" hspace="5" src="pub_FV12NAFEMS_vibration_08.png" alt=""> <h2>Discussion<a name="21"></a></h2><p>The natural frequencies are extracted from the updated <tt>model_data</tt> data structure.</p><pre class="codeinput">    f=model_data.Omega'/2/pi;
+    disp([<span class="string">'Natural frequencies '</span>  <span class="string">': '</span> num2str(f,4) <span class="string">' [Hz]'</span> ]);
+</pre><pre class="codeoutput">Natural frequencies : 1.625      2.377      2.956       4.22       4.22      7.612      7.612       7.74 [Hz]
+</pre><p>These computed frequencies should be compared with the benchmark values of in [Hz].</p><pre class="codeinput">    fan=[1.622, 2.360, 2.922, 4.190, 4.190,  7.356, 7.356, 7.668];
+</pre><p>In percent we have the comparison</p><pre class="codeinput">    format <span class="string">short</span>
+    f(1:length(fan))./fan*100
+</pre><pre class="codeoutput">
+ans =
+
+  Columns 1 through 7
+
+  100.2082  100.7127  101.1648  100.7079  100.7079  103.4763  103.4763
+
+  Column 8
+
+  100.9355
+
+</pre><p>The maximum error is around 3%. With a doubling  of the number of element edges per dimension  the error is brought under 1% in all eight natural frequencies. (Set <tt>nL=16</tt>, <tt>nt=2</tt> above.)</p><pre class="codeinput"><span class="keyword">end</span>
+</pre><p class="footer"><br><a href="http://www.mathworks.com/products/matlab/">Published with MATLAB&reg; R2012b</a><br></p></div><!--
+##### SOURCE BEGIN #####
+%% Vibration analysis of free thin square plate
+%
+
+%%
+% Link to the  <matlab:edit('pub_FV12NAFEMS_vibration') m-file>.
+%
+
+%% Description
+%
+% Free-vibration problem is solved for a homogeneous free-floating
+% (unsupported) square plate.
+% This is the NAFEMS Benchmark, Test No. FV12.
+
+
+%%
+% The plate is discretized with solid elements. 
+% Because no displacements are prevented, the structure
+% has six rigid body modes (six zero vibration frequencies).
+%%
+%
+% <html>
+% <table border=0><tr><td>
+% <img src="../docs/pub_FV12NAFEMS_vibration.jpg">
+% </td></tr>
+% <tr><td>Figure 1. Definition of the geometry of the free square plate</td></tr>
+% </table>
+% </html>
+
+%%
+% The nonzero benchmark frequencies are (in hertz): 
+%  1.622, 2.360, 2.922, 4.190, 4.190,  7.356, 7.356, 7.668.
+
+
+%% Solution
+%
+function pub_FV52NAFEMS_vibration
+    
+    %%
+    % Define the material properties.
+    pu=physical_units_struct;
+    % Parameters:
+    E = 200e3*pu.MEGA*pu.PA;
+    nu = 0.3;
+    rho= 8000*pu.KG/pu.M^3;
+    
+    %%
+    %
+    L =10*pu.M;% span of the plate
+    t =0.05*pu.M;% thickness of the plate
+    
+    %%
+    % The chosen mesh parameters. This is the  coarse mesh as specified in the benchmark.
+    nL= 8;% number of elements span wise
+    nt = 1;% number of elements through the thickness
+    
+    
+    %%
+    % The mesh is generated
+    [fens,fes] = H8_block(L,L,t,nL,nL,nt);;
+    
+    %%
+    % The chosen elements are the quadratic Lagrange hexahedra.
+    [fens,fes] = H8_to_H27(fens,fes);
+    
+    
+    %%
+    % We are ready to bundle up the model data so they can be passed to the solver.
+    clear model_data
+    model_data.fens =fens;% the finite element node set
+    
+    %%
+    % Note that we are specifying the material parameters and the material
+    % orientation matrix. The integration rule is going to be used for both the
+    % stiffness matrix and the mass matrix.
+    clear region
+    region.rho =rho;
+    region.E=E;
+    region.nu=nu;
+    region.fes= fes;% set of finite elements for the interior of the domain
+    region.integration_rule = gauss_rule (struct('dim', 3, 'order', 3));
+    model_data.region{1} =region;
+    
+    %%
+    % How many natural frequencies should be calculated?
+    model_data.neigvs= 14;
+    %%
+    % Six rigid body modes are to be expected with the present
+    % free-floating structure.  We have to use mass shifting. 1 Hz appears
+    % to be a good
+    % frequency between the first nonzero natural frequency  and the rigid body
+    % mode frequency of zero.
+    model_data.omega_shift= 1*2*pi;
+    
+    %%
+    % The modal analysis solver is now ready to be invoked.
+    
+    model_data = deformation_linear_modal_analysis(model_data);
+    
+    
+    %%
+    % Due to the mass-shifting,  the frequencies may come out  with  nonzero
+    % (but hopefully small) imaginary parts.  Remove the imaginary parts as
+    % they have no meaning.
+    format short e
+    model_data.Omega'
+    model_data.Omega  = real(model_data.Omega);
+    model_data.W  = real(model_data.W);
+    
+ 
+%% 
+% Furthermore, let us get rid of the rigid body modes (first six).
+model_data.Omega  = model_data.Omega(7:end);
+    model_data.W  = model_data.W(:,7:end);
+    
+    %%
+    % The modal-plot algorithm can be called to produce the plot of the
+    % first eight frequency modes.
+    model_data.postprocessing.u_scale= 2;
+    for mode=1:8
+        model_data.postprocessing.modelist=mode;
+        model_data=deformation_plot_modes(model_data);
+        snapnow;% produce an image for the published output now
+    end
+    
+    
+    %% Discussion
+    %
+    %%
+    % The natural frequencies are extracted from the updated |model_data| data
+    % structure. 
+    f=model_data.Omega'/2/pi;
+    disp(['Natural frequencies '  ': ' num2str(f,4) ' [Hz]' ]);
+    
+    %%
+    % These computed frequencies should be compared with the benchmark values
+    % of in [Hz].
+    fan=[1.622, 2.360, 2.922, 4.190, 4.190,  7.356, 7.356, 7.668];
+%% 
+% 
+    % In percent we have the comparison
+    format short
+    f(1:length(fan))./fan*100
+    
+%% 
+% The maximum error is around 3%. With a doubling  of the number of
+% element edges per dimension  the error is brought under 1% in all eight natural frequencies.
+% (Set |nL=16|, |nt=2| above.)
+end
+##### SOURCE END #####
+--></body></html>

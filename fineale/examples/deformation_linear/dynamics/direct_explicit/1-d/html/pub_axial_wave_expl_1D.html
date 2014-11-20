@@ -1,0 +1,308 @@
+
+<!DOCTYPE html
+  PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html><head>
+      <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+   <!--
+This HTML was auto-generated from MATLAB code.
+To make changes, update the MATLAB code and republish this document.
+      --><title>Axial wave in a bar; 1-D model</title><meta name="generator" content="MATLAB 8.0"><link rel="schema.DC" href="http://purl.org/dc/elements/1.1/"><meta name="DC.date" content="2012-12-22"><meta name="DC.source" content="pub_axial_wave_expl_1D.m"><style type="text/css">
+html,body,div,span,applet,object,iframe,h1,h2,h3,h4,h5,h6,p,blockquote,pre,a,abbr,acronym,address,big,cite,code,del,dfn,em,font,img,ins,kbd,q,s,samp,small,strike,strong,sub,sup,tt,var,b,u,i,center,dl,dt,dd,ol,ul,li,fieldset,form,label,legend,table,caption,tbody,tfoot,thead,tr,th,td{margin:0;padding:0;border:0;outline:0;font-size:100%;vertical-align:baseline;background:transparent}body{line-height:1}ol,ul{list-style:none}blockquote,q{quotes:none}blockquote:before,blockquote:after,q:before,q:after{content:'';content:none}:focus{outine:0}ins{text-decoration:none}del{text-decoration:line-through}table{border-collapse:collapse;border-spacing:0}
+
+html { min-height:100%; margin-bottom:1px; }
+html body { height:100%; margin:0px; font-family:Arial, Helvetica, sans-serif; font-size:10px; color:#000; line-height:140%; background:#fff none; overflow-y:scroll; }
+html body td { vertical-align:top; text-align:left; }
+
+h1 { padding:0px; margin:0px 0px 25px; font-family:Arial, Helvetica, sans-serif; font-size:1.5em; color:#d55000; line-height:100%; font-weight:normal; }
+h2 { padding:0px; margin:0px 0px 8px; font-family:Arial, Helvetica, sans-serif; font-size:1.2em; color:#000; font-weight:bold; line-height:140%; border-bottom:1px solid #d6d4d4; display:block; }
+h3 { padding:0px; margin:0px 0px 5px; font-family:Arial, Helvetica, sans-serif; font-size:1.1em; color:#000; font-weight:bold; line-height:140%; }
+
+a { color:#005fce; text-decoration:none; }
+a:hover { color:#005fce; text-decoration:underline; }
+a:visited { color:#004aa0; text-decoration:none; }
+
+p { padding:0px; margin:0px 0px 20px; }
+img { padding:0px; margin:0px 0px 20px; border:none; }
+p img, pre img, tt img, li img { margin-bottom:0px; } 
+
+ul { padding:0px; margin:0px 0px 20px 23px; list-style:square; }
+ul li { padding:0px; margin:0px 0px 7px 0px; }
+ul li ul { padding:5px 0px 0px; margin:0px 0px 7px 23px; }
+ul li ol li { list-style:decimal; }
+ol { padding:0px; margin:0px 0px 20px 0px; list-style:decimal; }
+ol li { padding:0px; margin:0px 0px 7px 23px; list-style-type:decimal; }
+ol li ol { padding:5px 0px 0px; margin:0px 0px 7px 0px; }
+ol li ol li { list-style-type:lower-alpha; }
+ol li ul { padding-top:7px; }
+ol li ul li { list-style:square; }
+
+.content { font-size:1.2em; line-height:140%; padding: 20px; }
+
+pre, tt, code { font-size:12px; }
+pre { margin:0px 0px 20px; }
+pre.error { color:red; }
+pre.codeinput { padding:10px; border:1px solid #d3d3d3; background:#f7f7f7; }
+pre.codeoutput { padding:10px 11px; margin:0px 0px 20px; color:#4c4c4c; }
+
+@media print { pre.codeinput, pre.codeoutput { word-wrap:break-word; width:100%; } }
+
+span.keyword { color:#0000FF }
+span.comment { color:#228B22 }
+span.string { color:#A020F0 }
+span.untermstring { color:#B20000 }
+span.syscmd { color:#B28C00 }
+
+.footer { width:auto; padding:10px 0px; margin:25px 0px 0px; border-top:1px dotted #878787; font-size:0.8em; line-height:140%; font-style:italic; color:#878787; text-align:left; float:none; }
+.footer p { margin:0px; }
+.footer a { color:#878787; }
+.footer a:hover { color:#878787; text-decoration:underline; }
+.footer a:visited { color:#878787; }
+
+table th { padding:7px 5px; text-align:left; vertical-align:middle; border: 1px solid #d6d4d4; font-weight:bold; }
+table td { padding:7px 5px; text-align:left; vertical-align:top; border:1px solid #d6d4d4; }
+
+
+
+
+
+  </style></head><body><div class="content"><h1>Axial wave in a bar; 1-D model</h1><!--introduction--><!--/introduction--><h2>Contents</h2><div><ul><li><a href="#2">Description</a></li><li><a href="#4">Solution</a></li><li><a href="#23">Discussion</a></li></ul></div><p>Link to the  <a href="matlab:edit('pub_axial_wave_expl_1D')">m-file</a>.</p><h2>Description<a name="2"></a></h2><p>A steel bar of uniform cross-section is clamped at  <img src="pub_axial_wave_expl_1D_eq76225.png" alt="$x=L$">.    It is given uniform initial velocity in the direction of increasing <img src="pub_axial_wave_expl_1D_eq43551.png" alt="$x$">.  The motion is to be integrated with the centered difference algorithm.</p><p>The analytical solution will present the following features: the traversal of the length of the bar  by the longitudinal wave will be determined by the mechanical properties of the material and the length of the bar.    The velocity of the material will change from positive to zero to negative and back again  due to the reflections of the wave at the ends of the bar.</p><h2>Solution<a name="4"></a></h2><pre class="codeinput"><span class="keyword">function</span> pub_axial_wave_expl_1D
+</pre><pre class="codeinput">    u=physical_units_struct;
+</pre><p>The material parameters correspond to structural steel.</p><pre class="codeinput">    E=205000*u.MEGA*u.PA;
+    nu=0.3;
+    rho  = 7850*u.KG/u.M^3;
+</pre><p>The bar is  2 m long, of a rectangular cross-section.</p><pre class="codeinput">    L = 2*u.M;
+    W = 4*u.MM;
+    H = 8*u.MM;
+    tolerance  =W/1000;
+</pre><p>The bar is initially moving as a whole towards the clamped end with a uniform velocity.</p><pre class="codeinput">    vmag = 0.1*u.M/u.SEC;
+</pre><p>The mesh is created of 361 (arbitrary number) L2 elements.  Note that the cross-sectional area is set here.</p><pre class="codeinput">    [fens,fes] = L2_block(L,361,struct(<span class="string">'other_dimension'</span>,W*H));
+</pre><p>Compose the model data.</p><pre class="codeinput">    clear <span class="string">model_data</span>
+    model_data.fens =fens;
+</pre><p>The two-point Gauss quadrature is an overkill, but it cannot hurt. Both stiffness and mass will be calculated correctly.   Note that lumped-mass matrix will be generated as the the solver is going to be the centered-difference  time integrator.</p><pre class="codeinput">    clear <span class="string">region</span>
+    region.property = <span class="string">'isotropic'</span>;
+    region.E =E;
+    region.nu=nu;
+    region.rho=rho;
+    region.fes= fes;
+    region.integration_rule = gauss_rule (struct(<span class="string">'dim'</span>, 1, <span class="string">'order'</span>, 2));
+    model_data.region{1} =region;
+</pre><p>The node at <img src="pub_axial_wave_expl_1D_eq76225.png" alt="$x=L$">  is restrained.</p><pre class="codeinput">    clear <span class="string">essential</span>
+    essential.component= [];
+    essential.fixed_value= 0;
+    essential.node_list = fenode_select (fens,<span class="keyword">...</span>
+        struct(<span class="string">'box'</span>,[L,L],<span class="string">'inflate'</span>,tolerance));
+    model_data.boundary_conditions.essential{1} = essential;
+</pre><p>The bar starts at zero displacement and uniform velocity in the direction of increasing <img src="pub_axial_wave_expl_1D_eq43551.png" alt="$x$">.</p><pre class="codeinput">    clear <span class="string">initial_condition</span>
+    initial_condition.u_fixed_value= @(x)0*x;
+    initial_condition.v_fixed_value= @(x)0*x+vmag;
+    model_data.initial_condition = initial_condition;
+</pre><p>The longitudinal elastic wave in the bar will have the speed of</p><p><img src="pub_axial_wave_expl_1D_eq95110.png" alt="$c=\sqrt{\frac{E}{\rho}}$"></p><p>so for our particular material, in meters per second</p><pre class="codeinput">    c=sqrt(E/rho);
+    c/(u.M/u.SEC)
+</pre><pre class="codeoutput">
+ans =
+
+   5.1102e+03
+
+</pre><p>Therefore, it will take the wave <img src="pub_axial_wave_expl_1D_eq04930.png" alt="$L/c$"> to traverse the length of the bar.   For our material and length of the bar (in milliseconds):</p><pre class="codeinput">    dtL=L/c;
+    dtL/(u.SEC/1000)
+</pre><pre class="codeoutput">
+ans =
+
+    0.3914
+
+</pre><p>so that the first figure should show  the wave of zero velocity produced by the clamped end at the middle of the bar and the second figure will show the wave to have reached the free end of the bar and so on.</p><p>The  motion will be tracked for the length of time it will take the wave to travel from the clamped and to the free end, back to the clamped end and back to the free end again.  So three times the traversal time.</p><pre class="codeinput">    model_data.tend =  3*dtL;
+</pre><p>We will take the output interval to be one half of the traversal time</p><pre class="codeinput">    dtOutput=dtL/2;
+</pre><p>The output() function animates the values of the displacement or velocity fields by plotting a marker on the vertical axis vs. the distance along the bar on the horizontal axis at each node.</p><pre class="codeinput">    nout=0;
+    <span class="keyword">function</span> output(t, model_data)
+        <span class="keyword">if</span> (nout*dtOutput&lt;=t)
+            set_graphics_defaults
+            <span class="comment">% The following block will plot  the displacement along the bar</span>
+            <span class="comment">% as a function of the distance along the bar. Uncomment the</span>
+            <span class="comment">% following three lines if you wish to see the displacement.</span>
+            <span class="comment">% plot(model_data.geom.values,model_data.u.values);</span>
+            <span class="comment">% set(gca,'xlim',[0,L]);</span>
+            <span class="comment">% set(gca,'ylim',[-5e-4,5e-4]/10);</span>
+
+            <span class="comment">% The following block will block the velocity along the bar as</span>
+            <span class="comment">% a function of the distance along the bar. Uncomment the</span>
+            <span class="comment">% following three lines if you wish to see the velocity.</span>
+            plot(model_data.geom.values,model_data.v.values,<span class="string">'rx'</span>);
+            labels(<span class="string">'Distance along the bar'</span>,<span class="string">' Velocity'</span>);
+            set(gca,<span class="string">'xlim'</span>,[0,L]);
+            set(gca,<span class="string">'ylim'</span>,[-1,1]*vmag*1.5);
+            title([ <span class="string">'t/dtL ='</span> num2str((t/dtL),2) <span class="string">' [ND]'</span>]);
+            snapnow;<span class="comment">% update the display</span>
+            nout= nout+1;
+        <span class="keyword">end</span>
+    <span class="keyword">end</span>
+    model_data.observer  =@output;;
+    corner=fenode_select (fens,struct(<span class="string">'box'</span>,[0 0],<span class="string">'inflate'</span>,tolerance));
+    corneru  = [];
+</pre><p>Solve using the centered-difference integrator of the equations of motion. Note that the progress of the simulation is being reported in graphical form using the output()  observer function.</p><pre class="codeinput">    model_data =deformation_linear_direct_explicit_CD(model_data);
+</pre><img vspace="5" hspace="5" src="pub_axial_wave_expl_1D_01.png" alt=""> <img vspace="5" hspace="5" src="pub_axial_wave_expl_1D_02.png" alt=""> <img vspace="5" hspace="5" src="pub_axial_wave_expl_1D_03.png" alt=""> <img vspace="5" hspace="5" src="pub_axial_wave_expl_1D_04.png" alt=""> <img vspace="5" hspace="5" src="pub_axial_wave_expl_1D_05.png" alt=""> <img vspace="5" hspace="5" src="pub_axial_wave_expl_1D_06.png" alt=""> <img vspace="5" hspace="5" src="pub_axial_wave_expl_1D_07.png" alt=""> <h2>Discussion<a name="23"></a></h2><p>The wave is tracked fairly well,  but there is quite a bit of noise associated with the passage of the front of the wave.  This is a general feature of the centered-difference algorithm.</p><pre class="codeinput"><span class="keyword">end</span>
+</pre><p class="footer"><br><a href="http://www.mathworks.com/products/matlab/">Published with MATLAB&reg; R2012b</a><br></p></div><!--
+##### SOURCE BEGIN #####
+%% Axial wave in a bar; 1-D model
+%
+
+%%
+% Link to the  <matlab:edit('pub_axial_wave_expl_1D') m-file>.
+%
+
+%% Description
+% A steel bar of uniform cross-section is clamped at  $x=L$.    It is given
+% uniform initial velocity in the direction of increasing $x$.  The motion
+% is to be integrated with the centered difference algorithm.
+
+
+%%
+% The analytical solution will present the following features: the
+% traversal of the length of the bar  by the longitudinal wave will be
+% determined by the mechanical properties of the material and the length of
+% the bar.    The velocity of the material will change from positive to
+% zero to negative and back again  due to the reflections of the wave at the
+% ends of the bar.
+
+%% Solution
+%
+function pub_axial_wave_expl_1D
+    u=physical_units_struct;
+    %%
+    % The material parameters correspond to structural steel.
+    E=205000*u.MEGA*u.PA;
+    nu=0.3;
+    rho  = 7850*u.KG/u.M^3;
+    
+    %%
+    % The bar is  2 m long, of a rectangular cross-section.
+    L = 2*u.M;
+    W = 4*u.MM;
+    H = 8*u.MM;
+    tolerance  =W/1000;
+    
+    %%
+    % The bar is initially moving as a whole towards the clamped end with a
+    % uniform velocity.
+    vmag = 0.1*u.M/u.SEC;
+    
+    
+    
+    %%
+    % The mesh is created of 361 (arbitrary number) L2 elements.  Note that
+    % the cross-sectional area is set here.
+    [fens,fes] = L2_block(L,361,struct('other_dimension',W*H));
+    
+    
+    %%
+    % Compose the model data.
+    clear model_data
+    model_data.fens =fens;
+    
+    %%
+    % The two-point Gauss quadrature is an overkill, but it cannot hurt.
+    % Both stiffness and mass will be calculated correctly.   Note that
+    % lumped-mass matrix will be generated as the the solver is going to be
+    % the centered-difference  time integrator.
+    clear region
+    region.property = 'isotropic';
+    region.E =E;
+    region.nu=nu;
+    region.rho=rho;
+    region.fes= fes;
+    region.integration_rule = gauss_rule (struct('dim', 1, 'order', 2));
+    model_data.region{1} =region;
+    
+    %%
+    % The node at $x=L$  is restrained.
+    clear essential
+    essential.component= [];
+    essential.fixed_value= 0;
+    essential.node_list = fenode_select (fens,...
+        struct('box',[L,L],'inflate',tolerance));
+    model_data.boundary_conditions.essential{1} = essential;
+    
+    %%
+    % The bar starts at zero displacement and uniform velocity in the
+    % direction of increasing $x$.
+    clear initial_condition
+    initial_condition.u_fixed_value= @(x)0*x;
+    initial_condition.v_fixed_value= @(x)0*x+vmag;
+    model_data.initial_condition = initial_condition;
+    
+    
+    %%
+    % The longitudinal elastic wave in the bar will have the speed of
+    %%
+    % $c=\sqrt{\frac{E}{\rho}}$
+    %
+    %%
+    % so for our particular material, in meters per second
+    c=sqrt(E/rho);
+    c/(u.M/u.SEC)
+    
+    %%
+    % Therefore, it will take the wave $L/c$ to traverse the length of the
+    % bar.   For our material and length of the bar (in milliseconds):
+    dtL=L/c;
+    dtL/(u.SEC/1000)
+    %%
+    % so that the first figure should show  the wave of zero velocity
+    % produced by the clamped end at the middle of the bar and the second
+    % figure will show the wave to have reached the free end of the bar and
+    % so on.
+    %%
+    % The  motion will be tracked for the length of time it will take the
+    % wave to travel from the clamped and to the free end, back to the
+    % clamped end and back to the free end again.  So three times the
+    % traversal time.
+    model_data.tend =  3*dtL;
+   %%
+    % We will take the output interval to be one half of the traversal time
+    dtOutput=dtL/2;
+     %%
+    % The output() function animates the values of the displacement or velocity
+    % fields by plotting a marker on the vertical axis vs. the distance along
+    % the bar on the horizontal axis at each node.
+    nout=0;
+    function output(t, model_data)
+        if (nout*dtOutput<=t)
+            set_graphics_defaults
+            % The following block will plot  the displacement along the bar
+            % as a function of the distance along the bar. Uncomment the
+            % following three lines if you wish to see the displacement.
+            % plot(model_data.geom.values,model_data.u.values);
+            % set(gca,'xlim',[0,L]);
+            % set(gca,'ylim',[-5e-4,5e-4]/10);
+            
+            % The following block will block the velocity along the bar as
+            % a function of the distance along the bar. Uncomment the
+            % following three lines if you wish to see the velocity.
+            plot(model_data.geom.values,model_data.v.values,'rx');
+            labels('Distance along the bar',' Velocity');
+            set(gca,'xlim',[0,L]);
+            set(gca,'ylim',[-1,1]*vmag*1.5);
+            title([ 't/dtL =' num2str((t/dtL),2) ' [ND]']);
+            snapnow;% update the display
+            nout= nout+1;
+        end
+    end
+    model_data.observer  =@output;;
+    corner=fenode_select (fens,struct('box',[0 0],'inflate',tolerance));
+    corneru  = [];
+    
+    
+    %%
+    % Solve using the centered-difference integrator of the equations of
+    % motion. Note that the progress of the simulation is being reported in
+    % graphical form using the output()  observer function.
+    model_data =deformation_linear_direct_explicit_CD(model_data);
+    
+%% Discussion
+% 
+%% 
+% The wave is tracked fairly well,  but there is quite a bit of noise
+% associated with the passage of the front of the wave.  This is a general
+% feature of the centered-difference algorithm.
+end
+##### SOURCE END #####
+--></body></html>

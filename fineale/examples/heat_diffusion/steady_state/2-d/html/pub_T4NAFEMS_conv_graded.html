@@ -1,0 +1,353 @@
+
+<!DOCTYPE html
+  PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html><head>
+      <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+   <!--
+This HTML was auto-generated from MATLAB code.
+To make changes, update the MATLAB code and republish this document.
+      --><title>Two-dimensional heat transfer with convection:  study with graded meshes</title><meta name="generator" content="MATLAB 8.0"><link rel="schema.DC" href="http://purl.org/dc/elements/1.1/"><meta name="DC.date" content="2012-12-20"><meta name="DC.source" content="pub_T4NAFEMS_conv_graded.m"><style type="text/css">
+html,body,div,span,applet,object,iframe,h1,h2,h3,h4,h5,h6,p,blockquote,pre,a,abbr,acronym,address,big,cite,code,del,dfn,em,font,img,ins,kbd,q,s,samp,small,strike,strong,sub,sup,tt,var,b,u,i,center,dl,dt,dd,ol,ul,li,fieldset,form,label,legend,table,caption,tbody,tfoot,thead,tr,th,td{margin:0;padding:0;border:0;outline:0;font-size:100%;vertical-align:baseline;background:transparent}body{line-height:1}ol,ul{list-style:none}blockquote,q{quotes:none}blockquote:before,blockquote:after,q:before,q:after{content:'';content:none}:focus{outine:0}ins{text-decoration:none}del{text-decoration:line-through}table{border-collapse:collapse;border-spacing:0}
+
+html { min-height:100%; margin-bottom:1px; }
+html body { height:100%; margin:0px; font-family:Arial, Helvetica, sans-serif; font-size:10px; color:#000; line-height:140%; background:#fff none; overflow-y:scroll; }
+html body td { vertical-align:top; text-align:left; }
+
+h1 { padding:0px; margin:0px 0px 25px; font-family:Arial, Helvetica, sans-serif; font-size:1.5em; color:#d55000; line-height:100%; font-weight:normal; }
+h2 { padding:0px; margin:0px 0px 8px; font-family:Arial, Helvetica, sans-serif; font-size:1.2em; color:#000; font-weight:bold; line-height:140%; border-bottom:1px solid #d6d4d4; display:block; }
+h3 { padding:0px; margin:0px 0px 5px; font-family:Arial, Helvetica, sans-serif; font-size:1.1em; color:#000; font-weight:bold; line-height:140%; }
+
+a { color:#005fce; text-decoration:none; }
+a:hover { color:#005fce; text-decoration:underline; }
+a:visited { color:#004aa0; text-decoration:none; }
+
+p { padding:0px; margin:0px 0px 20px; }
+img { padding:0px; margin:0px 0px 20px; border:none; }
+p img, pre img, tt img, li img { margin-bottom:0px; } 
+
+ul { padding:0px; margin:0px 0px 20px 23px; list-style:square; }
+ul li { padding:0px; margin:0px 0px 7px 0px; }
+ul li ul { padding:5px 0px 0px; margin:0px 0px 7px 23px; }
+ul li ol li { list-style:decimal; }
+ol { padding:0px; margin:0px 0px 20px 0px; list-style:decimal; }
+ol li { padding:0px; margin:0px 0px 7px 23px; list-style-type:decimal; }
+ol li ol { padding:5px 0px 0px; margin:0px 0px 7px 0px; }
+ol li ol li { list-style-type:lower-alpha; }
+ol li ul { padding-top:7px; }
+ol li ul li { list-style:square; }
+
+.content { font-size:1.2em; line-height:140%; padding: 20px; }
+
+pre, tt, code { font-size:12px; }
+pre { margin:0px 0px 20px; }
+pre.error { color:red; }
+pre.codeinput { padding:10px; border:1px solid #d3d3d3; background:#f7f7f7; }
+pre.codeoutput { padding:10px 11px; margin:0px 0px 20px; color:#4c4c4c; }
+
+@media print { pre.codeinput, pre.codeoutput { word-wrap:break-word; width:100%; } }
+
+span.keyword { color:#0000FF }
+span.comment { color:#228B22 }
+span.string { color:#A020F0 }
+span.untermstring { color:#B20000 }
+span.syscmd { color:#B28C00 }
+
+.footer { width:auto; padding:10px 0px; margin:25px 0px 0px; border-top:1px dotted #878787; font-size:0.8em; line-height:140%; font-style:italic; color:#878787; text-align:left; float:none; }
+.footer p { margin:0px; }
+.footer a { color:#878787; }
+.footer a:hover { color:#878787; text-decoration:underline; }
+.footer a:visited { color:#878787; }
+
+table th { padding:7px 5px; text-align:left; vertical-align:middle; border: 1px solid #d6d4d4; font-weight:bold; }
+table td { padding:7px 5px; text-align:left; vertical-align:top; border:1px solid #d6d4d4; }
+
+
+
+
+
+  </style></head><body><div class="content"><h1>Two-dimensional heat transfer with convection:  study with graded meshes</h1><!--introduction--><!--/introduction--><h2>Contents</h2><div><ul><li><a href="#2">Description</a></li><li><a href="#6">Solution</a></li><li><a href="#30">Discussion</a></li></ul></div><p>Link to the  <a href="matlab:edit('pub_T4NAFEMS_conv_graded')">m-file</a>.</p><h2>Description<a name="2"></a></h2><p>Consider a plate of uniform thickness, measuring 0.6 m by 1.0 m. On one short edge the temperature is fixed at 100 &deg;C, and on one long edge the plate is perfectly insulated so that the heat flux is zero through that edge. The other two edges are losing heat via convection to an ambient temperature of 0 &deg;C. The thermal conductivity of the plate is 52.0 W/(m .&deg;K), and the convective heat transfer coefficient is 750 W/(m^2.&deg;K). There is no internal generation of heat. Calculate the temperature 0.2 m along the un-insulated long side, measured from the intersection with the fixed temperature side. The reference result is 18.25 &deg;C.</p><p> <table border=0><tr><td> <img src="../docs/pub_T4NAFEMS_conv.jpg"
+width="70%"> </td></tr> <tr><td>Figure 1. Definition of the geometry of
+the domain</td></tr> </table> </p><p>The reference temperature at the point A  is 18.25 &deg;C according to the NAFEMS publication ( hich cites the book Carslaw, H.S. and J.C. Jaeger, Conduction of Heat in Solids. 1959: Oxford University Press).</p><p>The present  tutorial will investigate the reference temperature  and it will attempt to  estimate the  limit value more precisely using a sequence of graded meshes and Richardson's extrapolation.</p><h2>Solution<a name="6"></a></h2><pre class="codeinput"><span class="keyword">function</span>  pub_T4NAFEMS_conv_graded
+</pre><pre class="codeinput">    pu=physical_units_struct;<span class="comment">%  Bring in  definitions of physical units</span>
+    kappa=[52 0; 0 52]*pu.W/(pu.M*pu.K); <span class="comment">% conductivity matrix</span>
+    h=750*pu.W/(pu.M^2*pu.K);<span class="comment">% surface heat transfer coefficient</span>
+    Width=0.6*pu.M;<span class="comment">% Geometrical dimensions</span>
+    Height=1.0*pu.M;
+    HeightA=0.2*pu.M;
+    Thickness=1.0*pu.M;
+    Refinement_factors = 1./2.^(-1:1:4);<span class="comment">% Refinement factors for the sequence of simulations</span>
+    tolerance =HeightA*min(Refinement_factors)/1000;
+</pre><p>The simulation will be executed inside the loop over all the mesh sizes. The array  <tt>results</tt> will collect the temperatures at point A.</p><pre class="codeinput">    results = [];
+    <span class="keyword">for</span> Refinement_factor = Refinement_factors
+</pre><p>Generate the triangle mesh for the current mesh size. The domain is given as a sequence of vertices starting at the lower left corner, traversing the boundary in counterclockwise sense.  Edge 1 is between the first and the second vertex and so on. This call creates a cell array of commands that define the curves of the boundary.</p><pre class="codeinput">        Commands =  targe2_mesher_vl_cmds([0,0; Width,0;  Width,HeightA;  <span class="keyword">...</span>
+            Width,Height;   0,Height; ]);
+</pre><p>Define the "subregion" by specifying its boundary curves (this corresponds to region  in our model_data).</p><pre class="codeinput">        Commands{end+1}=<span class="string">'subregion 1  property 1 boundary 1 2 3 4 5'</span>;
+</pre><p>Now specify the mesh size. The "background" mesh size, which is the mesh size desired everywhere where the mesh-size controls  to be defined next do not apply.</p><pre class="codeinput">        mesh_size  = Refinement_factor*Height;
+        Commands{end+1}=[<span class="string">'m-ctl-point constant '</span> num2str(mesh_size)];
+</pre><p>We define two mesh-size control points.  The first at the location  of the point A. The desired mesh size is 1/10 of the background mesh size,  and the influence region is twice the desired size of the elements</p><pre class="codeinput">        local_mesh_size  =Refinement_factor*Height/10;
+        Commands{end+1}=[<span class="string">'m-ctl-point 1 xy '</span> num2str([Width,HeightA]) <span class="keyword">...</span>
+            <span class="string">' near '</span> num2str(local_mesh_size) <span class="keyword">...</span>
+            <span class="string">' influence '</span> num2str(local_mesh_size*2)];
+</pre><p>The second mesh-size control point is located at the point of the singularity at the transition between the prescribed temperature and the convection boundary condition.</p><pre class="codeinput">        local_mesh_size  =Refinement_factor*Height/10;
+        Commands{end+1}=[<span class="string">'m-ctl-point 1 xy '</span> num2str([Width,0])<span class="keyword">...</span>
+            <span class="string">' near '</span> num2str(local_mesh_size)<span class="keyword">...</span>
+            <span class="string">' influence '</span> num2str(local_mesh_size*2)];
+</pre><p>Note that the mesh size refinement described by the variable <tt>Refinement_factor</tt> varies inside the loop.   However, the proportions of the background mesh size and the desired mesh sizes  at the target point and the singularity are fixed.   This is important for the Richardson's extrapolation which relies  on there being a single refinement factor across the entire mesh: the ratio of the mesh size  in the mesh (j+1) to the mesh size in the mesh (j) at any point within the domain  must be a constant.</p><p>The automatic mesher can now be run to triangulate the domain using the Commands information. Note that we are requesting quadratic triangles to be generated.</p><pre class="codeinput">        [fens,fes,groups,edge_fes,edge_groups]=targe2_mesher(<span class="keyword">...</span>
+            Commands,Thickness,struct(<span class="string">'quadratic'</span>,true));
+</pre><p>Set up the model data.  The nodes:</p><pre class="codeinput">        clear <span class="string">model_data</span>
+        model_data.fens =fens;
+</pre><p>The region: note our use of six point quadrature  for the quadratic triangles.</p><pre class="codeinput">        clear <span class="string">region</span>
+        region.conductivity =kappa;
+        region.fes= fes;
+        region.integration_rule =tri_rule(struct(<span class="string">'npts'</span>,6));
+        model_data.region{1} =region;
+</pre><p>The convection boundary condition is applied along the edges 2,3,4. The elements along the boundary are quadratic line elements L3. The order-four Gauss quadrature is sufficiently accurate.</p><pre class="codeinput">        clear <span class="string">convection</span>
+        convection.ambient_temperature=0;
+        convection.surface_transfer_coefficient  =h;
+        convection.fes = subset(edge_fes,[edge_groups{2},edge_groups{3},edge_groups{4}]);
+        convection.integration_rule=gauss_rule(struct(<span class="string">'dim'</span>,1,<span class="string">'order'</span>,4));
+        model_data.boundary_conditions.convection{1} = convection;
+</pre><p>The prescribed temperature is applied along edge 1 (the bottom edge in Figure 1)..</p><pre class="codeinput">        clear <span class="string">essential</span>
+        essential.temperature=100;
+        essential.fes = subset(edge_fes,[edge_groups{1}]);
+        model_data.boundary_conditions.essential{1} = essential;
+</pre><p>The model data is defined, solve for the temperatures.</p><pre class="codeinput">        model_data =heat_diffusion_steady_state(model_data);
+</pre><p>Collect the temperature  at the point A  [coordinates (Width,HeightA)].</p><pre class="codeinput">        results =[results,gather_values(model_data.temp,fenode_select(fens,<span class="keyword">...</span>
+            struct(<span class="string">'box'</span>,[  Width,Width,HeightA,HeightA],<span class="string">'inflate'</span>, tolerance)))];
+</pre><p>Plot the temperature as a raised surface.</p><pre class="codeinput">        model_data.postprocessing.z_scale = 0.01;
+        heat_diffusion_plot_raised_surface(model_data);
+</pre><img vspace="5" hspace="5" src="pub_T4NAFEMS_conv_graded_01.png" alt=""> <img vspace="5" hspace="5" src="pub_T4NAFEMS_conv_graded_02.png" alt=""> <img vspace="5" hspace="5" src="pub_T4NAFEMS_conv_graded_03.png" alt=""> <img vspace="5" hspace="5" src="pub_T4NAFEMS_conv_graded_04.png" alt=""> <img vspace="5" hspace="5" src="pub_T4NAFEMS_conv_graded_05.png" alt=""> <img vspace="5" hspace="5" src="pub_T4NAFEMS_conv_graded_06.png" alt=""> <pre class="codeinput">    <span class="keyword">end</span>
+</pre><p>These are the computed results for the temperature at point A:</p><pre class="codeinput">    results
+</pre><pre class="codeoutput">
+results =
+
+   1.7885e+01   1.8753e+01   1.8225e+01   1.8266e+01   1.8255e+01   1.8254e+01
+
+</pre><p>Richardson extrapolation is used to estimate the true solution from the results for the finest three meshes.</p><pre class="codeinput">    [xestim, beta] = richextrapol(results(end-2:end),Refinement_factors(end-2:end));
+    disp([<span class="string">'Estimated true solution for temperature at A: '</span> num2str(xestim) <span class="string">' degrees'</span>])
+</pre><pre class="codeoutput">Estimated true solution for temperature at A: 18.2539 degrees
+</pre><p>Plot the estimated true error.</p><pre class="codeinput">    figure
+    loglog(Refinement_factors,abs(results-xestim)/xestim,<span class="string">'bo-'</span>,<span class="string">'linewidth'</span>,3)
+    grid <span class="string">on</span>
+     xlabel(<span class="string">'log(refinement factor)'</span>)
+    ylabel(<span class="string">'log(|estimated temperature error|)'</span>)
+    set_graphics_defaults
+</pre><img vspace="5" hspace="5" src="pub_T4NAFEMS_conv_graded_07.png" alt=""> <p>The estimated true error has  a slope of approximately 3 on the log-log scale. This is more closely aligned with the theoretical prediction of the convergence rate for quadratic elements.</p><p>Plot the absolute values of the approximate error (differences  of successive solutions).</p><pre class="codeinput">    figure
+    loglog(Refinement_factors(2:end),abs(diff(results)),<span class="string">'bo-'</span>,<span class="string">'linewidth'</span>,3)
+    grid <span class="string">on</span>
+    xlabel(<span class="string">'log(refinement factor)'</span>)
+    ylabel(<span class="string">'log(|approximate temperature error|)'</span>)
+    set_graphics_defaults
+</pre><img vspace="5" hspace="5" src="pub_T4NAFEMS_conv_graded_08.png" alt=""> <h2>Discussion<a name="30"></a></h2><p>The use of graded mesh-size meshes is  more efficient than use of uniform meshes. The extrapolation seems to be well justified, and provides a good quality estimate of the true solution.</p><pre class="codeinput"><span class="keyword">end</span>
+</pre><p class="footer"><br><a href="http://www.mathworks.com/products/matlab/">Published with MATLAB&reg; R2012b</a><br></p></div><!--
+##### SOURCE BEGIN #####
+%% Two-dimensional heat transfer with convection:  study with graded meshes
+%
+
+%%
+% Link to the  <matlab:edit('pub_T4NAFEMS_conv_graded') m-file>.
+%
+
+%% Description
+%
+% Consider a plate of uniform thickness, measuring 0.6 m by 1.0 m. On one
+% short edge the temperature is fixed at 100 °C, and on one long edge the
+% plate is perfectly insulated so that the heat flux is zero through that
+% edge. The other two edges are losing heat via convection to an ambient
+% temperature of 0 °C. The thermal conductivity of the plate is 52.0 W/(m
+% .°K), and the convective heat transfer coefficient is 750 W/(m^2.°K).
+% There is no internal generation of heat. Calculate the temperature 0.2 m
+% along the un-insulated long side, measured from the intersection with the
+% fixed temperature side. The reference result is 18.25 °C.
+
+%%
+%
+% <html> <table border=0><tr><td> <img src="../docs/pub_T4NAFEMS_conv.jpg"
+% width="70%"> </td></tr> <tr><td>Figure 1. Definition of the geometry of
+% the domain</td></tr> </table> </html>
+
+
+%%
+% The reference temperature at the point A  is 18.25 °C according to the
+% NAFEMS publication ( hich cites the book Carslaw, H.S. and J.C. Jaeger,
+% Conduction of Heat in Solids. 1959: Oxford University Press).
+
+%%
+% The present  tutorial will investigate the reference temperature  and it
+% will attempt to  estimate the  limit value more precisely using a
+% sequence of graded meshes and Richardson's extrapolation.
+
+%% Solution
+%
+function  pub_T4NAFEMS_conv_graded
+    pu=physical_units_struct;%  Bring in  definitions of physical units
+    kappa=[52 0; 0 52]*pu.W/(pu.M*pu.K); % conductivity matrix
+    h=750*pu.W/(pu.M^2*pu.K);% surface heat transfer coefficient
+    Width=0.6*pu.M;% Geometrical dimensions
+    Height=1.0*pu.M;
+    HeightA=0.2*pu.M;
+    Thickness=1.0*pu.M;
+    Refinement_factors = 1./2.^(-1:1:4);% Refinement factors for the sequence of simulations
+    tolerance =HeightA*min(Refinement_factors)/1000;
+    
+    
+    %%
+    % The simulation will be executed inside the loop over all the mesh
+    % sizes. The array  |results| will collect the temperatures at point A.
+    results = [];
+    for Refinement_factor = Refinement_factors
+        
+        %%
+        % Generate the triangle mesh for the current mesh size. The domain
+        % is given as a sequence of vertices starting at the lower left
+        % corner, traversing the boundary in counterclockwise sense.  Edge
+        % 1 is between the first and the second vertex and so on. This call
+        % creates a cell array of commands that define the curves of the
+        % boundary.
+        Commands =  targe2_mesher_vl_cmds([0,0; Width,0;  Width,HeightA;  ...
+            Width,Height;   0,Height; ]);
+        %%
+        % Define the "subregion" by specifying its boundary curves (this
+        % corresponds to region  in our model_data).
+        Commands{end+1}='subregion 1  property 1 boundary 1 2 3 4 5';
+        
+        %%
+        % Now specify the mesh size. The "background" mesh size, which is
+        % the mesh size desired everywhere where the mesh-size controls  to
+        % be defined next do not apply.
+        mesh_size  = Refinement_factor*Height;
+        Commands{end+1}=['m-ctl-point constant ' num2str(mesh_size)];
+        
+        %%
+        % We define two mesh-size control points.  The first at the
+        % location  of the point A. The desired mesh size is 1/10 of the
+        % background mesh size,  and the influence region is twice the
+        % desired size of the elements
+        local_mesh_size  =Refinement_factor*Height/10;
+        Commands{end+1}=['m-ctl-point 1 xy ' num2str([Width,HeightA]) ...
+            ' near ' num2str(local_mesh_size) ...
+            ' influence ' num2str(local_mesh_size*2)];
+        
+        %%
+        % The second mesh-size control point is located at the point of the
+        % singularity at the transition between the prescribed temperature
+        % and the convection boundary condition.
+        local_mesh_size  =Refinement_factor*Height/10;
+        Commands{end+1}=['m-ctl-point 1 xy ' num2str([Width,0])...
+            ' near ' num2str(local_mesh_size)...
+            ' influence ' num2str(local_mesh_size*2)];
+        
+        %%
+        % Note that the mesh size refinement described by the variable
+        % |Refinement_factor| varies inside the loop.   However, the
+        % proportions of the background mesh size and the desired mesh
+        % sizes  at the target point and the singularity are fixed.   This
+        % is important for the Richardson's extrapolation which relies  on
+        % there being a single refinement factor across the entire mesh:
+        % the ratio of the mesh size  in the mesh (j+1) to the mesh size in
+        % the mesh (j) at any point within the domain  must be a constant.
+        
+        %%
+        % The automatic mesher can now be run to triangulate the domain
+        % using the Commands information. Note that we are requesting
+        % quadratic triangles to be generated.
+        [fens,fes,groups,edge_fes,edge_groups]=targe2_mesher(...
+            Commands,Thickness,struct('quadratic',true));
+        
+        %%
+        % Set up the model data.  The nodes:
+        clear model_data
+        model_data.fens =fens;
+        
+        %%
+        % The region: note our use of six point quadrature  for the
+        % quadratic triangles.
+        clear region
+        region.conductivity =kappa;
+        region.fes= fes;
+        region.integration_rule =tri_rule(struct('npts',6));
+        model_data.region{1} =region;
+        
+        
+        %%
+        % The convection boundary condition is applied along the edges
+        % 2,3,4. The elements along the boundary are quadratic line
+        % elements L3. The order-four Gauss quadrature is sufficiently
+        % accurate.
+        clear convection
+        convection.ambient_temperature=0;
+        convection.surface_transfer_coefficient  =h;
+        convection.fes = subset(edge_fes,[edge_groups{2},edge_groups{3},edge_groups{4}]);
+        convection.integration_rule=gauss_rule(struct('dim',1,'order',4));
+        model_data.boundary_conditions.convection{1} = convection;
+        
+        %%
+        % The prescribed temperature is applied along edge 1 (the bottom
+        % edge in Figure 1)..
+        clear essential
+        essential.temperature=100;
+        essential.fes = subset(edge_fes,[edge_groups{1}]);
+        model_data.boundary_conditions.essential{1} = essential;
+        
+        
+        %%
+        % The model data is defined, solve for the temperatures.
+        model_data =heat_diffusion_steady_state(model_data);
+        
+        %%
+        % Collect the temperature  at the point A  [coordinates
+        % (Width,HeightA)].
+        results =[results,gather_values(model_data.temp,fenode_select(fens,...
+            struct('box',[  Width,Width,HeightA,HeightA],'inflate', tolerance)))];
+        
+        
+        %%
+        % Plot the temperature as a raised surface.
+        model_data.postprocessing.z_scale = 0.01;
+        heat_diffusion_plot_raised_surface(model_data);
+        
+    end
+    
+    %%
+    % These are the computed results for the temperature at point A:
+    results
+    
+    %%
+    % Richardson extrapolation is used to estimate the true solution from
+    % the results for the finest three meshes.
+    [xestim, beta] = richextrapol(results(end-2:end),Refinement_factors(end-2:end));
+    disp(['Estimated true solution for temperature at A: ' num2str(xestim) ' degrees'])
+    
+    %%
+    % Plot the estimated true error.
+    figure
+    loglog(Refinement_factors,abs(results-xestim)/xestim,'bo-','linewidth',3)
+    grid on
+     xlabel('log(refinement factor)')
+    ylabel('log(|estimated temperature error|)')
+    set_graphics_defaults
+    
+    %%
+    % The estimated true error has  a slope of approximately 3 on the
+    % log-log scale. This is more closely aligned with the theoretical
+    % prediction of the convergence rate for quadratic elements.
+    %%
+    % Plot the absolute values of the approximate error (differences  of
+    % successive solutions).
+    figure
+    loglog(Refinement_factors(2:end),abs(diff(results)),'bo-','linewidth',3)
+    grid on
+    xlabel('log(refinement factor)')
+    ylabel('log(|approximate temperature error|)')
+    set_graphics_defaults
+    
+    
+%% Discussion
+% 
+    %%
+    % The use of graded mesh-size meshes is  more efficient than use of
+    % uniform meshes. The extrapolation seems to be well justified, and
+    % provides a good quality estimate of the true solution.
+end
+##### SOURCE END #####
+--></body></html>

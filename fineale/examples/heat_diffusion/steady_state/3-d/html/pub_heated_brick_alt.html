@@ -1,0 +1,281 @@
+
+<!DOCTYPE html
+  PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html><head>
+      <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+   <!--
+This HTML was auto-generated from MATLAB code.
+To make changes, update the MATLAB code and republish this document.
+      --><title>Heated brick. Model with hexahedra (H8) using a solver.</title><meta name="generator" content="MATLAB 8.0"><link rel="schema.DC" href="http://purl.org/dc/elements/1.1/"><meta name="DC.date" content="2012-12-20"><meta name="DC.source" content="pub_heated_brick_alt.m"><style type="text/css">
+html,body,div,span,applet,object,iframe,h1,h2,h3,h4,h5,h6,p,blockquote,pre,a,abbr,acronym,address,big,cite,code,del,dfn,em,font,img,ins,kbd,q,s,samp,small,strike,strong,sub,sup,tt,var,b,u,i,center,dl,dt,dd,ol,ul,li,fieldset,form,label,legend,table,caption,tbody,tfoot,thead,tr,th,td{margin:0;padding:0;border:0;outline:0;font-size:100%;vertical-align:baseline;background:transparent}body{line-height:1}ol,ul{list-style:none}blockquote,q{quotes:none}blockquote:before,blockquote:after,q:before,q:after{content:'';content:none}:focus{outine:0}ins{text-decoration:none}del{text-decoration:line-through}table{border-collapse:collapse;border-spacing:0}
+
+html { min-height:100%; margin-bottom:1px; }
+html body { height:100%; margin:0px; font-family:Arial, Helvetica, sans-serif; font-size:10px; color:#000; line-height:140%; background:#fff none; overflow-y:scroll; }
+html body td { vertical-align:top; text-align:left; }
+
+h1 { padding:0px; margin:0px 0px 25px; font-family:Arial, Helvetica, sans-serif; font-size:1.5em; color:#d55000; line-height:100%; font-weight:normal; }
+h2 { padding:0px; margin:0px 0px 8px; font-family:Arial, Helvetica, sans-serif; font-size:1.2em; color:#000; font-weight:bold; line-height:140%; border-bottom:1px solid #d6d4d4; display:block; }
+h3 { padding:0px; margin:0px 0px 5px; font-family:Arial, Helvetica, sans-serif; font-size:1.1em; color:#000; font-weight:bold; line-height:140%; }
+
+a { color:#005fce; text-decoration:none; }
+a:hover { color:#005fce; text-decoration:underline; }
+a:visited { color:#004aa0; text-decoration:none; }
+
+p { padding:0px; margin:0px 0px 20px; }
+img { padding:0px; margin:0px 0px 20px; border:none; }
+p img, pre img, tt img, li img { margin-bottom:0px; } 
+
+ul { padding:0px; margin:0px 0px 20px 23px; list-style:square; }
+ul li { padding:0px; margin:0px 0px 7px 0px; }
+ul li ul { padding:5px 0px 0px; margin:0px 0px 7px 23px; }
+ul li ol li { list-style:decimal; }
+ol { padding:0px; margin:0px 0px 20px 0px; list-style:decimal; }
+ol li { padding:0px; margin:0px 0px 7px 23px; list-style-type:decimal; }
+ol li ol { padding:5px 0px 0px; margin:0px 0px 7px 0px; }
+ol li ol li { list-style-type:lower-alpha; }
+ol li ul { padding-top:7px; }
+ol li ul li { list-style:square; }
+
+.content { font-size:1.2em; line-height:140%; padding: 20px; }
+
+pre, tt, code { font-size:12px; }
+pre { margin:0px 0px 20px; }
+pre.error { color:red; }
+pre.codeinput { padding:10px; border:1px solid #d3d3d3; background:#f7f7f7; }
+pre.codeoutput { padding:10px 11px; margin:0px 0px 20px; color:#4c4c4c; }
+
+@media print { pre.codeinput, pre.codeoutput { word-wrap:break-word; width:100%; } }
+
+span.keyword { color:#0000FF }
+span.comment { color:#228B22 }
+span.string { color:#A020F0 }
+span.untermstring { color:#B20000 }
+span.syscmd { color:#B28C00 }
+
+.footer { width:auto; padding:10px 0px; margin:25px 0px 0px; border-top:1px dotted #878787; font-size:0.8em; line-height:140%; font-style:italic; color:#878787; text-align:left; float:none; }
+.footer p { margin:0px; }
+.footer a { color:#878787; }
+.footer a:hover { color:#878787; text-decoration:underline; }
+.footer a:visited { color:#878787; }
+
+table th { padding:7px 5px; text-align:left; vertical-align:middle; border: 1px solid #d6d4d4; font-weight:bold; }
+table td { padding:7px 5px; text-align:left; vertical-align:top; border:1px solid #d6d4d4; }
+
+
+
+
+
+  </style></head><body><div class="content"><h1>Heated brick. Model with hexahedra (H8) using a solver.</h1><!--introduction--><!--/introduction--><h2>Contents</h2><div><ul><li><a href="#2">Description</a></li><li><a href="#5">Solution</a></li><li><a href="#21">Discussion</a></li></ul></div><p>Link to the  <a href="matlab:edit('pub_heated_brick')">m-file</a>.</p><h2>Description<a name="2"></a></h2><p>The brick represented in Figure 1 has insulated lateral surfaces (BCGF, CDHG, DAEH, ABFE).  The  surface  ABCD  is  maintained  at  constant temperature  T  =  0  degrees,  and  the temperature is linearly distributed at EFGH surface so that T = 0 degrees at E point, T = 1 degrees at H and T = 2 degrees at point F. Find temperature at the point P. The reference solution for the temperature at point P is 0.901 degrees. Thermal conductivity <img src="pub_heated_brick_alt_eq94486.png" alt="$\kappa = 1$">.</p><p>
+<table border=0><tr><td>
+<img src="../docs/pub_heated_brick_2.jpg">
+</td></tr>
+<tr><td>Figure 1. Definition of the geometry of the heated brick</td></tr>
+</table>
+</p><p>Analytical solution is due to the Reference M. Necati Ozisik &#8220;Boundary Value Problems of Heat Conduction&#8221;.  Dover Publications, INC., N.Y. 1989.</p><h2>Solution<a name="5"></a></h2><p>It is good practice to put code into functions as we can avoid trouble due to shared global workspace variables.   All variables in this function are private.</p><pre class="codeinput"><span class="keyword">function</span> pub_heated_brick_alt
+</pre><p>Definition of the geometry: The locations of the points.</p><pre class="codeinput">    A=[0,0,0]; B=[0,0,2]; C=[0,3,2]; D=[0,3,0];
+    E=[5,0,0]; F=[5,0,2]; G=[5,3,2]; H=[5,3,0];
+    P=[3.75,0,0];
+</pre><p>Define the material properties.</p><pre class="codeinput">    kappa= 1.0;
+</pre><p>Generate the mesh by meshing two general hexahedra and merging them into a single mesh.</p><pre class="codeinput">    [fens,fes] = H8_hexahedron([A;P;(D+H)/2;D;B;(B+F)/2;(C+G)/2;C],1,1,1,[]);
+    [fens1,fes1] = H8_hexahedron([P;E;H;(D+H)/2;(B+F)/2;F;G;(C+G)/2],1,1,1,[]);
+    [fens,fes1,fes2] = merge_meshes(fens1, fes1, fens, fes, 1/1000);
+    fes=cat(fes1,fes2);
+</pre><p>Next, the two-element mesh is refined by trisection. Applying trisection twice means the mesh is going to consist of 64 hexahedra.</p><pre class="codeinput">    [fens,fes]=H8_refine(fens,fes);
+    [fens,fes]=H8_refine(fens,fes);
+</pre><p>In this tutorial we are going to invoke a steady-state heat conduction solver.  To inspect To see all the nitty-gritty, refer to the tutorial <a href="pub_heated_brick.html">pub_heated_brick.html</a>.</p><p>The model is described in  a struct with fields that define the region, the boundary conditions, the control parameters, ...,  and all of this is passed along to the solver.</p><p>First we bundle up the node set.</p><pre class="codeinput">    clear <span class="string">model_data</span>
+    model_data.fens =fens;
+</pre><p>Then we define the region  in which the problem is being solved by supplying material properties and the finite elements  that cover  the region. We must also specify the integration rule for the evaluation of the weighted-residual integrals (i. e.  the conductivity matrix and the heat load vector).</p><pre class="codeinput">    clear <span class="string">region</span>
+    region.conductivity =kappa;
+    region.fes= fes;
+    region.integration_rule = gauss_rule(struct( <span class="string">'dim'</span>,3,<span class="string">'order'</span>,2));
+    model_data.region{1} =region;
+</pre><p>The essential boundary conditions are specified next.</p><p>Essential boundary condition: zero temperature on face ABCD. The nodes located on this face are selected using a 'box' criterion.</p><pre class="codeinput">    clear <span class="string">essential</span>
+    essential.temperature=0;
+    essential.node_list  = fenode_select(fens,struct(<span class="string">'box'</span>,[A(1),A(1),-inf,inf,-inf,inf],<span class="keyword">...</span>
+        <span class="string">'inflate'</span>, 1/1000));
+    model_data.boundary_conditions.essential{1} = essential;
+</pre><p>Essential boundary condition: linearly-varying temperature on face EFGH. The nodes are selected using a box.   The locations of the selected nodes are <tt>fens.xyz(nl,:)</tt>, so that <tt>1.0*fens.xyz(nl,2)/H(2)</tt> describes the gradient of the temperature in the Y-direction and the temperatures at the nodes may be therefore evaluated as shown below.</p><pre class="codeinput">    clear <span class="string">essential</span>
+    nl=fenode_select(fens,struct(<span class="string">'box'</span>,[E(1),E(1),-inf,inf,-inf,inf],<span class="keyword">...</span>
+        <span class="string">'inflate'</span>, 1/1000));
+    essential.temperature=1.0*fens.xyz(nl,2)/H(2)+2.0*fens.xyz(nl,3)/F(3);
+    essential.node_list  = nl;
+    model_data.boundary_conditions.essential{2} = essential;
+</pre><p>We have specified completely  the model data. Solve for the temperatures  using the steady-state solver. It does exactly what the tutorial <a href="pub_heated_brick.html">pub_heated_brick.html</a> did step-by-step.</p><pre class="codeinput">    model_data =heat_diffusion_steady_state(model_data);
+</pre><p>Graphical rendering  of the computed temperatures. First we show the temperature displayed with filled surfaces on the boundary of the mesh color-coded  with the temperature.</p><pre class="codeinput">    model_data.postprocessing.colormap= hot;
+    mmodel_data=heat_diffusion_plot_temperature(model_data);
+</pre><img vspace="5" hspace="5" src="pub_heated_brick_alt_01.png" alt=""> <p>We are going to present the temperatures using isosurfaces.  These are surfaces of constant temperature, which are going to be color-coded using a map from temperatures to colors.</p><pre class="codeinput">    model_data.postprocessing.isovalues= [0.5:0.25:3.0];
+    model_data.postprocessing.colormap= hot;
+    model_data=heat_diffusion_plot_isosurfaces(model_data);
+</pre><img vspace="5" hspace="5" src="pub_heated_brick_alt_02.png" alt=""> <h2>Discussion<a name="21"></a></h2><p>Temperature at point P: Find the node at that point using a bounding box,...</p><pre class="codeinput">    Pid=fenode_select(fens,struct(<span class="string">'box'</span>,bounding_box(P),<span class="keyword">...</span>
+        <span class="string">'inflate'</span>, 1/1000)) ;
+</pre><p>...  and retrieve the temperature:</p><pre class="codeinput">    model_data.temp.values(Pid)
+</pre><pre class="codeoutput">
+ans =
+
+   9.2337e-01
+
+</pre><p>This may be compared with the analytical solution of 0.901 degrees at point P. With the given mesh we are therefore within 2.5% of the analytical solution.</p><pre class="codeinput"><span class="keyword">end</span>
+</pre><p class="footer"><br><a href="http://www.mathworks.com/products/matlab/">Published with MATLAB&reg; R2012b</a><br></p></div><!--
+##### SOURCE BEGIN #####
+%% Heated brick. Model with hexahedra (H8) using a solver.
+%
+
+%%
+% Link to the  <matlab:edit('pub_heated_brick') m-file>.
+%
+
+%% Description
+%
+% The brick represented in Figure 1 has insulated lateral surfaces (BCGF,
+% CDHG, DAEH, ABFE).  The  surface  ABCD  is  maintained  at  constant
+% temperature  T  =  0  degrees,  and  the temperature is linearly
+% distributed at EFGH surface so that T = 0 degrees at E point, T = 1
+% degrees at H and T = 2 degrees at point F. Find temperature at the point
+% P. The reference solution for the temperature at point P is 0.901 degrees. Thermal
+% conductivity $\kappa = 1$.
+%
+%%
+%
+% <html>
+% <table border=0><tr><td>
+% <img src="../docs/pub_heated_brick_2.jpg">
+% </td></tr>
+% <tr><td>Figure 1. Definition of the geometry of the heated brick</td></tr>
+% </table>
+% </html>
+
+%%
+%
+% Analytical solution is due to the Reference
+% M. Necati Ozisik “Boundary Value Problems of Heat Conduction”.  Dover Publications,
+% INC., N.Y. 1989.
+
+%% Solution
+%
+% It is good practice to put code into functions as we can avoid trouble
+% due to shared global workspace variables.   All variables in this
+% function are private.
+function pub_heated_brick_alt
+    
+    %%
+    % Definition of the geometry: The locations of the points.
+    A=[0,0,0]; B=[0,0,2]; C=[0,3,2]; D=[0,3,0];
+    E=[5,0,0]; F=[5,0,2]; G=[5,3,2]; H=[5,3,0];
+    P=[3.75,0,0];
+    
+    %%
+    % Define the material properties.
+    kappa= 1.0;
+    
+    
+    %%
+    % Generate the mesh by meshing two general hexahedra and merging them into
+    % a single mesh.
+    [fens,fes] = H8_hexahedron([A;P;(D+H)/2;D;B;(B+F)/2;(C+G)/2;C],1,1,1,[]);
+    [fens1,fes1] = H8_hexahedron([P;E;H;(D+H)/2;(B+F)/2;F;G;(C+G)/2],1,1,1,[]);
+    [fens,fes1,fes2] = merge_meshes(fens1, fes1, fens, fes, 1/1000);
+    fes=cat(fes1,fes2);
+    
+    %%
+    % Next, the two-element mesh is refined by trisection. Applying
+    % trisection twice means the mesh is going to consist of 64 hexahedra.
+    [fens,fes]=H8_refine(fens,fes);
+    [fens,fes]=H8_refine(fens,fes);
+    
+    %%
+    % In this tutorial we are going to invoke a steady-state heat conduction solver.  To inspect
+    % To see all the nitty-gritty, refer to the tutorial <pub_heated_brick.html>.
+    
+    
+    %%
+    % The model is described in  a struct with fields that define the region,
+    % the boundary conditions, the control parameters, ...,  and all of this is
+    % passed along to the solver.
+    
+    
+    %%
+    % First we bundle up the node set.
+    clear model_data
+    model_data.fens =fens;
+    
+    %%
+    % Then we define the region  in which the problem is being solved by
+    % supplying material properties and the finite elements  that cover  the
+    % region. We must also specify the integration rule for the evaluation of
+    % the weighted-residual integrals (i. e.  the conductivity matrix and the
+    % heat load vector).
+    clear region
+    region.conductivity =kappa;
+    region.fes= fes;
+    region.integration_rule = gauss_rule(struct( 'dim',3,'order',2));
+    model_data.region{1} =region;
+    
+    
+    %%
+    % The essential boundary conditions are specified next.
+    %%
+    % Essential boundary condition: zero temperature on face ABCD. The
+    % nodes located on this face are selected using a 'box' criterion.
+    clear essential
+    essential.temperature=0;
+    essential.node_list  = fenode_select(fens,struct('box',[A(1),A(1),-inf,inf,-inf,inf],...
+        'inflate', 1/1000));
+    model_data.boundary_conditions.essential{1} = essential;
+    
+    %%
+    % Essential boundary condition: linearly-varying temperature on face EFGH.
+    % The nodes are selected using a box.   The locations of the selected
+    % nodes are |fens.xyz(nl,:)|, so that |1.0*fens.xyz(nl,2)/H(2)|
+    % describes the gradient of the temperature in the Y-direction and the
+    % temperatures at the nodes may be therefore evaluated as shown below.
+    clear essential
+    nl=fenode_select(fens,struct('box',[E(1),E(1),-inf,inf,-inf,inf],...
+        'inflate', 1/1000));
+    essential.temperature=1.0*fens.xyz(nl,2)/H(2)+2.0*fens.xyz(nl,3)/F(3);
+    essential.node_list  = nl;
+    model_data.boundary_conditions.essential{2} = essential;
+    
+    
+%% 
+% We have specified completely  the model data.
+    % Solve for the temperatures  using the steady-state solver. It does
+    % exactly what the tutorial <pub_heated_brick.html> did step-by-step.
+    model_data =heat_diffusion_steady_state(model_data);
+    
+    
+    %%
+    % Graphical rendering  of the computed temperatures. First we show the
+    % temperature displayed with filled surfaces on the boundary of the mesh
+    % color-coded  with the temperature.
+    model_data.postprocessing.colormap= hot;
+    mmodel_data=heat_diffusion_plot_temperature(model_data);
+    
+    
+    %%
+    % We are going to present the temperatures using isosurfaces.  These are
+    % surfaces of constant temperature, which are going to be color-coded using
+    % a map from temperatures to colors.
+    model_data.postprocessing.isovalues= [0.5:0.25:3.0];
+    model_data.postprocessing.colormap= hot;
+    model_data=heat_diffusion_plot_isosurfaces(model_data);
+    
+    
+    %% Discussion
+    %
+    
+    %%
+    % Temperature at point P: Find the node at that point using a bounding box,...
+    Pid=fenode_select(fens,struct('box',bounding_box(P),...
+        'inflate', 1/1000)) ;
+    
+    %%
+    % ...  and retrieve the temperature:
+    model_data.temp.values(Pid)
+    %%
+    % This may be compared with the analytical solution of 0.901 degrees at
+    % point P. With the given mesh we are therefore within 2.5% of the
+    % analytical solution.
+    
+end
+##### SOURCE END #####
+--></body></html>

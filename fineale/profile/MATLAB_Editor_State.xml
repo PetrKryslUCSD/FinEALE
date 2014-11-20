@@ -1,0 +1,153 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Editor version="1.0">
+   <File absPath="C:\Users\pkrysl\Documents\Research\Software folder\FEA software folder\fineale_research\examples\deformation_linear\statics\3-d" lastWrittenTime="1373126138342" name="plot_Cook_3D_strain_flex.m">
+      <CodeFolds version="1.0"/>
+   </File>
+   <File absPath="C:\Users\pkrysl\Documents\Research\Software folder\FEA software folder\fineale_research\examples\deformation_linear\statics\3-d" lastWrittenTime="1373126138405" name="compliance_eigvecs.m">
+      <CodeFolds version="1.0"/>
+   </File>
+   <File absPath="C:\Users\pkrysl\Documents\Research\Software folder\FEA software folder\fineale\algorithms\deformation_linear" lastWrittenTime="1383251516688" name="deformation_plot_integration_points.m">
+      <CodeFolds version="1.0"/>
+   </File>
+   <File absPath="C:\Users\pkrysl\Documents\Research\Software folder\FEA software folder\fineale\examples\deformation_linear\statics\2-d" lastWrittenTime="1386641991492" name="pub_thick_pipe_axi.m">
+      <CodeFolds version="1.0"/>
+   </File>
+   <File absPath="C:\Users\pkrysl\Documents\Research\Software folder\FEA software folder\fineale\util\physical_units_utilities" lastWrittenTime="1386642000833" name="physical_units_struct.m">
+      <CodeFolds version="1.0"/>
+   </File>
+   <File absPath="C:\Users\pkrysl\Documents\Research\Software folder\FEA software folder\fineale\util\physical_units_utilities" lastWrittenTime="1386642002800" name="physical_units_machine.m">
+      <CodeFolds version="1.0"/>
+   </File>
+   <File absPath="C:\Users\pkrysl\Documents\Research\Software folder\FEA software folder\fineale\meshing\mesh_graphics" lastWrittenTime="1386642010250" name="drawmesh.m">
+      <CodeFolds version="1.0"/>
+   </File>
+   <File absPath="C:\Users\pkrysl\Documents\Research\Software folder\FEA software folder\fineale\examples\deformation_linear\statics\1-d" lastWrittenTime="1386874736625" name="pub_single_bar.m">
+      <CodeFolds version="1.0"/>
+   </File>
+   <File absPath="C:\Users\pkrysl\Documents\Research\Software folder\FEA software folder\fineale\algorithms\deformation_linear" lastWrittenTime="1392489841371" name="deformation_linear_steady_state_vibration.m">
+      <CodeFolds version="1.0"/>
+   </File>
+   <File absPath="C:\Users\pkrysl\Documents\Research\Software folder\FEA software folder\fineale\classes\femm\@femm_deformation" lastWrittenTime="1401386670829" name="surface_normal_spring_stiffness.m">
+      <CodeFolds version="1.0"/>
+   </File>
+   <File absPath="C:\Users\pkrysl\Documents\Research\Software folder\FEA software folder\fineale\classes\femm\@femm_deformation" lastWrittenTime="1401386682674" name="strain_energy.m">
+      <CodeFolds version="1.0"/>
+   </File>
+   <File absPath="C:\Users\pkrysl\Documents\Research\Software folder\FEA software folder\fineale\classes\femm\@femm_deformation" lastWrittenTime="1401386685808" name="stiffness.m">
+      <CodeFolds version="1.0"/>
+   </File>
+   <File absPath="C:\Users\pkrysl\Documents\Research\Software folder\FEA software folder\fineale\classes\femm\@femm_deformation" lastWrittenTime="1401386726043" name="nz_ebc_loads_acceleration.m">
+      <CodeFolds version="1.0"/>
+   </File>
+   <File absPath="C:\Users\pkrysl\Documents\Research\Software folder\FEA software folder\fineale\classes\femm\@femm_deformation" lastWrittenTime="1401386729027" name="nz_ebc_loads.m">
+      <CodeFolds version="1.0"/>
+   </File>
+   <File absPath="C:\Users\pkrysl\Documents\Research\Software folder\FEA software folder\fineale\classes\femm\@femm_deformation" lastWrittenTime="1401386736333" name="mass.m">
+      <CodeFolds version="1.0"/>
+   </File>
+   <File absPath="C:\Users\pkrysl\Documents\Research\Software folder\FEA software folder\fineale\classes\femm\@femm_deformation" lastWrittenTime="1401386737786" name="lumped_mass.m">
+      <CodeFolds version="1.0"/>
+   </File>
+   <File absPath="C:\Users\pkrysl\Documents\Research\Software folder\FEA software folder\fineale\classes\femm\@femm_deformation" lastWrittenTime="1401386763011" name="initial_strain_loads.m">
+      <CodeFolds version="1.0"/>
+   </File>
+   <File absPath="C:\Users\pkrysl\Documents\Research\Software folder\FEA software folder\fineale\tutorials" lastWrittenTime="1401387142380" name="tutorials_deformation_dynamics_steady.m">
+      <CodeFolds version="1.0"/>
+   </File>
+   <File absPath="C:\Users\pkrysl\Documents\Research\Software folder\FEA software folder\fineale\examples\mesh_generation\Complex" lastWrittenTime="1401391359151" name="test_t4_conversion_2.m">
+      <CodeFolds version="1.0"/>
+   </File>
+   <File absPath="C:\Users\pkrysl\Documents\Research\Software folder\FEA software folder\fineale\examples\deformation_linear\dynamics\direct_implicit\3-d" lastWrittenTime="1401391372433" name="pub_sin_rod_impl_3D.m">
+      <CodeFolds version="1.0"/>
+   </File>
+   <File absPath="C:\Users\pkrysl\Documents\Research\Software folder\FEA software folder\fineale\examples\heat_diffusion\pencil_and_paper" lastWrittenTime="1401400700910" name="ChimneyN.m">
+      <CodeFolds version="1.0"/>
+   </File>
+   <File absPath="C:\Users\pkrysl\Documents\Research\Software folder\FEA software folder\fineale\examples\heat_diffusion\pencil_and_paper" lastWrittenTime="1401400702510" name="runway_wire.m">
+      <CodeFolds version="1.0"/>
+   </File>
+   <File absPath="C:\Users\pkrysl\Documents\Research\Software folder\FEA software folder\fineale\examples\thermo_mechanical\2-d" lastWrittenTime="1401400720241" name="pub_LE11NAFEMS_Q8.m">
+      <CodeFolds version="1.0"/>
+   </File>
+   <File absPath="C:\Users\pkrysl\Documents\Research\Software folder\FEA software folder\fineale\examples\thermo_mechanical\2-d" lastWrittenTime="1401400721480" name="pub_cooling_stress_shock.m">
+      <CodeFolds version="1.0"/>
+   </File>
+   <File absPath="C:\Users\pkrysl\Documents\Research\Software folder\FEA software folder\fineale\examples\heat_diffusion\pencil_and_paper" lastWrittenTime="1401400730543" name="runway_wire_pnp.m">
+      <CodeFolds version="1.0"/>
+   </File>
+   <File absPath="C:\Users\pkrysl\Documents\Research\Software folder\FEA software folder\fineale" lastWrittenTime="1401402569843" name="Untitled.m">
+      <CodeFolds version="1.0"/>
+   </File>
+   <File absPath="C:\Users\pkrysl\Documents\Research\Software folder\FEA software folder\fineale\classes\material\@material_deformation" lastWrittenTime="1401417251276" name="material_deformation.m">
+      <CodeFolds version="1.0"/>
+   </File>
+   <File absPath="C:\Users\pkrysl\Documents\Research\Software folder\FEA software folder\fineale\classes\femm\@femm_deformation_linear_bbarx" lastWrittenTime="1401498170151" name="nz_ebc_loads.m">
+      <CodeFolds version="1.0"/>
+   </File>
+   <File absPath="C:\Users\pkrysl\Documents\Research\Software folder\FEA software folder\fineale\meshing\mesh_export" lastWrittenTime="1411178982495" name="vtk_export_mesh.m">
+      <CodeFolds version="1.0"/>
+   </File>
+   <File absPath="C:\Users\pkrysl\Documents\Research\Software folder\FEA software folder\fineale\classes\femm\@femm_deformation_linear_gsri" lastWrittenTime="1411178992999" name="inspect_integration_points.m">
+      <CodeFolds version="1.0"/>
+   </File>
+   <File absPath="C:\Users\pkrysl\Documents\Research\Software folder\FEA software folder\fineale\classes\material\@material_deformation_triax" lastWrittenTime="1411179005174" name="material_deformation_triax.m">
+      <CodeFolds version="1.0"/>
+   </File>
+   <File absPath="C:\Users\pkrysl\Documents\Research\Software folder\FEA software folder\fineale\classes\femm\@femm_deformation_linear" lastWrittenTime="1411179011698" name="stiffness.m">
+      <CodeFolds version="1.0"/>
+   </File>
+   <File absPath="C:\Users\pkrysl\Documents\Research\Software folder\FEA software folder\fineale\classes\property\@property_deformation_plastic_perf_j2_iso" lastWrittenTime="1411429213960" name="property_plastic_perf_j2_iso.m">
+      <CodeFolds version="1.0"/>
+   </File>
+   <File absPath="C:\Users\pkrysl\Documents\Research\Software folder\FEA software folder\fineale\classes\property\@property_deformation_plastic_perf_j2_iso" lastWrittenTime="1411430012013" name="property_deformation_plastic_perf_j2_iso.m">
+      <CodeFolds version="1.0"/>
+   </File>
+   <File absPath="C:\Users\pkrysl\Documents\Research\Software folder\FEA software folder\fineale\classes\material\@material_deformation_ss_plastic_perf_j2_triax" lastWrittenTime="1411430197205" name="mater_ss_plastic_perf_j2_triax.m">
+      <CodeFolds version="1.0"/>
+   </File>
+   <File absPath="C:\Users\pkrysl\Documents\Research\Software folder\FEA software folder\fineale\examples\deformation_nonlinear\statics\j2_plasticity_ss" lastWrittenTime="1411446080136" name="perforated_strip.m">
+      <CodeFolds version="1.0"/>
+   </File>
+   <File absPath="C:\Users\pkrysl\Documents\Research\Software folder\FEA software folder\fineale\examples\deformation_linear\statics\3-d" lastWrittenTime="1415374003309" name="clsqconc.m">
+      <CodeFolds version="1.0"/>
+   </File>
+   <File absPath="C:\Users\pkrysl\Documents\Research\Software folder\FEA software folder\fineale\examples\deformation_nonlinear\statics\j2_plasticity_ss\3-d" lastWrittenTime="1415374006411" name="perf_strip_prescr_disp_h8.m">
+      <CodeFolds version="1.0"/>
+   </File>
+   <File absPath="C:\Users\pkrysl\Documents\Research\Software folder\FEA software folder\fineale\classes\graphic_viewer\@graphic_viewer" lastWrittenTime="1415374007992" name="interact.m">
+      <CodeFolds version="1.0"/>
+   </File>
+   <File absPath="C:\Users\pkrysl\Documents\Research\Software folder\FEA software folder\fineale\classes\femm\@femm_deformation_linear" lastWrittenTime="1415374010724" name="inspect_integration_points.m">
+      <CodeFolds version="1.0"/>
+   </File>
+   <File absPath="C:\Users\pkrysl\Documents\Research\Software folder\FEA software folder\fineale\algorithms\deformation_nonlinear" lastWrittenTime="1415374020028" name="deformation_nonlinear_statics.m">
+      <CodeFolds version="1.0"/>
+   </File>
+   <File absPath="C:\Users\pkrysl\Documents\Research\Software folder\FEA software folder\fineale\examples\deformation_nonlinear\statics\j2_plasticity_ss" lastWrittenTime="1415374028524" name="Contents.m">
+      <CodeFolds version="1.0"/>
+   </File>
+   <File absPath="C:\Users\pkrysl\Documents\Research\Software folder\FEA software folder\fineale\examples\deformation_nonlinear" lastWrittenTime="1415374030675" name="Contents.m">
+      <CodeFolds version="1.0"/>
+   </File>
+   <File absPath="C:\Users\pkrysl\Documents\Research\Software folder\FEA software folder\fineale\examples\deformation_nonlinear\statics\j2_plasticity_ss\3-d" lastWrittenTime="1415374031795" name="perf_strip.m">
+      <CodeFolds version="1.0"/>
+   </File>
+   <File absPath="C:\Users\pkrysl\Documents\Research\Software folder\FEA software folder\fineale\examples\deformation_linear\statics\3-d" lastWrittenTime="1416009577377" name="sssqunif.m">
+      <CodeFolds version="1.0"/>
+   </File>
+   <File absPath="C:\Users\pkrysl\Documents\Research\Software folder\FEA software folder\fineale\examples\heat_diffusion\steady_state\2-d" lastWrittenTime="1416009577396" name="lshape3_hunif.m">
+      <CodeFolds version="1.0"/>
+   </File>
+   <File absPath="C:\Users\pkrysl\Documents\Research\Software folder\FEA software folder\fineale\meshing\triangle" lastWrittenTime="1416009577420" name="T3_refine.m">
+      <CodeFolds version="1.0"/>
+   </File>
+   <File absPath="C:\Users\pkrysl\Documents\Research\Software folder\FEA software folder\fineale\examples\deformation_nonlinear\statics\hyperelastic\3-d\Twisted_beam" lastWrittenTime="1416009577529" name="nonlinear_twisted_beam_algo.m">
+      <CodeFolds version="1.0"/>
+   </File>
+   <File absPath="C:\Users\pkrysl\Documents\Research\Software folder\FEA software folder\fineale\examples\taut_wire" lastWrittenTime="1416009577587" name="wireFEM4.m">
+      <CodeFolds version="1.0"/>
+   </File>
+   <File absPath="C:\Users\pkrysl\Documents\Research\Software folder\FEA software folder\fineale\examples\common\graphics" lastWrittenTime="1416009577623" name="Cook_3D_strain_vtk_visualization.m">
+      <CodeFolds version="1.0"/>
+   </File>
+</Editor>

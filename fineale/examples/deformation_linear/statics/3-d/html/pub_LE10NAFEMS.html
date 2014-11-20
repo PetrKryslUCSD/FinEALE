@@ -1,0 +1,352 @@
+
+<!DOCTYPE html
+  PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html><head>
+      <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+   <!--
+This HTML was auto-generated from MATLAB code.
+To make changes, update the MATLAB code and republish this document.
+      --><title>Transverse deflection of elliptical plate with elliptical hole</title><meta name="generator" content="MATLAB 8.0"><link rel="schema.DC" href="http://purl.org/dc/elements/1.1/"><meta name="DC.date" content="2012-12-20"><meta name="DC.source" content="pub_LE10NAFEMS.m"><style type="text/css">
+html,body,div,span,applet,object,iframe,h1,h2,h3,h4,h5,h6,p,blockquote,pre,a,abbr,acronym,address,big,cite,code,del,dfn,em,font,img,ins,kbd,q,s,samp,small,strike,strong,sub,sup,tt,var,b,u,i,center,dl,dt,dd,ol,ul,li,fieldset,form,label,legend,table,caption,tbody,tfoot,thead,tr,th,td{margin:0;padding:0;border:0;outline:0;font-size:100%;vertical-align:baseline;background:transparent}body{line-height:1}ol,ul{list-style:none}blockquote,q{quotes:none}blockquote:before,blockquote:after,q:before,q:after{content:'';content:none}:focus{outine:0}ins{text-decoration:none}del{text-decoration:line-through}table{border-collapse:collapse;border-spacing:0}
+
+html { min-height:100%; margin-bottom:1px; }
+html body { height:100%; margin:0px; font-family:Arial, Helvetica, sans-serif; font-size:10px; color:#000; line-height:140%; background:#fff none; overflow-y:scroll; }
+html body td { vertical-align:top; text-align:left; }
+
+h1 { padding:0px; margin:0px 0px 25px; font-family:Arial, Helvetica, sans-serif; font-size:1.5em; color:#d55000; line-height:100%; font-weight:normal; }
+h2 { padding:0px; margin:0px 0px 8px; font-family:Arial, Helvetica, sans-serif; font-size:1.2em; color:#000; font-weight:bold; line-height:140%; border-bottom:1px solid #d6d4d4; display:block; }
+h3 { padding:0px; margin:0px 0px 5px; font-family:Arial, Helvetica, sans-serif; font-size:1.1em; color:#000; font-weight:bold; line-height:140%; }
+
+a { color:#005fce; text-decoration:none; }
+a:hover { color:#005fce; text-decoration:underline; }
+a:visited { color:#004aa0; text-decoration:none; }
+
+p { padding:0px; margin:0px 0px 20px; }
+img { padding:0px; margin:0px 0px 20px; border:none; }
+p img, pre img, tt img, li img { margin-bottom:0px; } 
+
+ul { padding:0px; margin:0px 0px 20px 23px; list-style:square; }
+ul li { padding:0px; margin:0px 0px 7px 0px; }
+ul li ul { padding:5px 0px 0px; margin:0px 0px 7px 23px; }
+ul li ol li { list-style:decimal; }
+ol { padding:0px; margin:0px 0px 20px 0px; list-style:decimal; }
+ol li { padding:0px; margin:0px 0px 7px 23px; list-style-type:decimal; }
+ol li ol { padding:5px 0px 0px; margin:0px 0px 7px 0px; }
+ol li ol li { list-style-type:lower-alpha; }
+ol li ul { padding-top:7px; }
+ol li ul li { list-style:square; }
+
+.content { font-size:1.2em; line-height:140%; padding: 20px; }
+
+pre, tt, code { font-size:12px; }
+pre { margin:0px 0px 20px; }
+pre.error { color:red; }
+pre.codeinput { padding:10px; border:1px solid #d3d3d3; background:#f7f7f7; }
+pre.codeoutput { padding:10px 11px; margin:0px 0px 20px; color:#4c4c4c; }
+
+@media print { pre.codeinput, pre.codeoutput { word-wrap:break-word; width:100%; } }
+
+span.keyword { color:#0000FF }
+span.comment { color:#228B22 }
+span.string { color:#A020F0 }
+span.untermstring { color:#B20000 }
+span.syscmd { color:#B28C00 }
+
+.footer { width:auto; padding:10px 0px; margin:25px 0px 0px; border-top:1px dotted #878787; font-size:0.8em; line-height:140%; font-style:italic; color:#878787; text-align:left; float:none; }
+.footer p { margin:0px; }
+.footer a { color:#878787; }
+.footer a:hover { color:#878787; text-decoration:underline; }
+.footer a:visited { color:#878787; }
+
+table th { padding:7px 5px; text-align:left; vertical-align:middle; border: 1px solid #d6d4d4; font-weight:bold; }
+table td { padding:7px 5px; text-align:left; vertical-align:top; border:1px solid #d6d4d4; }
+
+
+
+
+
+  </style></head><body><div class="content"><h1>Transverse deflection of elliptical plate with elliptical hole</h1><!--introduction--><!--/introduction--><h2>Contents</h2><div><ul><li><a href="#2">Description</a></li><li><a href="#6">Solution</a></li></ul></div><p>Link to the  <a href="matlab:edit('pub_LE10NAFEMS')">m-file</a>.</p><h2>Description<a name="2"></a></h2><p>Thick elliptical plate with an elliptical hole is clamped on its exterior boundary and is loaded with transverse  pressure. This is a NAFEMS Benchmark, Test No. LE10.</p><p>The plate is discretized with solid elements. Because of the symmetries of the geometry and load, only quarter of the plate is modeled.</p><p>
+<table border=0><tr><td>
+<img src="../docs/pub_LE10NAFEMS.jpg" width="50%">
+</td></tr>
+<tr><td>Figure 1. Definition of the geometry of the thick elliptical plate</td></tr>
+</table>
+</p><p>The <img src="pub_LE10NAFEMS_eq47260.png" alt="$\sigma_y=\sigma_2$"> at the point <img src="pub_LE10NAFEMS_eq86892.png" alt="$P$"> is to be determined. Since the target point is on the boundary of the domain it will not be an integration node as we use Gauss quadrature. The reference value is -5.38 MPa.</p><h2>Solution<a name="6"></a></h2><pre class="codeinput"><span class="keyword">function</span> pub_LE10NAFEMS
+</pre><pre class="codeinput">    pu=physical_units_struct;
+</pre><p>Define the material properties.</p><pre class="codeinput">    E = 210e3*pu.MEGA*pu.PA;
+    nu = 0.3;
+    rho= 8000*pu.KG/pu.M^3;
+</pre><p>The geometrical parameters:</p><pre class="codeinput">    Ae =3.25*pu.M;<span class="comment">% Major radius of the exterior ellipse</span>
+    Be =2.75*pu.M;<span class="comment">% Minor radius of the exterior ellipse</span>
+    Ai =2.0*pu.M;<span class="comment">% Major radius of the interior ellipse</span>
+    Bi =1.0*pu.M;<span class="comment">% Minor radius of the interior ellipse</span>
+    t =0.6*pu.M;<span class="comment">% thickness of the plate</span>
+    tol=t/100;<span class="comment">% geometrical tolerance</span>
+</pre><p>The applied pressure on the top face is</p><pre class="codeinput">    qmagn=1*pu.MEGA*pu.PA;
+</pre><p>The chosen mesh parameters.</p><pre class="codeinput">    nr = 2;<span class="comment">% number of elements radially</span>
+    nc = 6;<span class="comment">% number of elements circumferentially</span>
+    nt = 2;<span class="comment">% number of elements through the thickness</span>
+</pre><p>The mesh is generated first in the XY  plane as a block. The first coordinate is normalized thickness, the second coordinate is angular.</p><pre class="codeinput">    [fens,fes]=Q4_block(1.0,pi/2, nr, nc, struct(<span class="string">'other_dimension'</span>,1.0));
+</pre><p>The rectangle is next extruded in the Z direction by the thickness. Note that the extrusion function simply adds the third dimension  to the coordinates of the nodes which are at this point in the Cartesian coordinates XY.</p><p>Check that the number of elements through the thickness is an even number, the application of the boundary conditions relies on it.</p><pre class="codeinput">nt=round(nt*2)/2;
+</pre><p>Extrude the quadrilaterals into hexahedra.</p><pre class="codeinput">    [fens,fes] = H8_extrude_Q4(fens,fes,nt,@(x,i)([x,0]+[0,0,t*i/nt]));
+</pre><p>The mesh looks like this at this point:</p><pre class="codeinput">    drawmesh({fens,fes},<span class="string">'fes'</span>,<span class="string">'facecolor'</span>,<span class="string">'r'</span>,<span class="string">'shrink'</span>, 0.9);
+</pre><img vspace="5" hspace="5" src="pub_LE10NAFEMS_01.png" alt=""> <p>Now we are going to convert the mesh to the element type we desire.  Here we are going to use the 64-node hexahedron.</p><pre class="codeinput">    [fens,fes] = H8_to_H20(fens,fes);
+</pre><p>At this point we will extract the boundary mesh.</p><pre class="codeinput">    bdry_fes = mesh_boundary(fes, struct(<span class="string">'other_dimension'</span>, 1.0));
+</pre><p>We will also select those finite elements  are on the  external elliptical boundary and those that are on the upper face of the plate. It is particularly easy because the mesh geometry is still a box.</p><pre class="codeinput">    exteriorbfl = fe_select(fens, bdry_fes, struct(<span class="string">'box'</span>, [1,1,0,pi/2,0,t],<span class="string">'inflate'</span>,tol));
+    topbfl = fe_select(fens, bdry_fes, struct(<span class="string">'box'</span>, [0,1,0,pi/2,t,t],<span class="string">'inflate'</span>,tol));
+</pre><p>Now the geometry can be warped into the  elliptical shape.</p><pre class="codeinput">    xyz=fens.xyz;
+    <span class="keyword">for</span> i=1:count(fens)
+        r=xyz(i,1); a=xyz(i,2); z=xyz(i,3);
+        xyz(i,:)=[(r*Ae+(1-r)*Ai)*cos(a) (r*Be+(1-r)*Bi)*sin(a) z];
+    <span class="keyword">end</span>
+    fens.xyz=xyz;
+</pre><p>The geometry may be verified graphically.</p><pre class="codeinput">    drawmesh({fens,fes},<span class="string">'fes'</span>,<span class="string">'facecolor'</span>,<span class="string">'r'</span>,<span class="string">'shrink'</span>, 0.9);
+</pre><img vspace="5" hspace="5" src="pub_LE10NAFEMS_02.png" alt=""> <p>We can also visualize the selected boundary faces.</p><pre class="codeinput">    gv=drawmesh({fens,subset(bdry_fes,exteriorbfl)},<span class="string">'fes'</span>,<span class="string">'facecolor'</span>,<span class="string">'b'</span>);
+    gv=drawmesh({fens,subset(bdry_fes,topbfl)},<span class="string">'gv'</span>,gv,<span class="string">'fes'</span>,<span class="string">'facecolor'</span>,<span class="string">'y'</span>);
+</pre><img vspace="5" hspace="5" src="pub_LE10NAFEMS_03.png" alt=""> <p>We are ready to bundle up the model data so they can be passed to the solver.</p><pre class="codeinput">    clear <span class="string">model_data</span>
+    model_data.fens =fens;<span class="comment">% the finite element node set</span>
+
+
+    clear <span class="string">region</span>
+    region.fes= fes;
+    region.rho =rho;
+    region.E=E;
+    region.nu=nu;
+    region.integration_rule =gauss_rule(struct(<span class="string">'dim'</span>,3, <span class="string">'order'</span>,2));
+    model_data.region{1} =region;
+</pre><p>The essential boundary conditions: The nodes on the symmetry planes are selected using box criteria.</p><pre class="codeinput">    clear <span class="string">essential</span>
+    essential.component= [1];
+    essential.fixed_value= 0;
+    essential.node_list = fenode_select (fens,struct(<span class="string">'box'</span>,[0,0,-inf,inf,-inf,inf],<span class="string">'inflate'</span>,tol));
+    model_data.boundary_conditions.essential{1} = essential;
+
+    clear <span class="string">essential</span>
+    essential.component= [2];
+    essential.fixed_value= 0;
+    essential.node_list = fenode_select (fens,struct(<span class="string">'box'</span>,[-inf,inf,0,0,-inf,inf],<span class="string">'inflate'</span>,tol));
+    model_data.boundary_conditions.essential{2} = essential;
+
+
+    clear <span class="string">essential</span>
+    essential.component= [1:2];
+    essential.fixed_value= 0;
+    essential.node_list = connected_nodes (subset(bdry_fes,exteriorbfl));
+    model_data.boundary_conditions.essential{3} = essential;
+
+    clear <span class="string">essential</span>
+    essential.component= [3];
+    essential.fixed_value= 0;
+    essential.node_list = intersect(connected_nodes (subset(bdry_fes,exteriorbfl)),<span class="keyword">...</span>
+        fenode_select (fens,struct(<span class="string">'box'</span>,[-inf,inf,-inf,inf,t/2,t/2],<span class="string">'inflate'</span>,tol)));
+    model_data.boundary_conditions.essential{4} = essential;
+
+    clear <span class="string">traction</span>
+    traction.fes =subset(bdry_fes,topbfl);
+    traction.traction= [0;0;-qmagn];
+    traction.integration_rule =gauss_rule(struct(<span class="string">'dim'</span>,2, <span class="string">'order'</span>,4));
+    model_data.boundary_conditions.traction{1} = traction;
+
+    <span class="comment">% Solve</span>
+    model_data =deformation_linear_statics(model_data);
+
+    Pn=fenode_select (fens,struct(<span class="string">'box'</span>,[Ai,Ai,0,0,t,t],<span class="string">'inflate'</span>,tol));
+
+    model_data.u_scale=1000;
+     model_data.stress_component=2;
+    <span class="keyword">function</span> observer(i, stressf,model_data)
+        disp( [<span class="string">'Stress at P='</span> num2str( gather_values( stressf,Pn)/(pu.MEGA*pu.PA)) <span class="string">' MPa'</span>]);
+    <span class="keyword">end</span>
+    model_data.observer =@ observer;
+    model_data.use_spr= true;
+    model_data=deformation_plot_stress(model_data);
+</pre><img vspace="5" hspace="5" src="pub_LE10NAFEMS_04.png" alt=""> <pre class="codeinput"><span class="keyword">end</span>
+</pre><p class="footer"><br><a href="http://www.mathworks.com/products/matlab/">Published with MATLAB&reg; R2012b</a><br></p></div><!--
+##### SOURCE BEGIN #####
+%% Transverse deflection of elliptical plate with elliptical hole
+%
+
+%%
+% Link to the  <matlab:edit('pub_LE10NAFEMS') m-file>.
+% 
+
+%% Description
+%
+% Thick elliptical plate with an elliptical hole is clamped on its exterior
+% boundary and is loaded with transverse  pressure.
+% This is a NAFEMS Benchmark, Test No. LE10.
+
+
+%%
+% The plate is discretized with solid elements.
+% Because of the symmetries of the geometry and load, only quarter of the plate is modeled.
+
+%%
+%
+% <html>
+% <table border=0><tr><td>
+% <img src="../docs/pub_LE10NAFEMS.jpg" width="50%">
+% </td></tr>
+% <tr><td>Figure 1. Definition of the geometry of the thick elliptical plate</td></tr>
+% </table>
+% </html>
+
+
+%% 
+% The $\sigma_y=\sigma_2$ at the point $P$ is to be determined. Since the
+% target point is on the boundary of the domain it will not be an
+% integration node as we use Gauss quadrature. The reference value is -5.38 MPa.
+
+%% Solution
+%
+function pub_LE10NAFEMS
+    pu=physical_units_struct;
+    
+    %%
+    % Define the material properties.
+    E = 210e3*pu.MEGA*pu.PA;
+    nu = 0.3;
+    rho= 8000*pu.KG/pu.M^3;
+    
+    %%
+    % The geometrical parameters:
+    Ae =3.25*pu.M;% Major radius of the exterior ellipse
+    Be =2.75*pu.M;% Minor radius of the exterior ellipse
+    Ai =2.0*pu.M;% Major radius of the interior ellipse
+    Bi =1.0*pu.M;% Minor radius of the interior ellipse
+    t =0.6*pu.M;% thickness of the plate
+    tol=t/100;% geometrical tolerance
+    %%
+    % The applied pressure on the top face is
+    qmagn=1*pu.MEGA*pu.PA;
+    
+    %%
+    % The chosen mesh parameters.
+    nr = 2;% number of elements radially
+    nc = 6;% number of elements circumferentially
+    nt = 2;% number of elements through the thickness
+    
+    
+    %%
+    % The mesh is generated first in the XY  plane as a block.
+    % The first coordinate is normalized thickness, the second coordinate
+    % is angular.
+    [fens,fes]=Q4_block(1.0,pi/2, nr, nc, struct('other_dimension',1.0));
+    
+    %%
+    % The rectangle is next extruded in the Z direction by the thickness. Note
+    % that the extrusion function simply adds the third dimension  to the
+    % coordinates of the nodes which are at this point in the Cartesian
+    % coordinates XY.
+    
+%% 
+% Check that the number of elements through the thickness is an even
+% number, the application of the boundary conditions relies on it.
+nt=round(nt*2)/2;
+
+%% 
+% Extrude the quadrilaterals into hexahedra.
+    [fens,fes] = H8_extrude_Q4(fens,fes,nt,@(x,i)([x,0]+[0,0,t*i/nt]));
+    %%
+    % The mesh looks like this at this point:
+    drawmesh({fens,fes},'fes','facecolor','r','shrink', 0.9);
+    
+    %%
+    % Now we are going to convert the mesh to the element type we desire.  Here
+    % we are going to use the 64-node hexahedron.
+    [fens,fes] = H8_to_H20(fens,fes);
+    
+    %%
+    % At this point we will extract the boundary mesh.
+    bdry_fes = mesh_boundary(fes, struct('other_dimension', 1.0));
+    %%
+    % We will also select those finite elements  are on the  external
+    % elliptical boundary and those that are on the upper face of the plate.
+    % It is particularly
+    % easy because the mesh geometry is still a box.
+    exteriorbfl = fe_select(fens, bdry_fes, struct('box', [1,1,0,pi/2,0,t],'inflate',tol));
+    topbfl = fe_select(fens, bdry_fes, struct('box', [0,1,0,pi/2,t,t],'inflate',tol));
+    
+    %%
+    % Now the geometry can be warped into the  elliptical shape.
+    xyz=fens.xyz;
+    for i=1:count(fens)
+        r=xyz(i,1); a=xyz(i,2); z=xyz(i,3);
+        xyz(i,:)=[(r*Ae+(1-r)*Ai)*cos(a) (r*Be+(1-r)*Bi)*sin(a) z];
+    end
+    fens.xyz=xyz;
+    
+    %%
+    % The geometry may be verified graphically.
+    drawmesh({fens,fes},'fes','facecolor','r','shrink', 0.9);
+    
+    %%
+    % We can also visualize the selected boundary faces.
+    gv=drawmesh({fens,subset(bdry_fes,exteriorbfl)},'fes','facecolor','b');
+    gv=drawmesh({fens,subset(bdry_fes,topbfl)},'gv',gv,'fes','facecolor','y');
+    
+    %%
+    % We are ready to bundle up the model data so they can be passed to the solver.
+    clear model_data
+    model_data.fens =fens;% the finite element node set
+    
+    
+    clear region
+    region.fes= fes;
+    region.rho =rho;
+    region.E=E;
+    region.nu=nu;
+    region.integration_rule =gauss_rule(struct('dim',3, 'order',2));
+    model_data.region{1} =region;
+    
+    %%
+    % The essential boundary conditions: The nodes on the symmetry planes are selected using box criteria.
+    
+    clear essential
+    essential.component= [1];
+    essential.fixed_value= 0;
+    essential.node_list = fenode_select (fens,struct('box',[0,0,-inf,inf,-inf,inf],'inflate',tol));
+    model_data.boundary_conditions.essential{1} = essential;
+    
+    clear essential
+    essential.component= [2];
+    essential.fixed_value= 0;
+    essential.node_list = fenode_select (fens,struct('box',[-inf,inf,0,0,-inf,inf],'inflate',tol));
+    model_data.boundary_conditions.essential{2} = essential;
+    
+    
+    clear essential
+    essential.component= [1:2];
+    essential.fixed_value= 0;
+    essential.node_list = connected_nodes (subset(bdry_fes,exteriorbfl));
+    model_data.boundary_conditions.essential{3} = essential;
+    
+    clear essential
+    essential.component= [3];
+    essential.fixed_value= 0;
+    essential.node_list = intersect(connected_nodes (subset(bdry_fes,exteriorbfl)),...
+        fenode_select (fens,struct('box',[-inf,inf,-inf,inf,t/2,t/2],'inflate',tol)));
+    model_data.boundary_conditions.essential{4} = essential;
+    
+    clear traction
+    traction.fes =subset(bdry_fes,topbfl);
+    traction.traction= [0;0;-qmagn];
+    traction.integration_rule =gauss_rule(struct('dim',2, 'order',4));
+    model_data.boundary_conditions.traction{1} = traction;
+    
+    % Solve
+    model_data =deformation_linear_statics(model_data);
+    
+    Pn=fenode_select (fens,struct('box',[Ai,Ai,0,0,t,t],'inflate',tol));
+    
+    model_data.u_scale=1000;
+     model_data.stress_component=2;
+    function observer(i, stressf,model_data)
+        disp( ['Stress at P=' num2str( gather_values( stressf,Pn)/(pu.MEGA*pu.PA)) ' MPa']);
+    end
+    model_data.observer =@ observer;
+    model_data.use_spr= true;
+    model_data=deformation_plot_stress(model_data);
+
+end
+##### SOURCE END #####
+--></body></html>

@@ -1,0 +1,399 @@
+
+<!DOCTYPE html
+  PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html><head>
+      <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+   <!--
+This HTML was auto-generated from MATLAB code.
+To make changes, update the MATLAB code and republish this document.
+      --><title>Elliptical plate with elliptical hole; T10 tetrahedra</title><meta name="generator" content="MATLAB 8.0"><link rel="schema.DC" href="http://purl.org/dc/elements/1.1/"><meta name="DC.date" content="2012-12-20"><meta name="DC.source" content="pub_LE10NAFEMS_T10.m"><style type="text/css">
+html,body,div,span,applet,object,iframe,h1,h2,h3,h4,h5,h6,p,blockquote,pre,a,abbr,acronym,address,big,cite,code,del,dfn,em,font,img,ins,kbd,q,s,samp,small,strike,strong,sub,sup,tt,var,b,u,i,center,dl,dt,dd,ol,ul,li,fieldset,form,label,legend,table,caption,tbody,tfoot,thead,tr,th,td{margin:0;padding:0;border:0;outline:0;font-size:100%;vertical-align:baseline;background:transparent}body{line-height:1}ol,ul{list-style:none}blockquote,q{quotes:none}blockquote:before,blockquote:after,q:before,q:after{content:'';content:none}:focus{outine:0}ins{text-decoration:none}del{text-decoration:line-through}table{border-collapse:collapse;border-spacing:0}
+
+html { min-height:100%; margin-bottom:1px; }
+html body { height:100%; margin:0px; font-family:Arial, Helvetica, sans-serif; font-size:10px; color:#000; line-height:140%; background:#fff none; overflow-y:scroll; }
+html body td { vertical-align:top; text-align:left; }
+
+h1 { padding:0px; margin:0px 0px 25px; font-family:Arial, Helvetica, sans-serif; font-size:1.5em; color:#d55000; line-height:100%; font-weight:normal; }
+h2 { padding:0px; margin:0px 0px 8px; font-family:Arial, Helvetica, sans-serif; font-size:1.2em; color:#000; font-weight:bold; line-height:140%; border-bottom:1px solid #d6d4d4; display:block; }
+h3 { padding:0px; margin:0px 0px 5px; font-family:Arial, Helvetica, sans-serif; font-size:1.1em; color:#000; font-weight:bold; line-height:140%; }
+
+a { color:#005fce; text-decoration:none; }
+a:hover { color:#005fce; text-decoration:underline; }
+a:visited { color:#004aa0; text-decoration:none; }
+
+p { padding:0px; margin:0px 0px 20px; }
+img { padding:0px; margin:0px 0px 20px; border:none; }
+p img, pre img, tt img, li img { margin-bottom:0px; } 
+
+ul { padding:0px; margin:0px 0px 20px 23px; list-style:square; }
+ul li { padding:0px; margin:0px 0px 7px 0px; }
+ul li ul { padding:5px 0px 0px; margin:0px 0px 7px 23px; }
+ul li ol li { list-style:decimal; }
+ol { padding:0px; margin:0px 0px 20px 0px; list-style:decimal; }
+ol li { padding:0px; margin:0px 0px 7px 23px; list-style-type:decimal; }
+ol li ol { padding:5px 0px 0px; margin:0px 0px 7px 0px; }
+ol li ol li { list-style-type:lower-alpha; }
+ol li ul { padding-top:7px; }
+ol li ul li { list-style:square; }
+
+.content { font-size:1.2em; line-height:140%; padding: 20px; }
+
+pre, tt, code { font-size:12px; }
+pre { margin:0px 0px 20px; }
+pre.error { color:red; }
+pre.codeinput { padding:10px; border:1px solid #d3d3d3; background:#f7f7f7; }
+pre.codeoutput { padding:10px 11px; margin:0px 0px 20px; color:#4c4c4c; }
+
+@media print { pre.codeinput, pre.codeoutput { word-wrap:break-word; width:100%; } }
+
+span.keyword { color:#0000FF }
+span.comment { color:#228B22 }
+span.string { color:#A020F0 }
+span.untermstring { color:#B20000 }
+span.syscmd { color:#B28C00 }
+
+.footer { width:auto; padding:10px 0px; margin:25px 0px 0px; border-top:1px dotted #878787; font-size:0.8em; line-height:140%; font-style:italic; color:#878787; text-align:left; float:none; }
+.footer p { margin:0px; }
+.footer a { color:#878787; }
+.footer a:hover { color:#878787; text-decoration:underline; }
+.footer a:visited { color:#878787; }
+
+table th { padding:7px 5px; text-align:left; vertical-align:middle; border: 1px solid #d6d4d4; font-weight:bold; }
+table td { padding:7px 5px; text-align:left; vertical-align:top; border:1px solid #d6d4d4; }
+
+
+
+
+
+  </style></head><body><div class="content"><h1>Elliptical plate with elliptical hole; T10 tetrahedra</h1><!--introduction--><!--/introduction--><h2>Contents</h2><div><ul><li><a href="#2">Description</a></li><li><a href="#6">Solution</a></li></ul></div><p>Link to the  <a href="matlab:edit('pub_LE10NAFEMS_T10')">m-file</a>.</p><h2>Description<a name="2"></a></h2><p>Thick elliptical plate with an elliptical hole is supported on its exterior boundary and is loaded at the top with transverse  pressure. This is a NAFEMS Benchmark, Test No. LE10.</p><p>In this tutorial, the plate is discretized with tetrahedral T10 solid elements. Because of the symmetries of the geometry and load, only quarter of the plate is modeled.</p><p> <table border=0><tr><td> <img src="../docs/pub_LE10NAFEMS.jpg"
+width="50%"> </td></tr> <tr><td>Figure 1. Definition of the geometry of
+the thick elliptical plate</td></tr> </table> </p><p>The <img src="pub_LE10NAFEMS_T10_eq47260.png" alt="$\sigma_y=\sigma_2$"> at the point <img src="pub_LE10NAFEMS_T10_eq86892.png" alt="$P$"> is to be determined. The reference value is -5.38 MPa.</p><h2>Solution<a name="6"></a></h2><pre class="codeinput"><span class="keyword">function</span> pub_LE10NAFEMS_T10
+</pre><pre class="codeinput">    pu=physical_units_struct;
+</pre><p>Define the material properties.</p><pre class="codeinput">    E = 210e3*pu.MEGA*pu.PA;
+    nu = 0.3;
+    rho= 8000*pu.KG/pu.M^3;
+</pre><p>The geometrical parameters:</p><pre class="codeinput">    Ae =3.25*pu.M;<span class="comment">% Major radius of the exterior ellipse</span>
+    Be =2.75*pu.M;<span class="comment">% Minor radius of the exterior ellipse</span>
+    Ai =2.0*pu.M;<span class="comment">% Major radius of the interior ellipse</span>
+    Bi =1.0*pu.M;<span class="comment">% Minor radius of the interior ellipse</span>
+    t =0.6*pu.M;<span class="comment">% thickness of the plate</span>
+    tol=t/100;<span class="comment">% geometrical tolerance</span>
+</pre><p>The applied pressure on the top face is</p><pre class="codeinput">    qmagn=1*pu.MEGA*pu.PA;
+</pre><p>The chosen mesh parameters. This is for the coarse mesh:</p><pre class="codeinput">    nr = 2;<span class="comment">% number of elements radially</span>
+    nc = 6;<span class="comment">% number of elements circumferentially</span>
+    nt = 2;<span class="comment">% number of elements through the thickness</span>
+    <span class="comment">%     %% % Whereas these  numbers of elements are for the fine mesh.</span>
+    <span class="comment">%             nr = 2*2;% number of elements radially nc = 2*6;% number</span>
+    <span class="comment">%             of elements circumferentially nt = 2*2;% number of</span>
+    <span class="comment">%             elements through the thickness</span>
+</pre><p>Check that the number of elements through the thickness is an even number, the application of the boundary conditions relies on it.</p><pre class="codeinput">    nt=round(nt*2)/2;
+</pre><p>The mesh is generated first in the XYZ  coordinates as a block. The first coordinate is normalized width of the plate, the second coordinate is angular. The third coordinate is the thickness.</p><pre class="codeinput">    [fens,fes]=H8_block(1.0, pi/2, t, nr, nc, nt);
+</pre><p>The node set is now going to be meshed with tetrahedra T4.</p><pre class="codeinput">    [fens,fes] = T4_hull(fens.xyz);
+</pre><p>And the resulting  mesh is going to be converted to quadratic tetrahedra T10.</p><pre class="codeinput">    [fens,fes] = T4_to_T10(fens,fes);
+</pre><p>At this point we will extract the boundary mesh.</p><pre class="codeinput">    bdry_fes = mesh_boundary(fes, struct(<span class="string">'other_dimension'</span>, 1.0));
+</pre><p>We will also select those finite elements  are on the  external elliptical boundary and those that are on the upper face of the plate. It is particularly easy because the mesh geometry is still a box.</p><pre class="codeinput">    exteriorbfl = fe_select(fens, bdry_fes, struct(<span class="string">'box'</span>, [1,1,0,pi/2,0,t],<span class="string">'inflate'</span>,tol));
+    topbfl = fe_select(fens, bdry_fes, struct(<span class="string">'box'</span>, [0,1,0,pi/2,t,t],<span class="string">'inflate'</span>,tol));
+</pre><p>Now the geometry can be warped into the  elliptical shape.</p><pre class="codeinput">    <span class="keyword">for</span> i=1:count(fens)
+        r=fens.xyz(i,1); a=fens.xyz(i,2); z=fens.xyz(i,3);
+        fens.xyz(i,:)=[(r*Ae+(1-r)*Ai)*cos(a) (r*Be+(1-r)*Bi)*sin(a) z];
+    <span class="keyword">end</span>
+</pre><p>We are ready to bundle up the model data so they can be passed to the solver.</p><pre class="codeinput">    clear <span class="string">model_data</span>
+    model_data.fens =fens;<span class="comment">% the finite element node set</span>
+</pre><p>The region uses the minimal 4-point tetrahedron rule.</p><pre class="codeinput">    clear <span class="string">region</span>
+    region.fes= fes;
+    region.rho =rho;
+    region.E=E;
+    region.nu=nu;
+    region.integration_rule =tet_rule(struct(<span class="string">'npts'</span>,4));
+    model_data.region{1} =region;
+</pre><p>The essential boundary conditions: The nodes on the symmetry planes are selected using box criteria.</p><pre class="codeinput">    clear <span class="string">essential</span>
+    essential.component= [1];
+    essential.fixed_value= 0;
+    essential.node_list = fenode_select (fens,struct(<span class="string">'box'</span>,[0,0,-inf,inf,-inf,inf],<span class="string">'inflate'</span>,tol));
+    model_data.boundary_conditions.essential{1} = essential;
+
+    clear <span class="string">essential</span>
+    essential.component= [2];
+    essential.fixed_value= 0;
+    essential.node_list = fenode_select (fens,struct(<span class="string">'box'</span>,[-inf,inf,0,0,-inf,inf],<span class="string">'inflate'</span>,tol));
+    model_data.boundary_conditions.essential{2} = essential;
+</pre><p>The essential boundary conditions on the exterior elliptical boundary resemble, but are not equivalent to,  complete clamping. All in-plane components are fixed.</p><pre class="codeinput">    clear <span class="string">essential</span>
+    essential.component= [1:2];
+    essential.fixed_value= 0;
+    essential.node_list = connected_nodes (subset(bdry_fes,exteriorbfl));
+    model_data.boundary_conditions.essential{3} = essential;
+</pre><p>And only  the nodes on the mid-plane on the supported exterior boundary are fixed in the Z direction.</p><pre class="codeinput">    clear <span class="string">essential</span>
+    essential.component= [3];
+    essential.fixed_value= 0;
+    essential.node_list = intersect(connected_nodes(subset(bdry_fes,exteriorbfl)),<span class="keyword">...</span>
+        fenode_select(fens,struct(<span class="string">'box'</span>,[-inf,inf,-inf,inf,t/2,t/2],<span class="string">'inflate'</span>,tol)));
+    model_data.boundary_conditions.essential{4} = essential;
+</pre><p>The  top of the plate is loaded by normal traction (pressure).</p><pre class="codeinput">    clear <span class="string">traction</span>
+    traction.fes =subset(bdry_fes,topbfl);
+    traction.traction= [0;0;-qmagn];
+    traction.integration_rule =tri_rule(struct(<span class="string">'npts'</span>,3));
+    model_data.boundary_conditions.traction{1} = traction;
+</pre><p>Invoke the statics solver.</p><pre class="codeinput">    model_data =deformation_linear_statics(model_data);
+</pre><p>Now we have our displacement results. The stress is to be calculated in the location of this node:</p><pre class="codeinput">    Pn=fenode_select (fens,struct(<span class="string">'box'</span>,[Ai,Ai,0,0,t,t],<span class="string">'inflate'</span>,tol));
+</pre><p>The transverse deflection at the point P is:</p><pre class="codeinput">    disp(num2str(somel(gather_values( model_data.u,Pn),3)))
+</pre><pre class="codeoutput">-9.9191e-05
+</pre><p>The <img src="pub_LE10NAFEMS_T10_eq32673.png" alt="$\sigma_2$"> stress at point P is going to be stored in this variable:</p><pre class="codeinput">    sigma2P = [];
+</pre><p>We are going to plot the stress using a nodal stress field.  It is extracted from the quadrature points.  The inverse-distance interpolation of the quadrature point data is used.</p><pre class="codeinput">    model_data.u_scale=1000;
+    model_data.stress_component=2;
+    model_data.colormap=cadcolors2;
+    <span class="keyword">function</span> observer(i, stressf,model_data)
+        sigma2P = gather_values( stressf,Pn);
+    <span class="keyword">end</span>
+    model_data.observer =@ observer;
+    model_data=deformation_plot_stress(model_data);
+</pre><img vspace="5" hspace="5" src="pub_LE10NAFEMS_T10_01.png" alt=""> <p>The computed stress should be compared with -5.38 MPa as the reference value.</p><pre class="codeinput">    disp( [<span class="string">'Stress at P='</span> num2str(sigma2P/(pu.MEGA*pu.PA)) <span class="string">' MPa'</span>]);
+    disp( [<span class="string">'i. e.  '</span> num2str(sigma2P/(pu.MEGA*pu.PA)/5.38*100,5) <span class="string">'% of reference value'</span>]);
+</pre><pre class="codeoutput">Stress at P= MPa
+i. e.  % of reference value
+</pre><p>The 10-node tetrahedron mesh does not deliver good accuracy of the stress distribution at the surface with the default inverse-distance interpolation of the stress.  The stress at the location of point P peaks at the surface.  The inverse-distance interpolation cannot take this into account.</p><p>A much more successful  stress post-processing strategy is to use the Super-convergent Patch Recovery (SPR).</p><p>Note that we are setting the flag <tt>use_spr</tt>.</p><pre class="codeinput">    model_data.u_scale=1000;
+    model_data.stress_component=2;
+    model_data.colormap=cadcolors2;
+    model_data.observer =@ observer;
+    model_data.use_spr= true;
+    model_data=deformation_plot_stress(model_data);
+</pre><img vspace="5" hspace="5" src="pub_LE10NAFEMS_T10_02.png" alt=""> <p>The computed stress should be compared with -5.38 MPa as the reference value.</p><pre class="codeinput">    disp( [<span class="string">'Stress at P='</span> num2str(sigma2P/(pu.MEGA*pu.PA)) <span class="string">' MPa'</span>]);
+    disp( [<span class="string">'i. e.  '</span> num2str(sigma2P/(pu.MEGA*pu.PA)/5.38*100,5) <span class="string">'% of reference value'</span>]);
+</pre><pre class="codeoutput">Stress at P= MPa
+i. e.  % of reference value
+</pre><p>The estimate of the peak stress improved considerably with the SPR technique.</p><pre class="codeinput"><span class="keyword">end</span>
+</pre><p class="footer"><br><a href="http://www.mathworks.com/products/matlab/">Published with MATLAB&reg; R2012b</a><br></p></div><!--
+##### SOURCE BEGIN #####
+%% Elliptical plate with elliptical hole; T10 tetrahedra
+%
+
+%%
+% Link to the  <matlab:edit('pub_LE10NAFEMS_T10') m-file>.
+%
+
+%% Description
+%
+% Thick elliptical plate with an elliptical hole is supported on its
+% exterior boundary and is loaded at the top with transverse  pressure.
+% This is a NAFEMS Benchmark, Test No. LE10.
+
+
+%%
+% In this tutorial, the plate is discretized with tetrahedral T10 solid
+% elements. Because of the symmetries of the geometry and load, only
+% quarter of the plate is modeled.
+
+%%
+%
+% <html> <table border=0><tr><td> <img src="../docs/pub_LE10NAFEMS.jpg"
+% width="50%"> </td></tr> <tr><td>Figure 1. Definition of the geometry of
+% the thick elliptical plate</td></tr> </table> </html>
+
+
+%%
+% The $\sigma_y=\sigma_2$ at the point $P$ is to be determined. The
+% reference value is -5.38 MPa.
+
+%% Solution
+%
+function pub_LE10NAFEMS_T10
+    pu=physical_units_struct;
+    
+    %%
+    % Define the material properties.
+    E = 210e3*pu.MEGA*pu.PA;
+    nu = 0.3;
+    rho= 8000*pu.KG/pu.M^3;
+    
+    %%
+    % The geometrical parameters:
+    Ae =3.25*pu.M;% Major radius of the exterior ellipse
+    Be =2.75*pu.M;% Minor radius of the exterior ellipse
+    Ai =2.0*pu.M;% Major radius of the interior ellipse
+    Bi =1.0*pu.M;% Minor radius of the interior ellipse
+    t =0.6*pu.M;% thickness of the plate
+    tol=t/100;% geometrical tolerance
+    %%
+    % The applied pressure on the top face is
+    qmagn=1*pu.MEGA*pu.PA;
+    
+    %%
+    % The chosen mesh parameters. This is for the coarse mesh:
+    nr = 2;% number of elements radially
+    nc = 6;% number of elements circumferentially
+    nt = 2;% number of elements through the thickness
+    %     %% % Whereas these  numbers of elements are for the fine mesh.
+    %             nr = 2*2;% number of elements radially nc = 2*6;% number
+    %             of elements circumferentially nt = 2*2;% number of
+    %             elements through the thickness
+   
+    
+    
+    %%
+    % Check that the number of elements through the thickness is an even
+    % number, the application of the boundary conditions relies on it.
+    nt=round(nt*2)/2;
+    
+    %%
+    % The mesh is generated first in the XYZ  coordinates as a block. The
+    % first coordinate is normalized width of the plate, the second
+    % coordinate is angular. The third coordinate is the thickness.
+    [fens,fes]=H8_block(1.0, pi/2, t, nr, nc, nt);
+    
+    %%
+    % The node set is now going to be meshed with tetrahedra T4.
+    [fens,fes] = T4_hull(fens.xyz);
+    %%
+    % And the resulting  mesh is going to be converted to quadratic
+    % tetrahedra T10.
+    [fens,fes] = T4_to_T10(fens,fes);
+    
+    %%
+    % At this point we will extract the boundary mesh.
+    bdry_fes = mesh_boundary(fes, struct('other_dimension', 1.0));
+    %%
+    % We will also select those finite elements  are on the  external
+    % elliptical boundary and those that are on the upper face of the
+    % plate. It is particularly easy because the mesh geometry is still a
+    % box.
+    exteriorbfl = fe_select(fens, bdry_fes, struct('box', [1,1,0,pi/2,0,t],'inflate',tol));
+    topbfl = fe_select(fens, bdry_fes, struct('box', [0,1,0,pi/2,t,t],'inflate',tol));
+    
+    %%
+    % Now the geometry can be warped into the  elliptical shape.
+    for i=1:count(fens)
+        r=fens.xyz(i,1); a=fens.xyz(i,2); z=fens.xyz(i,3);
+        fens.xyz(i,:)=[(r*Ae+(1-r)*Ai)*cos(a) (r*Be+(1-r)*Bi)*sin(a) z];
+    end
+    
+    %%
+    % We are ready to bundle up the model data so they can be passed to the
+    % solver.
+    clear model_data
+    model_data.fens =fens;% the finite element node set
+    
+    
+    %%
+    % The region uses the minimal 4-point tetrahedron rule.
+    clear region
+    region.fes= fes;
+    region.rho =rho;
+    region.E=E;
+    region.nu=nu;
+    region.integration_rule =tet_rule(struct('npts',4));
+    model_data.region{1} =region;
+    
+    %%
+    % The essential boundary conditions: The nodes on the symmetry planes
+    % are selected using box criteria.
+    
+    clear essential
+    essential.component= [1];
+    essential.fixed_value= 0;
+    essential.node_list = fenode_select (fens,struct('box',[0,0,-inf,inf,-inf,inf],'inflate',tol));
+    model_data.boundary_conditions.essential{1} = essential;
+    
+    clear essential
+    essential.component= [2];
+    essential.fixed_value= 0;
+    essential.node_list = fenode_select (fens,struct('box',[-inf,inf,0,0,-inf,inf],'inflate',tol));
+    model_data.boundary_conditions.essential{2} = essential;
+    
+    
+    %%
+    % The essential boundary conditions on the exterior elliptical boundary
+    % resemble, but are not equivalent to,  complete clamping. All in-plane
+    % components are fixed.
+    clear essential
+    essential.component= [1:2];
+    essential.fixed_value= 0;
+    essential.node_list = connected_nodes (subset(bdry_fes,exteriorbfl));
+    model_data.boundary_conditions.essential{3} = essential;
+    
+    %%
+    % And only  the nodes on the mid-plane on the supported exterior
+    % boundary are fixed in the Z direction.
+    clear essential
+    essential.component= [3];
+    essential.fixed_value= 0;
+    essential.node_list = intersect(connected_nodes(subset(bdry_fes,exteriorbfl)),...
+        fenode_select(fens,struct('box',[-inf,inf,-inf,inf,t/2,t/2],'inflate',tol)));
+    model_data.boundary_conditions.essential{4} = essential;
+    
+    %%
+    % The  top of the plate is loaded by normal traction (pressure).
+    clear traction
+    traction.fes =subset(bdry_fes,topbfl);
+    traction.traction= [0;0;-qmagn];
+    traction.integration_rule =tri_rule(struct('npts',3));
+    model_data.boundary_conditions.traction{1} = traction;
+    
+    
+    %%
+    % Invoke the statics solver.
+    model_data =deformation_linear_statics(model_data);
+    
+    %%
+    % Now we have our displacement results. The stress is to be calculated
+    % in the location of this node:
+    Pn=fenode_select (fens,struct('box',[Ai,Ai,0,0,t,t],'inflate',tol));
+    
+    
+    %%
+    % The transverse deflection at the point P is:
+    disp(num2str(somel(gather_values( model_data.u,Pn),3)))
+    
+    %%
+    % The $\sigma_2$ stress at point P is going to be stored in this
+    % variable:
+    sigma2P = [];
+    
+    %%
+    % We are going to plot the stress using a nodal stress field.  It is
+    % extracted from the quadrature points.  The inverse-distance
+    % interpolation of the quadrature point data is used.
+    model_data.u_scale=1000;
+    model_data.stress_component=2;
+    model_data.colormap=cadcolors2;
+    function observer(i, stressf,model_data)
+        sigma2P = gather_values( stressf,Pn);
+    end
+    model_data.observer =@ observer;
+    model_data=deformation_plot_stress(model_data);
+    
+    
+    %%
+    % The computed stress should be compared with -5.38 MPa as the
+    % reference value.
+    disp( ['Stress at P=' num2str(sigma2P/(pu.MEGA*pu.PA)) ' MPa']);
+    disp( ['i. e.  ' num2str(sigma2P/(pu.MEGA*pu.PA)/5.38*100,5) '% of reference value']);
+    %%
+    % The 10-node tetrahedron mesh does not deliver good accuracy of the
+    % stress distribution at the surface with the default inverse-distance
+    % interpolation of the stress.  The stress at the location of point P
+    % peaks at the surface.  The inverse-distance interpolation cannot take
+    % this into account.
+    %%
+    % A much more successful  stress post-processing strategy is to use the
+    % Super-convergent Patch Recovery (SPR).
+    %%
+    % Note that we are setting the flag |use_spr|.
+    model_data.u_scale=1000;
+    model_data.stress_component=2;
+    model_data.colormap=cadcolors2;
+    model_data.observer =@ observer;
+    model_data.use_spr= true;
+    model_data=deformation_plot_stress(model_data);
+    
+    
+    %%
+    % The computed stress should be compared with -5.38 MPa as the
+    % reference value.
+    disp( ['Stress at P=' num2str(sigma2P/(pu.MEGA*pu.PA)) ' MPa']);
+    disp( ['i. e.  ' num2str(sigma2P/(pu.MEGA*pu.PA)/5.38*100,5) '% of reference value']);
+   
+%% 
+% The estimate of the peak stress improved considerably with the SPR
+% technique.
+end
+##### SOURCE END #####
+--></body></html>

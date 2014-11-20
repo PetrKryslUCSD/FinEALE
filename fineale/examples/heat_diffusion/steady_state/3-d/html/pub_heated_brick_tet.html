@@ -1,0 +1,418 @@
+
+<!DOCTYPE html
+  PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html><head>
+      <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+   <!--
+This HTML was auto-generated from MATLAB code.
+To make changes, update the MATLAB code and republish this document.
+      --><title>Heated brick.  Solution with  quadratic tetrahedra.</title><meta name="generator" content="MATLAB 8.0"><link rel="schema.DC" href="http://purl.org/dc/elements/1.1/"><meta name="DC.date" content="2012-12-20"><meta name="DC.source" content="pub_heated_brick_tet.m"><style type="text/css">
+html,body,div,span,applet,object,iframe,h1,h2,h3,h4,h5,h6,p,blockquote,pre,a,abbr,acronym,address,big,cite,code,del,dfn,em,font,img,ins,kbd,q,s,samp,small,strike,strong,sub,sup,tt,var,b,u,i,center,dl,dt,dd,ol,ul,li,fieldset,form,label,legend,table,caption,tbody,tfoot,thead,tr,th,td{margin:0;padding:0;border:0;outline:0;font-size:100%;vertical-align:baseline;background:transparent}body{line-height:1}ol,ul{list-style:none}blockquote,q{quotes:none}blockquote:before,blockquote:after,q:before,q:after{content:'';content:none}:focus{outine:0}ins{text-decoration:none}del{text-decoration:line-through}table{border-collapse:collapse;border-spacing:0}
+
+html { min-height:100%; margin-bottom:1px; }
+html body { height:100%; margin:0px; font-family:Arial, Helvetica, sans-serif; font-size:10px; color:#000; line-height:140%; background:#fff none; overflow-y:scroll; }
+html body td { vertical-align:top; text-align:left; }
+
+h1 { padding:0px; margin:0px 0px 25px; font-family:Arial, Helvetica, sans-serif; font-size:1.5em; color:#d55000; line-height:100%; font-weight:normal; }
+h2 { padding:0px; margin:0px 0px 8px; font-family:Arial, Helvetica, sans-serif; font-size:1.2em; color:#000; font-weight:bold; line-height:140%; border-bottom:1px solid #d6d4d4; display:block; }
+h3 { padding:0px; margin:0px 0px 5px; font-family:Arial, Helvetica, sans-serif; font-size:1.1em; color:#000; font-weight:bold; line-height:140%; }
+
+a { color:#005fce; text-decoration:none; }
+a:hover { color:#005fce; text-decoration:underline; }
+a:visited { color:#004aa0; text-decoration:none; }
+
+p { padding:0px; margin:0px 0px 20px; }
+img { padding:0px; margin:0px 0px 20px; border:none; }
+p img, pre img, tt img, li img { margin-bottom:0px; } 
+
+ul { padding:0px; margin:0px 0px 20px 23px; list-style:square; }
+ul li { padding:0px; margin:0px 0px 7px 0px; }
+ul li ul { padding:5px 0px 0px; margin:0px 0px 7px 23px; }
+ul li ol li { list-style:decimal; }
+ol { padding:0px; margin:0px 0px 20px 0px; list-style:decimal; }
+ol li { padding:0px; margin:0px 0px 7px 23px; list-style-type:decimal; }
+ol li ol { padding:5px 0px 0px; margin:0px 0px 7px 0px; }
+ol li ol li { list-style-type:lower-alpha; }
+ol li ul { padding-top:7px; }
+ol li ul li { list-style:square; }
+
+.content { font-size:1.2em; line-height:140%; padding: 20px; }
+
+pre, tt, code { font-size:12px; }
+pre { margin:0px 0px 20px; }
+pre.error { color:red; }
+pre.codeinput { padding:10px; border:1px solid #d3d3d3; background:#f7f7f7; }
+pre.codeoutput { padding:10px 11px; margin:0px 0px 20px; color:#4c4c4c; }
+
+@media print { pre.codeinput, pre.codeoutput { word-wrap:break-word; width:100%; } }
+
+span.keyword { color:#0000FF }
+span.comment { color:#228B22 }
+span.string { color:#A020F0 }
+span.untermstring { color:#B20000 }
+span.syscmd { color:#B28C00 }
+
+.footer { width:auto; padding:10px 0px; margin:25px 0px 0px; border-top:1px dotted #878787; font-size:0.8em; line-height:140%; font-style:italic; color:#878787; text-align:left; float:none; }
+.footer p { margin:0px; }
+.footer a { color:#878787; }
+.footer a:hover { color:#878787; text-decoration:underline; }
+.footer a:visited { color:#878787; }
+
+table th { padding:7px 5px; text-align:left; vertical-align:middle; border: 1px solid #d6d4d4; font-weight:bold; }
+table td { padding:7px 5px; text-align:left; vertical-align:top; border:1px solid #d6d4d4; }
+
+
+
+
+
+  </style></head><body><div class="content"><h1>Heated brick.  Solution with  quadratic tetrahedra.</h1><!--introduction--><!--/introduction--><h2>Contents</h2><div><ul><li><a href="#2">Description</a></li><li><a href="#6">Solution</a></li><li><a href="#48">Discussion</a></li></ul></div><p>Link to the  <a href="matlab:edit('pub_heated_brick_tet')">m-file</a>.</p><h2>Description<a name="2"></a></h2><p>The brick represented in Figure 1 has insulated lateral surfaces (BCGF, CDHG, DAEH, ABFE).  The  surface  ABCD  is  maintained  at  constant temperature  T  =  0  degrees,  and  the temperature is linearly distributed at EFGH surface so that T = 0 degrees at E point, T = 1 degrees at H and T = 2 degrees at point F. Find temperature at the point P. The reference solution for the temperature at point P is 0.901 degrees. Thermal conductivity <img src="pub_heated_brick_tet_eq94486.png" alt="$\kappa = 1$">.</p><p>The problem was solved with hexahedra in tutorials pub_heated_brick and pub_heated_brick_quadratic. In this case quadratic tetrahedra will be used.</p><p>
+<table border=0><tr><td>
+<img src="../docs/pub_heated_brick_2.jpg">
+</td></tr>
+<tr><td>Figure 1. Definition of the geometry of the heated brick</td></tr>
+</table>
+</p><p>Analytical solution is due to the Reference M. Necati Ozisik &#8220;Boundary Value Problems of Heat Conduction&#8221;.  Dover Publications, INC., N.Y. 1989.</p><h2>Solution<a name="6"></a></h2><p>The solution flow is very similar to that of pub_heated_brick.  The only difference is due to the use of quadratic tetrahedra.  The changes in the code will be clearly marked with <i>[[TETRAHEDRA]]</i>.</p><pre class="codeinput"><span class="keyword">function</span> pub_heated_brick_tet
+</pre><p>Definition of the geometry: The locations of the points.</p><pre class="codeinput">    A=[0,0,0]; B=[0,0,2]; C=[0,3,2]; D=[0,3,0];
+    E=[5,0,0]; F=[5,0,2]; G=[5,3,2]; H=[5,3,0];
+    P=[3.75,0,0];
+</pre><p>Define the material properties.</p><pre class="codeinput">    kappa= 1.0;
+</pre><p>Generate the mesh by meshing two general hexahedra and merging them into a single mesh.</p><pre class="codeinput">    [fens,fes] = H8_hexahedron([A;P;(D+H)/2;D;B;(B+F)/2;(C+G)/2;C],1,1,1,[]);
+    [fens1,fes1] = H8_hexahedron([P;E;H;(D+H)/2;(B+F)/2;F;G;(C+G)/2],1,1,1,[]);
+    [fens,fes1,fes2] = merge_meshes(fens1, fes1, fens, fes, 1/1000);
+    fes=cat(fes1,fes2);
+</pre><p><i>[[TETRAHEDRA]]</i> Next, the two-element mesh is converted to tetrahedra.  The locations of the nodes are going to be used as vertices in the so-called Delaunay tetrahedralization.</p><pre class="codeinput">    [fens,fes] = T4_hull(fens.xyz);
+</pre><p><i>[[TETRAHEDRA]]</i> If desired, the tetrahedral mesh may now be refined (repeatedly) by octasection. The lines below then may be enabled by removing the comments.       [fens,fes] = T4_refine(fens,fes);       %       [fens,fes] = T4_refine(fens,fes);</p><p><i>[[TETRAHEDRA]]</i> The mesh of tetrahedra T4 is now converted to the quadratic tetrahedra T10 with 10 nodes.</p><pre class="codeinput">    [fens,fes]=T4_to_T10(fens,fes);
+</pre><p>We are going to create the objects for the analysis.  The thermal property and the thermal material objects:</p><pre class="codeinput">    prop=property_heat_diffusion(struct(<span class="string">'thermal_conductivity'</span>,kappa,<span class="string">'source'</span>,0.0));
+    mater=material_heat_diffusion (struct(<span class="string">'property'</span>,prop));
+</pre><p>The finite element model machine for heat diffusion. <i>[[TETRAHEDRA]]</i>  Tetrahedral quadrature rule with four points  is the minimum for the quadratic tetrahedron.</p><pre class="codeinput">    femm = femm_heat_diffusion (struct (<span class="string">'material'</span>,mater,<span class="keyword">...</span>
+        <span class="string">'fes'</span>,fes,<span class="keyword">...</span>
+        <span class="string">'integration_rule'</span>,tet_rule(struct( <span class="string">'npts'</span>,4))));
+</pre><p>This is it for the changes required to transition from hexahedra to tetrahedra.  Everything else below is the same as in pub_heated_brick.</p><p>The geometry nodal field is created from the finite element node set.</p><pre class="codeinput">    geom = nodal_field(struct(<span class="string">'name'</span>,[<span class="string">'geom'</span>], <span class="string">'dim'</span>, 3, <span class="string">'fens'</span>,fens));
+</pre><p>The temperature field has one degree of freedom per node.</p><pre class="codeinput">    temp=nodal_field(struct(<span class="string">'name'</span>,[<span class="string">'temp'</span>], <span class="string">'dim'</span>, 1, <span class="string">'nfens'</span>,geom.nfens));
+</pre><p>The essential boundary conditions are applied next.</p><p>Essential boundary condition: zero temperature on face ABCD.</p><pre class="codeinput">    fenids=fenode_select(fens,struct(<span class="string">'box'</span>,[A(1),A(1),-inf,inf,-inf,inf],<span class="keyword">...</span>
+        <span class="string">'inflate'</span>, 1/1000)) ;
+    temp = set_ebc(temp, fenids, true, [], 0.0);
+    temp = apply_ebc (temp);
+</pre><p>Essential boundary condition: linearly-varying temperature on face EFGH.</p><pre class="codeinput">    fenids=fenode_select(fens,struct(<span class="string">'box'</span>,[E(1),E(1),-inf,inf,-inf,inf],<span class="keyword">...</span>
+        <span class="string">'inflate'</span>, 1/1000)) ;
+    fixed_temperatures =1.0*fens.xyz(fenids,2)/H(2)+2.0*fens.xyz(fenids,3)/F(3);
+    temp = set_ebc(temp, fenids, true, [], fixed_temperatures);
+    temp = apply_ebc (temp);
+</pre><p>Number the free degrees of freedom</p><pre class="codeinput">    temp = numberdofs (temp);
+</pre><p>Calculate and assemble the conductivity matrix.</p><pre class="codeinput">    K = conductivity(femm, sysmat_assembler_sparse, geom, temp);
+</pre><p>Calculate and assemble the non-zero-EBC heat load.</p><pre class="codeinput">    F =  nz_ebc_loads_conductivity(femm, sysvec_assembler, geom, temp);
+</pre><p>Compute the values of the temperature for the free degrees of freedom and distribute the results to the nodal field.</p><pre class="codeinput">    temp = scatter_sysvec(temp, K\F);
+</pre><p>Graphical rendering  of the computed temperatures. First we show the temperature displayed with filled surfaces on the boundary of the mesh color-coded  with the temperature.</p><p>Create the graphics viewer and reset the view. Note: so that we don't have to see all the intermediate figures in the published output, we create the figure as invisible, and then we turn it on when we call interact().</p><pre class="codeinput">    close <span class="string">all</span>
+    figure(<span class="string">'visible'</span>, <span class="string">'off'</span>)
+    gv=graphic_viewer;
+    gv=reset (gv,struct(<span class="string">'axes'</span>,gca));
+</pre><img vspace="5" hspace="5" src="pub_heated_brick_tet_01.png" alt=""> <p>Create the data colormap object for mapping temperatures to colors.</p><pre class="codeinput">    dcm=data_colormap(struct(<span class="string">'range'</span>,[min(temp.values),max(temp.values)],<span class="string">'colormap'</span>,hot));
+</pre><p>Create the color field, with colors at nodes.  The colors will be interpolated using the finite element basis functions on the mesh.</p><pre class="codeinput">    colorfield=nodal_field(struct (<span class="string">'name'</span>, [<span class="string">'colorfield'</span>], <span class="string">'data'</span>,<span class="keyword">...</span>
+        map_data(dcm, temp.values)));
+</pre><p>Plot the color field on the surface of the brick.</p><pre class="codeinput">    draw(mesh_boundary(femm.fes, []), gv, struct (<span class="string">'x'</span>,geom, <span class="string">'u'</span>,0*geom,<span class="keyword">...</span>
+        <span class="string">'colorfield'</span>,colorfield, <span class="string">'shrink'</span>,1));
+</pre><img vspace="5" hspace="5" src="pub_heated_brick_tet_02.png" alt=""> <p>Add the color bar</p><pre class="codeinput">    draw_colorbar(gv, struct(<span class="string">'colormap'</span>,dcm.colormap,<span class="string">'label'</span>,<span class="string">'Temperature'</span>,<span class="keyword">...</span>
+        <span class="string">'minmax'</span>,[min(temp.values),max(temp.values)]));
+</pre><img vspace="5" hspace="5" src="pub_heated_brick_tet_03.png" alt=""> <pre>Add the labels to the axes...</pre><pre class="codeinput">    labels ([])
+</pre><p>...and make the figure visible and interact with the view.</p><pre class="codeinput">    interact(gv);
+</pre><img vspace="5" hspace="5" src="pub_heated_brick_tet_04.png" alt=""> <p>We are going to present the temperatures using isosurfaces.  These are surfaces of constant temperature, which are going to be color-coded using a map from temperatures to colors.</p><p>Create the graphics viewer and reset the view.</p><pre class="codeinput">    close <span class="string">all</span>
+    figure(<span class="string">'visible'</span>, <span class="string">'off'</span>)
+    gv=graphic_viewer;
+    gv=reset (gv,struct(<span class="string">'axes'</span>,gca));
+</pre><img vspace="5" hspace="5" src="pub_heated_brick_tet_05.png" alt=""> <p>Create the data colormap object for mapping temperatures to colors.</p><pre class="codeinput">    dcm=data_colormap(struct(<span class="string">'range'</span>,[min(temp.values),max(temp.values)],<span class="string">'colormap'</span>,hot));
+</pre><p>Plot the boundary surface of the brick in wireframe rendering for reference.</p><pre class="codeinput">    draw(mesh_boundary (femm.fes, []), gv, struct (<span class="string">'x'</span>,geom, <span class="string">'u'</span>,0*geom,<span class="keyword">...</span>
+        <span class="string">'facecolor'</span>,<span class="string">'none'</span>));
+    <span class="keyword">for</span> isovalue = [0.5:0.25:3.0]
+        draw_isosurface(fes,  gv, struct (<span class="string">'x'</span>,geom, <span class="string">'u'</span>,0*geom,<span class="keyword">...</span>
+            <span class="string">'scalarfield'</span>,temp,<span class="string">'isovalue'</span>,isovalue,<span class="string">'color'</span>,map_data(dcm, isovalue)));
+    <span class="keyword">end</span>
+</pre><img vspace="5" hspace="5" src="pub_heated_brick_tet_06.png" alt=""> <p>Add the color bar</p><pre class="codeinput">    draw_colorbar(gv, struct(<span class="string">'colormap'</span>,dcm.colormap,<span class="string">'label'</span>,<span class="string">'Temperature'</span>,<span class="keyword">...</span>
+        <span class="string">'minmax'</span>,[min(temp.values),max(temp.values)]));
+</pre><img vspace="5" hspace="5" src="pub_heated_brick_tet_07.png" alt=""> <pre>Add the labels to the axes...</pre><pre class="codeinput">    labels ([])
+</pre><p>Add lighting to aid in the interpretation of the scene.</p><pre class="codeinput">    headlight(gv);
+</pre><img vspace="5" hspace="5" src="pub_heated_brick_tet_08.png" alt=""> <p>...and make the figure visible and interact with the view.</p><pre class="codeinput">    interact(gv);
+</pre><img vspace="5" hspace="5" src="pub_heated_brick_tet_09.png" alt=""> <p>Temperature at point P: Find the node at that point using a bounding box,...</p><pre class="codeinput">    Pid=fenode_select(fens,struct(<span class="string">'box'</span>,bounding_box(P),<span class="keyword">...</span>
+        <span class="string">'inflate'</span>, 1/1000)) ;
+</pre><p>...  and retrieve the temperature:</p><pre class="codeinput">    temp.values(Pid)
+</pre><pre class="codeoutput">
+ans =
+
+   8.9976e-01
+
+</pre><p>This may be compared with the analytical solution of 0.901 degrees at point P. With the given mesh we are therefore within a percent of the analytical solution.</p><p>Temperature at point P: Find the node at that point using a bounding box,...</p><pre class="codeinput">    Pid=fenode_select(fens,struct(<span class="string">'box'</span>,bounding_box(P),<span class="keyword">...</span>
+        <span class="string">'inflate'</span>, 1/1000)) ;
+</pre><p>...  and retrieve the temperature:</p><pre class="codeinput">    temp.values(Pid)
+</pre><pre class="codeoutput">
+ans =
+
+   8.9976e-01
+
+</pre><p>This may be compared with the analytical solution of 0.901 degrees at point P. With the given mesh we are therefore within a  percent of the analytical solution.</p><h2>Discussion<a name="48"></a></h2><p>The quadratic tetrahedron is seen to be quite accurate. If you'd like to see the effect of the approximation order on the tetrahedron on the quality of the solution, switch to linear tetrahedra (T4) by removing (commenting out) the conversion</p><pre>   [fens,fes]=T4_to_T10(fens,fes);</pre><p>For reasonable accuracy one would then have to refine the mesh, and not only once but twice, to reduce the error below 10%.</p><pre class="codeinput"><span class="keyword">end</span>
+</pre><p class="footer"><br><a href="http://www.mathworks.com/products/matlab/">Published with MATLAB&reg; R2012b</a><br></p></div><!--
+##### SOURCE BEGIN #####
+%% Heated brick.  Solution with  quadratic tetrahedra.
+%
+
+%%
+% Link to the  <matlab:edit('pub_heated_brick_tet') m-file>.
+%
+
+%% Description
+%
+% The brick represented in Figure 1 has insulated lateral surfaces (BCGF,
+% CDHG, DAEH, ABFE).  The  surface  ABCD  is  maintained  at  constant
+% temperature  T  =  0  degrees,  and  the temperature is linearly
+% distributed at EFGH surface so that T = 0 degrees at E point, T = 1
+% degrees at H and T = 2 degrees at point F. Find temperature at the point
+% P. The reference solution for the temperature at point P is 0.901 degrees. Thermal
+% conductivity $\kappa = 1$.
+%
+
+%%
+% The problem was solved with hexahedra in tutorials pub_heated_brick and
+% pub_heated_brick_quadratic. In this case quadratic tetrahedra will be
+% used.
+%%
+%
+% <html>
+% <table border=0><tr><td>
+% <img src="../docs/pub_heated_brick_2.jpg">
+% </td></tr>
+% <tr><td>Figure 1. Definition of the geometry of the heated brick</td></tr>
+% </table>
+% </html>
+
+%%
+%
+% Analytical solution is due to the Reference
+% M. Necati Ozisik “Boundary Value Problems of Heat Conduction”.  Dover Publications,
+% INC., N.Y. 1989.
+
+%% Solution
+%
+% The solution flow is very similar to that of pub_heated_brick.  The only
+% difference is due to the use of quadratic tetrahedra.  The
+% changes in the code will be clearly marked with _[[TETRAHEDRA]]_.
+function pub_heated_brick_tet
+    
+    %%
+    % Definition of the geometry: The locations of the points.
+    A=[0,0,0]; B=[0,0,2]; C=[0,3,2]; D=[0,3,0];
+    E=[5,0,0]; F=[5,0,2]; G=[5,3,2]; H=[5,3,0];
+    P=[3.75,0,0];
+    
+    %%
+    % Define the material properties.
+    kappa= 1.0;
+    
+    
+    %%
+    % Generate the mesh by meshing two general hexahedra and merging them into
+    % a single mesh.
+    [fens,fes] = H8_hexahedron([A;P;(D+H)/2;D;B;(B+F)/2;(C+G)/2;C],1,1,1,[]);
+    [fens1,fes1] = H8_hexahedron([P;E;H;(D+H)/2;(B+F)/2;F;G;(C+G)/2],1,1,1,[]);
+    [fens,fes1,fes2] = merge_meshes(fens1, fes1, fens, fes, 1/1000);
+    fes=cat(fes1,fes2);
+    
+    %%
+    % _[[TETRAHEDRA]]_ Next, the two-element mesh is converted to
+    % tetrahedra.  The locations of the nodes are going to be used as
+    % vertices in the so-called Delaunay tetrahedralization.
+    [fens,fes] = T4_hull(fens.xyz);
+    
+    %%
+    % _[[TETRAHEDRA]]_ If desired, the tetrahedral mesh may now be refined (repeatedly) by
+    % octasection. The lines below then may be enabled by removing the
+    % comments.
+    %       [fens,fes] = T4_refine(fens,fes);
+    %       %       [fens,fes] = T4_refine(fens,fes);
+    %%
+    % _[[TETRAHEDRA]]_ The mesh of tetrahedra T4 is now converted to the quadratic
+    % tetrahedra T10 with 10 nodes.
+    [fens,fes]=T4_to_T10(fens,fes);
+    
+    %%
+    % We are going to create the objects for the analysis.  The thermal
+    % property and the thermal material objects:
+    prop=property_heat_diffusion(struct('thermal_conductivity',kappa,'source',0.0));
+    mater=material_heat_diffusion (struct('property',prop));
+    
+    %%
+    % The finite element model machine for heat diffusion.
+    % _[[TETRAHEDRA]]_  Tetrahedral quadrature rule with four points  is the minimum for
+    % the quadratic tetrahedron.
+    femm = femm_heat_diffusion (struct ('material',mater,...
+        'fes',fes,...
+        'integration_rule',tet_rule(struct( 'npts',4))));
+    
+    %%
+    % This is it for the changes required to transition from hexahedra to
+    % tetrahedra.  Everything else below is the same as in
+    % pub_heated_brick.
+    %%
+    % The geometry nodal field is created from the finite element node set.
+    geom = nodal_field(struct('name',['geom'], 'dim', 3, 'fens',fens));
+    %%
+    % The temperature field has one degree of freedom per node.
+    temp=nodal_field(struct('name',['temp'], 'dim', 1, 'nfens',geom.nfens));
+    
+    %%
+    % The essential boundary conditions are applied next.
+    %%
+    % Essential boundary condition: zero temperature on face ABCD.
+    fenids=fenode_select(fens,struct('box',[A(1),A(1),-inf,inf,-inf,inf],...
+        'inflate', 1/1000)) ;
+    temp = set_ebc(temp, fenids, true, [], 0.0);
+    temp = apply_ebc (temp);
+    
+    %%
+    % Essential boundary condition: linearly-varying temperature on face EFGH.
+    fenids=fenode_select(fens,struct('box',[E(1),E(1),-inf,inf,-inf,inf],...
+        'inflate', 1/1000)) ;
+    fixed_temperatures =1.0*fens.xyz(fenids,2)/H(2)+2.0*fens.xyz(fenids,3)/F(3);
+    temp = set_ebc(temp, fenids, true, [], fixed_temperatures);
+    temp = apply_ebc (temp);
+    
+    %%
+    % Number the free degrees of freedom
+    temp = numberdofs (temp);
+    
+    %%
+    % Calculate and assemble the conductivity matrix.
+    K = conductivity(femm, sysmat_assembler_sparse, geom, temp);
+    
+    %%
+    % Calculate and assemble the non-zero-EBC heat load.
+    F =  nz_ebc_loads_conductivity(femm, sysvec_assembler, geom, temp);
+    
+    %%
+    % Compute the values of the temperature for the free degrees of freedom and
+    % distribute the results to the nodal field.
+    temp = scatter_sysvec(temp, K\F);
+    
+    %%
+    % Graphical rendering  of the computed temperatures. First we show the
+    % temperature displayed with filled surfaces on the boundary of the mesh
+    % color-coded  with the temperature.
+    %%
+    % Create the graphics viewer and reset the view. Note: so that we don't have to
+    % see all the intermediate figures in the published output, we create
+    % the figure as invisible, and then we turn it on when we call interact().
+    close all
+    figure('visible', 'off')
+    gv=graphic_viewer;
+    gv=reset (gv,struct('axes',gca));
+    
+    %%
+    % Create the data colormap object for mapping temperatures to colors.
+    dcm=data_colormap(struct('range',[min(temp.values),max(temp.values)],'colormap',hot));
+    %%
+    % Create the color field, with colors at nodes.  The colors will be
+    % interpolated using the finite element basis functions on the mesh.
+    colorfield=nodal_field(struct ('name', ['colorfield'], 'data',...
+        map_data(dcm, temp.values)));
+    
+    %%
+    % Plot the color field on the surface of the brick.
+    draw(mesh_boundary(femm.fes, []), gv, struct ('x',geom, 'u',0*geom,...
+        'colorfield',colorfield, 'shrink',1));
+    
+    %%
+    % Add the color bar
+    draw_colorbar(gv, struct('colormap',dcm.colormap,'label','Temperature',...
+        'minmax',[min(temp.values),max(temp.values)]));
+    %%
+    %  Add the labels to the axes...
+    labels ([])
+    %%
+    % ...and make the figure visible and interact with the view.
+    interact(gv);
+    
+    
+    %%
+    % We are going to present the temperatures using isosurfaces.  These are
+    % surfaces of constant temperature, which are going to be color-coded using
+    % a map from temperatures to colors.
+    %%
+    % Create the graphics viewer and reset the view.
+    close all
+    figure('visible', 'off')
+    gv=graphic_viewer;
+    gv=reset (gv,struct('axes',gca));
+    
+    %%
+    % Create the data colormap object for mapping temperatures to colors.
+    dcm=data_colormap(struct('range',[min(temp.values),max(temp.values)],'colormap',hot));
+    
+    %%
+    % Plot the boundary surface of the brick in wireframe rendering for reference.
+    draw(mesh_boundary (femm.fes, []), gv, struct ('x',geom, 'u',0*geom,...
+        'facecolor','none'));
+    for isovalue = [0.5:0.25:3.0]
+        draw_isosurface(fes,  gv, struct ('x',geom, 'u',0*geom,...
+            'scalarfield',temp,'isovalue',isovalue,'color',map_data(dcm, isovalue)));
+    end
+    %%
+    % Add the color bar
+    draw_colorbar(gv, struct('colormap',dcm.colormap,'label','Temperature',...
+        'minmax',[min(temp.values),max(temp.values)]));
+    %%
+    %  Add the labels to the axes...
+    labels ([])
+    
+    %%
+    % Add lighting to aid in the interpretation of the scene.
+    headlight(gv);
+    %%
+    % ...and make the figure visible and interact with the view.
+    interact(gv);
+    
+    
+    
+    %%
+    % Temperature at point P: Find the node at that point using a bounding box,...
+    Pid=fenode_select(fens,struct('box',bounding_box(P),...
+        'inflate', 1/1000)) ;
+    
+    %%
+    % ...  and retrieve the temperature:
+    temp.values(Pid)
+    %%
+    % This may be compared with the analytical solution of 0.901 degrees at
+    % point P. With the given mesh we are therefore within a percent of the
+    % analytical solution.
+    
+    
+    
+    %%
+    % Temperature at point P: Find the node at that point using a bounding box,...
+    Pid=fenode_select(fens,struct('box',bounding_box(P),...
+        'inflate', 1/1000)) ;
+    
+    %%
+    % ...  and retrieve the temperature:
+    temp.values(Pid)
+    %%
+    % This may be compared with the analytical solution of 0.901 degrees at
+    % point P. With the given mesh we are therefore within a  percent of the
+    % analytical solution.
+    
+    
+    
+    
+    %% Discussion
+    %
+    %%
+    % The quadratic tetrahedron is seen to be quite accurate. If you'd
+    % like to see the effect of the approximation order on the tetrahedron
+    % on the quality of the solution, switch to linear tetrahedra (T4) by
+    % removing (commenting out) the conversion
+    %
+    %     [fens,fes]=T4_to_T10(fens,fes);
+    %
+%% 
+% For reasonable accuracy one would then have to refine the mesh, and not
+% only once but twice, to reduce the error below 10%.
+end
+##### SOURCE END #####
+--></body></html>

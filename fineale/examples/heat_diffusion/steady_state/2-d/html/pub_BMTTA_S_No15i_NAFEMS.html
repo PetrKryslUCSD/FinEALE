@@ -1,0 +1,265 @@
+
+<!DOCTYPE html
+  PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html><head>
+      <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+   <!--
+This HTML was auto-generated from MATLAB code.
+To make changes, update the MATLAB code and republish this document.
+      --><title>Circular cylinder with heat flux. Axially symmetric model.</title><meta name="generator" content="MATLAB 8.0"><link rel="schema.DC" href="http://purl.org/dc/elements/1.1/"><meta name="DC.date" content="2012-12-20"><meta name="DC.source" content="pub_BMTTA_S_No15i_NAFEMS.m"><style type="text/css">
+html,body,div,span,applet,object,iframe,h1,h2,h3,h4,h5,h6,p,blockquote,pre,a,abbr,acronym,address,big,cite,code,del,dfn,em,font,img,ins,kbd,q,s,samp,small,strike,strong,sub,sup,tt,var,b,u,i,center,dl,dt,dd,ol,ul,li,fieldset,form,label,legend,table,caption,tbody,tfoot,thead,tr,th,td{margin:0;padding:0;border:0;outline:0;font-size:100%;vertical-align:baseline;background:transparent}body{line-height:1}ol,ul{list-style:none}blockquote,q{quotes:none}blockquote:before,blockquote:after,q:before,q:after{content:'';content:none}:focus{outine:0}ins{text-decoration:none}del{text-decoration:line-through}table{border-collapse:collapse;border-spacing:0}
+
+html { min-height:100%; margin-bottom:1px; }
+html body { height:100%; margin:0px; font-family:Arial, Helvetica, sans-serif; font-size:10px; color:#000; line-height:140%; background:#fff none; overflow-y:scroll; }
+html body td { vertical-align:top; text-align:left; }
+
+h1 { padding:0px; margin:0px 0px 25px; font-family:Arial, Helvetica, sans-serif; font-size:1.5em; color:#d55000; line-height:100%; font-weight:normal; }
+h2 { padding:0px; margin:0px 0px 8px; font-family:Arial, Helvetica, sans-serif; font-size:1.2em; color:#000; font-weight:bold; line-height:140%; border-bottom:1px solid #d6d4d4; display:block; }
+h3 { padding:0px; margin:0px 0px 5px; font-family:Arial, Helvetica, sans-serif; font-size:1.1em; color:#000; font-weight:bold; line-height:140%; }
+
+a { color:#005fce; text-decoration:none; }
+a:hover { color:#005fce; text-decoration:underline; }
+a:visited { color:#004aa0; text-decoration:none; }
+
+p { padding:0px; margin:0px 0px 20px; }
+img { padding:0px; margin:0px 0px 20px; border:none; }
+p img, pre img, tt img, li img { margin-bottom:0px; } 
+
+ul { padding:0px; margin:0px 0px 20px 23px; list-style:square; }
+ul li { padding:0px; margin:0px 0px 7px 0px; }
+ul li ul { padding:5px 0px 0px; margin:0px 0px 7px 23px; }
+ul li ol li { list-style:decimal; }
+ol { padding:0px; margin:0px 0px 20px 0px; list-style:decimal; }
+ol li { padding:0px; margin:0px 0px 7px 23px; list-style-type:decimal; }
+ol li ol { padding:5px 0px 0px; margin:0px 0px 7px 0px; }
+ol li ol li { list-style-type:lower-alpha; }
+ol li ul { padding-top:7px; }
+ol li ul li { list-style:square; }
+
+.content { font-size:1.2em; line-height:140%; padding: 20px; }
+
+pre, tt, code { font-size:12px; }
+pre { margin:0px 0px 20px; }
+pre.error { color:red; }
+pre.codeinput { padding:10px; border:1px solid #d3d3d3; background:#f7f7f7; }
+pre.codeoutput { padding:10px 11px; margin:0px 0px 20px; color:#4c4c4c; }
+
+@media print { pre.codeinput, pre.codeoutput { word-wrap:break-word; width:100%; } }
+
+span.keyword { color:#0000FF }
+span.comment { color:#228B22 }
+span.string { color:#A020F0 }
+span.untermstring { color:#B20000 }
+span.syscmd { color:#B28C00 }
+
+.footer { width:auto; padding:10px 0px; margin:25px 0px 0px; border-top:1px dotted #878787; font-size:0.8em; line-height:140%; font-style:italic; color:#878787; text-align:left; float:none; }
+.footer p { margin:0px; }
+.footer a { color:#878787; }
+.footer a:hover { color:#878787; text-decoration:underline; }
+.footer a:visited { color:#878787; }
+
+table th { padding:7px 5px; text-align:left; vertical-align:middle; border: 1px solid #d6d4d4; font-weight:bold; }
+table td { padding:7px 5px; text-align:left; vertical-align:top; border:1px solid #d6d4d4; }
+
+
+
+
+
+  </style></head><body><div class="content"><h1>Circular cylinder with heat flux. Axially symmetric model.</h1><!--introduction--><!--/introduction--><h2>Contents</h2><div><ul><li><a href="#2">Description</a></li><li><a href="#9">Solution</a></li><li><a href="#32">Discussion</a></li></ul></div><p>Link to the  <a href="matlab:edit('pub_BMTTA_S_No15i_NAFEMS')">m-file</a>.</p><h2>Description<a name="2"></a></h2><p>The geometry is shown in Figure 1. The domain is a circular cylinder whose cylindrical surface is split into two parts, the bottom part is insulated and the top part is exposed to given heat flux.</p><p>The bottom  circular face is held at temperature  of 0&deg; C,  and the top circular face is insulated.</p><p>The problem is modeled as axially symmetric using linear quadrilaterals Q4.</p><p>Material: thermal conductivity = 52.0 W/m&deg;C.</p><p> <table border=0><tr><td> <img src="../docs/pub_BMTTA_S_No15i_NAFEMS.jpg"
+width ="60%"> </td></tr> <tr><td>Figure 1. Definition of the geometry of
+the benchmark</td></tr> </table> </p><p>Target solution: Temperature of 213.60&deg;C at the circular boundary that separates the heat-flux loaded strip from the insulated bottom part of the cylindrical surface.</p><p>Reference: This is a test recommended by the National Agency for Finite Element Methods and Standards (U.K.):  BMTTA(S), No. 15(i).</p><h2>Solution<a name="9"></a></h2><pre class="codeinput"><span class="keyword">function</span> pub_BMTTA_S_No15i_NAFEMS
+</pre><pre class="codeinput">    pu= physical_units_struct;
+</pre><p>Height of the cylinder.</p><pre class="codeinput">    H=0.05*pu.M;
+</pre><p>Height of the upper part of the cylinder.</p><pre class="codeinput">    Ht=0.02*pu.M;
+</pre><p>Radius of the cylinder</p><pre class="codeinput">    R=0.1*pu.M;
+</pre><p>Material properties.</p><pre class="codeinput">    kappa=52.0*eye(2)*pu.W/pu.M/pu.K; <span class="comment">% conductivity matrix</span>
+</pre><p>Prescribed temperature at the bottom.</p><pre class="codeinput">    T0=0*pu.K;<span class="comment">%  temperature at the right-hand side face</span>
+</pre><p>Number of elements through the height.</p><pre class="codeinput">    nH=6;
+</pre><p>Number of elements through the radius.</p><pre class="codeinput">    nR=4;
+</pre><p>Prescribed heat flux along the strip at the top. The heat flux is going into the domain hence the negative sign.</p><pre class="codeinput">    qb  =-5e5*pu.W/pu.M^2;
+</pre><p>Make sure the nodal locations include the target depth for the output.</p><pre class="codeinput">    xs=linspace(0,R,nR+1)';
+    ys=unique([linspace(0,H,nH+1), H-Ht])';;
+    [fens,fes] = Q4_blockx(xs,ys,struct(<span class="string">'axisymm'</span>, true)); <span class="comment">% Mesh</span>
+</pre><p>Display the mesh.  The x-coordinate is the radial direction, the y-coordinate is the axial direction.</p><pre class="codeinput">    gv=drawmesh({fens,fes},<span class="string">'nodes'</span>,<span class="string">'fes'</span>,<span class="string">'facecolor'</span>,<span class="string">'r'</span>);
+    view(2);
+    labels
+</pre><img vspace="5" hspace="5" src="pub_BMTTA_S_No15i_NAFEMS_01.png" alt=""> <p>Package up the model data.</p><pre class="codeinput">    clear <span class="string">model_data</span>
+    model_data.fens =fens;
+</pre><p>The two-dimensional region uses the Gauss  rule.</p><pre class="codeinput">    clear <span class="string">region</span>
+    region.conductivity =kappa;
+    region.fes= fes;
+    region.integration_rule =gauss_rule(struct(<span class="string">'dim'</span>,2, <span class="string">'order'</span>, 2));
+    model_data.region{1} =region;
+</pre><p>Prescribed temperature at the bottom circular surface.</p><pre class="codeinput">    clear <span class="string">essential</span>
+    essential.temperature=T0;
+    essential.node_list = fenode_select(fens,struct(<span class="string">'box'</span>,[-inf,inf,0,0],<span class="string">'inflate'</span>,eps));;
+    model_data.boundary_conditions.essential{1} = essential;
+</pre><p>Prescribed heat flux at the top cylindrical portion of the surface.</p><pre class="codeinput">    clear <span class="string">flux</span>
+    flux.normal_flux=qb;
+</pre><p>Extract the boundary...</p><pre class="codeinput">    bfes= mesh_boundary(fes,struct(<span class="string">'axisymm'</span>, true));
+</pre><p>...and only the upper-strip mesh faces.</p><pre class="codeinput">    flux.fes=subset(bfes,fe_select(fens,bfes,struct(<span class="string">'box'</span>,[R,R,H-Ht,H], <span class="string">'inflate'</span>,eps)));
+</pre><p>Recall that the heat flux is applied to the surface, but in the axially symmetric model the surface is represented by a cross-sectional curve. To integrate along the curve we need one-dimensional quadrature. The second direction is included automatically to produce a surface integral (multiplication with 2*pi).</p><pre class="codeinput">    flux.integration_rule=gauss_rule(struct(<span class="string">'dim'</span>,1, <span class="string">'order'</span>, 2));
+    model_data.boundary_conditions.flux{1}= flux;
+</pre><p>Run the steady-state solver.</p><pre class="codeinput">    model_data =heat_diffusion_steady_state(model_data);
+</pre><p>Plot the temperature distribution in the cross-section.  Note that the X direction is radial, and the Y direction is axial.</p><pre class="codeinput">    model_data.postprocessing.z_scale = 0.0001;
+    model_data=heat_diffusion_plot_raised_surface(model_data);;
+</pre><img vspace="5" hspace="5" src="pub_BMTTA_S_No15i_NAFEMS_02.png" alt=""> <p>Report the temperature along the circle separating the insulated part from the part where the heat flux is prescribed (marked E).</p><pre class="codeinput">    targetn  =fenode_select(fens,struct(<span class="string">'box'</span>,[R,R,H-Ht,H-Ht],<span class="string">'inflate'</span>,eps));;
+
+    Tn =gather_values(model_data.temp, targetn);
+    disp([<span class="string">'Temperature at E ='</span> num2str(Tn) <span class="string">', i. e.  '</span> num2str(Tn/ 213.6*100) <span class="string">'%  of the reference value'</span>])
+</pre><pre class="codeoutput">Temperature at E =212.0155, i. e.  99.2582%  of the reference value
+</pre><h2>Discussion<a name="32"></a></h2><p>The relatively coarse mesh produces results of decent accuracy.</p><pre class="codeinput"><span class="keyword">end</span>
+</pre><p class="footer"><br><a href="http://www.mathworks.com/products/matlab/">Published with MATLAB&reg; R2012b</a><br></p></div><!--
+##### SOURCE BEGIN #####
+%% Circular cylinder with heat flux. Axially symmetric model.
+%
+
+%%
+% Link to the  <matlab:edit('pub_BMTTA_S_No15i_NAFEMS') m-file>.
+%
+
+%% Description
+%
+% The geometry is shown in Figure 1. The domain is a circular cylinder
+% whose cylindrical surface is split into two parts, the bottom part is
+% insulated and the top part is exposed to given heat flux. 
+
+%% 
+% The bottom  circular face is held at temperature  of 0° C,  and the top circular face is insulated.
+
+%% 
+% The problem is modeled as axially symmetric using linear quadrilaterals Q4.
+
+%%
+% Material: thermal conductivity = 52.0 W/m°C. 
+
+%%
+%
+% <html> <table border=0><tr><td> <img src="../docs/pub_BMTTA_S_No15i_NAFEMS.jpg"
+% width ="60%"> </td></tr> <tr><td>Figure 1. Definition of the geometry of
+% the benchmark</td></tr> </table> </html>
+
+%%
+% Target solution: Temperature of 213.60°C at the circular boundary that
+% separates the heat-flux loaded strip from the insulated bottom part of
+% the cylindrical surface.
+%%
+% Reference: This is a test recommended by the National Agency for Finite
+% Element Methods and Standards (U.K.):  BMTTA(S), No. 15(i).
+
+%% Solution
+%
+function pub_BMTTA_S_No15i_NAFEMS
+    pu= physical_units_struct;
+    
+    %%
+    % Height of the cylinder.
+    H=0.05*pu.M;
+    %%
+    % Height of the upper part of the cylinder.
+    Ht=0.02*pu.M;
+    %%
+    % Radius of the cylinder
+    R=0.1*pu.M;
+    
+    %%
+    % Material properties.
+    kappa=52.0*eye(2)*pu.W/pu.M/pu.K; % conductivity matrix
+    %%
+    % Prescribed temperature at the bottom.
+    T0=0*pu.K;%  temperature at the right-hand side face
+    %%
+    % Number of elements through the height.
+    nH=6;
+    %%
+    % Number of elements through the radius.
+    nR=4;
+    
+    %%
+    % Prescribed heat flux along the strip at the top. The heat flux is
+    % going into the domain hence the negative sign.
+    qb  =-5e5*pu.W/pu.M^2;
+    
+    %%
+    %
+    %%
+    % Make sure the nodal locations include the target depth for the
+    % output.
+    xs=linspace(0,R,nR+1)';
+    ys=unique([linspace(0,H,nH+1), H-Ht])';;
+    [fens,fes] = Q4_blockx(xs,ys,struct('axisymm', true)); % Mesh
+    
+    
+    %%
+    % Display the mesh.  The x-coordinate is the radial direction, the
+    % y-coordinate is the axial direction.
+    gv=drawmesh({fens,fes},'nodes','fes','facecolor','r');
+    view(2);
+    labels
+    %%
+    % Package up the model data.
+    clear model_data
+    model_data.fens =fens;
+    
+    %%
+    % The two-dimensional region uses the Gauss  rule. 
+    clear region
+    region.conductivity =kappa;
+    region.fes= fes;
+    region.integration_rule =gauss_rule(struct('dim',2, 'order', 2));
+    model_data.region{1} =region;
+    
+    %%
+    % Prescribed temperature at the bottom circular surface.
+    clear essential
+    essential.temperature=T0;
+    essential.node_list = fenode_select(fens,struct('box',[-inf,inf,0,0],'inflate',eps));;
+    model_data.boundary_conditions.essential{1} = essential;
+    
+    %%
+    % Prescribed heat flux at the top cylindrical portion of the surface.
+    clear flux
+    flux.normal_flux=qb;
+%% 
+% Extract the boundary...
+
+    bfes= mesh_boundary(fes,struct('axisymm', true));
+%% 
+% ...and only the upper-strip mesh faces.
+    flux.fes=subset(bfes,fe_select(fens,bfes,struct('box',[R,R,H-Ht,H], 'inflate',eps)));
+    
+%% 
+% Recall that the heat flux is applied to the surface, but in the axially
+% symmetric model the surface is represented by a cross-sectional curve. To
+% integrate along the curve we need one-dimensional quadrature. The second
+% direction is included automatically to produce a surface integral
+% (multiplication with 2*pi).
+    flux.integration_rule=gauss_rule(struct('dim',1, 'order', 2));
+    model_data.boundary_conditions.flux{1}= flux;
+    
+    %%
+    % Run the steady-state solver.
+    model_data =heat_diffusion_steady_state(model_data);
+    
+    %%
+    % Plot the temperature distribution in the cross-section.  Note that
+    % the X direction is radial, and the Y direction is axial.
+    
+    model_data.postprocessing.z_scale = 0.0001;
+    model_data=heat_diffusion_plot_raised_surface(model_data);;
+    %%
+    % Report the temperature along the circle separating the insulated
+    % part from the part where the heat flux is prescribed (marked E).
+    targetn  =fenode_select(fens,struct('box',[R,R,H-Ht,H-Ht],'inflate',eps));;
+    
+    Tn =gather_values(model_data.temp, targetn);
+    disp(['Temperature at E =' num2str(Tn) ', i. e.  ' num2str(Tn/ 213.6*100) '%  of the reference value'])
+   
+    %% Discussion
+    %
+    
+    %%
+    % The relatively coarse mesh produces results of decent accuracy.
+end
+##### SOURCE END #####
+--></body></html>

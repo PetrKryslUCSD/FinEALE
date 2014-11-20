@@ -1,0 +1,506 @@
+
+<!DOCTYPE html
+  PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html><head>
+      <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+   <!--
+This HTML was auto-generated from MATLAB code.
+To make changes, update the MATLAB code and republish this document.
+      --><title>Cooling shock loading of porcelain plate (plane-strain model)</title><meta name="generator" content="MATLAB 8.0"><link rel="schema.DC" href="http://purl.org/dc/elements/1.1/"><meta name="DC.date" content="2012-12-22"><meta name="DC.source" content="pub_cooling_stress_shock.m"><style type="text/css">
+html,body,div,span,applet,object,iframe,h1,h2,h3,h4,h5,h6,p,blockquote,pre,a,abbr,acronym,address,big,cite,code,del,dfn,em,font,img,ins,kbd,q,s,samp,small,strike,strong,sub,sup,tt,var,b,u,i,center,dl,dt,dd,ol,ul,li,fieldset,form,label,legend,table,caption,tbody,tfoot,thead,tr,th,td{margin:0;padding:0;border:0;outline:0;font-size:100%;vertical-align:baseline;background:transparent}body{line-height:1}ol,ul{list-style:none}blockquote,q{quotes:none}blockquote:before,blockquote:after,q:before,q:after{content:'';content:none}:focus{outine:0}ins{text-decoration:none}del{text-decoration:line-through}table{border-collapse:collapse;border-spacing:0}
+
+html { min-height:100%; margin-bottom:1px; }
+html body { height:100%; margin:0px; font-family:Arial, Helvetica, sans-serif; font-size:10px; color:#000; line-height:140%; background:#fff none; overflow-y:scroll; }
+html body td { vertical-align:top; text-align:left; }
+
+h1 { padding:0px; margin:0px 0px 25px; font-family:Arial, Helvetica, sans-serif; font-size:1.5em; color:#d55000; line-height:100%; font-weight:normal; }
+h2 { padding:0px; margin:0px 0px 8px; font-family:Arial, Helvetica, sans-serif; font-size:1.2em; color:#000; font-weight:bold; line-height:140%; border-bottom:1px solid #d6d4d4; display:block; }
+h3 { padding:0px; margin:0px 0px 5px; font-family:Arial, Helvetica, sans-serif; font-size:1.1em; color:#000; font-weight:bold; line-height:140%; }
+
+a { color:#005fce; text-decoration:none; }
+a:hover { color:#005fce; text-decoration:underline; }
+a:visited { color:#004aa0; text-decoration:none; }
+
+p { padding:0px; margin:0px 0px 20px; }
+img { padding:0px; margin:0px 0px 20px; border:none; }
+p img, pre img, tt img, li img { margin-bottom:0px; } 
+
+ul { padding:0px; margin:0px 0px 20px 23px; list-style:square; }
+ul li { padding:0px; margin:0px 0px 7px 0px; }
+ul li ul { padding:5px 0px 0px; margin:0px 0px 7px 23px; }
+ul li ol li { list-style:decimal; }
+ol { padding:0px; margin:0px 0px 20px 0px; list-style:decimal; }
+ol li { padding:0px; margin:0px 0px 7px 23px; list-style-type:decimal; }
+ol li ol { padding:5px 0px 0px; margin:0px 0px 7px 0px; }
+ol li ol li { list-style-type:lower-alpha; }
+ol li ul { padding-top:7px; }
+ol li ul li { list-style:square; }
+
+.content { font-size:1.2em; line-height:140%; padding: 20px; }
+
+pre, tt, code { font-size:12px; }
+pre { margin:0px 0px 20px; }
+pre.error { color:red; }
+pre.codeinput { padding:10px; border:1px solid #d3d3d3; background:#f7f7f7; }
+pre.codeoutput { padding:10px 11px; margin:0px 0px 20px; color:#4c4c4c; }
+
+@media print { pre.codeinput, pre.codeoutput { word-wrap:break-word; width:100%; } }
+
+span.keyword { color:#0000FF }
+span.comment { color:#228B22 }
+span.string { color:#A020F0 }
+span.untermstring { color:#B20000 }
+span.syscmd { color:#B28C00 }
+
+.footer { width:auto; padding:10px 0px; margin:25px 0px 0px; border-top:1px dotted #878787; font-size:0.8em; line-height:140%; font-style:italic; color:#878787; text-align:left; float:none; }
+.footer p { margin:0px; }
+.footer a { color:#878787; }
+.footer a:hover { color:#878787; text-decoration:underline; }
+.footer a:visited { color:#878787; }
+
+table th { padding:7px 5px; text-align:left; vertical-align:middle; border: 1px solid #d6d4d4; font-weight:bold; }
+table td { padding:7px 5px; text-align:left; vertical-align:top; border:1px solid #d6d4d4; }
+
+
+
+
+
+  </style></head><body><div class="content"><h1>Cooling shock loading of porcelain plate (plane-strain model)</h1><!--introduction--><!--/introduction--><h2>Contents</h2><div><ul><li><a href="#2">Description</a></li><li><a href="#4">Solution</a></li><li><a href="#37">Appendix</a></li></ul></div><p>Link to the  <a href="matlab:edit('pub_cooling_stress_shock')">m-file</a>.</p><h2>Description<a name="2"></a></h2><p>The structure is a plate long in the out-of-plane direction, hence plane strain is assumed. The structure is initially at 100&deg;C and then suddenly it's left-hand side face is cooled to 20&deg;C and held at that temperature. As the cooling propagates through the wall the thermal stress effects are calculated.</p><p>The structure is assumed to be made of industrial-grade porcelain.</p><h2>Solution<a name="4"></a></h2><pre class="codeinput"><span class="keyword">function</span> pub_cooling_stress_shock
+</pre><p>The simulation is executed step-by-step at the level of the linear algebra and differential equations obtained after discretization in space.</p><p>First we define the physical parameters.</p><pre class="codeinput">    pu= physical_units_struct;
+</pre><p>Thermal properties of porcelain</p><pre class="codeinput">    kappa=1.67*pu.W/pu.M/pu.K; <span class="comment">% conductivity matrix</span>
+    cp = 1007*pu.J/pu.KG/pu.K;<span class="comment">% specific heat per unit mass</span>
+    rho=1800*pu.KG/pu.M^3;<span class="comment">% mass density</span>
+    E=70000*pu.MEGA*pu.PA;
+    nu=0.3;
+    alpha = 5e-6;
+
+    Tini=100*pu.K;
+    Tcold=20*pu.K;
+    dt=0.3*pu.SEC;
+    tend=6*pu.SEC;
+
+    w=0.010*pu.M;<span class="comment">% width of the structure</span>
+    h=0.020*pu.M;<span class="comment">% height of the structure</span>
+    t=0.001*pu.M;<span class="comment">% thickness in the direction of the plane strain constraint</span>
+    tolerance =w/1e5;<span class="comment">% geometrical tolerance</span>
+</pre><pre class="codeinput">    nw=22;
+    nh=10;
+</pre><p>Control parameters:</p><p>The time stepping of the heat conduction process is performed using the generalized trapezoidal method. For theta=1 we get the backward Euler method.</p><pre class="codeinput">    theta = 1; <span class="comment">% generalized trapezoidal method</span>
+</pre><p>Scales for graphics processing of the temperature and displacement fields.</p><pre class="codeinput">    hcscale = 0.0001;
+    mechscale = 100;
+</pre><p>Time instants for graphical output.</p><pre class="codeinput">    tOut=linspace(dt,tend-dt,3);
+</pre><p>Create the mesh of the rectangular block.</p><pre class="codeinput">    [fens,fes] = Q4_block(w,h,nw,nh,t);
+    [fens,fes] = Q4_to_Q8(fens,fes,struct( <span class="string">'other_dimension'</span>,t));
+</pre><p>Material: heat conduction.</p><pre class="codeinput">    hcprop=property_heat_diffusion(struct(<span class="string">'thermal_conductivity'</span>,kappa,<span class="keyword">...</span>
+        <span class="string">'specific_heat'</span>,cp*rho,<span class="string">'source'</span>,0.0));
+    hcmater = material_heat_diffusion (struct(<span class="string">'property'</span>,hcprop));
+</pre><p>Material: mechanical. Note that in addition to the Young's modulus and the Poisson's ratio we need to supply the coefficient of thermal expansion (called alpha here).</p><pre class="codeinput">    mechprop = property_deformation_linear_iso (struct (<span class="string">'E'</span>,E,<span class="keyword">...</span>
+        <span class="string">'nu'</span>,nu,<span class="string">'alpha'</span>, alpha));
+    mechmater=material_deformation_linear_biax(struct(<span class="string">'property'</span>,mechprop));
+</pre><p>Finite element block: heat conduction</p><pre class="codeinput">    hcfemm = femm_heat_diffusion (struct (<span class="string">'material'</span>,hcmater, <span class="keyword">...</span>
+        <span class="string">'fes'</span>,fes,<span class="keyword">...</span>
+        <span class="string">'integration_rule'</span>,gauss_rule(struct(<span class="string">'dim'</span>,2,<span class="string">'order'</span>,2))));
+</pre><p>Finite element block: mechanical</p><pre class="codeinput">    mechfemm = femm_deformation_linear (struct (<span class="string">'material'</span>,mechmater,<span class="keyword">...</span>
+        <span class="string">'fes'</span>,fes, <span class="keyword">...</span>
+        <span class="string">'integration_rule'</span>,gauss_rule(struct(<span class="string">'dim'</span>,2,<span class="string">'order'</span>,2))));
+</pre><p>We create the requisite nodal fields. Geometry:</p><pre class="codeinput">    geom = nodal_field(struct (<span class="string">'name'</span>,[<span class="string">'geom'</span>], <span class="string">'dim'</span>, 2, <span class="string">'fens'</span>,fens));
+</pre><p>Displacement:</p><pre class="codeinput">    u = nodal_field(struct (<span class="string">'name'</span>,[<span class="string">'geom'</span>], <span class="string">'dim'</span>, 2, <span class="string">'fens'</span>,fens));
+</pre><p>Temperature field</p><pre class="codeinput">    tempn= nodal_field(struct(<span class="string">'name'</span>,[<span class="string">'tempn'</span>], <span class="string">'dim'</span>, 1, <span class="keyword">...</span>
+        <span class="string">'nfens'</span>,geom.nfens));
+</pre><p>The boundary conditions need to be applied both for the thermal problem and also for the mechanical problem. Apply thermal EBC's. The temperature is prescribed on the left-hand side face of the object.</p><pre class="codeinput">    nl=fenode_select (fens,struct (<span class="string">'box'</span>,[0 0 0 h],<span class="string">'inflate'</span>,tolerance));
+    tempn = set_ebc(tempn, nl, true, 1, Tcold);
+    tempn = apply_ebc (tempn);
+</pre><p>Apply mechanical EBC's. On the plane y=0 we apply a roller boundary condition in the direction of the Y axis to simulate a symmetry boundary condition.</p><pre class="codeinput">    nl=fenode_select (fens,struct (<span class="string">'box'</span>,[0 w 0 0],<span class="string">'inflate'</span>,h/1000));
+    u = set_ebc(u, nl, true, 2, 0);
+</pre><p>At a single point we prevent translation in the X direction to remove the rigid body mode.</p><pre class="codeinput">    nl=fenode_select (fens,struct (<span class="string">'box'</span>,[0 0 0 0],<span class="string">'inflate'</span>,h/1000));
+    u = set_ebc(u, nl, true, 1, 0);
+</pre><p>The boundary conditions are now applied to the total displacement field.</p><pre class="codeinput">    u = apply_ebc (u);
+</pre><p>The unknowns (degrees of freedom) are now numbered.</p><pre class="codeinput">    tempn = numberdofs (tempn);
+    u = numberdofs (u);
+</pre><p>We are ready to assemble the necessary matrices. We may start with the mechanical problem: Assemble the stiffness matrix.</p><pre class="codeinput">    S = stiffness(mechfemm, sysmat_assembler_sparse, geom, u);
+</pre><p>Now assemble the matrices of the thermal problem. The conductivity matrix...</p><pre class="codeinput">    K = conductivity(hcfemm, sysmat_assembler_sparse, geom, tempn);
+</pre><p>... the capacity matrix ...</p><pre class="codeinput">    C = capacity(hcfemm, sysmat_assembler_sparse, geom, tempn);
+</pre><p>The temperature nodal field needs to be initialized using the initial conditions.</p><pre class="codeinput">    tempn = scatter_sysvec(tempn,gather_sysvec(tempn)*0+Tini);
+</pre><p>and the thermal load due to prescribed temperature.</p><pre class="codeinput">    F = nz_ebc_loads_conductivity(hcfemm, sysvec_assembler, geom, tempn);
+</pre><p>Note that we don't have to include the thermal loads due to prescribed rate of temperature since the temperature does not change on the cool surface.</p><p>The deflection of the horizontal cross-section at the top of the plate will be collected as output. Select output node:</p><pre class="codeinput">    outnl=fenode_select (fens,struct (<span class="string">'box'</span>,[0 0 h h],<span class="string">'inflate'</span>,tolerance));
+    outdeflection =[];
+</pre><pre class="codeinput">    t=0;
+    L = thermal_strain_loads(mechfemm, sysvec_assembler, geom, u,<span class="keyword">...</span>
+        tempn-Tini);
+    u = scatter_sysvec(u, S\L);
+</pre><p>Time is now going to be advanced in the thermal problem and the solution of the mechanical problem will get updated in lockstep.</p><p>Get ready for the graphics.</p><pre class="codeinput">    fig=figure(<span class="string">'visible'</span>, <span class="string">'off'</span>);
+    hpT = uipanel(<span class="string">'Parent'</span>,fig,<span class="string">'Title'</span>,<span class="string">'Temperature'</span>,<span class="string">'FontSize'</span>,9,<span class="keyword">...</span>
+        <span class="string">'BackgroundColor'</span>,[1,1,1],<span class="keyword">...</span>
+        <span class="string">'Position'</span>,[0.51, 0.01, 0.48, 0.98]);
+    haxT=axes(<span class="string">'position'</span>,[0.07, 0.07, 0.86, 0.86],<span class="string">'Parent'</span>,hpT);
+    hpU = uipanel(<span class="string">'Parent'</span>,fig,<span class="string">'Title'</span>,<span class="string">'Deflection'</span>,<span class="string">'FontSize'</span>,9,<span class="keyword">...</span>
+        <span class="string">'BackgroundColor'</span>, [1,1,1],<span class="keyword">...</span>
+        <span class="string">'Position'</span>,[0.01, 0.01, 0.49, 0.98]);
+    haxU=axes(<span class="string">'position'</span>,[0.07, 0.07, 0.86, 0.86],<span class="string">'Parent'</span>,hpU);
+    gv=graphic_viewer;
+</pre><p>This is the time stepping loop. In order for the figures to come out one after the other in the published document  we do not put any sections in the code.  All descriptions are in the comments themselves.</p><pre class="codeinput">    <span class="keyword">while</span> true
+        <span class="comment">% Breakout of the time stepping loop if end time had been reached</span>
+        <span class="keyword">if</span> (t&gt;=tend), <span class="keyword">break</span>;; <span class="keyword">end</span>
+        <span class="comment">%  Should we produce graphical output?</span>
+        <span class="keyword">if</span> (t&gt;=tOut(1))
+            visualize; <span class="comment">% Visualize the temperature and deflection</span>
+        <span class="keyword">end</span>
+        <span class="comment">% Solve the mechanical problem. The stiffness matrix does not change, the</span>
+        <span class="comment">% loads due to the current temperature do change with time.</span>
+        L = thermal_strain_loads(mechfemm, sysvec_assembler, geom, u, tempn-Tini);
+        u = scatter_sysvec(u, S\L);
+        <span class="comment">% This is the deflection at the target point out of plane of the wall due</span>
+        <span class="comment">% to the thermal bending.</span>
+        outu = gather_values(u, outnl);
+        outdeflection(end+1) = outu(1);
+        <span class="comment">% Advance the solution of the thermal problem. The quantities C, K, F are</span>
+        <span class="comment">% time-independent, only the current temperature changes with time.</span>
+        Tn=gather_sysvec(tempn);
+        Tn1 = (1/dt*C+theta*K) \ ((1/dt*C-(1-theta)*K)*Tn+F);
+        tempn = scatter_sysvec(tempn,Tn1);
+        <span class="comment">% Advance the time by one step</span>
+        t=t+dt;
+    <span class="keyword">end</span>
+</pre><img vspace="5" hspace="5" src="pub_cooling_stress_shock_01.png" alt=""> <img vspace="5" hspace="5" src="pub_cooling_stress_shock_02.png" alt=""> <img vspace="5" hspace="5" src="pub_cooling_stress_shock_03.png" alt=""> <p>Plot the time record of the deflection of the free edge transversely to the plane of the plate as a result of thermally induced bending.</p><pre class="codeinput">    figure;
+    plot(0:1:length(outdeflection)-1,outdeflection)
+    labels <span class="string">' Time'</span>  <span class="string">'Transverse deflection'</span>
+</pre><img vspace="5" hspace="5" src="pub_cooling_stress_shock_04.png" alt=""> <h2>Appendix<a name="37"></a></h2><p>The visualization of the results during the time stepping loop is coded in this function.  Note that it has access to all thevariables defined in the top-level function.</p><pre class="codeinput">    <span class="keyword">function</span>  visualize
+        tOut=tOut(2: end);
+        set(fig,<span class="string">'visible'</span>, <span class="string">'on'</span>);
+        <span class="comment">% Plot the temperature distribution</span>
+        cmap=hot;
+        dcm=data_colormap(struct (<span class="string">'range'</span>,[Tini,Tcold], <span class="keyword">...</span>
+            <span class="string">'colormap'</span>,cmap));
+        colorfield=nodal_field(struct (<span class="string">'name'</span>, [<span class="string">'colorfield'</span>],<span class="keyword">...</span>
+            <span class="string">'data'</span>,map_data(dcm, tempn.values)));
+        geom3d=nodal_field(struct (<span class="string">'name'</span>, [<span class="string">'geom3d'</span>],<span class="keyword">...</span>
+            <span class="string">'data'</span>,[geom.values, 0*tempn.values]));
+        u3d=nodal_field(struct (<span class="string">'name'</span>, [<span class="string">'u3d'</span>],<span class="keyword">...</span>
+            <span class="string">'data'</span>,[0*geom.values, tempn.values]));
+        gv=reset (gv,struct(<span class="string">'axes'</span>,haxT));
+        camset(gv,[ -0.0456   -0.1468  585.3321    0.0050    0.0100<span class="keyword">...</span>
+             50.0000         0         0    1.0000    9.9139]);
+        set(gca,<span class="string">'DataAspectRatio'</span>, [1, 1, 1/hcscale])
+        draw(hcfemm, gv, <span class="keyword">...</span>
+            struct (<span class="string">'x'</span>,geom3d,<span class="string">'u'</span>,0*u3d, <span class="string">'facecolor'</span>,<span class="string">'none'</span>));
+        draw(hcfemm, gv, <span class="keyword">...</span>
+            struct (<span class="string">'x'</span>,geom3d,<span class="string">'u'</span>,u3d, <span class="string">'colorfield'</span>,colorfield));
+        labels <span class="string">x</span> <span class="string">y</span>  <span class="string">T</span>
+        title ([<span class="string">'Time ='</span> num2str(t)]);
+        <span class="comment">% Plot the deflected shape with the stress distribution.</span>
+        cmap=cadcolors2;
+        fld = field_from_integration_points(mechfemm, geom,<span class="keyword">...</span>
+            u, tempn-Tini, <span class="string">'Cauchy'</span>, 2);
+        nvals=fld.values/(pu.MEGA*pu.PA);
+        nvalsrange=[-5 15];
+        dcm=data_colormap(struct (<span class="string">'range'</span>,nvalsrange, <span class="string">'colormap'</span>,cmap));
+        colorfield=nodal_field(struct (<span class="string">'name'</span>, [<span class="string">'colorfield'</span>],<span class="keyword">...</span>
+            <span class="string">'data'</span>,map_data(dcm, nvals)));
+        gv=reset (gv,struct(<span class="string">'axes'</span>,haxU,<span class="keyword">...</span>
+            <span class="string">'limits'</span>,[-0.25*w 1.25*w -0.02*h 1.25*h]));
+        draw(mechfemm, gv, struct (<span class="string">'x'</span>,geom,<span class="string">'u'</span>, mechscale*u, <span class="keyword">...</span>
+            <span class="string">'colorfield'</span>,colorfield, <span class="string">'shrink'</span>,1));
+        title ([<span class="string">'Thermal stress. Time ='</span> num2str(t)]);
+        draw_colorbar(gv, struct(<span class="string">'colormap'</span>,cmap, <span class="keyword">...</span>
+            <span class="string">'position'</span>,[0.8 0.15 0.05 0.7],<span class="keyword">...</span>
+            <span class="string">'label'</span>,<span class="string">'\sigma_{yy}'</span>,<span class="string">'minmax'</span>,nvalsrange));
+        labels <span class="string">x</span> <span class="string">y</span>
+        snapnow;
+    <span class="keyword">end</span>
+</pre><pre class="codeinput"><span class="keyword">end</span>
+</pre><p class="footer"><br><a href="http://www.mathworks.com/products/matlab/">Published with MATLAB&reg; R2012b</a><br></p></div><!--
+##### SOURCE BEGIN #####
+%% Cooling shock loading of porcelain plate (plane-strain model)
+%
+
+%%
+% Link to the  <matlab:edit('pub_cooling_stress_shock') m-file>.
+%
+
+%% Description
+% 
+% The structure is a plate long in the out-of-plane
+% direction, hence plane strain is assumed. The structure is initially at
+% 100°C and then suddenly it's left-hand side face is cooled to 20°C and
+% held at that temperature. As the cooling propagates through the wall the
+% thermal stress effects are calculated.
+%%
+% The structure is assumed to be made of industrial-grade porcelain.
+
+%% Solution
+
+function pub_cooling_stress_shock
+    %%
+    % The simulation is executed step-by-step at the level of the linear
+    % algebra and differential equations obtained after discretization in
+    % space.
+    
+    %%
+    % First we define the physical parameters.
+    pu= physical_units_struct;
+    
+    %%
+    % Thermal properties of porcelain
+    kappa=1.67*pu.W/pu.M/pu.K; % conductivity matrix
+    cp = 1007*pu.J/pu.KG/pu.K;% specific heat per unit mass
+    rho=1800*pu.KG/pu.M^3;% mass density
+    E=70000*pu.MEGA*pu.PA;
+    nu=0.3;
+    alpha = 5e-6;
+    
+    Tini=100*pu.K;
+    Tcold=20*pu.K;
+    dt=0.3*pu.SEC;
+    tend=6*pu.SEC;
+    
+    w=0.010*pu.M;% width of the structure
+    h=0.020*pu.M;% height of the structure
+    t=0.001*pu.M;% thickness in the direction of the plane strain constraint
+    tolerance =w/1e5;% geometrical tolerance
+    %%
+    %
+    nw=22;
+    nh=10;
+    
+    %%
+    % Control parameters:
+    %%
+    % The time stepping of the heat conduction process is performed using the
+    % generalized trapezoidal method. For theta=1 we get the backward Euler
+    % method.
+    theta = 1; % generalized trapezoidal method
+    %%
+    % Scales for graphics processing of the temperature and displacement
+    % fields.
+    hcscale = 0.0001;
+    mechscale = 100;
+    
+    %%
+    % Time instants for graphical output.
+    tOut=linspace(dt,tend-dt,3);
+    
+    %%
+    % Create the mesh of the rectangular block.
+    [fens,fes] = Q4_block(w,h,nw,nh,t);
+    [fens,fes] = Q4_to_Q8(fens,fes,struct( 'other_dimension',t));
+    %%
+    % Material: heat conduction.
+    hcprop=property_heat_diffusion(struct('thermal_conductivity',kappa,...
+        'specific_heat',cp*rho,'source',0.0));
+    hcmater = material_heat_diffusion (struct('property',hcprop));
+    %%
+    % Material: mechanical. Note that in addition to the Young's modulus
+    % and the Poisson's ratio we need to supply the coefficient of thermal
+    % expansion (called alpha here).
+    mechprop = property_deformation_linear_iso (struct ('E',E,...
+        'nu',nu,'alpha', alpha));
+    mechmater=material_deformation_linear_biax(struct('property',mechprop));
+    
+    
+    %%
+    %
+    % Finite element block: heat conduction
+    hcfemm = femm_heat_diffusion (struct ('material',hcmater, ...
+        'fes',fes,...
+        'integration_rule',gauss_rule(struct('dim',2,'order',2))));
+    %%
+    % Finite element block: mechanical
+    mechfemm = femm_deformation_linear (struct ('material',mechmater,...
+        'fes',fes, ...
+        'integration_rule',gauss_rule(struct('dim',2,'order',2))));
+    
+    
+    %%
+    % We create the requisite nodal fields.
+    % Geometry:
+    geom = nodal_field(struct ('name',['geom'], 'dim', 2, 'fens',fens));
+    %%
+    % Displacement:
+    u = nodal_field(struct ('name',['geom'], 'dim', 2, 'fens',fens));
+    %%
+    % Temperature field
+    tempn= nodal_field(struct('name',['tempn'], 'dim', 1, ...
+        'nfens',geom.nfens));
+    
+    %%
+    % The boundary conditions need to be applied both for the thermal problem
+    % and also for the mechanical problem. Apply thermal EBC's. The
+    % temperature is prescribed on the left-hand side face of the object.
+    nl=fenode_select (fens,struct ('box',[0 0 0 h],'inflate',tolerance));
+    tempn = set_ebc(tempn, nl, true, 1, Tcold);
+    tempn = apply_ebc (tempn);
+    
+    %%
+    % Apply mechanical EBC's. On the plane y=0 we apply a roller boundary
+    % condition in the direction of the Y axis to simulate a symmetry boundary
+    % condition.
+    nl=fenode_select (fens,struct ('box',[0 w 0 0],'inflate',h/1000));
+    u = set_ebc(u, nl, true, 2, 0);
+    
+    %%
+    % At a single point we prevent translation in the X direction to remove the
+    % rigid body mode.
+    nl=fenode_select (fens,struct ('box',[0 0 0 0],'inflate',h/1000));
+    u = set_ebc(u, nl, true, 1, 0);
+    %%
+    % The boundary conditions are now applied to the total displacement field.
+    u = apply_ebc (u);
+    
+    %%
+    % The unknowns (degrees of freedom) are now numbered.
+    tempn = numberdofs (tempn);
+    u = numberdofs (u);
+    
+    %%
+    % We are ready to assemble the necessary matrices. We may start with the
+    % mechanical problem: Assemble the stiffness matrix.
+    S = stiffness(mechfemm, sysmat_assembler_sparse, geom, u);
+    
+    %%
+    % Now assemble the matrices of the thermal problem.
+    % The conductivity matrix...
+    
+    K = conductivity(hcfemm, sysmat_assembler_sparse, geom, tempn);
+    
+    %%
+    %
+    % ... the capacity matrix ...
+    C = capacity(hcfemm, sysmat_assembler_sparse, geom, tempn);
+    
+    %%
+    % The temperature nodal field needs to be initialized using the initial
+    % conditions.
+    tempn = scatter_sysvec(tempn,gather_sysvec(tempn)*0+Tini);
+    
+    %%
+    %
+    % and the thermal load due to prescribed temperature.
+    F = nz_ebc_loads_conductivity(hcfemm, sysvec_assembler, geom, tempn);
+    %%
+    % Note that we don't have to include the thermal loads due to prescribed
+    % rate of temperature since the temperature does not change on the cool
+    % surface.
+    
+    %%
+    % The deflection of the horizontal cross-section at the top of the
+    % plate will be collected as output.
+    % Select output node:
+    outnl=fenode_select (fens,struct ('box',[0 0 h h],'inflate',tolerance));
+    outdeflection =[];
+    
+    
+    %%
+    %
+    t=0;
+    L = thermal_strain_loads(mechfemm, sysvec_assembler, geom, u,...
+        tempn-Tini);
+    u = scatter_sysvec(u, S\L);
+    
+    %%
+    % Time is now going to be advanced in the thermal problem and the
+    % solution of the mechanical problem will get updated in lockstep.
+    %
+    %
+    % Get ready for the graphics.
+    fig=figure('visible', 'off');
+    hpT = uipanel('Parent',fig,'Title','Temperature','FontSize',9,...
+        'BackgroundColor',[1,1,1],...
+        'Position',[0.51, 0.01, 0.48, 0.98]);
+    haxT=axes('position',[0.07, 0.07, 0.86, 0.86],'Parent',hpT);
+    hpU = uipanel('Parent',fig,'Title','Deflection','FontSize',9,...
+        'BackgroundColor', [1,1,1],...
+        'Position',[0.01, 0.01, 0.49, 0.98]);
+    haxU=axes('position',[0.07, 0.07, 0.86, 0.86],'Parent',hpU);
+    gv=graphic_viewer;
+    
+    
+    %%
+    %
+    % This is the time stepping loop. In order for the figures to come out
+    % one after the other in the published document  we do not put any
+    % sections in the code.  All descriptions are in the comments
+    % themselves.
+    while true
+        % Breakout of the time stepping loop if end time had been reached
+        if (t>=tend), break;; end
+        %  Should we produce graphical output?
+        if (t>=tOut(1))
+            visualize; % Visualize the temperature and deflection
+        end
+        % Solve the mechanical problem. The stiffness matrix does not change, the
+        % loads due to the current temperature do change with time.
+        L = thermal_strain_loads(mechfemm, sysvec_assembler, geom, u, tempn-Tini);
+        u = scatter_sysvec(u, S\L);
+        % This is the deflection at the target point out of plane of the wall due
+        % to the thermal bending.
+        outu = gather_values(u, outnl);
+        outdeflection(end+1) = outu(1);
+        % Advance the solution of the thermal problem. The quantities C, K, F are
+        % time-independent, only the current temperature changes with time.
+        Tn=gather_sysvec(tempn);
+        Tn1 = (1/dt*C+theta*K) \ ((1/dt*C-(1-theta)*K)*Tn+F);
+        tempn = scatter_sysvec(tempn,Tn1);
+        % Advance the time by one step
+        t=t+dt;
+    end
+    
+    
+    %%
+    % Plot the time record of the deflection of the free edge transversely
+    % to the plane of the plate as a result of thermally induced bending.
+    figure;
+    plot(0:1:length(outdeflection)-1,outdeflection)
+    labels ' Time'  'Transverse deflection'
+    
+    %% Appendix
+    %
+    %%
+    % The visualization of the results during the time stepping loop is coded
+    % in this function.  Note that it has access to all thevariables defined in
+    % the top-level function.
+    function  visualize
+        tOut=tOut(2: end);
+        set(fig,'visible', 'on');
+        % Plot the temperature distribution
+        cmap=hot;
+        dcm=data_colormap(struct ('range',[Tini,Tcold], ...
+            'colormap',cmap));
+        colorfield=nodal_field(struct ('name', ['colorfield'],...
+            'data',map_data(dcm, tempn.values)));
+        geom3d=nodal_field(struct ('name', ['geom3d'],...
+            'data',[geom.values, 0*tempn.values]));
+        u3d=nodal_field(struct ('name', ['u3d'],...
+            'data',[0*geom.values, tempn.values]));
+        gv=reset (gv,struct('axes',haxT));
+        camset(gv,[ -0.0456   -0.1468  585.3321    0.0050    0.0100...
+             50.0000         0         0    1.0000    9.9139]);
+        set(gca,'DataAspectRatio', [1, 1, 1/hcscale])
+        draw(hcfemm, gv, ...
+            struct ('x',geom3d,'u',0*u3d, 'facecolor','none'));
+        draw(hcfemm, gv, ...
+            struct ('x',geom3d,'u',u3d, 'colorfield',colorfield));
+        labels x y  T
+        title (['Time =' num2str(t)]);
+        % Plot the deflected shape with the stress distribution.
+        cmap=cadcolors2;
+        fld = field_from_integration_points(mechfemm, geom,...
+            u, tempn-Tini, 'Cauchy', 2);
+        nvals=fld.values/(pu.MEGA*pu.PA);
+        nvalsrange=[-5 15];
+        dcm=data_colormap(struct ('range',nvalsrange, 'colormap',cmap));
+        colorfield=nodal_field(struct ('name', ['colorfield'],...
+            'data',map_data(dcm, nvals)));
+        gv=reset (gv,struct('axes',haxU,...
+            'limits',[-0.25*w 1.25*w -0.02*h 1.25*h]));
+        draw(mechfemm, gv, struct ('x',geom,'u', mechscale*u, ...
+            'colorfield',colorfield, 'shrink',1));
+        title (['Thermal stress. Time =' num2str(t)]);
+        draw_colorbar(gv, struct('colormap',cmap, ...
+            'position',[0.8 0.15 0.05 0.7],...
+            'label','\sigma_{yy}','minmax',nvalsrange));
+        labels x y
+        snapnow;
+    end
+end
+##### SOURCE END #####
+--></body></html>

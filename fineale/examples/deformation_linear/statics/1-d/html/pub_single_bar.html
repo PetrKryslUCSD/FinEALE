@@ -1,0 +1,288 @@
+
+<!DOCTYPE html
+  PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html><head>
+      <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+   <!--
+This HTML was auto-generated from MATLAB code.
+To make changes, update the MATLAB code and republish this document.
+      --><title>Single truss bar structure: stiffness and thermal load</title><meta name="generator" content="MATLAB 8.0"><link rel="schema.DC" href="http://purl.org/dc/elements/1.1/"><meta name="DC.date" content="2012-12-20"><meta name="DC.source" content="pub_single_bar.m"><style type="text/css">
+html,body,div,span,applet,object,iframe,h1,h2,h3,h4,h5,h6,p,blockquote,pre,a,abbr,acronym,address,big,cite,code,del,dfn,em,font,img,ins,kbd,q,s,samp,small,strike,strong,sub,sup,tt,var,b,u,i,center,dl,dt,dd,ol,ul,li,fieldset,form,label,legend,table,caption,tbody,tfoot,thead,tr,th,td{margin:0;padding:0;border:0;outline:0;font-size:100%;vertical-align:baseline;background:transparent}body{line-height:1}ol,ul{list-style:none}blockquote,q{quotes:none}blockquote:before,blockquote:after,q:before,q:after{content:'';content:none}:focus{outine:0}ins{text-decoration:none}del{text-decoration:line-through}table{border-collapse:collapse;border-spacing:0}
+
+html { min-height:100%; margin-bottom:1px; }
+html body { height:100%; margin:0px; font-family:Arial, Helvetica, sans-serif; font-size:10px; color:#000; line-height:140%; background:#fff none; overflow-y:scroll; }
+html body td { vertical-align:top; text-align:left; }
+
+h1 { padding:0px; margin:0px 0px 25px; font-family:Arial, Helvetica, sans-serif; font-size:1.5em; color:#d55000; line-height:100%; font-weight:normal; }
+h2 { padding:0px; margin:0px 0px 8px; font-family:Arial, Helvetica, sans-serif; font-size:1.2em; color:#000; font-weight:bold; line-height:140%; border-bottom:1px solid #d6d4d4; display:block; }
+h3 { padding:0px; margin:0px 0px 5px; font-family:Arial, Helvetica, sans-serif; font-size:1.1em; color:#000; font-weight:bold; line-height:140%; }
+
+a { color:#005fce; text-decoration:none; }
+a:hover { color:#005fce; text-decoration:underline; }
+a:visited { color:#004aa0; text-decoration:none; }
+
+p { padding:0px; margin:0px 0px 20px; }
+img { padding:0px; margin:0px 0px 20px; border:none; }
+p img, pre img, tt img, li img { margin-bottom:0px; } 
+
+ul { padding:0px; margin:0px 0px 20px 23px; list-style:square; }
+ul li { padding:0px; margin:0px 0px 7px 0px; }
+ul li ul { padding:5px 0px 0px; margin:0px 0px 7px 23px; }
+ul li ol li { list-style:decimal; }
+ol { padding:0px; margin:0px 0px 20px 0px; list-style:decimal; }
+ol li { padding:0px; margin:0px 0px 7px 23px; list-style-type:decimal; }
+ol li ol { padding:5px 0px 0px; margin:0px 0px 7px 0px; }
+ol li ol li { list-style-type:lower-alpha; }
+ol li ul { padding-top:7px; }
+ol li ul li { list-style:square; }
+
+.content { font-size:1.2em; line-height:140%; padding: 20px; }
+
+pre, tt, code { font-size:12px; }
+pre { margin:0px 0px 20px; }
+pre.error { color:red; }
+pre.codeinput { padding:10px; border:1px solid #d3d3d3; background:#f7f7f7; }
+pre.codeoutput { padding:10px 11px; margin:0px 0px 20px; color:#4c4c4c; }
+
+@media print { pre.codeinput, pre.codeoutput { word-wrap:break-word; width:100%; } }
+
+span.keyword { color:#0000FF }
+span.comment { color:#228B22 }
+span.string { color:#A020F0 }
+span.untermstring { color:#B20000 }
+span.syscmd { color:#B28C00 }
+
+.footer { width:auto; padding:10px 0px; margin:25px 0px 0px; border-top:1px dotted #878787; font-size:0.8em; line-height:140%; font-style:italic; color:#878787; text-align:left; float:none; }
+.footer p { margin:0px; }
+.footer a { color:#878787; }
+.footer a:hover { color:#878787; text-decoration:underline; }
+.footer a:visited { color:#878787; }
+
+table th { padding:7px 5px; text-align:left; vertical-align:middle; border: 1px solid #d6d4d4; font-weight:bold; }
+table td { padding:7px 5px; text-align:left; vertical-align:top; border:1px solid #d6d4d4; }
+
+
+
+
+
+  </style></head><body><div class="content"><h1>Single truss bar structure: stiffness and thermal load</h1><!--introduction--><p>The structure is a single truss bar between points [10,-5,20] in and [30,25,-15] in. The bar is of uniform cross-section of 2 in. squared. The Young's modulus is assumed at value of 30e6 psi.  The structure is exposed to an increase of temperature of 100&deg;F. The coefficient of thermal expansion is 5.5e-6 1/degree Fahrenheit. The goal is to calculate the stiffness matrix of the structure and the thermal load.</p><!--/introduction--><h2>Contents</h2><div><ul><li><a href="#2">Solution</a></li><li><a href="#25">Discussion</a></li></ul></div><p>The solution calculated in longhand is given by Rao, The Finite Element Method in Engineering, fifth edition, 2011, pages 315-317.</p><h2>Solution<a name="2"></a></h2><pre class="codeinput"><span class="keyword">function</span> pub_single_bar
+</pre><pre class="codeinput">pu= physical_units_struct;
+</pre><p>Define the finite element node set.</p><pre class="codeinput">fens=fenode_set(struct(<span class="string">'xyz'</span>,[<span class="keyword">...</span>
+    10,-5,20; <span class="keyword">...</span><span class="comment">% node 1</span>
+    30,25,-15 <span class="keyword">...</span><span class="comment">% node 2</span>
+    ]*pu.IN));
+</pre><p>Define the single finite element set. Note that we are setting the cross-sectional area as the property of the element set.</p><pre class="codeinput">fes= fe_set_L2(struct(<span class="string">'conn'</span>,[1,2], <span class="string">'other_dimension'</span>, 2*pu.IN^2));
+</pre><p>Define the material property object and the material object. Note well the value of the Poisson's ratio  of zero.   Strictly speaking this is not necessary, the material stiffness calculation would correctly deduce the material  stiffness constant as the Young's modulus, but since it's value is not given in the reference we may take it as well as zero.</p><pre class="codeinput">prop = property_deformation_linear_iso (struct (<span class="keyword">...</span>
+    <span class="string">'E'</span>,30e6*pu.PSI,<span class="keyword">...</span><span class="comment">% Young's modulus</span>
+    <span class="string">'nu'</span>,0.,<span class="keyword">...</span>
+    <span class="string">'alpha'</span>, 5.5e-6*pu.IN/pu.IN/pu.F<span class="keyword">...</span><span class="comment">% coefficient of thermal expansion</span>
+    ));
+</pre><p>Note that the material  object needs to be uniaxial in order to provide the correct calculation of the material stiffness matrix  (one by one), and the thermal stress (a single component, along the bar)</p><pre class="codeinput">    mater = material_deformation_linear_uniax (struct(<span class="string">'property'</span>,prop));
+</pre><p>Define the finite element model machine of the small-deformation linear elastic kind. One-point Gauss quadrature is in fact sufficient for the stiffness matrix and the thermal-strain load vector.</p><p>Note well that we are making sure to define the material orientation matrix.   The truss bar has a special direction,  its axis.  The material orientation matrix  is a single vector  in the direction of the axis of the bar, and  is used to calculate the component of the displacement in the direction of the bar  axis and the strain-displacement matrix that produces axial strain from the  global 3-D displacements of the nodes. In this case the material orientation matrix  is provided by the finite element model machine itself, as requested by specifying the material orientation matrix as 'geniso'.</p><pre class="codeinput">    femm = femm_deformation_linear(struct (<span class="string">'material'</span>,mater,<span class="keyword">...</span>
+        <span class="string">'fes'</span>,fes,<span class="keyword">...</span>
+        <span class="string">'integration_rule'</span>,gauss_rule(struct(<span class="string">'dim'</span>,1,<span class="string">'order'</span>,1)),<span class="keyword">...</span>
+        <span class="string">'Rm'</span>,<span class="string">'geniso'</span>));
+</pre><p>Define the geometry and displacement fields. Geometry is constructed from the finite element node set.</p><pre class="codeinput">geom = nodal_field(struct (<span class="string">'name'</span>,[<span class="string">'geom'</span>], <span class="string">'dim'</span>, 3, <span class="string">'fens'</span>,fens));
+</pre><p>The displacement field is created by cloning  the geometry field since they have the same number of parameters per node (3).</p><pre class="codeinput">u   = 0*clone(geom,<span class="string">'u'</span>);
+</pre><p>The structure is free-floating: There are no EBC's applied on the structure. Therefore we proceed immediately to number equations:</p><pre class="codeinput">u   = numberdofs (u);
+</pre><p>Finally we produce the first result: we assemble the element  (structure)  stiffness matrix:</p><pre class="codeinput">K = stiffness(femm, sysmat_assembler_sparse, geom, u);
+</pre><pre>We print out the resulting stiffness matrix in the desired units:</pre><pre class="codeinput">format <span class="string">short</span> <span class="string">e</span>
+full(K/(pu.LB/pu.IN))
+</pre><pre class="codeoutput">
+ans =
+
+   1.8916e+05   2.8373e+05  -3.3102e+05  -1.8916e+05  -2.8373e+05   3.3102e+05
+   2.8373e+05   4.2560e+05  -4.9653e+05  -2.8373e+05  -4.2560e+05   4.9653e+05
+  -3.3102e+05  -4.9653e+05   5.7929e+05   3.3102e+05   4.9653e+05  -5.7929e+05
+  -1.8916e+05  -2.8373e+05   3.3102e+05   1.8916e+05   2.8373e+05  -3.3102e+05
+  -2.8373e+05  -4.2560e+05   4.9653e+05   2.8373e+05   4.2560e+05  -4.9653e+05
+   3.3102e+05   4.9653e+05  -5.7929e+05  -3.3102e+05  -4.9653e+05   5.7929e+05
+
+</pre><p>And we may compare with the reference (hand-calculated)  stiffness matrix (in units of pounds per inch)..</p><pre class="codeinput">ref_K=   1.0e+05 *[
+    1.8916    2.8373   -3.3102   -1.8916   -2.8373    3.3102
+    2.8373    4.2560   -4.9653   -2.8373   -4.2560    4.9653
+   -3.3102   -4.9653    5.7929    3.3102    4.9653   -5.7929
+   -1.8916   -2.8373    3.3102    1.8916    2.8373   -3.3102
+   -2.8373   -4.2560    4.9653    2.8373    4.2560   -4.9653
+    3.3102    4.9653   -5.7929   -3.3102   -4.9653    5.7929];
+</pre><p>Our calculation  is compared  to the reference stiffness matrix using matrix norm:</p><pre class="codeinput">ekn=norm(full(K/(pu.LB/pu.IN))- ref_K)/norm(ref_K)
+</pre><pre class="codeoutput">
+ekn =
+
+   5.2553e-06
+
+</pre><p>The accuracy of the calculation is actually better than suggested by the relative norm of the difference.  Only five digits are given for the reference matrix  and hence the difference  is relatively large.</p><p>We calculate the thermal load vector. For this we need to define the nodal field that represents the temperature increment  across the structure.</p><pre class="codeinput">dT = nodal_field(struct (<span class="string">'name'</span>,[<span class="string">'dT'</span>], <span class="string">'dim'</span>, 1, <span class="string">'nfens'</span>,fens.count));
+</pre><p>Note that it is necessary to use addition of the (originally zero) values in the  temperature field; we may also use the expression  <tt>dT.values = dT.values + 100*pu.F</tt>.</p><pre class="codeinput">dT.values(:) = 100*pu.F;
+</pre><p>The thermal-strain  load vector for the element is assembled next....</p><pre class="codeinput">F = thermal_strain_loads(femm, sysvec_assembler, geom, u, dT);
+</pre><p>...  and the result is printed out  in pounds:</p><pre class="codeinput">F/(pu.LB)
+</pre><pre class="codeoutput">
+ans =
+
+  -1.3134e+04
+  -1.9702e+04
+   2.2985e+04
+   1.3134e+04
+   1.9702e+04
+  -2.2985e+04
+
+</pre><p>Reference (hand calculated) thermal load vector in pounds</p><pre class="codeinput">ref_F=  1.0e+04 *[
+  -1.313449091077187
+  -1.970173636615779
+   2.298535909385076
+   1.313449091077187
+   1.970173636615779
+  -2.298535909385076];
+</pre><p>may be then compared with the calculated load vector.</p><pre class="codeinput">efn=norm(F/(pu.LB)-ref_F)/norm(ref_F)
+</pre><pre class="codeoutput">
+efn =
+
+   1.9874e-16
+
+</pre><p>The norm  of the difference is close to machine epsilon, as in this case the reference vector is known to all significant digits.</p><h2>Discussion<a name="25"></a></h2><p>The toolbox provides answers identical to those calculated using elementary structural-analysis formulas for truss elements.</p><p class="footer"><br><a href="http://www.mathworks.com/products/matlab/">Published with MATLAB&reg; R2012b</a><br></p></div><!--
+##### SOURCE BEGIN #####
+%% Single truss bar structure: stiffness and thermal load
+%
+% The structure is a single truss bar between points [10,-5,20] in and
+% [30,25,-15] in. The bar is of uniform cross-section of 2 in. squared. The
+% Young's modulus is assumed at value of 30e6 psi.  The structure is
+% exposed to an increase of temperature of 100°F. The coefficient of
+% thermal expansion is 5.5e-6 1/degree Fahrenheit. The goal is to calculate
+% the stiffness matrix of the structure and the thermal load.
+
+%% 
+% The solution calculated in longhand is given by Rao, The Finite Element
+% Method in Engineering, fifth edition, 2011, pages 315-317.
+
+%% Solution
+
+function pub_single_bar
+pu= physical_units_struct;
+%% 
+% Define the finite element node set.
+fens=fenode_set(struct('xyz',[...
+    10,-5,20; ...% node 1
+    30,25,-15 ...% node 2
+    ]*pu.IN));
+
+%% 
+% Define the single finite element set. Note that we are setting the
+% cross-sectional area as the property of the element set.
+fes= fe_set_L2(struct('conn',[1,2], 'other_dimension', 2*pu.IN^2));
+
+
+%% 
+% Define the material property object and the material object. Note well
+% the value of the Poisson's ratio  of zero.   Strictly speaking this is
+% not necessary, the material stiffness calculation would correctly deduce
+% the material  stiffness constant as the Young's modulus, but since it's
+% value is not given in the reference we may take it as well as zero.
+prop = property_deformation_linear_iso (struct (...
+    'E',30e6*pu.PSI,...% Young's modulus
+    'nu',0.,...
+    'alpha', 5.5e-6*pu.IN/pu.IN/pu.F...% coefficient of thermal expansion
+    ));
+%% 
+% Note that the material  object needs to be uniaxial in order to provide
+% the correct calculation of the material stiffness matrix  (one by one),
+% and the thermal stress (a single component, along the bar)
+    mater = material_deformation_linear_uniax (struct('property',prop));
+%% 
+% Define the finite element model machine of the small-deformation linear
+% elastic kind. One-point Gauss quadrature is in fact sufficient for the
+% stiffness matrix and the thermal-strain load vector.
+%% 
+% Note well that we are making sure to define the material orientation
+% matrix.   The truss bar has a special direction,  its axis.  The material
+% orientation matrix  is a single vector  in the direction of the axis of
+% the bar, and  is used to calculate the component of the displacement in
+% the direction of the bar  axis and the strain-displacement matrix that
+% produces axial strain from the  global 3-D displacements of the nodes. In
+% this case the material orientation matrix  is provided by the finite
+% element model machine itself, as requested by specifying the material
+% orientation matrix as 'geniso'.
+    femm = femm_deformation_linear(struct ('material',mater,...
+        'fes',fes,...
+        'integration_rule',gauss_rule(struct('dim',1,'order',1)),...
+        'Rm','geniso'));
+%% 
+% Define the geometry and displacement fields.
+% Geometry is constructed from the finite element node set.
+geom = nodal_field(struct ('name',['geom'], 'dim', 3, 'fens',fens));
+%% 
+% The displacement field is created by cloning  the geometry field since
+% they have the same number of parameters per node (3).
+u   = 0*clone(geom,'u');
+%% 
+% The structure is free-floating: There are no EBC's applied on the
+% structure. Therefore we proceed immediately to number equations:
+u   = numberdofs (u);
+%% 
+% Finally we produce the first result: we assemble the element  (structure)  stiffness matrix:
+
+K = stiffness(femm, sysmat_assembler_sparse, geom, u);
+
+%% 
+%  We print out the resulting stiffness matrix in the desired units:
+format short e
+full(K/(pu.LB/pu.IN))
+
+
+%% 
+% And we may compare with the reference (hand-calculated)  stiffness matrix
+% (in units of pounds per inch)..
+ref_K=   1.0e+05 *[
+    1.8916    2.8373   -3.3102   -1.8916   -2.8373    3.3102
+    2.8373    4.2560   -4.9653   -2.8373   -4.2560    4.9653
+   -3.3102   -4.9653    5.7929    3.3102    4.9653   -5.7929
+   -1.8916   -2.8373    3.3102    1.8916    2.8373   -3.3102
+   -2.8373   -4.2560    4.9653    2.8373    4.2560   -4.9653
+    3.3102    4.9653   -5.7929   -3.3102   -4.9653    5.7929];
+%% 
+% Our calculation  is compared  to the reference stiffness matrix using matrix norm:
+ekn=norm(full(K/(pu.LB/pu.IN))- ref_K)/norm(ref_K)
+
+%% 
+% The accuracy of the calculation is actually better than suggested by the
+% relative norm of the difference.  Only five digits are given for the reference
+% matrix  and hence the difference  is relatively large.
+
+
+%% 
+% We calculate the thermal load vector. For this we need to define the nodal
+% field that represents the temperature increment  across the structure.
+dT = nodal_field(struct ('name',['dT'], 'dim', 1, 'nfens',fens.count));
+%% 
+% Note that it is necessary to use addition of the (originally zero) values
+% in the  temperature field; we may also use the expression  |dT.values = dT.values + 100*pu.F|.
+dT.values(:) = 100*pu.F;
+
+%% 
+% The thermal-strain  load vector for the element is assembled next....
+F = thermal_strain_loads(femm, sysvec_assembler, geom, u, dT);
+%% 
+% ...  and the result is printed out  in pounds:
+F/(pu.LB)
+
+%% 
+% Reference (hand calculated) thermal load vector in pounds
+ref_F=  1.0e+04 *[
+  -1.313449091077187
+  -1.970173636615779
+   2.298535909385076
+   1.313449091077187
+   1.970173636615779
+  -2.298535909385076];
+%% 
+% may be then compared with the calculated load vector.
+efn=norm(F/(pu.LB)-ref_F)/norm(ref_F)
+%% 
+% The norm  of the difference is close to machine epsilon, as in this case
+% the reference vector is known to all significant digits.
+
+%% Discussion
+% 
+%% 
+% The toolbox provides answers identical to those calculated using
+% elementary structural-analysis formulas for truss elements.
+##### SOURCE END #####
+--></body></html>

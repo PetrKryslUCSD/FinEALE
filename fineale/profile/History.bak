@@ -1,0 +1,324 @@
+<?xml version="1.0" encoding="utf-8"?>
+<history>
+<session>
+<command time_stamp="1488f19800c">%-- 9/19/2014 10:08 AM --%</command>
+<command execution_time="563385">run('C:\Users\pkrysl\Documents\Research\Software folder\FEA software folder\fineale\examples\deformation_nonlinear\statics\hyperelastic\3-d\Twisted_beam\nonlinear_twisted_beam.m')</command>
+<command execution_time="305885">nonlinear_twisted_beam_h20</command>
+<command error="true" execution_time="602">run('C:\Users\pkrysl\Documents\Research\Software folder\FEA software folder\fineale\examples\deformation_nonlinear\statics\hyperelastic\3-d\Twisted_beam\plot_nonlinear_twisted_beam.m')</command>
+<command execution_time="118526" repeat="3">cookstrain3d_nonlinear_runner</command>
+<command error="true" execution_time="270">run('C:\Users\pkrysl\Documents\Research\Software folder\FEA software folder\fineale\examples\deformation_nonlinear\statics\hyperelastic\3-d\Curved_beam\curved_beam_h8.m')</command>
+<command execution_time="43124" repeat="2">curved_beam_h8</command>
+<command execution_time="203699">curved_beam_h20</command>
+<command execution_time="217" repeat="6">doc fineale</command>
+<command error="true" execution_time="237">run('C:\Users\pkrysl\Documents\Research\Software folder\FEA software folder\fineale\examples\deformation_nonlinear\statics\hyperelastic\bias_test.m')</command>
+<command execution_time="25778">run('C:\Users\pkrysl\Documents\Research\Software folder\FEA software folder\fineale\examples\deformation_nonlinear\instability\3-d\Argyris_L_linearbuckling.m')</command>
+<command execution_time="24852" repeat="5">Argyris_L_linearbuckling</command>
+<command execution_time="2399" repeat="2">bathtub_buckling</command>
+<command error="true" execution_time="3758">run('C:\Users\pkrysl\Documents\Research\Software folder\FEA software folder\fineale\examples\deformation_nonlinear\instability\3-d\Box_buckling_8.m')</command>
+<command execution_time="41636">Box_buckling_8</command>
+<command execution_time="210" repeat="4">doc fineale</command>
+<command execution_time="3796">run('C:\Users\pkrysl\Documents\Research\Software folder\FEA software folder\fineale\fineale_init.m')</command>
+<command execution_time="262" repeat="2">doc fineale</command>
+<command error="true" execution_time="92" repeat="2">nonlinear_twisted_beam_h20_algo</command>
+<command execution_time="4399">fineale_init</command>
+<command execution_time="1200" repeat="13">nonlinear_twisted_beam_h20_algo</command>
+<command execution_time="13">model_data</command>
+<command execution_time="2143" repeat="5">nonlinear_twisted_beam_h20_algo</command>
+<command execution_time="20">FL</command>
+<command execution_time="12">max(FL)</command>
+<command execution_time="1014">nonlinear_twisted_beam_h20_algo</command>
+<command execution_time="12">size(K)</command>
+<command execution_time="13">max(max(K))</command>
+<command execution_time="16">plot(dusol)</command>
+<command execution_time="49">spy(K)</command>
+</session>
+<session>
+<command time_stamp="14894ea59a9">%-- 9/20/2014 1:14 PM --%</command>
+<command error="true" execution_time="10690">nonlinear_twisted_beam_h20_algo</command>
+</session>
+<session>
+<command time_stamp="14894eb509a">%-- 9/20/2014 1:15 PM --%</command>
+<command execution_time="2674">nonlinear_twisted_beam_h20</command>
+<command error="true" execution_time="20">save('K','K")</command>
+<command execution_time="52">save('K','K')</command>
+<command execution_time="16">load('K.mat')</command>
+<command execution_time="23">whos</command>
+<command execution_time="853">nonlinear_twisted_beam_h20_algo</command>
+<command execution_time="16">u</command>
+<command execution_time="11">model_data</command>
+<command execution_time="12">model_data.boundary_conditions</command>
+<command execution_time="26">model_data.boundary_conditions.essential</command>
+<command execution_time="13">model_data.boundary_conditions.essential{1}</command>
+<command execution_time="453" repeat="7">nonlinear_twisted_beam_h20_algo</command>
+<command execution_time="10">model_data</command>
+<command execution_time="9">t= 0.05;</command>
+<command execution_time="7">maxdu_tol = t/1e10;</command>
+<command execution_time="8">maxdu_tol</command>
+<command execution_time="303320" repeat="3">nonlinear_twisted_beam_h20_algo</command>
+<command batch="1">for j=1:length(us)</command>
+<command batch="1">gv=reset(clear(gv,[]),[]);</command>
+<command batch="1">draw(sfemm,gv, struct ('x', model_data.geom, 'u', 0*us{j},'facecolor','none', 'shrink',1.0));</command>
+<command batch="1">draw(sfemm,gv, struct ('x', model_data.geom, 'u', us{j},'facecolor','y', 'shrink',1.0));</command>
+<command batch="1">camset (gv,Cam);</command>
+<command batch="1">interact(gv);</command>
+<command batch="1">pause(0.5); Cam =camget(gv);</command>
+<command batch="1" execution_time="13725">end</command>
+<command batch="2">for j=1:length(us)</command>
+<command batch="2">gv=reset(clear(gv,[]),[]);</command>
+<command batch="2">draw(sfemm,gv, struct ('x', model_data.geom, 'u', 0*us{j},'facecolor','none', 'shrink',1.0));</command>
+<command batch="2">draw(sfemm,gv, struct ('x', model_data.geom, 'u', us{j},'facecolor','y', 'shrink',1.0));</command>
+<command batch="2">camset (gv,Cam);</command>
+<command batch="2">interact(gv);</command>
+<command batch="2">pause(0.05); Cam =camget(gv);</command>
+<command batch="2" execution_time="9386">end</command>
+<command execution_time="302592" repeat="2">nonlinear_twisted_beam_h20_algo</command>
+<command error="true" execution_time="154358" repeat="7">nonlinear_twisted_beam_algo</command>
+<command error="true" execution_time="125" repeat="2">perforated_strip</command>
+<command execution_time="4219">fineale_init</command>
+<command error="true" execution_time="96">perforated_strip</command>
+<command error="true" execution_time="19">property_plastic_perf_j2_iso</command>
+<command execution_time="4165">fineale_init</command>
+<command execution_time="29">property_deformation_linear_iso</command>
+<command error="true" execution_time="146" repeat="4">perforated_strip</command>
+<command execution_time="4321">fineale_init</command>
+<command execution_time="499" repeat="8">perforated_strip</command>
+<command execution_time="10">context</command>
+<command execution_time="1987" repeat="7">perforated_strip</command>
+<command execution_time="11" repeat="2">Cam =camget(gv)</command>
+<command execution_time="5246" repeat="6">perforated_strip</command>
+<command execution_time="11">model_data.region{i}.femm</command>
+<command error="true" execution_time="12">model_data.region{i}.femm.model_data.region{i}</command>
+<command execution_time="14">model_data.region{i}.femm.matstates</command>
+<command execution_time="9">size(model_data.region{i}.femm.matstates)</command>
+<command execution_time="10">model_data.region{i}.femm.matstates{1,1}</command>
+<command execution_time="12">model_data.region{i}.femm.matstates{1,1:8}</command>
+<command execution_time="17">model_data.region{i}.femm.matstates{2,1:8}</command>
+<command execution_time="10" repeat="2">model_data.region{i}.femm.matstates{3,1:8}</command>
+<command error="true" execution_time="11">model_data.region{i}.femm.matstates{3,1:8}.eps_p</command>
+<command execution_time="12">model_data.region{i}.femm.matstates{3,1}.eps_p</command>
+<command execution_time="10">gradu</command>
+<command execution_time="9">(gradu+gradu')/2</command>
+<command execution_time="10">ms</command>
+<command execution_time="11" repeat="3">ms.eps_p</command>
+<command execution_time="16">model_data.region{i}.femm.matstates{3,1}.eps_p</command>
+<command execution_time="9">model_data.region{i}.femm.matstates{13,1}.eps_p</command>
+<command error="true" execution_time="12">for</command>
+<command execution_time="21" repeat="2">for k=1:48, model_data.region{i}.femm.matstates{k,1}.eps_p,end</command>
+<command execution_time="5421" repeat="7">perforated_strip</command>
+<command error="true" execution_time="197" repeat="2">deformation_nonlinear_statics</command>
+<command error="true" execution_time="3654" repeat="7">perforated_strip</command>
+<command execution_time="80">clear all classes</command>
+<command execution_time="4323">fineale_init</command>
+<command error="true" execution_time="3702" repeat="8">perforated_strip</command>
+<command execution_time="10">context</command>
+<command execution_time="3952" repeat="4">perforated_strip</command>
+<command execution_time="8">out</command>
+<command execution_time="8">quantity</command>
+<command execution_time="8">context.output</command>
+<command execution_time="7" repeat="2">context</command>
+<command execution_time="4180" repeat="2">perforated_strip</command>
+<command execution_time="7">output</command>
+<command execution_time="4132" repeat="2">perforated_strip</command>
+<command execution_time="7">scale</command>
+<command execution_time="7">out</command>
+<command execution_time="21435">perforated_strip</command>
+<command execution_time="10">context</command>
+<command execution_time="8">scale</command>
+<command error="true" execution_time="58">epscale</command>
+<command execution_time="3923">perforated_strip</command>
+<command execution_time="8">epscale</command>
+<command execution_time="9">xyz</command>
+<command execution_time="9">scale*[1,1,1]*out(1)</command>
+<command execution_time="9">out</command>
+<command execution_time="7">scale</command>
+<command execution_time="20">scale=1e5</command>
+<command execution_time="6031">perforated_strip</command>
+</session>
+<session>
+<command time_stamp="148a4a1b647">%-- 9/23/2014 2:28 PM --%</command>
+<command error="true" execution_time="1042" repeat="2">perforated_strip_prescribed_displacement_h8</command>
+<command execution_time="38">clear all classes</command>
+<command execution_time="1991953" repeat="3">perforated_strip_prescribed_displacement_h8</command>
+<command execution_time="2016">doc fineale</command>
+</session>
+<session>
+<command time_stamp="1498834f2a7">%-- 11/6/2014 7:03 PM --%</command>
+<command execution_time="525" repeat="19">sssqunif</command>
+<command execution_time="20">w_max</command>
+<command execution_time="10">1.09293e-3*um('in')</command>
+<command execution_time="474" repeat="20">sssqunif</command>
+<command error="true" execution_time="101" repeat="2">line_load_cyl_thin</command>
+<command execution_time="410" repeat="7">sssqunif</command>
+</session>
+<session>
+<command time_stamp="1498ae01c57">%-- 11/7/2014 7:29 AM --%</command>
+<command execution_time="7049" repeat="7">sssqunif</command>
+<command execution_time="20">close all</command>
+<command execution_time="6854" repeat="8">sssqunif</command>
+<command execution_time="1676" repeat="14">lshape3_hunif</command>
+<command execution_time="6187" repeat="9">scordelis_lo</command>
+<command error="true" execution_time="70">camget(gv)</command>
+<command error="true" execution_time="20">camget(model_data.postprocessing.gv)</command>
+<command execution_time="10">model_data</command>
+<command execution_time="10">model_data.postprocessing</command>
+<command execution_time="1113">model_data=deformation_plot_deformation(model_data);</command>
+<command execution_time="30">camget(model_data.postprocessing.gv)</command>
+<command execution_time="40363" repeat="13">scordelis_lo</command>
+<command execution_time="60">set_pub_defaults</command>
+<command execution_time="125795">run('C:\Users\pkrysl\Documents\Research\Software folder\FEA software folder\fineale\examples\deformation_nonlinear\statics\hyperelastic\3-d\Cook\cookstrain3d_nonlinear_runner.m')</command>
+<command execution_time="43327">curved_beam_h8</command>
+<command execution_time="18011" repeat="2">line_load_cyl</command>
+<command execution_time="81882">line_load_cyl_thin</command>
+<command execution_time="2242235">annular_slit_plate</command>
+<command execution_time="982127">squash_thecube(1)</command>
+<command execution_time="554692">run('C:\Users\pkrysl\Documents\Research\Software folder\FEA software folder\fineale\examples\deformation_nonlinear\statics\hyperelastic\3-d\Twisted_beam\nonlinear_twisted_beam.m')</command>
+<command execution_time="20946" repeat="2">Argyris_L_linearbuckling</command>
+<command execution_time="20">parula</command>
+<command execution_time="434" repeat="5">wireFEM4</command>
+<command execution_time="10">Us</command>
+<command execution_time="20">sqrt(0.9/80)</command>
+<command execution_time="518">wireFEM4</command>
+<command execution_time="10">sqrt(900/80)</command>
+<command execution_time="725" repeat="4">wireFEM4</command>
+</session>
+<session>
+<command time_stamp="149aabb999f">%-- 11/13/2014 11:57 AM --%</command>
+<command execution_time="216" repeat="5">wireFEM4</command>
+<command execution_time="300" repeat="2">doc fineale</command>
+<command execution_time="5807">run('C:\Users\pkrysl\Documents\Research\Software folder\FEA software folder\fineale\examples\deformation_linear\dynamics\forced_vibration\3-d\pub_test5_vibration.m')</command>
+<command execution_time="2716">pub_test5_vibration</command>
+<command execution_time="20">atan2(imag(midpointu),real(midpointu) )/pi*180</command>
+<command batch="3">plot( model_data.frequencies , ...</command>
+<command batch="3">atan2(imag(midpointu),real(midpointu) )/pi*180,...</command>
+<command batch="3">'r','Markersize',3,'linewidth',2); hold on</command>
+<command batch="3">%     set(gca,'ylim',[0,180])</command>
+<command batch="3">xlabel( 'Frequency'),ylabel('Phase shift of the displacement')</command>
+<command batch="3" execution_time="50">grid on</command>
+<command execution_time="240" repeat="2">doc fineale</command>
+<command error="true" execution_time="74420">run('C:\Users\pkrysl\Documents\Research\Software folder\FEA software folder\fineale\examples\deformation_linear\dynamics\forced_vibration\3-d\test_TEST13H_vibration.m')</command>
+<command execution_time="85777" repeat="2">test_TEST13H_vibration</command>
+</session>
+<session>
+<command time_stamp="149ac27fc85">%-- 11/13/2014 6:35 PM --%</command>
+<command execution_time="9250">run('C:\Users\pkrysl\Documents\Research\Software folder\FEA software folder\fineale\examples\common\graphics\Cook_3D_strain_vtk_visualization.m')</command>
+<command execution_time="25" repeat="2">paraview</command>
+<command batch="4" execution_time="1094" repeat="2">Cook_3D_strain_vtk_visualization</command>
+<command batch="4" execution_time="2199">Cook_3D_strain_vtk_visualization</command>
+<command execution_time="770" repeat="2">run('C:\Users\pkrysl\Documents\Research\Software folder\FEA software folder\fineale\examples\common\graphics\Cook_3D_strain_vtk_visualization.m')</command>
+<command execution_time="6">exist( [executable])</command>
+<command execution_time="10">executable</command>
+<command execution_time="10">exist('"C:\Program Files (x86)\ParaView 3.12.0\bin\paraview.exe"')</command>
+<command execution_time="20">exist('C:\Program Files (x86)\ParaView 3.12.0\bin\paraview.exe')</command>
+<command execution_time="7316">Cook_3D_strain_vtk_visualization</command>
+<command execution_time="6779">run('C:\Users\pkrysl\Documents\Research\Software folder\FEA software folder\fineale\examples\common\measurement\circle_area.m')</command>
+<command execution_time="5254">run('C:\Users\pkrysl\Documents\Research\Software folder\FEA software folder\fineale\examples\common\measurement\circle_areaq.m')</command>
+<command execution_time="17691">run('C:\Users\pkrysl\Documents\Research\Software folder\FEA software folder\fineale\examples\common\measurement\sphere_inertia.m')</command>
+<command execution_time="125">run('C:\Users\pkrysl\Documents\Research\Software folder\FEA software folder\fineale\examples\deformation_linear\statics\1-d\pub_single_bar.m')</command>
+<command execution_time="45">run('C:\Users\pkrysl\Documents\Research\Software folder\FEA software folder\fineale\examples\deformation_linear\statics\1-d\single_bar.m')</command>
+<command execution_time="670">run('C:\Users\pkrysl\Documents\Research\Software folder\FEA software folder\fineale\examples\deformation_linear\statics\1-d\sw129b_l3_irreg.m')</command>
+<command execution_time="1912">run('C:\Users\pkrysl\Documents\Research\Software folder\FEA software folder\fineale\examples\deformation_linear\statics\2-d\cookstrain.m')</command>
+<command execution_time="2132">cookstrain</command>
+<command execution_time="1073">run('C:\Users\pkrysl\Documents\Research\Software folder\FEA software folder\fineale\examples\deformation_linear\statics\2-d\cookstress.m')</command>
+<command execution_time="785">run('C:\Users\pkrysl\Documents\Research\Software folder\FEA software folder\fineale\examples\deformation_linear\statics\2-d\Floyd.m')</command>
+<command execution_time="35435">run('C:\Users\pkrysl\Documents\Research\Software folder\FEA software folder\fineale\examples\deformation_linear\statics\2-d\Floyd_had.m')</command>
+<command execution_time="3180">run('C:\Users\pkrysl\Documents\Research\Software folder\FEA software folder\fineale\examples\deformation_linear\statics\2-d\LE1NAFEMS.m')</command>
+<command execution_time="32389">run('C:\Users\pkrysl\Documents\Research\Software folder\FEA software folder\fineale\examples\deformation_linear\statics\2-d\LE1NAFEMS_conv.m')</command>
+<command execution_time="531">run('C:\Users\pkrysl\Documents\Research\Software folder\FEA software folder\fineale\examples\deformation_linear\statics\2-d\Ltract_energy.m')</command>
+<command execution_time="532">Ltract_energy</command>
+<command execution_time="823">run('C:\Users\pkrysl\Documents\Research\Software folder\FEA software folder\fineale\examples\deformation_linear\statics\2-d\orthoballoon.m')</command>
+<command execution_time="26427">run('C:\Users\pkrysl\Documents\Research\Software folder\FEA software folder\fineale\examples\deformation_linear\statics\2-d\pub_Floyd.m')</command>
+<command batch="5">run('C:\Users\pkrysl\Documents\Research\Software folder\FEA software folder\fineale\examples\deformation_linear\statics\2-d\pub_rodwtrans.m')</command>
+<command batch="5">run('C:\Users\pkrysl\Documents\Research\Software folder\FEA software folder\fineale\examples\deformation_linear\statics\2-d\pub_thick_pipe_axi.m')</command>
+<command batch="5">run('C:\Users\pkrysl\Documents\Research\Software folder\FEA software folder\fineale\examples\deformation_linear\statics\2-d\pub_thick_pipe_ps.m')</command>
+<command batch="5">run('C:\Users\pkrysl\Documents\Research\Software folder\FEA software folder\fineale\examples\deformation_linear\statics\2-d\shaftwtrans0.m')</command>
+<command batch="5" execution_time="29074">run('C:\Users\pkrysl\Documents\Research\Software folder\FEA software folder\fineale\examples\deformation_linear\statics\2-d\shaftwtrans1.m')</command>
+<command execution_time="1526">run('C:\Users\pkrysl\Documents\Research\Software folder\FEA software folder\fineale\examples\deformation_linear\statics\2-d\shaftwtrans3.m')</command>
+<command execution_time="1525">run('C:\Users\pkrysl\Documents\Research\Software folder\FEA software folder\fineale\examples\deformation_linear\statics\2-d\shaftwtrans2.m')</command>
+<command execution_time="1494">run('C:\Users\pkrysl\Documents\Research\Software folder\FEA software folder\fineale\examples\deformation_linear\statics\2-d\shaftwtrans1.m')</command>
+<command execution_time="26300">run('C:\Users\pkrysl\Documents\Research\Software folder\FEA software folder\fineale\examples\deformation_linear\statics\2-d\shear_wall_had.m')</command>
+<command execution_time="16275">run('C:\Users\pkrysl\Documents\Research\Software folder\FEA software folder\fineale\examples\deformation_linear\statics\3-d\Bushing.m')</command>
+<command execution_time="9271">run('C:\Users\pkrysl\Documents\Research\Software folder\FEA software folder\fineale\examples\deformation_linear\statics\3-d\clsqconc.m')</command>
+<command execution_time="810">run('C:\Users\pkrysl\Documents\Research\Software folder\FEA software folder\fineale\examples\deformation_linear\statics\3-d\Cook_3D_strain.m')</command>
+<command execution_time="6972">run('C:\Users\pkrysl\Documents\Research\Software folder\FEA software folder\fineale\examples\deformation_linear\statics\3-d\Cook_3D_strain_T10.m')</command>
+<command execution_time="3542">run('C:\Users\pkrysl\Documents\Research\Software folder\FEA software folder\fineale\examples\deformation_linear\statics\3-d\curved_beam.m')</command>
+<command execution_time="30767">run('C:\Users\pkrysl\Documents\Research\Software folder\FEA software folder\fineale\examples\deformation_linear\statics\3-d\fiber_reinf_cant_yn_strong.m')</command>
+<command error="true" execution_time="15502">run('C:\Users\pkrysl\Documents\Research\Software folder\FEA software folder\fineale\examples\deformation_linear\statics\3-d\fiber_reinf_cant_zn_strong.m')</command>
+<command execution_time="29038" repeat="2">fiber_reinf_cant_zn_strong</command>
+<command execution_time="3844" repeat="2">run('C:\Users\pkrysl\Documents\Research\Software folder\FEA software folder\fineale\examples\deformation_linear\statics\3-d\pinchcyl.m')</command>
+<command execution_time="32194">run('C:\Users\pkrysl\Documents\Research\Software folder\FEA software folder\fineale\examples\deformation_linear\statics\3-d\pinchcyl_T10.m')</command>
+<command batch="6">run('C:\Users\pkrysl\Documents\Research\Software folder\FEA software folder\fineale\examples\deformation_linear\statics\3-d\pinchsphere.m')</command>
+<command batch="6" execution_time="199949">run('C:\Users\pkrysl\Documents\Research\Software folder\FEA software folder\fineale\examples\deformation_linear\statics\3-d\pinchsphere_T10.m')</command>
+<command execution_time="13799" repeat="2">run('C:\Users\pkrysl\Documents\Research\Software folder\FEA software folder\fineale\examples\deformation_linear\statics\3-d\plane_w_hole.m')</command>
+<command execution_time="7859">run('C:\Users\pkrysl\Documents\Research\Software folder\FEA software folder\fineale\examples\deformation_linear\statics\3-d\plane_w_hole_m.m')</command>
+<command execution_time="11255">run('C:\Users\pkrysl\Documents\Research\Software folder\FEA software folder\fineale\examples\deformation_linear\statics\3-d\plate_two_fibers.m')</command>
+<command execution_time="1994">run('C:\Users\pkrysl\Documents\Research\Software folder\FEA software folder\fineale\examples\deformation_linear\statics\3-d\pub_LE10NAFEMS.m')</command>
+<command execution_time="2174">run('C:\Users\pkrysl\Documents\Research\Software folder\FEA software folder\fineale\examples\deformation_linear\statics\3-d\pub_LE10NAFEMS_H20.m')</command>
+<command execution_time="5436">run('C:\Users\pkrysl\Documents\Research\Software folder\FEA software folder\fineale\examples\deformation_linear\statics\3-d\pub_LE10NAFEMS_H64.m')</command>
+<command execution_time="2097">run('C:\Users\pkrysl\Documents\Research\Software folder\FEA software folder\fineale\examples\deformation_linear\statics\3-d\pub_LE10NAFEMS_T10.m')</command>
+<command batch="7">run('C:\Users\pkrysl\Documents\Research\Software folder\FEA software folder\fineale\examples\deformation_linear\statics\3-d\pub_plane_w_hole_m.m')</command>
+<command batch="7">run('C:\Users\pkrysl\Documents\Research\Software folder\FEA software folder\fineale\examples\deformation_linear\statics\3-d\pub_R0031NAFEMS.m')</command>
+<command batch="7">run('C:\Users\pkrysl\Documents\Research\Software folder\FEA software folder\fineale\examples\deformation_linear\statics\3-d\pub_R0031NAFEMS_1_region.m')</command>
+<command batch="7">run('C:\Users\pkrysl\Documents\Research\Software folder\FEA software folder\fineale\examples\deformation_linear\statics\3-d\pub_thick_pipe.m')</command>
+<command batch="7" execution_time="106303">run('C:\Users\pkrysl\Documents\Research\Software folder\FEA software folder\fineale\examples\deformation_linear\statics\3-d\pub_Twisted_beam.m')</command>
+<command execution_time="300">close all</command>
+<command execution_time="7705">run('C:\Users\pkrysl\Documents\Research\Software folder\FEA software folder\fineale\examples\deformation_linear\statics\3-d\pub_Twisted_beam.m')</command>
+<command execution_time="12713">run('C:\Users\pkrysl\Documents\Research\Software folder\FEA software folder\fineale\examples\deformation_linear\statics\3-d\rltb_3D.m')</command>
+<command batch="8">run('C:\Users\pkrysl\Documents\Research\Software folder\FEA software folder\fineale\examples\deformation_linear\statics\3-d\scordelis_lo.m')</command>
+<command batch="8" execution_time="50219">run('C:\Users\pkrysl\Documents\Research\Software folder\FEA software folder\fineale\examples\deformation_linear\statics\3-d\sssqunif.m')</command>
+<command execution_time="2601">run('C:\Users\pkrysl\Documents\Research\Software folder\FEA software folder\fineale\examples\deformation_linear\statics\3-d\thick_pipe.m')</command>
+<command execution_time="5787">run('C:\Users\pkrysl\Documents\Research\Software folder\FEA software folder\fineale\examples\deformation_linear\statics\3-d\thickplate_with_stress.m')</command>
+<command execution_time="5446">run('C:\Users\pkrysl\Documents\Research\Software folder\FEA software folder\fineale\examples\deformation_linear\statics\3-d\three_point_bend.m')</command>
+<command batch="9">run('C:\Users\pkrysl\Documents\Research\Software folder\FEA software folder\fineale\examples\deformation_linear\statics\3-d\Twisted_beam.m')</command>
+<command batch="9" execution_time="106929">run('C:\Users\pkrysl\Documents\Research\Software folder\FEA software folder\fineale\examples\deformation_linear\statics\3-d\Z_laminate_u_ss.m')</command>
+<command execution_time="4446">run('C:\Users\pkrysl\Documents\Research\Software folder\FEA software folder\fineale\examples\deformation_linear\statics\3-d\Z_laminate_u_ss_stress.m')</command>
+<command execution_time="14122">run('C:\Users\pkrysl\Documents\Research\Software folder\FEA software folder\fineale\examples\deformation_linear\dynamics\direct_explicit\1-d\axial_wave_expl_1D.m')</command>
+<command execution_time="247">close all</command>
+<command execution_time="40775">run('C:\Users\pkrysl\Documents\Research\Software folder\FEA software folder\fineale\examples\deformation_linear\dynamics\direct_explicit\1-d\forcedwave1dL2.m')</command>
+<command execution_time="3549">run('C:\Users\pkrysl\Documents\Research\Software folder\FEA software folder\fineale\examples\deformation_linear\dynamics\direct_explicit\1-d\pub_axial_wave_expl_1D.m')</command>
+<command execution_time="1314">run('C:\Users\pkrysl\Documents\Research\Software folder\FEA software folder\fineale\examples\deformation_linear\dynamics\direct_explicit\1-d\pub_sin_rod_expl_1D.m')</command>
+<command execution_time="7806">run('C:\Users\pkrysl\Documents\Research\Software folder\FEA software folder\fineale\examples\deformation_linear\dynamics\direct_explicit\1-d\wave1dL2.m')</command>
+<command execution_time="41183">run('C:\Users\pkrysl\Documents\Research\Software folder\FEA software folder\fineale\examples\deformation_linear\dynamics\direct_explicit\2-d\pub_sin_rod_expl_2D_axi.m')</command>
+<command execution_time="146">run('C:\Users\pkrysl\Documents\Research\Software folder\FEA software folder\fineale\examples\deformation_linear\dynamics\direct_implicit\1-d\pub_sin_rod_impl_1D.m')</command>
+<command execution_time="220">run('C:\Users\pkrysl\Documents\Research\Software folder\FEA software folder\fineale\examples\deformation_linear\dynamics\direct_implicit\2-d\pub_sin_rod_impl_2D_axi.m')</command>
+<command execution_time="4277">run('C:\Users\pkrysl\Documents\Research\Software folder\FEA software folder\fineale\examples\deformation_linear\dynamics\direct_implicit\3-d\bending_wave_impl_Rayleigh.m')</command>
+<command execution_time="1569">run('C:\Users\pkrysl\Documents\Research\Software folder\FEA software folder\fineale\examples\deformation_linear\dynamics\direct_implicit\3-d\pub_sin_rod_impl_3D.m')</command>
+<command batch="10" error="true">run('C:\Users\pkrysl\Documents\Research\Software folder\FEA software folder\fineale\examples\deformation_linear\dynamics\forced_vibration\3-d\test_TEST13H_vibration.m')</command>
+<command batch="10" error="true" execution_time="18993">run('C:\Users\pkrysl\Documents\Research\Software folder\FEA software folder\fineale\examples\deformation_linear\dynamics\forced_vibration\3-d\test_TEST13H_support_motion.m')</command>
+<command batch="11">run('C:\Users\pkrysl\Documents\Research\Software folder\FEA software folder\fineale\examples\deformation_linear\dynamics\forced_vibration\3-d\pub_TEST13H_vibration.m')</command>
+<command batch="11" execution_time="276323">run('C:\Users\pkrysl\Documents\Research\Software folder\FEA software folder\fineale\examples\deformation_linear\dynamics\forced_vibration\3-d\test5_direct.m')</command>
+<command execution_time="28509">run('C:\Users\pkrysl\Documents\Research\Software folder\FEA software folder\fineale\examples\deformation_linear\dynamics\free_vibration\3-d\drum_t4.m')</command>
+<command execution_time="11686">run('C:\Users\pkrysl\Documents\Research\Software folder\FEA software folder\fineale\examples\deformation_linear\dynamics\free_vibration\3-d\drum_t10.m')</command>
+<command execution_time="21750">run('C:\Users\pkrysl\Documents\Research\Software folder\FEA software folder\fineale\examples\deformation_linear\dynamics\free_vibration\3-d\KS_sandwich_vibration_ss.m')</command>
+<command execution_time="6087">run('C:\Users\pkrysl\Documents\Research\Software folder\FEA software folder\fineale\examples\deformation_linear\dynamics\free_vibration\3-d\pub_FV12NAFEMS_vibration.m')</command>
+<command execution_time="569">run('C:\Users\pkrysl\Documents\Research\Software folder\FEA software folder\fineale\examples\deformation_linear\dynamics\free_vibration\3-d\pub_FV52NAFEMS_vibration.m')</command>
+<command execution_time="579">pub_FV52NAFEMS_vibration</command>
+<command execution_time="3283" repeat="2">run('C:\Users\pkrysl\Documents\Research\Software folder\FEA software folder\fineale\examples\deformation_linear\dynamics\free_vibration\3-d\pub_KS_sandwich_vibration_ss.m')</command>
+<command execution_time="6760">run('C:\Users\pkrysl\Documents\Research\Software folder\FEA software folder\fineale\examples\deformation_linear\dynamics\free_vibration\3-d\pub_test5_free.m')</command>
+<command execution_time="5074">run('C:\Users\pkrysl\Documents\Research\Software folder\FEA software folder\fineale\examples\deformation_linear\dynamics\free_vibration\3-d\rectangular_plate.m')</command>
+<command execution_time="25946">run('C:\Users\pkrysl\Documents\Research\Software folder\FEA software folder\fineale\examples\deformation_linear\dynamics\free_vibration\3-d\rectangular_plate_anim.m')</command>
+<command execution_time="9265">run('C:\Users\pkrysl\Documents\Research\Software folder\FEA software folder\fineale\examples\deformation_linear\dynamics\free_vibration\3-d\trunc_conic_shell_3d.m')</command>
+<command execution_time="105216">run('C:\Users\pkrysl\Documents\Research\Software folder\FEA software folder\fineale\examples\deformation_linear\dynamics\free_vibration\3-d\twist_t4.m')</command>
+<command execution_time="3069">run('C:\Users\pkrysl\Documents\Research\Software folder\FEA software folder\fineale\examples\deformation_linear\dynamics\free_vibration\3-d\unit_cube_modes.m')</command>
+<command execution_time="68776">run('C:\Users\pkrysl\Documents\Research\Software folder\FEA software folder\fineale\examples\deformation_linear\dynamics\free_vibration\3-d\twist_t10.m')</command>
+<command execution_time="749">run('C:\Users\pkrysl\Documents\Research\Software folder\FEA software folder\fineale\examples\heat_diffusion\nafems\t3nafems_demo.m')</command>
+<command execution_time="1892">run('C:\Users\pkrysl\Documents\Research\Software folder\FEA software folder\fineale\examples\heat_diffusion\nafems\t4nafems.m')</command>
+<command execution_time="30391">run('C:\Users\pkrysl\Documents\Research\Software folder\FEA software folder\fineale\examples\heat_diffusion\nafems\t4nafems_conv.m')</command>
+<command execution_time="93924">run('C:\Users\pkrysl\Documents\Research\Software folder\FEA software folder\fineale\examples\heat_diffusion\nafems\t4nafems_t3_had.m')</command>
+<command execution_time="1195">run('C:\Users\pkrysl\Documents\Research\Software folder\FEA software folder\fineale\examples\heat_diffusion\nafems\t4nafems_T6.m')</command>
+<command execution_time="591">run('C:\Users\pkrysl\Documents\Research\Software folder\FEA software folder\fineale\examples\heat_diffusion\pencil_and_paper\ChimneyN.m')</command>
+<command execution_time="2339">run('C:\Users\pkrysl\Documents\Research\Software folder\FEA software folder\fineale\examples\heat_diffusion\pencil_and_paper\ChimneyN_conv.m')</command>
+<command execution_time="169">run('C:\Users\pkrysl\Documents\Research\Software folder\FEA software folder\fineale\examples\heat_diffusion\pencil_and_paper\pnpSingleConductivity1.m')</command>
+<command execution_time="1419">run('C:\Users\pkrysl\Documents\Research\Software folder\FEA software folder\fineale\examples\heat_diffusion\pencil_and_paper\pnpSquare.m')</command>
+<command execution_time="1444">run('C:\Users\pkrysl\Documents\Research\Software folder\FEA software folder\fineale\examples\heat_diffusion\pencil_and_paper\pnpSquare1symb.m')</command>
+<command execution_time="613">run('C:\Users\pkrysl\Documents\Research\Software folder\FEA software folder\fineale\examples\heat_diffusion\pencil_and_paper\pnpSquareInSquare.m')</command>
+<command execution_time="488">run('C:\Users\pkrysl\Documents\Research\Software folder\FEA software folder\fineale\examples\heat_diffusion\pencil_and_paper\pnpSquareInSquare1.m')</command>
+<command execution_time="266">run('C:\Users\pkrysl\Documents\Research\Software folder\FEA software folder\fineale\examples\heat_diffusion\pencil_and_paper\pnpWall4T3.m')</command>
+<command batch="12">run('C:\Users\pkrysl\Documents\Research\Software folder\FEA software folder\fineale\examples\heat_diffusion\pencil_and_paper\runway_wire.m')</command>
+<command batch="12" execution_time="3961">run('C:\Users\pkrysl\Documents\Research\Software folder\FEA software folder\fineale\examples\heat_diffusion\pencil_and_paper\runway_wire_pnp.m')</command>
+<command execution_time="697">run('C:\Users\pkrysl\Documents\Research\Software folder\FEA software folder\fineale\examples\heat_diffusion\steady_state\1-d\T129b_l2_uq.m')</command>
+<command execution_time="666">run('C:\Users\pkrysl\Documents\Research\Software folder\FEA software folder\fineale\examples\heat_diffusion\steady_state\1-d\T129b_l3_lq.m')</command>
+<command execution_time="695">run('C:\Users\pkrysl\Documents\Research\Software folder\FEA software folder\fineale\examples\heat_diffusion\steady_state\1-d\T129b_l3_lq_irreg.m')</command>
+<command execution_time="615">run('C:\Users\pkrysl\Documents\Research\Software folder\FEA software folder\fineale\examples\heat_diffusion\steady_state\1-d\T129b_l3_uq_irreg.m')</command>
+<command execution_time="230">close all</command>
+</session>
+</history>

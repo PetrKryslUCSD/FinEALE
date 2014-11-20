@@ -1,0 +1,555 @@
+
+<!DOCTYPE html
+  PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html><head>
+      <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+   <!--
+This HTML was auto-generated from MATLAB code.
+To make changes, update the MATLAB code and republish this document.
+      --><title>Laminated Strip Under Three-Point Bending: a single-region formulation</title><meta name="generator" content="MATLAB 8.0"><link rel="schema.DC" href="http://purl.org/dc/elements/1.1/"><meta name="DC.date" content="2012-12-20"><meta name="DC.source" content="pub_R0031NAFEMS_1_region.m"><style type="text/css">
+html,body,div,span,applet,object,iframe,h1,h2,h3,h4,h5,h6,p,blockquote,pre,a,abbr,acronym,address,big,cite,code,del,dfn,em,font,img,ins,kbd,q,s,samp,small,strike,strong,sub,sup,tt,var,b,u,i,center,dl,dt,dd,ol,ul,li,fieldset,form,label,legend,table,caption,tbody,tfoot,thead,tr,th,td{margin:0;padding:0;border:0;outline:0;font-size:100%;vertical-align:baseline;background:transparent}body{line-height:1}ol,ul{list-style:none}blockquote,q{quotes:none}blockquote:before,blockquote:after,q:before,q:after{content:'';content:none}:focus{outine:0}ins{text-decoration:none}del{text-decoration:line-through}table{border-collapse:collapse;border-spacing:0}
+
+html { min-height:100%; margin-bottom:1px; }
+html body { height:100%; margin:0px; font-family:Arial, Helvetica, sans-serif; font-size:10px; color:#000; line-height:140%; background:#fff none; overflow-y:scroll; }
+html body td { vertical-align:top; text-align:left; }
+
+h1 { padding:0px; margin:0px 0px 25px; font-family:Arial, Helvetica, sans-serif; font-size:1.5em; color:#d55000; line-height:100%; font-weight:normal; }
+h2 { padding:0px; margin:0px 0px 8px; font-family:Arial, Helvetica, sans-serif; font-size:1.2em; color:#000; font-weight:bold; line-height:140%; border-bottom:1px solid #d6d4d4; display:block; }
+h3 { padding:0px; margin:0px 0px 5px; font-family:Arial, Helvetica, sans-serif; font-size:1.1em; color:#000; font-weight:bold; line-height:140%; }
+
+a { color:#005fce; text-decoration:none; }
+a:hover { color:#005fce; text-decoration:underline; }
+a:visited { color:#004aa0; text-decoration:none; }
+
+p { padding:0px; margin:0px 0px 20px; }
+img { padding:0px; margin:0px 0px 20px; border:none; }
+p img, pre img, tt img, li img { margin-bottom:0px; } 
+
+ul { padding:0px; margin:0px 0px 20px 23px; list-style:square; }
+ul li { padding:0px; margin:0px 0px 7px 0px; }
+ul li ul { padding:5px 0px 0px; margin:0px 0px 7px 23px; }
+ul li ol li { list-style:decimal; }
+ol { padding:0px; margin:0px 0px 20px 0px; list-style:decimal; }
+ol li { padding:0px; margin:0px 0px 7px 23px; list-style-type:decimal; }
+ol li ol { padding:5px 0px 0px; margin:0px 0px 7px 0px; }
+ol li ol li { list-style-type:lower-alpha; }
+ol li ul { padding-top:7px; }
+ol li ul li { list-style:square; }
+
+.content { font-size:1.2em; line-height:140%; padding: 20px; }
+
+pre, tt, code { font-size:12px; }
+pre { margin:0px 0px 20px; }
+pre.error { color:red; }
+pre.codeinput { padding:10px; border:1px solid #d3d3d3; background:#f7f7f7; }
+pre.codeoutput { padding:10px 11px; margin:0px 0px 20px; color:#4c4c4c; }
+
+@media print { pre.codeinput, pre.codeoutput { word-wrap:break-word; width:100%; } }
+
+span.keyword { color:#0000FF }
+span.comment { color:#228B22 }
+span.string { color:#A020F0 }
+span.untermstring { color:#B20000 }
+span.syscmd { color:#B28C00 }
+
+.footer { width:auto; padding:10px 0px; margin:25px 0px 0px; border-top:1px dotted #878787; font-size:0.8em; line-height:140%; font-style:italic; color:#878787; text-align:left; float:none; }
+.footer p { margin:0px; }
+.footer a { color:#878787; }
+.footer a:hover { color:#878787; text-decoration:underline; }
+.footer a:visited { color:#878787; }
+
+table th { padding:7px 5px; text-align:left; vertical-align:middle; border: 1px solid #d6d4d4; font-weight:bold; }
+table td { padding:7px 5px; text-align:left; vertical-align:top; border:1px solid #d6d4d4; }
+
+
+
+
+
+  </style></head><body><div class="content"><h1>Laminated Strip Under Three-Point Bending: a single-region formulation</h1><!--introduction--><!--/introduction--><h2>Contents</h2><div><ul><li><a href="#2">Description</a></li><li><a href="#10">Solution</a></li><li><a href="#49">Discussion</a></li></ul></div><p>Link to the  <a href="matlab:edit('pub_R0031NAFEMS_1_region')">m-file</a>.</p><h2>Description<a name="2"></a></h2><p>Determine the central transverse displacement in a simply-supported seven layer symmetric strip with a central line load. A 0/90/0/90/0/90/0 material lay-up is specified with the center ply being four times as thick as the others.</p><p>Reference: NAFEMS Report R0031, Test No.1, 17-Dec-1998.</p><p>The plate is discretized with solid serendipity quadratic hexahedral elements. Because of the symmetries of the geometry and load, only the first-quadrant   (in XY) quarter of the plate is modeled.</p><p>The coordinate system is centered at point E (at the difference with respect to the original benchmark definition).  The  load is applied along a curve passing through point C. The simple support is applied along the curve passing through point B.</p><p> <table border=0><tr><td> <img src="../docs/pub_R0031NAFEMS.jpg"
+width="50%"> </td></tr> <tr><td>Figure 1. Definition of the geometry of
+the thick elliptical plate</td></tr> </table> </p><p>We realize the simple supports along the lines  A, B and the line load at point C  are illegal from the point of view of convergence.  No convergence can be hoped for as the stress underneath the load and above the simple supports  is infinite in the limit (these locations are stress singularities).   However, for relatively coarse meshes the results away from the singularities are still meaningful.</p><p>The target quantities are displacement at the bottom surface at point E, the tensile axial stress at the same point,  and of the transverse shear stress at point D  in between the bottommost two layers (See figure 1).</p><p>The difference with respect to the tutorial pub_R0031NAFEMS is in the handling  of the finite element regions.  While pub_R0031NAFEMS defined two regions, one for each orientation of the lamina, the present tutorial defines a single finite element region.  The orientation is defined using a function   That computes the orientation for each finite element on the fly.</p><h2>Solution<a name="10"></a></h2><pre class="codeinput"><span class="keyword">function</span> pub_R0031NAFEMS_1_region
+</pre><pre class="codeinput">    u= physical_units_struct;
+</pre><p>The material is orthotropic, the same in all seven layers (the orientation of the material is different ddepending on the layer, of course).</p><pre class="codeinput">    E1=100e3*u.MEGA*u.PA; E2=5e3*u.MEGA*u.PA; E3=E2;
+    G12=3e3*u.MEGA*u.PA; G13=2e3*u.MEGA*u.PA;  G23=2e3*u.MEGA*u.PA;
+    nu12= 0.4; nu13= 0.02; nu23= 0.3;
+</pre><p>The geometry of the strip.</p><pre class="codeinput">    AB=30*u.MM; <span class="comment">%  span between simple supports</span>
+    OH=10*u.MM;<span class="comment">% overhang</span>
+    W=10*u.MM;<span class="comment">% width of the plate</span>
+</pre><p>The line load is in the negative Z direction.</p><pre class="codeinput">    q0 = -10*u.NT/u.MM;<span class="comment">% find load</span>
+</pre><p>Here we define the layout and the thicknesses of the layers.</p><pre class="codeinput">    angles =[0,90,0,90,0,90,0];
+    ts= [0.1, 0.1, 0.1, 0.4, 0.1, 0.1, 0.1]'*u.MM;<span class="comment">% layer thicknesses</span>
+    TH=sum(ts);<span class="comment">% total thickness of the plate</span>
+</pre><p>Reference deflection under the load is</p><pre class="codeinput">    wEref=-1.06*u.MM;
+</pre><p>The reference tensile stress at the bottom of the lowest layer is</p><pre class="codeinput">    sigma11Eref=684*u.MEGA*u.PA;
+</pre><p>Because we model the first-quadrant quarter of the plate using coordinate axes centered  at the point E  the shear at the point D is positive instead of negative as in the benchmark where the coordinate system is located at the outer corner of the strip.</p><pre class="codeinput">    sigma13Dref=4.1*u.MEGA*u.PA;
+</pre><p>The mesh is created using the composite-plate utility, making sure the nodes are placed at the location of the simple support by using the version <tt>H8_composite_plate_x</tt>.</p><p>We select 8 elements spanwise and 2 elements widthwise.  The overhang of the plate is given one element.</p><pre class="codeinput">    nL=4; nO=1; nW=1;
+</pre><p>Each layer is modeled with a single element.</p><pre class="codeinput">    nts= 1*ones(length(angles),1);<span class="comment">% number of elements per layer</span>
+</pre><p>Define the geometrical tolerance using the minimal dimension in the model.</p><pre class="codeinput">    tolerance =min(ts)/max(nts)/100;
+</pre><p>The nodes must be located so that the simple support can be applied.</p><pre class="codeinput">    xs=unique([linspace(0,AB/2,nL+1),linspace(AB/2,AB/2+OH,nO+1)]);
+    ys=linspace(0,W/2,nW+1);
+    [fens,fes] = H8_composite_plate_x(xs,ys,ts,nts);;
+    [fens,fes] = H8_to_H20(fens,fes);
+</pre><p>The model data is packaged for the solver as before:</p><pre class="codeinput">    clear <span class="string">model_data</span>
+    model_data.fens =fens;
+</pre><p>We will now create a single finite element region for the 0&deg; and the 90&deg; layers.</p><pre class="codeinput">    clear <span class="string">region</span>
+    region.property = <span class="string">'orthotropic'</span>;
+    region.E1 =E1;    region.E2 =E2;    region.E3 =E3;
+    region.G12=G12;    region.G13=G13;    region.G23=G23;
+    region.nu12=nu12;    region.nu13=nu13;    region.nu23=nu23;
+    region.fes= fes;
+    region.integration_rule = gauss_rule (struct(<span class="string">'dim'</span>, 3, <span class="string">'order'</span>, 3));
+</pre><p>A distinguishing characteristic is the use of a function handle to be used by the finite element model machine to define the orientation of the material at each quadrature point. The function in this case is written to distinguish between the different lamina (layers) using the finite element label: the label is equal to the layer number, and therefore we can use a simple lookup into the array of orientation angles (<tt>angles(label)</tt>) to compute the  material orientation matrix on the fly.</p><pre class="codeinput">    <span class="keyword">function</span> Rm = LayerRm(XYZ, ts, label)<span class="comment">% label equals the layer number here</span>
+        Rm= rotmat(angles(label)/180*pi* [0,0,1]);
+    <span class="keyword">end</span>
+    region.Rm =@LayerRm
+    model_data.region{1} =region;
+</pre><pre class="codeoutput">
+region = 
+
+            property: 'orthotropic'
+                  E1: 1.0000e+11
+                  E2: 5.0000e+09
+                  E3: 5.0000e+09
+                 G12: 3.0000e+09
+                 G13: 2.0000e+09
+                 G23: 2.0000e+09
+                nu12: 4.0000e-01
+                nu13: 2.0000e-02
+                nu23: 3.0000e-01
+                 fes: [1x1 fe_set_H20]
+    integration_rule: [1x1 gauss_rule]
+                  Rm: @pub_R0031NAFEMS_1_region/LayerRm
+
+</pre><p>These steps are as before, until we get to the postprocessing of the stress.</p><p>The essential boundary conditions are applied on the symmetry planes. First the plane X=0;...</p><pre class="codeinput">    clear <span class="string">essential</span>
+    essential.component= [1];
+    essential.fixed_value= 0;
+    essential.node_list = fenode_select(fens, <span class="keyword">...</span>
+        struct(<span class="string">'box'</span>, [0,0,-Inf,Inf,-Inf,Inf],  <span class="string">'inflate'</span>,tolerance));
+    model_data.boundary_conditions.essential{1} = essential;
+</pre><p>... and then the plane Y=0.</p><pre class="codeinput">    clear <span class="string">essential</span>
+    essential.component= [2];
+    essential.fixed_value= 0;
+    essential.node_list = fenode_select(fens, <span class="keyword">...</span>
+        struct(<span class="string">'box'</span>, [-Inf,Inf,0,0,-Inf,Inf],  <span class="string">'inflate'</span>,tolerance));
+    model_data.boundary_conditions.essential{2} = essential;
+</pre><p>The transverse displacement is fixed along the line  passing through point B. The nodes are fixed in the box along this line in the Z direction.</p><pre class="codeinput">    clear <span class="string">essential</span>
+    essential.component= [3];
+    essential.fixed_value= 0;
+    essential.node_list = fenode_select(fens, <span class="keyword">...</span>
+        struct(<span class="string">'box'</span>, [AB/2,AB/2,-Inf,Inf,0,0],  <span class="string">'inflate'</span>,tolerance));
+    model_data.boundary_conditions.essential{3} = essential;
+</pre><p>The traction boundary condition is applied  along  the edge of the mesh passing through point C at the top surface of the strip.   First we extract the boundary of the hexahedral mesh.</p><pre class="codeinput">    clear <span class="string">traction</span>
+    bdry_fes = mesh_boundary(fes, []);
+</pre><p>This boundary consists of quadrilaterals.  From the collection of the boundary quadrilaterals we select those at the top surface.</p><pre class="codeinput">    bcl = fe_select(fens, bdry_fes, <span class="keyword">...</span>
+        struct (<span class="string">'box'</span>,[0,0,-Inf,Inf,-Inf,Inf],<span class="string">'inflate'</span>,tolerance));
+</pre><p>We extract the boundary of the quadrilaterals  at the top surface  of the strip.   This boundary will consist of L3  line elements.</p><pre class="codeinput">    line_fes = mesh_boundary(subset(bdry_fes,bcl), struct(<span class="string">'other_dimension'</span>,1));
+</pre><p>From the line elements we will select only those that pass through point C. That is the straight line on which the traction is going to be applied.</p><pre class="codeinput">    lcl = fe_select(fens, line_fes, <span class="keyword">...</span>
+        struct (<span class="string">'box'</span>,[0,0,-Inf,Inf,TH,TH],<span class="string">'inflate'</span>,tolerance));
+    traction.fes =subset(line_fes,lcl);
+</pre><p>Note that  we have to apply only half of the line load given that were modeling  just one quarter of the geometry and were splitting the line load  with the symmetry plane X=0.</p><pre class="codeinput">    traction.traction= [0; 0; q0/2];
+    traction.integration_rule =gauss_rule (struct(<span class="string">'dim'</span>, 1, <span class="string">'order'</span>, 3));
+    model_data.boundary_conditions.traction{1} = traction;
+</pre><p>The model is defined and we obtain  the displacement solution:</p><pre class="codeinput">    model_data =deformation_linear_statics(model_data);
+</pre><p>The results are now presented graphically. Scale for the deflections:</p><pre class="codeinput">    u_scale=2;
+
+    model_data.postprocessing.u_scale= u_scale;
+    model_data=deformation_plot_deformation(model_data);
+</pre><img vspace="5" hspace="5" src="pub_R0031NAFEMS_1_region_01.png" alt=""> <p>The results of the displacement and stresses will be reported at nodes located at the appropriate points.</p><pre class="codeinput">    nE=[fenode_select(fens, struct(<span class="string">'box'</span>, [0,0,0,0,0,0],<span class="keyword">...</span>
+        <span class="string">'inflate'</span>,tolerance))];
+    nC=[fenode_select(fens, struct(<span class="string">'box'</span>, [0,0,0,0,TH,TH],<span class="keyword">...</span>
+        <span class="string">'inflate'</span>,tolerance))];
+    nD=[fenode_select(fens, struct(<span class="string">'box'</span>, [0,0,0,0,ts(1),ts(1)],<span class="keyword">...</span>
+        <span class="string">'inflate'</span>,tolerance))];
+</pre><p>The displacement is reported at the bottom surface:</p><pre class="codeinput">    wc=gather_values(model_data.u,nE);
+    disp([<span class="string">'Center deflection='</span> num2str(wc(3)/u.MM) <span class="string">' mm, wc/wc_ref='</span> num2str(wc(3)/wEref*100) <span class="string">'%'</span>])
+</pre><pre class="codeoutput">Center deflection=-1.0568 mm, wc/wc_ref=99.698%
+</pre><p>We are going to plot the stress using a nodal stress field.  It is extracted from the quadrature points. Since we have a single region, the nodal stress field would be continuous.  That may be correct if the stress is expected to be continuous (for instance the transverse shear stress), but it is not correct when the stress is not expected to be continuous (the axial stress due to bending).</p><p>In order to treat correctly the discontinuous stress, we will create lists of  finite elements, one for the layers with 0&deg;  orientation, and one for the layers with 90&deg; orientation.</p><pre class="codeinput">    region1list=[fe_select(fens,fes,struct(<span class="string">'label'</span>, 1)),
+        fe_select(fens,fes,struct(<span class="string">'label'</span>, 3)),
+        fe_select(fens,fes,struct(<span class="string">'label'</span>, 5)),
+        fe_select(fens,fes,struct(<span class="string">'label'</span>, 7))];
+    region2list=[fe_select(fens,fes,struct(<span class="string">'label'</span>, 2)),
+        fe_select(fens,fes,struct(<span class="string">'label'</span>, 4)),
+        fe_select(fens,fes,struct(<span class="string">'label'</span>, 6))];
+</pre><p>We will create a copy of the finite element model machine that was used to compute the solution, and we will change it by resetting the finite elements that form its region. First, it will be only the finite element that are part of the 0&deg;  orientation lamina.</p><pre class="codeinput">    pfemm= model_data.region{1}.femm;
+    pfemm.fes=subset(fes,region1list);;
+</pre><p>Then we use the ad hoc finite element model machine  to compute the nodal stress field. It is only computed for nodes that are connected to finite elements from the list for the   0&deg;  orientation lamina. Note that the orientation matrix for the output of the stress is specified as the global Cartesian coordinate system (identity matrix).</p><pre class="codeinput">    stressf = field_from_integration_points_spr (pfemm, model_data.geom, <span class="keyword">...</span>
+        model_data.u, [], <span class="string">'Cauchy'</span>,1,struct(<span class="string">'outputRm'</span>,eye(3)));
+    sigma11C= gather_values(stressf,nC);
+    sigma11D1= gather_values(stressf,nD);
+    sigma11E= gather_values(stressf,nE);
+</pre><p>We reset  the ad hoc finite element model machine to compute the nodal stress field for the finite elements that are part of the  90&deg; orientation lamina.</p><pre class="codeinput">    pfemm.fes=subset(fes,region2list);;
+    stressf = field_from_integration_points_spr (pfemm, model_data.geom, <span class="keyword">...</span>
+        model_data.u, [], <span class="string">'Cauchy'</span>,1,struct(<span class="string">'outputRm'</span>,eye(3)));
+    sigma11D2= gather_values(stressf,nD);
+</pre><p>The axial stress is reported:</p><pre class="codeinput">    disp([<span class="string">'Point C sigma11='</span> num2str(sigma11C/(u.MEGA*u.PA)) <span class="string">' MPa'</span>])
+    disp([<span class="string">'Point E sigma11='</span> num2str(sigma11E/(u.MEGA*u.PA)) <span class="string">' MPa (relative error '</span> num2str((sigma11E-sigma11Eref)/sigma11Eref*100) <span class="string">'%)'</span>])
+    disp([<span class="string">'     to be compared with reference at E, sigma11='</span> num2str(sigma11Eref/(u.MEGA*u.PA)) <span class="string">' MPa'</span> ])
+</pre><pre class="codeoutput">Point C sigma11=-673.2407 MPa
+Point E sigma11=673.3373 MPa (relative error -1.5589%)
+     to be compared with reference at E, sigma11=684 MPa
+</pre><p>The transverse shear is reported at all three points again, but the reference value is available only at point D. Note that the stress vector component is sigma_XZ= sigma_13= sigma_5</p><p>In this case  we will directly compute the nodal stress field for the entire region (i. e.  all the finite elements irrespective of their orientation)  because we expect the  transverse shear stress to be continuous.</p><pre class="codeinput">    pfemm= model_data.region{1}.femm;
+    stressf = field_from_integration_points_spr (pfemm, model_data.geom, <span class="keyword">...</span>
+        model_data.u, [], <span class="string">'Cauchy'</span>,5,struct(<span class="string">'outputRm'</span>,eye(3)));
+    sigma13C= gather_values(stressf,nC);
+    sigma13D= gather_values(stressf,nD);
+    sigma13E= gather_values(stressf,nE);
+</pre><p>The shear stress in the plane XZ (13) is reported next:</p><pre class="codeinput">    disp([<span class="string">'Point C sigma13='</span> num2str(sigma13C/(u.MEGA*u.PA)) <span class="string">' MPa'</span>])
+    disp([<span class="string">'Point D sigma13='</span> num2str(sigma13D/(u.MEGA*u.PA)) <span class="string">' MPa (relative error '</span> num2str((sigma13D-sigma13Dref)/sigma13Dref*100) <span class="string">'%)'</span>])
+    disp([<span class="string">'     to be compared with reference at D, sigma13='</span> num2str(sigma13Dref/(u.MEGA*u.PA)) <span class="string">' MPa'</span>])
+    disp([<span class="string">'Point E sigma13='</span> num2str(sigma13E/(u.MEGA*u.PA)) <span class="string">' MPa'</span>])
+</pre><pre class="codeoutput">Point C sigma13=3.9963 MPa
+Point D sigma13=4.2421 MPa (relative error 3.4647%)
+     to be compared with reference at D, sigma13=4.1 MPa
+Point E sigma13=2.6496 MPa
+</pre><h2>Discussion<a name="49"></a></h2><p>There are at least two options for treating laminated plates:  create different regions for separate lamina with identical material orientations    or create a single region and distinguish between lamina with a function that defines material orientations.  Both ways are valid, but care must be exercised when computing the nodal stress fields.  Sometimes they should be continuous, but other times the correct solution is discontinuous in stress at the interlaminar interface.  If that is the case the must incorporate computing the nodal stress field separately so that the stress field is not artificially made continuous at the interlaminar interfaces.</p><pre class="codeinput"><span class="keyword">end</span>
+</pre><p class="footer"><br><a href="http://www.mathworks.com/products/matlab/">Published with MATLAB&reg; R2012b</a><br></p></div><!--
+##### SOURCE BEGIN #####
+%% Laminated Strip Under Three-Point Bending: a single-region formulation
+%
+
+%%
+% Link to the  <matlab:edit('pub_R0031NAFEMS_1_region') m-file>.
+%
+
+%% Description
+%
+% Determine the central transverse displacement in a simply-supported seven
+% layer symmetric strip with a central line load. A 0/90/0/90/0/90/0
+% material lay-up is specified with the center ply being four times as
+% thick as the others.
+
+%%
+% Reference: NAFEMS Report R0031, Test No.1, 17-Dec-1998.
+
+
+%%
+% The plate is discretized with solid serendipity quadratic hexahedral
+% elements. Because of the symmetries of the geometry and load, only the
+% first-quadrant   (in XY) quarter of the plate is modeled.
+%%
+% The coordinate system is centered at point E (at the difference with
+% respect to the original benchmark definition).  The  load is applied
+% along a curve passing through point C. The simple support is applied
+% along the curve passing through point B.
+
+%%
+%
+% <html> <table border=0><tr><td> <img src="../docs/pub_R0031NAFEMS.jpg"
+% width="50%"> </td></tr> <tr><td>Figure 1. Definition of the geometry of
+% the thick elliptical plate</td></tr> </table> </html>
+
+%%
+% We realize the simple supports along the lines  A, B and the line load at
+% point C  are illegal from the point of view of convergence.  No
+% convergence can be hoped for as the stress underneath the load and above
+% the simple supports  is infinite in the limit (these locations are stress
+% singularities).   However, for relatively coarse meshes the results away
+% from the singularities are still meaningful.
+%%
+% The target quantities are displacement at the bottom surface at point E,
+% the tensile axial stress at the same point,  and of the transverse shear
+% stress at point D  in between the bottommost two layers (See figure 1).
+
+%%
+% The difference with respect to the tutorial pub_R0031NAFEMS is in the
+% handling  of the finite element regions.  While pub_R0031NAFEMS defined
+% two regions, one for each orientation of the lamina, the present tutorial
+% defines a single finite element region.  The orientation is defined using
+% a function   That computes the orientation for each finite element on the
+% fly.
+
+%% Solution
+%
+
+function pub_R0031NAFEMS_1_region
+    u= physical_units_struct;
+    %%
+    % The material is orthotropic, the same in all seven layers (the
+    % orientation of the material is different ddepending on the layer, of
+    % course).
+    E1=100e3*u.MEGA*u.PA; E2=5e3*u.MEGA*u.PA; E3=E2;
+    G12=3e3*u.MEGA*u.PA; G13=2e3*u.MEGA*u.PA;  G23=2e3*u.MEGA*u.PA;
+    nu12= 0.4; nu13= 0.02; nu23= 0.3;
+    
+    %%
+    % The geometry of the strip.
+    AB=30*u.MM; %  span between simple supports
+    OH=10*u.MM;% overhang
+    W=10*u.MM;% width of the plate
+    
+    %%
+    % The line load is in the negative Z direction.
+    q0 = -10*u.NT/u.MM;% find load
+    
+    %%
+    % Here we define the layout and the thicknesses of the layers.
+    angles =[0,90,0,90,0,90,0];
+    ts= [0.1, 0.1, 0.1, 0.4, 0.1, 0.1, 0.1]'*u.MM;% layer thicknesses
+    TH=sum(ts);% total thickness of the plate
+    
+    %%
+    % Reference deflection under the load is
+    wEref=-1.06*u.MM;
+    %%
+    % The reference tensile stress at the bottom of the lowest layer is
+    sigma11Eref=684*u.MEGA*u.PA;
+    %%
+    % Because we model the first-quadrant quarter of the plate using
+    % coordinate axes centered  at the point E  the shear at the point D is
+    % positive instead of negative as in the benchmark where the coordinate
+    % system is located at the outer corner of the strip.
+    sigma13Dref=4.1*u.MEGA*u.PA;
+    
+    
+    %%
+    % The mesh is created using the composite-plate utility, making sure
+    % the nodes are placed at the location of the simple support by using
+    % the version |H8_composite_plate_x|.
+    %%
+    % We select 8 elements spanwise and 2 elements widthwise.  The overhang
+    % of the plate is given one element.
+    nL=4; nO=1; nW=1;
+    %%
+    % Each layer is modeled with a single element.
+    nts= 1*ones(length(angles),1);% number of elements per layer
+    %%
+    % Define the geometrical tolerance using the minimal dimension in the
+    % model.
+    tolerance =min(ts)/max(nts)/100;
+    
+    %%
+    % The nodes must be located so that the simple support can be applied.
+    xs=unique([linspace(0,AB/2,nL+1),linspace(AB/2,AB/2+OH,nO+1)]);
+    ys=linspace(0,W/2,nW+1);
+    [fens,fes] = H8_composite_plate_x(xs,ys,ts,nts);;
+    [fens,fes] = H8_to_H20(fens,fes);
+    
+    
+    %%
+    % The model data is packaged for the solver as before:
+    clear model_data
+    model_data.fens =fens;
+    
+    %%
+    % We will now create a single finite element region for the 0° and the
+    % 90° layers.
+    clear region
+    region.property = 'orthotropic';
+    region.E1 =E1;    region.E2 =E2;    region.E3 =E3;
+    region.G12=G12;    region.G13=G13;    region.G23=G23;
+    region.nu12=nu12;    region.nu13=nu13;    region.nu23=nu23;
+    region.fes= fes;
+    region.integration_rule = gauss_rule (struct('dim', 3, 'order', 3));
+    %%
+    % A distinguishing characteristic is the use of a function handle to be
+    % used by the finite element model machine to define the orientation of
+    % the material at each quadrature point. The function in this case is
+    % written to distinguish between the different lamina (layers) using
+    % the finite element label: the label is equal to the layer number, and
+    % therefore we can use a simple lookup into the array of orientation
+    % angles (|angles(label)|) to compute the  material orientation matrix
+    % on the fly.
+    function Rm = LayerRm(XYZ, ts, label)% label equals the layer number here
+        Rm= rotmat(angles(label)/180*pi* [0,0,1]);
+    end
+    region.Rm =@LayerRm
+    model_data.region{1} =region;
+    
+    
+    %%
+    % These steps are as before, until we get to the postprocessing of the
+    % stress.
+    %%
+    % The essential boundary conditions are applied on the symmetry planes.
+    % First the plane X=0;...
+    
+    clear essential
+    essential.component= [1];
+    essential.fixed_value= 0;
+    essential.node_list = fenode_select(fens, ...
+        struct('box', [0,0,-Inf,Inf,-Inf,Inf],  'inflate',tolerance));
+    model_data.boundary_conditions.essential{1} = essential;
+    
+    %%
+    % ... and then the plane Y=0.
+    
+    clear essential
+    essential.component= [2];
+    essential.fixed_value= 0;
+    essential.node_list = fenode_select(fens, ...
+        struct('box', [-Inf,Inf,0,0,-Inf,Inf],  'inflate',tolerance));
+    model_data.boundary_conditions.essential{2} = essential;
+    
+    %%
+    % The transverse displacement is fixed along the line  passing through
+    % point B. The nodes are fixed in the box along this line in the Z
+    % direction.
+    clear essential
+    essential.component= [3];
+    essential.fixed_value= 0;
+    essential.node_list = fenode_select(fens, ...
+        struct('box', [AB/2,AB/2,-Inf,Inf,0,0],  'inflate',tolerance));
+    model_data.boundary_conditions.essential{3} = essential;
+    
+    %%
+    % The traction boundary condition is applied  along  the edge of the
+    % mesh passing through point C at the top surface of the strip.   First
+    % we extract the boundary of the hexahedral mesh.
+    clear traction
+    bdry_fes = mesh_boundary(fes, []);
+    
+    %%
+    % This boundary consists of quadrilaterals.  From the collection of the
+    % boundary quadrilaterals we select those at the top surface.
+    bcl = fe_select(fens, bdry_fes, ...
+        struct ('box',[0,0,-Inf,Inf,-Inf,Inf],'inflate',tolerance));
+    %%
+    % We extract the boundary of the quadrilaterals  at the top surface  of
+    % the strip.   This boundary will consist of L3  line elements.
+    line_fes = mesh_boundary(subset(bdry_fes,bcl), struct('other_dimension',1));
+    
+    %%
+    % From the line elements we will select only those that pass through
+    % point C. That is the straight line on which the traction is going to
+    % be applied.
+    lcl = fe_select(fens, line_fes, ...
+        struct ('box',[0,0,-Inf,Inf,TH,TH],'inflate',tolerance));
+    traction.fes =subset(line_fes,lcl);
+    %%
+    % Note that  we have to apply only half of the line load given that
+    % were modeling  just one quarter of the geometry and were splitting
+    % the line load  with the symmetry plane X=0.
+    traction.traction= [0; 0; q0/2];
+    traction.integration_rule =gauss_rule (struct('dim', 1, 'order', 3));
+    model_data.boundary_conditions.traction{1} = traction;
+    
+    %%
+    % The model is defined and we obtain  the displacement solution:
+    model_data =deformation_linear_statics(model_data);
+    
+    %%
+    % The results are now presented graphically. Scale for the deflections:
+    u_scale=2;
+    
+    model_data.postprocessing.u_scale= u_scale;
+    model_data=deformation_plot_deformation(model_data);
+    
+    %%
+    % The results of the displacement and stresses will be reported at
+    % nodes located at the appropriate points.
+    nE=[fenode_select(fens, struct('box', [0,0,0,0,0,0],...
+        'inflate',tolerance))];
+    nC=[fenode_select(fens, struct('box', [0,0,0,0,TH,TH],...
+        'inflate',tolerance))];
+    nD=[fenode_select(fens, struct('box', [0,0,0,0,ts(1),ts(1)],...
+        'inflate',tolerance))];
+    
+    %%
+    % The displacement is reported at the bottom surface:
+    wc=gather_values(model_data.u,nE);
+    disp(['Center deflection=' num2str(wc(3)/u.MM) ' mm, wc/wc_ref=' num2str(wc(3)/wEref*100) '%'])
+    
+    
+    %%
+    % We are going to plot the stress using a nodal stress field.  It is
+    % extracted from the quadrature points. Since we have a single region,
+    % the nodal stress field would be continuous.  That may be correct if
+    % the stress is expected to be continuous (for instance the transverse
+    % shear stress), but it is not correct when the stress is not expected
+    % to be continuous (the axial stress due to bending).
+    
+    
+    %%
+    % In order to treat correctly the discontinuous stress, we will create
+    % lists of
+    %  finite elements, one for the layers with 0°  orientation,
+    % and one for the layers with 90° orientation.
+    region1list=[fe_select(fens,fes,struct('label', 1)),
+        fe_select(fens,fes,struct('label', 3)),
+        fe_select(fens,fes,struct('label', 5)),
+        fe_select(fens,fes,struct('label', 7))];
+    region2list=[fe_select(fens,fes,struct('label', 2)),
+        fe_select(fens,fes,struct('label', 4)),
+        fe_select(fens,fes,struct('label', 6))];
+    
+    %%
+    % We will create a copy of the finite element model machine that was
+    % used to compute the solution, and we will change it by resetting the
+    % finite elements that form its region. First, it will be only the
+    % finite element that are part of the 0°  orientation lamina.
+    pfemm= model_data.region{1}.femm;
+    pfemm.fes=subset(fes,region1list);;
+    
+    %%
+    % Then we use the ad hoc finite element model machine  to compute the
+    % nodal stress field. It is only computed for nodes that are connected
+    % to finite elements from the list for the   0°  orientation lamina.
+    % Note that the orientation matrix for the output of the stress is specified
+     % as the global Cartesian coordinate system (identity matrix).
+    stressf = field_from_integration_points_spr (pfemm, model_data.geom, ...
+        model_data.u, [], 'Cauchy',1,struct('outputRm',eye(3)));
+    sigma11C= gather_values(stressf,nC);
+    sigma11D1= gather_values(stressf,nD);
+    sigma11E= gather_values(stressf,nE);
+    %%
+    % We reset  the ad hoc finite element model machine to compute the
+    % nodal stress field for the finite elements that are part of the  90°
+    % orientation lamina.
+    pfemm.fes=subset(fes,region2list);;
+    stressf = field_from_integration_points_spr (pfemm, model_data.geom, ...
+        model_data.u, [], 'Cauchy',1,struct('outputRm',eye(3)));
+    sigma11D2= gather_values(stressf,nD);
+    %%
+    % The axial stress is reported:
+    disp(['Point C sigma11=' num2str(sigma11C/(u.MEGA*u.PA)) ' MPa'])
+    disp(['Point E sigma11=' num2str(sigma11E/(u.MEGA*u.PA)) ' MPa (relative error ' num2str((sigma11E-sigma11Eref)/sigma11Eref*100) '%)'])
+    disp(['     to be compared with reference at E, sigma11=' num2str(sigma11Eref/(u.MEGA*u.PA)) ' MPa' ])
+    
+    
+    %%
+    % The transverse shear is reported at all three points again, but the
+    % reference value is available only at point D. Note that the stress
+    % vector component is sigma_XZ= sigma_13= sigma_5
+    
+    %%
+    % In this case  we will directly compute the nodal stress field for the
+    % entire region (i. e.  all the finite elements irrespective of their
+    % orientation)  because we expect the  transverse shear stress to be
+    % continuous.
+    %
+    pfemm= model_data.region{1}.femm;
+    stressf = field_from_integration_points_spr (pfemm, model_data.geom, ...
+        model_data.u, [], 'Cauchy',5,struct('outputRm',eye(3)));
+    sigma13C= gather_values(stressf,nC);
+    sigma13D= gather_values(stressf,nD);
+    sigma13E= gather_values(stressf,nE);
+    
+    
+    %%
+    % The shear stress in the plane XZ (13) is reported next:
+    disp(['Point C sigma13=' num2str(sigma13C/(u.MEGA*u.PA)) ' MPa'])
+    disp(['Point D sigma13=' num2str(sigma13D/(u.MEGA*u.PA)) ' MPa (relative error ' num2str((sigma13D-sigma13Dref)/sigma13Dref*100) '%)'])
+    disp(['     to be compared with reference at D, sigma13=' num2str(sigma13Dref/(u.MEGA*u.PA)) ' MPa'])
+    disp(['Point E sigma13=' num2str(sigma13E/(u.MEGA*u.PA)) ' MPa'])
+    
+    
+    
+    %% Discussion
+    %
+    
+    %%
+    % There are at least two options for treating laminated plates:  create
+    % different regions for separate lamina with identical material
+    % orientations    or create a single region and distinguish between
+    % lamina with a function that defines material orientations.  Both ways
+    % are valid, but care must be exercised when computing the nodal stress
+    % fields.  Sometimes they should be continuous, but other times the
+    % correct solution is discontinuous in stress at the interlaminar
+    % interface.  If that is the case the must incorporate computing the
+    % nodal stress field separately so that the stress field is not
+    % artificially made continuous at the interlaminar interfaces.
+    
+end
+
+##### SOURCE END #####
+--></body></html>

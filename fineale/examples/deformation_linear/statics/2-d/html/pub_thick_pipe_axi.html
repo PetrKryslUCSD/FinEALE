@@ -1,0 +1,538 @@
+
+<!DOCTYPE html
+  PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html><head>
+      <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+   <!--
+This HTML was auto-generated from MATLAB code.
+To make changes, update the MATLAB code and republish this document.
+      --><title>Thick pipe with internal pressure: axially symmetric model</title><meta name="generator" content="MATLAB 8.0"><link rel="schema.DC" href="http://purl.org/dc/elements/1.1/"><meta name="DC.date" content="2013-12-05"><meta name="DC.source" content="pub_thick_pipe_axi.m"><style type="text/css">
+html,body,div,span,applet,object,iframe,h1,h2,h3,h4,h5,h6,p,blockquote,pre,a,abbr,acronym,address,big,cite,code,del,dfn,em,font,img,ins,kbd,q,s,samp,small,strike,strong,sub,sup,tt,var,b,u,i,center,dl,dt,dd,ol,ul,li,fieldset,form,label,legend,table,caption,tbody,tfoot,thead,tr,th,td{margin:0;padding:0;border:0;outline:0;font-size:100%;vertical-align:baseline;background:transparent}body{line-height:1}ol,ul{list-style:none}blockquote,q{quotes:none}blockquote:before,blockquote:after,q:before,q:after{content:'';content:none}:focus{outine:0}ins{text-decoration:none}del{text-decoration:line-through}table{border-collapse:collapse;border-spacing:0}
+
+html { min-height:100%; margin-bottom:1px; }
+html body { height:100%; margin:0px; font-family:Arial, Helvetica, sans-serif; font-size:10px; color:#000; line-height:140%; background:#fff none; overflow-y:scroll; }
+html body td { vertical-align:top; text-align:left; }
+
+h1 { padding:0px; margin:0px 0px 25px; font-family:Arial, Helvetica, sans-serif; font-size:1.5em; color:#d55000; line-height:100%; font-weight:normal; }
+h2 { padding:0px; margin:0px 0px 8px; font-family:Arial, Helvetica, sans-serif; font-size:1.2em; color:#000; font-weight:bold; line-height:140%; border-bottom:1px solid #d6d4d4; display:block; }
+h3 { padding:0px; margin:0px 0px 5px; font-family:Arial, Helvetica, sans-serif; font-size:1.1em; color:#000; font-weight:bold; line-height:140%; }
+
+a { color:#005fce; text-decoration:none; }
+a:hover { color:#005fce; text-decoration:underline; }
+a:visited { color:#004aa0; text-decoration:none; }
+
+p { padding:0px; margin:0px 0px 20px; }
+img { padding:0px; margin:0px 0px 20px; border:none; }
+p img, pre img, tt img, li img { margin-bottom:0px; } 
+
+ul { padding:0px; margin:0px 0px 20px 23px; list-style:square; }
+ul li { padding:0px; margin:0px 0px 7px 0px; }
+ul li ul { padding:5px 0px 0px; margin:0px 0px 7px 23px; }
+ul li ol li { list-style:decimal; }
+ol { padding:0px; margin:0px 0px 20px 0px; list-style:decimal; }
+ol li { padding:0px; margin:0px 0px 7px 23px; list-style-type:decimal; }
+ol li ol { padding:5px 0px 0px; margin:0px 0px 7px 0px; }
+ol li ol li { list-style-type:lower-alpha; }
+ol li ul { padding-top:7px; }
+ol li ul li { list-style:square; }
+
+.content { font-size:1.2em; line-height:140%; padding: 20px; }
+
+pre, tt, code { font-size:12px; }
+pre { margin:0px 0px 20px; }
+pre.error { color:red; }
+pre.codeinput { padding:10px; border:1px solid #d3d3d3; background:#f7f7f7; }
+pre.codeoutput { padding:10px 11px; margin:0px 0px 20px; color:#4c4c4c; }
+
+@media print { pre.codeinput, pre.codeoutput { word-wrap:break-word; width:100%; } }
+
+span.keyword { color:#0000FF }
+span.comment { color:#228B22 }
+span.string { color:#A020F0 }
+span.untermstring { color:#B20000 }
+span.syscmd { color:#B28C00 }
+
+.footer { width:auto; padding:10px 0px; margin:25px 0px 0px; border-top:1px dotted #878787; font-size:0.8em; line-height:140%; font-style:italic; color:#878787; text-align:left; float:none; }
+.footer p { margin:0px; }
+.footer a { color:#878787; }
+.footer a:hover { color:#878787; text-decoration:underline; }
+.footer a:visited { color:#878787; }
+
+table th { padding:7px 5px; text-align:left; vertical-align:middle; border: 1px solid #d6d4d4; font-weight:bold; }
+table td { padding:7px 5px; text-align:left; vertical-align:top; border:1px solid #d6d4d4; }
+
+
+
+
+
+  </style></head><body><div class="content"><h1>Thick pipe with internal pressure: axially symmetric model</h1><!--introduction--><!--/introduction--><h2>Contents</h2><div><ul><li><a href="#2">Description</a></li><li><a href="#8">Solution</a></li><li><a href="#36">Discussion</a></li></ul></div><p>Link to the  <a href="matlab:edit('pub_thick_pipe_axi')">m-file</a>.</p><h2>Description<a name="2"></a></h2><p>This is a simple modification of the full three-dimensional simulation of the tutorial pub_thick_pipe that implements the axially-symmetric model reduction procedure.</p><p>An infinitely long thick walled cylindrical pipe with inner boundary radius of 3 mm and outer boundary radius of 9 mm is subjected to an internal pressure of 1.0 MPa. A wedge   with thickness of 2 mm and a 90-degree angle sector is considered for the finite element analysis. The material properties are taken as  isotropic linear elastic with <img src="pub_thick_pipe_axi_eq12783.png" alt="$E=1000$"> MPa and <img src="pub_thick_pipe_axi_eq04077.png" alt="$\nu=0.4999$"> to represent nearly incompressible behavior. This problem has been proposed to by MacNeal and Harder as a test of an element's ability to represent the  response of a nearly incompressible material. The plane-strain condition is assumed in the axial direction of the pipe which together with the radial symmetry confines the material in all but the radial direction and therefore amplifies the numerical difficulties associated with the confinement of the nearly incompressible material.</p><p>There is an analytical solution to this problem. Timoshenko and Goodier presented the original solution of Lame in their textbook. We are going to compare with  both the stress distribution (radial and hoop stresses) and the displacement of the inner  cylindrical surface.</p><p>
+<table border=0><tr><td>
+<img src="../docs/pub_thick_pipe_axi.png" width = "30%">
+</td></tr>
+<tr><td>Figure 1. Definition of the geometry of the internally pressurized thick pipe</td></tr>
+</table>
+</p><p>References:</p><div><ol><li>Macneal RH, Harder RL (1985) A proposed standard set of problems to test finite element accuracy. Finite Elements in Analysis and Design 1: 3-20.</li></ol></div><div><ol><li>Timoshenko S. and Goodier J. N., Theory of Elasticity, McGraw-Hill, 2nd ed., 1951.</li></ol></div><h2>Solution<a name="8"></a></h2><pre class="codeinput"><span class="keyword">function</span> pub_thick_pipe_axi
+</pre><pre class="codeinput">    u= physical_units_struct;
+</pre><p>Internal radius of the pipe.</p><pre class="codeinput">    a=3*u.MM;
+</pre><p>External radius of the pipe.</p><pre class="codeinput">    b=9*u.MM;
+</pre><p>Thickness of the slice.</p><pre class="codeinput">    t=2*u.MM;
+</pre><p>Geometrical tolerance.</p><pre class="codeinput">    tolerance  =a/10000;
+</pre><p>Young's modulus and Poisson's ratio.</p><pre class="codeinput">    E=1000*u.MEGA*u.PA;
+    nu=0.499;
+</pre><p>Applied pressure on the internal surface.</p><pre class="codeinput">    p=  1*u.MEGA*u.PA;
+</pre><p>Analytical solutions.   Radial stress:</p><pre class="codeinput">    radial_stress =@(r)p*a.^2/(b^2-a^2).*(1-b^2./r.^2);
+</pre><p>Circumferential (hoop) stress:</p><pre class="codeinput">    hoop_stress =@(r)p*a.^2/(b^2-a^2).*(1+b^2./r.^2);
+</pre><p>Radial displacement:</p><pre class="codeinput">    radial_displacement=@(r)p*a^2*(1+nu)*(b^2+r.^2*(1-2*nu))/(E*(b^2-a^2).*r);;
+</pre><p>Therefore the radial displacement of the loaded surface will be:</p><pre class="codeinput">    urex = radial_displacement(a);
+</pre><p>The mesh parameters: The numbers of element edges axially, and through the thickness of the pipe wall (radially).</p><pre class="codeinput">    na=1; nt=5;
+</pre><p>Note that the material object needs to be created with the proper model-dimension reduction in mind.  In this case that is the plane-strain assumption.</p><pre class="codeinput">    prop=property_deformation_linear_iso(struct(<span class="string">'E'</span>,E,<span class="string">'nu'</span>,nu));
+    mater = material_deformation_linear_biax (struct(<span class="string">'property'</span>,prop,<span class="keyword">...</span>
+        <span class="string">'reduction'</span>, <span class="string">'axisymm'</span>));
+</pre><p>This function will execute the simulation for a particular finite element with selected numerical integration rules. The arguments are:</p><pre>description = descriptive string
+mf  = handle to a block-meshing function
+femmf = handle to a function constructing the finite element model machine,
+surface_integration_rule = surface integration rule</pre><pre class="codeinput">    <span class="keyword">function</span>  execute_simulation (description, mf, femmf, <span class="keyword">...</span>
+            surface_integration_rule)
+        <span class="comment">% Create the mesh and initialize the geometry.  First we are going</span>
+        <span class="comment">% to construct the block of elements with the first coordinate</span>
+        <span class="comment">% corresponding to the thickness in the radial direction, and the second</span>
+        <span class="comment">% coordinate is the thickness in the axial direction.</span>
+        [fens,fes]=  mf (b-a, t, nt, na, struct(<span class="string">'axisymm'</span>, true));
+        <span class="comment">% Extract the boundary  and mark the finite elements on the</span>
+        <span class="comment">% interior surface.</span>
+        bdry_fes = mesh_boundary(fes, struct(<span class="string">'axisymm'</span>, true));
+        bcl = fe_select(fens, bdry_fes, <span class="keyword">...</span>
+            struct (<span class="string">'box'</span>,[0,0,-inf,inf],<span class="string">'inflate'</span>,tolerance));
+        internal_fenids= connected_nodes (subset(bdry_fes,bcl));
+        <span class="comment">% Now  shape the block  into  the actual wedge piece of the pipe.</span>
+        <span class="keyword">for</span> i=1:count (fens)
+            fens.xyz(i,:)=fens.xyz(i,:)+[a,0];
+        <span class="keyword">end</span>
+        <span class="comment">% Compose the model data</span>
+        clear <span class="string">model_data</span>
+        model_data.fens =fens;
+        <span class="comment">% The region is cconstructed directly with the finite element</span>
+        <span class="comment">% model machine produced according to the instructions coded for</span>
+        <span class="comment">% each element differently. This gives us an opportunity to  exert</span>
+        <span class="comment">% find control over which integration rule is to be used.   In</span>
+        <span class="comment">% particular, the selective reduced integration rule may be</span>
+        <span class="comment">% introduced.</span>
+        clear <span class="string">region</span>
+        region.femm= femmf(fes);
+        model_data.region{1} =region;
+        <span class="comment">% The plane-strain condition in the axial direction  is specified by selecting nodes</span>
+        <span class="comment">% on the plane y=0 and y=t.</span>
+        clear <span class="string">essential</span>
+        essential.component= [2];
+        essential.fixed_value= 0;
+        essential.node_list = [<span class="keyword">...</span>
+            fenode_select(fens,<span class="keyword">...</span>
+            struct (<span class="string">'box'</span>,[-inf,inf 0 0 ],<span class="string">'inflate'</span>,tolerance)),<span class="keyword">...</span>
+            fenode_select(fens,<span class="keyword">...</span>
+            struct (<span class="string">'box'</span>,[-inf,inf t t],<span class="string">'inflate'</span>,tolerance))];
+        model_data.boundary_conditions.essential{1} = essential;
+        <span class="comment">% The traction boundary condition is applied in the radial</span>
+        <span class="comment">% direction.</span>
+        clear <span class="string">traction</span>
+        traction.fes =subset(bdry_fes,bcl);;
+        traction.traction=[p;0];
+        traction.integration_rule =surface_integration_rule;
+        model_data.boundary_conditions.traction{1} = traction;
+
+        <span class="comment">% Call the statics solver to obtain the displacement solution.</span>
+        model_data =deformation_linear_statics(model_data);
+
+
+        <span class="comment">% Transfer the solution of the displacement to the nodes on the</span>
+        <span class="comment">% internal cylindrical surface and convert to</span>
+        <span class="comment">% cylindrical-coordinate displacements there.</span>
+        uv=gather_values (model_data.u,internal_fenids);
+        <span class="comment">% Report the  relative displacement on the internal surface:</span>
+        disp([<span class="string">'(Approximate/true displacement) at the internal surface: '</span><span class="keyword">...</span>
+            num2str(mean(uv(:,1))/urex*100) <span class="string">'%'</span>])
+
+        <span class="comment">% Produce a plot of the radial stress component in the cylindrical</span>
+        <span class="comment">% coordinate system. Note that this is the usual representation of</span>
+        <span class="comment">% stress using nodal stress field.</span>
+        model_data.postprocessing.u_scale= 200;
+        model_data.postprocessing.stress_component=1;
+        model_data.postprocessing.stress_range=[-p,0];
+        model_data=deformation_plot_stress(model_data);
+        draw_annotation(model_data.postprocessing.gv,<span class="keyword">...</span>
+            [0.35, 0.8, 0.35, 0.075],description,<span class="keyword">...</span>
+            struct(<span class="string">'backgroundcolor'</span>,<span class="string">'w'</span>))
+        view(2);
+
+        <span class="comment">% Produce a plot of the solution components in the cylindrical</span>
+        <span class="comment">% coordinate system.</span>
+        <span class="comment">% Plot the analytical solution.</span>
+        figure;
+        r  =linspace(a,b,100);
+        plot(r,radial_stress(r),<span class="string">'k.-'</span>,<span class="string">'linewidth'</span>,3); hold <span class="string">on</span>
+        context. output=<span class="string">'Cauchy'</span>;
+        idat.component =1; <span class="comment">%  Radial component of stress</span>
+        <span class="comment">% For all finite elements in the finite element model machine:</span>
+        <span class="keyword">for</span> ii=1:count(model_data.region{1}.femm.fes)
+            <span class="comment">% Now go through the  integration points in the finite element</span>
+            <span class="comment">% number ii, compute the stress components in the global</span>
+            <span class="comment">% Cartesian coordinate system, then transform the stress</span>
+            <span class="comment">% components into the cylindrical coordinate system.</span>
+            idat.r =[]; idat.s =[];
+            idat = inspect_integration_points(model_data.region{1}.femm, <span class="keyword">...</span>
+                model_data.geom, model_data.u, [], ii, context,<span class="keyword">...</span>
+                @inspector, idat);
+            <span class="comment">% Plot the stress at each integration point in the graph.</span>
+            <span class="keyword">for</span> j  =1:length(idat.r)
+                plot(idat.r(j),idat.s(j),<span class="string">'rx'</span>,<span class="string">'linewidth'</span>,3); hold <span class="string">on</span>
+            <span class="keyword">end</span>
+        <span class="keyword">end</span>
+        title([description])
+        labels(<span class="string">'Radial distance'</span>, <span class="string">'Stress $\sigma_r$'</span>)
+        set_graphics_defaults
+
+    <span class="keyword">end</span>
+</pre><p>This is a helper function for the calculation of the integration-point stresses.</p><pre class="codeinput">    <span class="keyword">function</span> idat =inspector(idat, out, xyz, u, pc)
+        idat.r(end+1) =norm(xyz(1));
+        idat.s(end+1)=out(idat.component);
+    <span class="keyword">end</span>
+</pre><p><b>Regular quadratic triangle</b></p><p>We start with the workhorse of most commonly used finite element packages, the quadratic triangle. Similarly to the quadratic tetrahedron in the 3-D version of this tutorial (pub_thick_pipe), the stress is polluted with oscillations. Definitely not as bad as in the plane-strain simulations when the triangles were distorted into shapes with curved edges, but the disturbances are there.</p><pre class="codeinput">    description =<span class="string">'T6'</span>;<span class="comment">% tetrahedron</span>
+    mf =@T6_block;
+    femmf =@(fes)femm_deformation_linear(struct(<span class="string">'fes'</span>,fes,<span class="keyword">...</span>
+        <span class="string">'material'</span>,mater,<span class="string">'integration_rule'</span>,tri_rule(struct(<span class="string">'npts'</span>,3))));
+    surface_integration_rule=gauss_rule(struct(<span class="string">'dim'</span>,1, <span class="string">'order'</span>, 3));
+    execute_simulation (description, mf, femmf, surface_integration_rule);
+</pre><pre class="codeoutput">(Approximate/true displacement) at the internal surface: 99.837%
+</pre><img vspace="5" hspace="5" src="pub_thick_pipe_axi_01.png" alt=""> <img vspace="5" hspace="5" src="pub_thick_pipe_axi_02.png" alt=""> <p>The same remedy of selective reduced integration as in full 3-D models will also work here.  Is demonstrated by the simulation with the selective reduced integration quadratic triangle.</p><p><b>Selective reduced integration quadratic triangle</b></p><pre class="codeinput">    description =<span class="string">'T6-SRI'</span>;
+    mf =@T6_block;
+    femmf =@(fes)femm_deformation_linear_sri(struct(<span class="string">'fes'</span>,fes,<span class="keyword">...</span>
+        <span class="string">'material'</span>,mater,<span class="keyword">...</span>
+        <span class="string">'integration_rule_volumetric'</span>,tri_rule(struct(<span class="string">'npts'</span>,1)),<span class="keyword">...</span>
+        <span class="string">'integration_rule_deviatoric'</span>,tri_rule(struct(<span class="string">'npts'</span>,3))));
+    surface_integration_rule=gauss_rule(struct(<span class="string">'dim'</span>,1, <span class="string">'order'</span>, 3));
+    execute_simulation (description, mf, femmf, surface_integration_rule);
+</pre><pre class="codeoutput">(Approximate/true displacement) at the internal surface: 100.3951%
+</pre><img vspace="5" hspace="5" src="pub_thick_pipe_axi_03.png" alt=""> <img vspace="5" hspace="5" src="pub_thick_pipe_axi_04.png" alt=""> <p>The selective reduced integration works very well with the T6 triangle.</p><p>An element that is often used in these situations is the uniformly under integrated serendipity (8-node) quadrilateral.</p><p><b>Reduced integration serendipity quadrilateral</b></p><pre>The same finite
+element model machine as above is used, and the integration is the 2
+x 2 Gauss rule (one order lower than that required for full
+integration which would be 3 x 3).</pre><pre class="codeinput">    description =<span class="string">'Q8R'</span>;
+    mf =@Q8_block;
+    femmf =@(fes)femm_deformation_linear(struct(<span class="string">'fes'</span>,fes,<span class="keyword">...</span>
+        <span class="string">'material'</span>,mater,<span class="keyword">...</span>
+        <span class="string">'integration_rule'</span>,gauss_rule(struct(<span class="string">'dim'</span>,2, <span class="string">'order'</span>,2))));
+    surface_integration_rule=gauss_rule(struct(<span class="string">'dim'</span>,1, <span class="string">'order'</span>,3));
+    execute_simulation (description, mf, femmf, surface_integration_rule);
+</pre><pre class="codeoutput">(Approximate/true displacement) at the internal surface: 100%
+</pre><img vspace="5" hspace="5" src="pub_thick_pipe_axi_05.png" alt=""> <img vspace="5" hspace="5" src="pub_thick_pipe_axi_06.png" alt=""> <p><b>Full integration serendipity quadrilateral</b></p><p>Using the full-integration Gauss rule of 3 x 3 points clearly leads to disaster.</p><pre class="codeinput">    description =<span class="string">'Q8'</span>;
+    mf =@Q8_block;
+    femmf =@(fes)femm_deformation_linear(struct(<span class="string">'fes'</span>,fes,<span class="keyword">...</span>
+        <span class="string">'material'</span>,mater,<span class="keyword">...</span>
+        <span class="string">'integration_rule'</span>,gauss_rule(struct(<span class="string">'dim'</span>,2, <span class="string">'order'</span>,3))));
+    surface_integration_rule=gauss_rule(struct(<span class="string">'dim'</span>,1, <span class="string">'order'</span>,3));
+    execute_simulation (description, mf, femmf, surface_integration_rule);
+</pre><pre class="codeoutput">(Approximate/true displacement) at the internal surface: 95.2401%
+</pre><img vspace="5" hspace="5" src="pub_thick_pipe_axi_07.png" alt=""> <img vspace="5" hspace="5" src="pub_thick_pipe_axi_08.png" alt=""> <p>The stress is now totally unacceptable.</p><h2>Discussion<a name="36"></a></h2><p>The axially symmetric model is clearly very effective computationally, as the size is much reduced compared to the 3-D model.  In conjunction with  uniform or selective reduced integration it can be very accurate as well.</p><pre class="codeinput"><span class="keyword">end</span>
+</pre><p class="footer"><br><a href="http://www.mathworks.com/products/matlab/">Published with MATLAB&reg; R2012b</a><br></p></div><!--
+##### SOURCE BEGIN #####
+%% Thick pipe with internal pressure: axially symmetric model
+%
+
+%%
+% Link to the  <matlab:edit('pub_thick_pipe_axi') m-file>.
+
+%% Description
+%%
+% This is a simple modification of the full three-dimensional simulation of
+% the tutorial pub_thick_pipe that implements the axially-symmetric model
+% reduction procedure.
+%%
+% An infinitely long thick walled cylindrical pipe
+% with inner boundary radius of 3 mm and outer boundary radius of 9 mm is
+% subjected to an internal pressure of 1.0 MPa. A wedge   with thickness of
+% 2 mm and a 90-degree angle sector is considered for the finite element
+% analysis. The material properties are taken as  isotropic linear elastic
+% with $E=1000$ MPa and $\nu=0.4999$ to represent nearly incompressible
+% behavior. This problem has been proposed to by MacNeal and Harder as a
+% test of an element's ability to represent the  response of a nearly
+% incompressible material. The plane-strain condition is assumed in the
+% axial direction of the pipe which together with the radial symmetry
+% confines the material in all but the radial direction and therefore
+% amplifies the numerical difficulties associated with the confinement of
+% the nearly incompressible material.
+%%
+% There is an analytical solution to this problem. Timoshenko and Goodier
+% presented the original solution of Lame in their textbook. We are going
+% to compare with  both the stress distribution (radial and hoop stresses)
+% and the displacement of the inner  cylindrical surface.
+
+%%
+%
+% <html>
+% <table border=0><tr><td>
+% <img src="../docs/pub_thick_pipe_axi.png" width = "30%">
+% </td></tr>
+% <tr><td>Figure 1. Definition of the geometry of the internally pressurized thick pipe</td></tr>
+% </table>
+% </html>
+
+%%
+% References:
+%
+% # Macneal RH, Harder RL (1985) A proposed standard set of problems to test
+% finite element accuracy. Finite Elements in Analysis and Design 1: 3-20.
+%
+% # Timoshenko S. and Goodier J. N., Theory of Elasticity, McGraw-Hill, 2nd ed., 1951.
+
+%% Solution
+%
+function pub_thick_pipe_axi
+    u= physical_units_struct;
+    %%
+    % Internal radius of the pipe.
+    a=3*u.MM;
+    %%
+    % External radius of the pipe.
+    b=9*u.MM;
+    %%
+    % Thickness of the slice.
+    t=2*u.MM;
+    
+    %%
+    % Geometrical tolerance.
+    tolerance  =a/10000;
+    %%
+    % Young's modulus and Poisson's ratio.
+    E=1000*u.MEGA*u.PA;
+    nu=0.499;
+    %%
+    % Applied pressure on the internal surface.
+    p=  1*u.MEGA*u.PA;
+    
+    %%
+    % Analytical solutions.   Radial stress:
+    radial_stress =@(r)p*a.^2/(b^2-a^2).*(1-b^2./r.^2);
+    %%
+    % Circumferential (hoop) stress:
+    hoop_stress =@(r)p*a.^2/(b^2-a^2).*(1+b^2./r.^2);
+    
+    %%
+    % Radial displacement:
+    radial_displacement=@(r)p*a^2*(1+nu)*(b^2+r.^2*(1-2*nu))/(E*(b^2-a^2).*r);;
+    
+    %%
+    % Therefore the radial displacement of the loaded surface will be:
+    urex = radial_displacement(a);
+    
+    
+    %%
+    % The mesh parameters: The numbers of element edges axially,
+    % and through the thickness of the pipe wall (radially).
+    
+    na=1; nt=5;
+    
+    %%
+    % Note that the material object needs to be created with the proper
+    % model-dimension reduction in mind.  In this case that is the plane-strain
+    % assumption.
+    prop=property_deformation_linear_iso(struct('E',E,'nu',nu));
+    mater = material_deformation_linear_biax (struct('property',prop,...
+        'reduction', 'axisymm'));
+    
+    
+    %%
+    % This function will execute the simulation for a particular finite element
+    % with selected numerical integration rules. The arguments are:
+    %%
+    %
+    %  description = descriptive string
+    %  mf  = handle to a block-meshing function
+    %  femmf = handle to a function constructing the finite element model machine,
+    %  surface_integration_rule = surface integration rule
+    function  execute_simulation (description, mf, femmf, ...
+            surface_integration_rule)
+        % Create the mesh and initialize the geometry.  First we are going
+        % to construct the block of elements with the first coordinate
+        % corresponding to the thickness in the radial direction, and the second
+        % coordinate is the thickness in the axial direction.
+        [fens,fes]=  mf (b-a, t, nt, na, struct('axisymm', true));
+        % Extract the boundary  and mark the finite elements on the
+        % interior surface.
+        bdry_fes = mesh_boundary(fes, struct('axisymm', true));
+        bcl = fe_select(fens, bdry_fes, ...
+            struct ('box',[0,0,-inf,inf],'inflate',tolerance));
+        internal_fenids= connected_nodes (subset(bdry_fes,bcl));
+        % Now  shape the block  into  the actual wedge piece of the pipe.
+        for i=1:count (fens)
+            fens.xyz(i,:)=fens.xyz(i,:)+[a,0];
+        end
+        % Compose the model data
+        clear model_data
+        model_data.fens =fens;
+        % The region is cconstructed directly with the finite element
+        % model machine produced according to the instructions coded for
+        % each element differently. This gives us an opportunity to  exert
+        % find control over which integration rule is to be used.   In
+        % particular, the selective reduced integration rule may be
+        % introduced.
+        clear region
+        region.femm= femmf(fes);
+        model_data.region{1} =region;
+        % The plane-strain condition in the axial direction  is specified by selecting nodes
+        % on the plane y=0 and y=t.
+        clear essential
+        essential.component= [2];
+        essential.fixed_value= 0;
+        essential.node_list = [...
+            fenode_select(fens,...
+            struct ('box',[-inf,inf 0 0 ],'inflate',tolerance)),...
+            fenode_select(fens,...
+            struct ('box',[-inf,inf t t],'inflate',tolerance))];
+        model_data.boundary_conditions.essential{1} = essential;
+        % The traction boundary condition is applied in the radial
+        % direction.
+        clear traction
+        traction.fes =subset(bdry_fes,bcl);;
+        traction.traction=[p;0];
+        traction.integration_rule =surface_integration_rule;
+        model_data.boundary_conditions.traction{1} = traction;
+        
+        % Call the statics solver to obtain the displacement solution.
+        model_data =deformation_linear_statics(model_data);
+        
+        
+        % Transfer the solution of the displacement to the nodes on the
+        % internal cylindrical surface and convert to
+        % cylindrical-coordinate displacements there.
+        uv=gather_values (model_data.u,internal_fenids);
+        % Report the  relative displacement on the internal surface:
+        disp(['(Approximate/true displacement) at the internal surface: '...
+            num2str(mean(uv(:,1))/urex*100) '%'])
+        
+        % Produce a plot of the radial stress component in the cylindrical
+        % coordinate system. Note that this is the usual representation of
+        % stress using nodal stress field.
+        model_data.postprocessing.u_scale= 200;
+        model_data.postprocessing.stress_component=1;
+        model_data.postprocessing.stress_range=[-p,0];
+        model_data=deformation_plot_stress(model_data);
+        draw_annotation(model_data.postprocessing.gv,...
+            [0.35, 0.8, 0.35, 0.075],description,...
+            struct('backgroundcolor','w'))
+        view(2);
+        
+        % Produce a plot of the solution components in the cylindrical
+        % coordinate system.
+        % Plot the analytical solution.
+        figure;
+        r  =linspace(a,b,100);
+        plot(r,radial_stress(r),'k.-','linewidth',3); hold on
+        context. output='Cauchy';
+        idat.component =1; %  Radial component of stress
+        % For all finite elements in the finite element model machine:
+        for ii=1:count(model_data.region{1}.femm.fes)
+            % Now go through the  integration points in the finite element
+            % number ii, compute the stress components in the global
+            % Cartesian coordinate system, then transform the stress
+            % components into the cylindrical coordinate system.
+            idat.r =[]; idat.s =[];
+            idat = inspect_integration_points(model_data.region{1}.femm, ...
+                model_data.geom, model_data.u, [], ii, context,...
+                @inspector, idat);
+            % Plot the stress at each integration point in the graph.
+            for j  =1:length(idat.r)
+                plot(idat.r(j),idat.s(j),'rx','linewidth',3); hold on
+            end
+        end
+        title([description])
+        labels('Radial distance', 'Stress $\sigma_r$')
+        set_graphics_defaults
+        
+    end
+    
+    %%
+    % This is a helper function for the calculation of the integration-point
+    % stresses.
+    function idat =inspector(idat, out, xyz, u, pc)
+        idat.r(end+1) =norm(xyz(1));
+        idat.s(end+1)=out(idat.component);
+    end
+    
+    
+    %%
+    % *Regular quadratic triangle*
+    %%
+    % We start with the workhorse of most commonly used finite element
+    % packages, the quadratic triangle. Similarly to the quadratic
+    % tetrahedron in the 3-D version of this tutorial (pub_thick_pipe), the
+    % stress is polluted with oscillations. Definitely not as bad as in the
+    % plane-strain simulations when the triangles were distorted into
+    % shapes with curved edges, but the disturbances are there.
+    description ='T6';% tetrahedron
+    mf =@T6_block;
+    femmf =@(fes)femm_deformation_linear(struct('fes',fes,...
+        'material',mater,'integration_rule',tri_rule(struct('npts',3))));
+    surface_integration_rule=gauss_rule(struct('dim',1, 'order', 3));
+    execute_simulation (description, mf, femmf, surface_integration_rule);
+    
+    %%
+    % The same remedy of selective reduced integration as in full 3-D models
+    % will also work here.  Is demonstrated by the simulation with the
+    % selective reduced integration quadratic triangle.
+    %%
+    % *Selective reduced
+    % integration quadratic triangle*
+    description ='T6-SRI';
+    mf =@T6_block;
+    femmf =@(fes)femm_deformation_linear_sri(struct('fes',fes,...
+        'material',mater,...
+        'integration_rule_volumetric',tri_rule(struct('npts',1)),...
+        'integration_rule_deviatoric',tri_rule(struct('npts',3))));
+    surface_integration_rule=gauss_rule(struct('dim',1, 'order', 3));
+    execute_simulation (description, mf, femmf, surface_integration_rule);
+    
+    
+    %%
+    % The selective reduced integration works very well with the T6 triangle.
+    %%
+    % An element that is often used in these situations is the uniformly
+    % under integrated serendipity (8-node) quadrilateral.
+    %%
+    % *Reduced integration serendipity quadrilateral*
+    %%
+    %  The same finite
+    % element model machine as above is used, and the integration is the 2
+    % x 2 Gauss rule (one order lower than that required for full
+    % integration which would be 3 x 3).
+    description ='Q8R';
+    mf =@Q8_block;
+    femmf =@(fes)femm_deformation_linear(struct('fes',fes,...
+        'material',mater,...
+        'integration_rule',gauss_rule(struct('dim',2, 'order',2))));
+    surface_integration_rule=gauss_rule(struct('dim',1, 'order',3));
+    execute_simulation (description, mf, femmf, surface_integration_rule);
+    
+    %%
+    % *Full integration serendipity quadrilateral*
+    %%
+    % Using the full-integration Gauss rule of 3 x 3 points clearly leads to disaster.
+    description ='Q8';
+    mf =@Q8_block;
+    femmf =@(fes)femm_deformation_linear(struct('fes',fes,...
+        'material',mater,...
+        'integration_rule',gauss_rule(struct('dim',2, 'order',3))));
+    surface_integration_rule=gauss_rule(struct('dim',1, 'order',3));
+    execute_simulation (description, mf, femmf, surface_integration_rule);
+    
+    %%
+    % The stress is now totally unacceptable.
+    
+    
+    %% Discussion
+    %
+    %%
+    % The axially symmetric model is clearly very effective
+    % computationally, as the size is much reduced compared to the 3-D
+    % model.  In conjunction with  uniform or selective reduced integration
+    % it can be very accurate as well.
+end
+##### SOURCE END #####
+--></body></html>
