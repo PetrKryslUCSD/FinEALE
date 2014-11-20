@@ -1,4 +1,5 @@
 fineale: Finite Element Analysis Learning Environment
+    fineale 5.0 (C) 11/13/2014, Petr Krysl.
     fineale 4.0 (C) 09/13/2014, Petr Krysl.
     fineale 3.0 (C) 02/13/2014, Petr Krysl.
     fineale 2.0 (C) 12/13/2013, Petr Krysl.
@@ -21,12 +22,13 @@ published online (2014) with Lulu.com.
 The fineale toolkit and PDF versions of the book are
 distributed as open-source from
 
-    http://fineale.googlecode.com
-    =============================
+    https://github.com/PetrKryslUCSD/FinEALE
+    ========================================
 
 The toolkit includes finite element tools for linear steady-state and 
 transient thermal analysis and linear static, transient or modal stress 
-analysis. 
+analysis. Also included are some examples of geometrically nonlinear 
+analysis, including buckling, and material-nonlinear analysis (plasticity).
 
 The finite elements include linear and quadratic triangles and
 tetrahedra, linear to cubic quadrangles and hexahedra, and of 
@@ -94,7 +96,7 @@ fineale:
 COMPATIBILITY NOTES
 =================================================================
 The toolkit itself is pure Matlab, developed in its current form 
-with R2011b, R2012b, and R2013b. 
+with various versions of Matlab (see below). 
 
 The executable for the automatic generator of triangle
 meshes is at this point distributed only for 
@@ -108,7 +110,7 @@ is open-source (http://hogwarts.ucsd.edu/~pkrysl/software.html).
 Tested in 2014 on systems:
 
 -- Windows 7  64-bit
-Fully functional with R2013b.
+Fully functional with R2013b, R2014a.
 
 Tested in 2013 on systems:
 
