@@ -23,7 +23,9 @@ function model_data =heat_diffusion_steady_state(model_data)
 % model_data.boundary_conditions.essential = cell array of struct,
 %           each piece of surface with essential boundary condition gets one
 %           element of the array with a struct with the attributes
-%     essential.temperature=fixed (prescribed) temperature (scalar)
+%     essential.temperature=fixed (prescribed) temperature (scalar),  or
+%           handle to a function with signature
+%               function T =f(x)
 %     essential.fes = finite element set on the boundary to which 
 %                       the condition applies
 %               or alternatively
@@ -107,8 +109,13 @@ function model_data =heat_diffusion_steady_state(model_data)
             comp=[];
             T_fixed=0;
             if (isfield( essential, 'temperature' ))
-                T_fixed = essential.temperature;
+                if (strcmp(class(essential.temperature),'function_handle'))
+                   T_fixed = essential.temperature(geom.values(fenids,:));
+                else
+                    T_fixed = essential.temperature;
+                end
             end
+            if (length(T_fixed)==1), T_fixed =repmat(T_fixed,length(fenids),1); end
             val=zeros(length(fenids),1)+T_fixed;
             temp = set_ebc(temp, fenids, fixed, comp, val);
             temp = apply_ebc (temp);

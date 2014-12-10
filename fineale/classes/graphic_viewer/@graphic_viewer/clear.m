@@ -23,12 +23,17 @@ function retobj = clear (self, options)
         %         for i=1:length(Children)
         %             if (strcmp(get(Children(i), 'type'),'axes'))
         %                  set(Parent,'CurrentAxes',Children(i),'visible',get(Children(i),'visible')); % set the current axes
-        figure(gcf); clf;
-        if (strcmp(get(self.axes,'visible'),'on'))
+        %         if (strcmp(get(gcf,'visible'),'on'))
+        %             figure(gcf); clf;
+        %         else
+        %              clf(gcf); self.axes =[];
+        %         end
+        if  (~isempty(self.axes))&&(strcmp(get(self.axes,'visible'),'on'))
             cla(self.axes,'reset');
         else
-                   cla(self.axes); set(self.axes,'visible','off');
-                 end
+            self.axes=get(gcf,'CurrentAxes');
+            cla(self.axes); set(self.axes,'visible','off');
+        end
 %                  break;
 %             end
 %         end

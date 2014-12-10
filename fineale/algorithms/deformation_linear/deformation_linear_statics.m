@@ -195,8 +195,13 @@ function model_data = deformation_linear_statics(model_data)
             end
             fixed_value =0;
             if (isfield( essential, 'fixed_value' ))
-                fixed_value = essential.fixed_value;
+                if (strcmp(class(essential.fixed_value),'function_handle'))
+                   fixed_value = essential.fixed_value(geom.values(fenids,:));
+                else
+                    fixed_value = essential.fixed_value;
+                end
             end
+            if (length(fixed_value)==1), fixed_value =repmat(fixed_value,length(fenids),1); end
             val=zeros(length(fenids),1)+fixed_value;
             for k=1:length( component)
                 u = set_ebc(u, fenids, is_fixed, component(k), val);

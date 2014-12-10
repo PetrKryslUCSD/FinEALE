@@ -114,6 +114,7 @@ end
 
 
 % Plot the surface for each region
+minmin=inf; maxmax=-inf;
 for i=1:length(model_data.region)
     region =model_data.region{i};
     % Find the finite elements that are exposed on the boundary
@@ -127,6 +128,8 @@ for i=1:length(model_data.region)
             fld = field_from_integration_points (region.femm, ...
                 geom, u, [], output,stress_component, context);
             fld = (1/stress_units)*fld;
+            minmin=min([minmin,min(fld.values)]);
+            maxmax=max([maxmax,max(fld.values)]);
             if (isempty(stress_range))
                 stress_range =[min(fld.values),max(fld.values)];
                 dcm=data_colormap(struct('range',stress_range,'colormap',cmap));

@@ -1,3 +1,19 @@
+% 12/09/2014
+% - Added passing of function handles to  set  values of  essential boundary conditions.
+% Affected algorithms: deformation_linear_statics, heat_diffusion_steady_state
+
+% 12/08/2014
+% - fe_set: A check in the setter function to replace  connectivity is now
+% used to compare the number of finite element nodes with  the value of the
+% field
+
+% 12/07/2014
+% - mesh_boundary(): An additional algorithm has been added to compensate for missing
+% functionality in Julia. The operation of the algorithm  (the results)
+% do not change.
+% - The clear() function of the graphic_viewer class does not clear the figure
+%     only the axes.
+
 % 11/12/2014
 % - deformation_plot_deformation().   Additional options.
 

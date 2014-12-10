@@ -36,6 +36,7 @@ classdef  fe_set
             if nargin < 1
                 return
             end
+            retobj.nfens = 0;
             if isfield(Parameters,'conn')
                 retobj.conn = Parameters.conn;
             end
@@ -70,6 +71,12 @@ classdef  fe_set
         
         function self=set.conn(self,val)
             %             Get the connectivity of this set.
+            
+            % Initially nfens is set to zero. It gets then initialized to
+            % the correct number. So initially ignore this error.
+            if (self.nfens ~= 0) && (self.nfens ~= size(val,2)) 
+                error('Wrong number of nodes!');
+            end
             self.conn=val;
         end
         
@@ -281,4 +288,3 @@ classdef  fe_set
     end
     
 end
-
