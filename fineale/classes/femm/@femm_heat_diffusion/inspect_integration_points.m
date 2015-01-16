@@ -56,12 +56,11 @@ function idat = inspect_integration_points(self, ...
         for j=1:npts
             J = Jacobian_matrix(fes,Nders{j},x);
             Jac = Jacobian_volume(fes,conn, Ns{j}, J, x);
-            Ndersp = Nders{j}/J;
             if (~Rm_constant)% do I need to evaluate the local material orientation?
                 if (~isempty(labels )),  Rm =Rmh(c,J,labels(i));
                 else,                    Rm =Rmh(c,J,[]);                end
             end
-            Ndersp=Ndersp*Rm;
+            Ndersp = Nders{j}/(Rm'*J);% gradient WRT the material coordinates
             context.xyz=Ns{j}'*x;% 'location in global coordinates
             context.gradtheta = T'* Ndersp;%  gradient in mat. orient. coord
             context.Rm  =Rm;% material orientation matrix

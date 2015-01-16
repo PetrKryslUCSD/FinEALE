@@ -51,12 +51,11 @@ function elerrs = flux_L2_error (self, geom, Temp, nodal_flux)
         for j=1:npts
             J = Jacobian_matrix(fes,Nders{j},x);
             Jac = Jacobian_volume(fes,conn, Ns{j}, J, x);
-            Ndersp = Nders{j}/J;
             if (~Rm_constant)% do I need to evaluate the local material orientation?
                 if (~isempty(labels )),  Rm =Rmh(c,J,labels(i));
                 else,                    Rm =Rmh(c,J,[]);                end
             end
-            Ndersp=Ndersp*Rm;
+            Ndersp = Nders{j}/(Rm'*J);% gradient WRT the material coordinates
             context.xyz=Ns{j}'*x;
             context.gradtheta = T'* Ndersp;
             [sig,ignore] = update(mat, matstates{i,j}, context);

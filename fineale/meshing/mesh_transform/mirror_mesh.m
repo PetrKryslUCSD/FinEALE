@@ -19,10 +19,12 @@ function [fens1,fes1] = mirror_mesh(fens, fes, Normal, Point, renumb)
 % 
 % 
     Normal = Normal/norm (Normal);
+    Point = reshape(Point,1,[]);
     fens1 =fens;
     xyz =fens1.xyz;
     for i=1:count(fens1)
-        xyz(i,:) =xyz(i,:)-2*dot(Normal,xyz(i,:))*Normal;
+        a = xyz(i,:);
+        xyz(i,:) =a-2*dot(Normal,a-Point)*Normal;
     end
     fens1.xyz=xyz;
     % Reconnect the cells

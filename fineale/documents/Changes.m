@@ -1,3 +1,15 @@
+% 01/01/2015
+% - mirror_mesh(): was  not using Point -- corrected.
+
+% 12/18/2014
+% - Rm use in heat  conduction: Rm is now used to produce the "reduced"
+% Jacobian matrix.
+
+% 12/13/2014
+% - merge_nodes()  was corrected to merge multiple  nodes within the same
+% location.  Previously only two nodes  were merged.
+% - fuse_nodes() now chooses from the same-location set the lowest number of node.
+
 % 12/09/2014
 % - Added passing of function handles to  set  values of  essential boundary conditions.
 % Affected algorithms: deformation_linear_statics, heat_diffusion_steady_state

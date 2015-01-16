@@ -35,13 +35,23 @@ function [fens,new_indexes_of_fens1_nodes] = fuse_nodes(fens1, fens2, tolerance)
     % Mark nodes from the first array that are duplicated in the second
     if (tolerance>0)% should we attempt to merge nodes?
         for i=1:count(fens1)
-            xyz =xyz1(i,:);
-            xyzd=abs(xyz2-c1*xyz);
-            j=find(sum(xyzd')'<tolerance);
-            if (~isempty(j))
-                id1(i) =-j(1);
+            XYZ =xyz1(i,:);
+            % Note  that we are looking for  distances  of this node to nodes in the OTHER node set
+            xyzd=abs(xyz2-c1*XYZ);% find the distances along  coordinate directions
+            jx=find(sum(xyzd')'<tolerance);
+            if (~isempty(jx))
+                minn=min(jx);
+                id1(i) =-minn;
             end
         end
+        %         for i=1:count(fens1)
+        %             xyz =xyz1(i,:);
+        %             xyzd=abs(xyz2-c1*xyz);
+        %             j=find(sum(xyzd')'<tolerance);
+        %             if (~isempty(j))
+        %                 id1(i) =-j(1);
+        %             end
+        %         end
     end
     % Generate  fused arrays of the nodes
     xyzm = zeros(count(fens1)+count(fens2),dim);
@@ -69,3 +79,4 @@ function [fens,new_indexes_of_fens1_nodes] = fuse_nodes(fens1, fens2, tolerance)
     new_indexes_of_fens1_nodes=id1;
     % The node set 2 numbering stays the same
 end
+

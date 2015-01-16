@@ -1,5 +1,5 @@
 function squash_thecube(ntmult)
-    if ~exist('ntmult','var'), ntmult=6; end
+    if ~exist('ntmult','var'), ntmult=2; end
     % A new locking-free brick element technique for large
     % deformation problems in elasticity p
     % S. Reese a, *, P. Wriggers a , B.D. Reddy

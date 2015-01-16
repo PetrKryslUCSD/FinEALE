@@ -47,7 +47,7 @@ function model_data =heat_diffusion_steady_state(model_data)
 % model_data.boundary_conditions.flux = cell array of struct,
 %           each piece of surface with flux boundary condition gets one
 %           element of the array with a struct with the attributes
-%     flux.normal_flux=ambient temperature (scalar)
+%     flux.normal_flux= normal flux component, positive when outward-bound (scalar)
 %     flux.fes = finite element set on the boundary to which 
 %                       the condition applies
 %     flux.integration_rule= integration rule
