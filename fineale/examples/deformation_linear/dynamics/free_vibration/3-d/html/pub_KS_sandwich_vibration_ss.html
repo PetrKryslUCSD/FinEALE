@@ -6,7 +6,7 @@
    <!--
 This HTML was auto-generated from MATLAB code.
 To make changes, update the MATLAB code and republish this document.
-      --><title>Vibration analysis of laminated composite plate</title><meta name="generator" content="MATLAB 8.0"><link rel="schema.DC" href="http://purl.org/dc/elements/1.1/"><meta name="DC.date" content="2012-12-20"><meta name="DC.source" content="pub_KS_sandwich_vibration_ss.m"><style type="text/css">
+      --><title>Vibration analysis of laminated composite plate</title><meta name="generator" content="MATLAB 8.0"><link rel="schema.DC" href="http://purl.org/dc/elements/1.1/"><meta name="DC.date" content="2015-01-18"><meta name="DC.source" content="pub_KS_sandwich_vibration_ss.m"><style type="text/css">
 html,body,div,span,applet,object,iframe,h1,h2,h3,h4,h5,h6,p,blockquote,pre,a,abbr,acronym,address,big,cite,code,del,dfn,em,font,img,ins,kbd,q,s,samp,small,strike,strong,sub,sup,tt,var,b,u,i,center,dl,dt,dd,ol,ul,li,fieldset,form,label,legend,table,caption,tbody,tfoot,thead,tr,th,td{margin:0;padding:0;border:0;outline:0;font-size:100%;vertical-align:baseline;background:transparent}body{line-height:1}ol,ul{list-style:none}blockquote,q{quotes:none}blockquote:before,blockquote:after,q:before,q:after{content:'';content:none}:focus{outine:0}ins{text-decoration:none}del{text-decoration:line-through}table{border-collapse:collapse;border-spacing:0}
 
 html { min-height:100%; margin-bottom:1px; }
@@ -125,10 +125,10 @@ f_fundamental =
 </pre><p>The modal-plot algorithm can be called to produce the plot of the fundamental mode.</p><pre class="codeinput">    model_data.postprocessing.u_scale= 2;
     model_data.postprocessing.modelist= 1;
     mmodel_data=deformation_plot_modes(model_data);
-</pre><pre class="codeoutput">Mode 1, frequency 6566.0502
+</pre><pre class="codeoutput">Mode 1, frequency 6546.9255
 </pre><img vspace="5" hspace="5" src="pub_KS_sandwich_vibration_ss_01.png" alt=""> <h2>Discussion<a name="21"></a></h2><p>The fundamental frequency is extracted from the updated <tt>model_data</tt> data structure.</p><pre class="codeinput">    f=model_data.Omega(1)/2/pi;
     disp([<span class="string">'Fundamental frequency '</span> num2str(1) <span class="string">': '</span> num2str(f) <span class="string">' [Hz]'</span> <span class="string">', f/f_analytical='</span> num2str(100*f/f_fundamental) <span class="string">'%'</span>]);
-</pre><pre class="codeoutput">Fundamental frequency 1: 6566.0502 [Hz], f/f_analytical=99.3821%
+</pre><pre class="codeoutput">Fundamental frequency 1: 6546.9255 [Hz], f/f_analytical=99.0926%
 </pre><p>The accuracy of less than 1% error seems to be quite adequate. However, if we refine the mesh our results will converge to a frequency that is approximately .62% lower than the reference solution. Since all the cited numbers in the Reference article are in fact lower (around 1% lower) than the 3-D elasticity solution,  and since our numerical method is in agreement with the other three  cited solutions, we may venture a guess that the 3-D elasticity solution may be in error.</p><pre class="codeinput"><span class="keyword">end</span>
 </pre><p class="footer"><br><a href="http://www.mathworks.com/products/matlab/">Published with MATLAB&reg; R2012b</a><br></p></div><!--
 ##### SOURCE BEGIN #####

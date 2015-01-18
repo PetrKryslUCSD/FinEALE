@@ -6,7 +6,7 @@
    <!--
 This HTML was auto-generated from MATLAB code.
 To make changes, update the MATLAB code and republish this document.
-      --><title>Single truss bar structure: stiffness and thermal load</title><meta name="generator" content="MATLAB 8.0"><link rel="schema.DC" href="http://purl.org/dc/elements/1.1/"><meta name="DC.date" content="2012-12-20"><meta name="DC.source" content="pub_single_bar.m"><style type="text/css">
+      --><title>Single truss bar structure: stiffness and thermal load</title><meta name="generator" content="MATLAB 8.0"><link rel="schema.DC" href="http://purl.org/dc/elements/1.1/"><meta name="DC.date" content="2015-01-18"><meta name="DC.source" content="pub_single_bar.m"><style type="text/css">
 html,body,div,span,applet,object,iframe,h1,h2,h3,h4,h5,h6,p,blockquote,pre,a,abbr,acronym,address,big,cite,code,del,dfn,em,font,img,ins,kbd,q,s,samp,small,strike,strong,sub,sup,tt,var,b,u,i,center,dl,dt,dd,ol,ul,li,fieldset,form,label,legend,table,caption,tbody,tfoot,thead,tr,th,td{margin:0;padding:0;border:0;outline:0;font-size:100%;vertical-align:baseline;background:transparent}body{line-height:1}ol,ul{list-style:none}blockquote,q{quotes:none}blockquote:before,blockquote:after,q:before,q:after{content:'';content:none}:focus{outine:0}ins{text-decoration:none}del{text-decoration:line-through}table{border-collapse:collapse;border-spacing:0}
 
 html { min-height:100%; margin-bottom:1px; }
@@ -87,7 +87,7 @@ table td { padding:7px 5px; text-align:left; vertical-align:top; border:1px soli
 </pre><p>The structure is free-floating: There are no EBC's applied on the structure. Therefore we proceed immediately to number equations:</p><pre class="codeinput">u   = numberdofs (u);
 </pre><p>Finally we produce the first result: we assemble the element  (structure)  stiffness matrix:</p><pre class="codeinput">K = stiffness(femm, sysmat_assembler_sparse, geom, u);
 </pre><pre>We print out the resulting stiffness matrix in the desired units:</pre><pre class="codeinput">format <span class="string">short</span> <span class="string">e</span>
-full(K/(pu.LB/pu.IN))
+full(K/(pu.LBF/pu.IN))
 </pre><pre class="codeoutput">
 ans =
 
@@ -105,7 +105,7 @@ ans =
    -1.8916   -2.8373    3.3102    1.8916    2.8373   -3.3102
    -2.8373   -4.2560    4.9653    2.8373    4.2560   -4.9653
     3.3102    4.9653   -5.7929   -3.3102   -4.9653    5.7929];
-</pre><p>Our calculation  is compared  to the reference stiffness matrix using matrix norm:</p><pre class="codeinput">ekn=norm(full(K/(pu.LB/pu.IN))- ref_K)/norm(ref_K)
+</pre><p>Our calculation  is compared  to the reference stiffness matrix using matrix norm:</p><pre class="codeinput">ekn=norm(full(K/(pu.LBF/pu.IN))- ref_K)/norm(ref_K)
 </pre><pre class="codeoutput">
 ekn =
 
@@ -114,7 +114,7 @@ ekn =
 </pre><p>The accuracy of the calculation is actually better than suggested by the relative norm of the difference.  Only five digits are given for the reference matrix  and hence the difference  is relatively large.</p><p>We calculate the thermal load vector. For this we need to define the nodal field that represents the temperature increment  across the structure.</p><pre class="codeinput">dT = nodal_field(struct (<span class="string">'name'</span>,[<span class="string">'dT'</span>], <span class="string">'dim'</span>, 1, <span class="string">'nfens'</span>,fens.count));
 </pre><p>Note that it is necessary to use addition of the (originally zero) values in the  temperature field; we may also use the expression  <tt>dT.values = dT.values + 100*pu.F</tt>.</p><pre class="codeinput">dT.values(:) = 100*pu.F;
 </pre><p>The thermal-strain  load vector for the element is assembled next....</p><pre class="codeinput">F = thermal_strain_loads(femm, sysvec_assembler, geom, u, dT);
-</pre><p>...  and the result is printed out  in pounds:</p><pre class="codeinput">F/(pu.LB)
+</pre><p>...  and the result is printed out  in pounds:</p><pre class="codeinput">F/(pu.LBF)
 </pre><pre class="codeoutput">
 ans =
 
@@ -132,11 +132,11 @@ ans =
    1.313449091077187
    1.970173636615779
   -2.298535909385076];
-</pre><p>may be then compared with the calculated load vector.</p><pre class="codeinput">efn=norm(F/(pu.LB)-ref_F)/norm(ref_F)
+</pre><p>may be then compared with the calculated load vector.</p><pre class="codeinput">efn=norm(F/(pu.LBF)-ref_F)/norm(ref_F)
 </pre><pre class="codeoutput">
 efn =
 
-   1.9874e-16
+   5.9367e-16
 
 </pre><p>The norm  of the difference is close to machine epsilon, as in this case the reference vector is known to all significant digits.</p><h2>Discussion<a name="25"></a></h2><p>The toolbox provides answers identical to those calculated using elementary structural-analysis formulas for truss elements.</p><p class="footer"><br><a href="http://www.mathworks.com/products/matlab/">Published with MATLAB&reg; R2012b</a><br></p></div><!--
 ##### SOURCE BEGIN #####
@@ -224,7 +224,7 @@ K = stiffness(femm, sysmat_assembler_sparse, geom, u);
 %% 
 %  We print out the resulting stiffness matrix in the desired units:
 format short e
-full(K/(pu.LB/pu.IN))
+full(K/(pu.LBF/pu.IN))
 
 
 %% 
@@ -239,7 +239,7 @@ ref_K=   1.0e+05 *[
     3.3102    4.9653   -5.7929   -3.3102   -4.9653    5.7929];
 %% 
 % Our calculation  is compared  to the reference stiffness matrix using matrix norm:
-ekn=norm(full(K/(pu.LB/pu.IN))- ref_K)/norm(ref_K)
+ekn=norm(full(K/(pu.LBF/pu.IN))- ref_K)/norm(ref_K)
 
 %% 
 % The accuracy of the calculation is actually better than suggested by the
@@ -261,7 +261,7 @@ dT.values(:) = 100*pu.F;
 F = thermal_strain_loads(femm, sysvec_assembler, geom, u, dT);
 %% 
 % ...  and the result is printed out  in pounds:
-F/(pu.LB)
+F/(pu.LBF)
 
 %% 
 % Reference (hand calculated) thermal load vector in pounds
@@ -274,7 +274,7 @@ ref_F=  1.0e+04 *[
   -2.298535909385076];
 %% 
 % may be then compared with the calculated load vector.
-efn=norm(F/(pu.LB)-ref_F)/norm(ref_F)
+efn=norm(F/(pu.LBF)-ref_F)/norm(ref_F)
 %% 
 % The norm  of the difference is close to machine epsilon, as in this case
 % the reference vector is known to all significant digits.

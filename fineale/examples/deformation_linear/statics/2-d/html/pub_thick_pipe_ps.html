@@ -6,7 +6,7 @@
    <!--
 This HTML was auto-generated from MATLAB code.
 To make changes, update the MATLAB code and republish this document.
-      --><title>Thick pipe with internal pressure: plane strain</title><meta name="generator" content="MATLAB 8.0"><link rel="schema.DC" href="http://purl.org/dc/elements/1.1/"><meta name="DC.date" content="2012-12-20"><meta name="DC.source" content="pub_thick_pipe_ps.m"><style type="text/css">
+      --><title>Thick pipe with internal pressure: plane strain</title><meta name="generator" content="MATLAB 8.0"><link rel="schema.DC" href="http://purl.org/dc/elements/1.1/"><meta name="DC.date" content="2015-01-18"><meta name="DC.source" content="pub_thick_pipe_ps.m"><style type="text/css">
 html,body,div,span,applet,object,iframe,h1,h2,h3,h4,h5,h6,p,blockquote,pre,a,abbr,acronym,address,big,cite,code,del,dfn,em,font,img,ins,kbd,q,s,samp,small,strike,strong,sub,sup,tt,var,b,u,i,center,dl,dt,dd,ol,ul,li,fieldset,form,label,legend,table,caption,tbody,tfoot,thead,tr,th,td{margin:0;padding:0;border:0;outline:0;font-size:100%;vertical-align:baseline;background:transparent}body{line-height:1}ol,ul{list-style:none}blockquote,q{quotes:none}blockquote:before,blockquote:after,q:before,q:after{content:'';content:none}:focus{outine:0}ins{text-decoration:none}del{text-decoration:line-through}table{border-collapse:collapse;border-spacing:0}
 
 html { min-height:100%; margin-bottom:1px; }
@@ -208,7 +208,7 @@ surface_integration_rule = surface integration rule</pre><pre class="codeinput">
         set_graphics_defaults
 
     <span class="keyword">end</span>
-</pre><p>This is a helper function for the calculation of the integration-point stresses.</p><pre class="codeinput">    <span class="keyword">function</span> idat =inspector(idat, out, xyz, pc)
+</pre><p>This is a helper function for the calculation of the integration-point stresses.</p><pre class="codeinput">    <span class="keyword">function</span> idat =inspector(idat, out, xyz, u, pc)
         Rm= outputRm(xyz,[],[]);<span class="comment">% transformation matrix for the stress</span>
         tm = stress_4v_to_3x3t (mater,out);<span class="comment">% stress in global XYZ</span>
         tpm = Rm'*tm*Rm;<span class="comment">%  stress matrix in cylindrical coordinates</span>
@@ -624,7 +624,7 @@ function pub_thick_pipe_ps
     %%
     % This is a helper function for the calculation of the integration-point
     % stresses.
-    function idat =inspector(idat, out, xyz, pc)
+    function idat =inspector(idat, out, xyz, u, pc)
         Rm= outputRm(xyz,[],[]);% transformation matrix for the stress
         tm = stress_4v_to_3x3t (mater,out);% stress in global XYZ
         tpm = Rm'*tm*Rm;%  stress matrix in cylindrical coordinates

@@ -6,7 +6,7 @@
    <!--
 This HTML was auto-generated from MATLAB code.
 To make changes, update the MATLAB code and republish this document.
-      --><title>Vibration analysis of simply-supported thick  (solid) plate</title><meta name="generator" content="MATLAB 8.0"><link rel="schema.DC" href="http://purl.org/dc/elements/1.1/"><meta name="DC.date" content="2012-12-20"><meta name="DC.source" content="pub_FV52NAFEMS_vibration.m"><style type="text/css">
+      --><title>Vibration analysis of simply-supported thick  (solid) plate</title><meta name="generator" content="MATLAB 8.0"><link rel="schema.DC" href="http://purl.org/dc/elements/1.1/"><meta name="DC.date" content="2015-01-18"><meta name="DC.source" content="pub_FV52NAFEMS_vibration.m"><style type="text/css">
 html,body,div,span,applet,object,iframe,h1,h2,h3,h4,h5,h6,p,blockquote,pre,a,abbr,acronym,address,big,cite,code,del,dfn,em,font,img,ins,kbd,q,s,samp,small,strike,strong,sub,sup,tt,var,b,u,i,center,dl,dt,dd,ol,ul,li,fieldset,form,label,legend,table,caption,tbody,tfoot,thead,tr,th,td{margin:0;padding:0;border:0;outline:0;font-size:100%;vertical-align:baseline;background:transparent}body{line-height:1}ol,ul{list-style:none}blockquote,q{quotes:none}blockquote:before,blockquote:after,q:before,q:after{content:'';content:none}:focus{outine:0}ins{text-decoration:none}del{text-decoration:line-through}table{border-collapse:collapse;border-spacing:0}
 
 html { min-height:100%; margin-bottom:1px; }
@@ -105,41 +105,30 @@ table td { padding:7px 5px; text-align:left; vertical-align:top; border:1px soli
 </pre><pre class="codeoutput">
 ans =
 
-  Columns 1 through 2
+  Columns 1 through 6
 
-            0 - 5.5468e-05i            0 - 4.9940e-05i
+   4.6486e-05   7.0227e-05   8.7734e-05   2.7720e+02   6.6509e+02   6.6509e+02
 
-  Columns 3 through 4
+  Columns 7 through 10
 
-   1.0849e-05                 2.7953e+02              
-
-  Columns 5 through 6
-
-   6.8895e+02                 6.8895e+02              
-
-  Columns 7 through 8
-
-   1.0602e+03                 1.2193e+03              
-
-  Columns 9 through 10
-
-   1.3050e+03                 1.3050e+03              
+   9.9206e+02   1.1715e+03   1.1715e+03   1.2121e+03
 
 </pre><p>Furthermore, let us get rid of the rigid body modes (first three).</p><pre class="codeinput">model_data.Omega  = model_data.Omega(4:end);
     model_data.W  = model_data.W(:,4:end);
 </pre><p>The modal-plot algorithm can be called to produce the plot of the second and third natural  frequency mode.</p><pre class="codeinput">    model_data.postprocessing.u_scale= 2;
     model_data.postprocessing.modelist=3;
+    model_data.postprocessing.cmap=parula;
     model_data=deformation_plot_modes(model_data);
-</pre><pre class="codeoutput">Mode 3, frequency 109.6504
+</pre><pre class="codeoutput">Mode 3, frequency 105.8523
 </pre><img vspace="5" hspace="5" src="pub_FV52NAFEMS_vibration_01.png" alt=""> <h2>Discussion<a name="21"></a></h2><p>The fundamental frequency is extracted from the updated <tt>model_data</tt> data structure.</p><pre class="codeinput">    f=model_data.Omega'/2/pi;
     disp([<span class="string">'Natural frequencies '</span>  <span class="string">': '</span> num2str(f) <span class="string">' [Hz]'</span> ]);
-</pre><pre class="codeoutput">Natural frequencies : 44.48828      109.6504      109.6504      168.7437       194.064       207.691       207.691 [Hz]
+</pre><pre class="codeoutput">Natural frequencies : 44.11707      105.8523      105.8523      157.8908      186.4558      186.4558      192.9065 [Hz]
 </pre><p>These computed frequencies should be compared with the benchmark values of 45.897,   109.44,  109.44, 167.89,  193.59,  206.64,  206.64 [Hz]. In percent we have the comparison</p><pre class="codeinput">    format <span class="string">short</span>
     f./[45.897,   109.44,  109.44, 167.89,  193.59,  206.64,  206.64]*100
 </pre><pre class="codeoutput">
 ans =
 
-   96.9307  100.1923  100.1923  100.5085  100.2448  100.5086  100.5086
+   96.1219   96.7217   96.7217   94.0442   96.3148   90.2322   93.3539
 
 </pre><pre class="codeinput"><span class="keyword">end</span>
 </pre><p class="footer"><br><a href="http://www.mathworks.com/products/matlab/">Published with MATLAB&reg; R2012b</a><br></p></div><!--
@@ -269,6 +258,7 @@ model_data.Omega  = model_data.Omega(4:end);
     % second and third natural  frequency mode.
     model_data.postprocessing.u_scale= 2;
     model_data.postprocessing.modelist=3;
+    model_data.postprocessing.cmap=parula;
     model_data=deformation_plot_modes(model_data);
     
     %% Discussion

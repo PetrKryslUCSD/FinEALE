@@ -6,7 +6,7 @@
    <!--
 This HTML was auto-generated from MATLAB code.
 To make changes, update the MATLAB code and republish this document.
-      --><title>Axial wave in a bar; 1-D model</title><meta name="generator" content="MATLAB 8.0"><link rel="schema.DC" href="http://purl.org/dc/elements/1.1/"><meta name="DC.date" content="2012-12-22"><meta name="DC.source" content="pub_axial_wave_expl_1D.m"><style type="text/css">
+      --><title>Axial wave in a bar; 1-D model</title><meta name="generator" content="MATLAB 8.0"><link rel="schema.DC" href="http://purl.org/dc/elements/1.1/"><meta name="DC.date" content="2015-01-18"><meta name="DC.source" content="pub_axial_wave_expl_1D.m"><style type="text/css">
 html,body,div,span,applet,object,iframe,h1,h2,h3,h4,h5,h6,p,blockquote,pre,a,abbr,acronym,address,big,cite,code,del,dfn,em,font,img,ins,kbd,q,s,samp,small,strike,strong,sub,sup,tt,var,b,u,i,center,dl,dt,dd,ol,ul,li,fieldset,form,label,legend,table,caption,tbody,tfoot,thead,tr,th,td{margin:0;padding:0;border:0;outline:0;font-size:100%;vertical-align:baseline;background:transparent}body{line-height:1}ol,ul{list-style:none}blockquote,q{quotes:none}blockquote:before,blockquote:after,q:before,q:after{content:'';content:none}:focus{outine:0}ins{text-decoration:none}del{text-decoration:line-through}table{border-collapse:collapse;border-spacing:0}
 
 html { min-height:100%; margin-bottom:1px; }
@@ -108,7 +108,7 @@ ans =
 </pre><pre class="codeoutput">
 ans =
 
-    0.3914
+   3.9137e-01
 
 </pre><p>so that the first figure should show  the wave of zero velocity produced by the clamped end at the middle of the bar and the second figure will show the wave to have reached the free end of the bar and so on.</p><p>The  motion will be tracked for the length of time it will take the wave to travel from the clamped and to the free end, back to the clamped end and back to the free end again.  So three times the traversal time.</p><pre class="codeinput">    model_data.tend =  3*dtL;
 </pre><p>We will take the output interval to be one half of the traversal time</p><pre class="codeinput">    dtOutput=dtL/2;

@@ -1,13 +1,14 @@
-curve 1 line 0 0 75 0
-curve 2 line 75 0 75 40
-curve 3 line 75 40 50 40
-curve 4 line 50 40 50 17.5
-curve 45 arc 47.5 15 50 17.5 center 47.5 17.5 rev
-curve 5 line 47.5 15 0 15
-curve 6 line 0 15 0 0
-curve 7 line 50 40 0 40
-curve 8 line 0 40 0 15
-subregion 1  property 1 boundary  1  2 3 4 -45 5 6
-subregion 2  property 2 boundary  -5 -4 7 8 45
-m-ctl-point constant 2.5
-m-ctl-point 1 xy 50 15 near 0.25 influence  0.625
+curve 1 line 0 0 0.6 0
+
+curve 2 line 0.6 0 0.6 0.2
+
+curve 3 line 0.6 0.2 0.6 1
+
+curve 4 line 0.6 1 0 1
+
+curve 5 line 0 1 0 0
+
+subregion 1  property 1 boundary 1 2 3 4 5
+m-ctl-point constant 0.0625
+m-ctl-point 1 xy 0.6         0.2 near 0.00625 influence 0.0125
+m-ctl-point 1 xy 0.6           0 near 0.00625 influence 0.0125

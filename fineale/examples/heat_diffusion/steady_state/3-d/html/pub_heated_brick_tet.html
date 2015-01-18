@@ -6,7 +6,7 @@
    <!--
 This HTML was auto-generated from MATLAB code.
 To make changes, update the MATLAB code and republish this document.
-      --><title>Heated brick.  Solution with  quadratic tetrahedra.</title><meta name="generator" content="MATLAB 8.0"><link rel="schema.DC" href="http://purl.org/dc/elements/1.1/"><meta name="DC.date" content="2012-12-20"><meta name="DC.source" content="pub_heated_brick_tet.m"><style type="text/css">
+      --><title>Heated brick.  Solution with  quadratic tetrahedra.</title><meta name="generator" content="MATLAB 8.0"><link rel="schema.DC" href="http://purl.org/dc/elements/1.1/"><meta name="DC.date" content="2015-01-18"><meta name="DC.source" content="pub_heated_brick_tet.m"><style type="text/css">
 html,body,div,span,applet,object,iframe,h1,h2,h3,h4,h5,h6,p,blockquote,pre,a,abbr,acronym,address,big,cite,code,del,dfn,em,font,img,ins,kbd,q,s,samp,small,strike,strong,sub,sup,tt,var,b,u,i,center,dl,dt,dd,ol,ul,li,fieldset,form,label,legend,table,caption,tbody,tfoot,thead,tr,th,td{margin:0;padding:0;border:0;outline:0;font-size:100%;vertical-align:baseline;background:transparent}body{line-height:1}ol,ul{list-style:none}blockquote,q{quotes:none}blockquote:before,blockquote:after,q:before,q:after{content:'';content:none}:focus{outine:0}ins{text-decoration:none}del{text-decoration:line-through}table{border-collapse:collapse;border-spacing:0}
 
 html { min-height:100%; margin-bottom:1px; }
@@ -106,32 +106,32 @@ table td { padding:7px 5px; text-align:left; vertical-align:top; border:1px soli
     figure(<span class="string">'visible'</span>, <span class="string">'off'</span>)
     gv=graphic_viewer;
     gv=reset (gv,struct(<span class="string">'axes'</span>,gca));
-</pre><img vspace="5" hspace="5" src="pub_heated_brick_tet_01.png" alt=""> <p>Create the data colormap object for mapping temperatures to colors.</p><pre class="codeinput">    dcm=data_colormap(struct(<span class="string">'range'</span>,[min(temp.values),max(temp.values)],<span class="string">'colormap'</span>,hot));
+</pre><p>Create the data colormap object for mapping temperatures to colors.</p><pre class="codeinput">    dcm=data_colormap(struct(<span class="string">'range'</span>,[min(temp.values),max(temp.values)],<span class="string">'colormap'</span>,hot));
 </pre><p>Create the color field, with colors at nodes.  The colors will be interpolated using the finite element basis functions on the mesh.</p><pre class="codeinput">    colorfield=nodal_field(struct (<span class="string">'name'</span>, [<span class="string">'colorfield'</span>], <span class="string">'data'</span>,<span class="keyword">...</span>
         map_data(dcm, temp.values)));
 </pre><p>Plot the color field on the surface of the brick.</p><pre class="codeinput">    draw(mesh_boundary(femm.fes, []), gv, struct (<span class="string">'x'</span>,geom, <span class="string">'u'</span>,0*geom,<span class="keyword">...</span>
         <span class="string">'colorfield'</span>,colorfield, <span class="string">'shrink'</span>,1));
-</pre><img vspace="5" hspace="5" src="pub_heated_brick_tet_02.png" alt=""> <p>Add the color bar</p><pre class="codeinput">    draw_colorbar(gv, struct(<span class="string">'colormap'</span>,dcm.colormap,<span class="string">'label'</span>,<span class="string">'Temperature'</span>,<span class="keyword">...</span>
+</pre><p>Add the color bar</p><pre class="codeinput">    draw_colorbar(gv, struct(<span class="string">'colormap'</span>,dcm.colormap,<span class="string">'label'</span>,<span class="string">'Temperature'</span>,<span class="keyword">...</span>
         <span class="string">'minmax'</span>,[min(temp.values),max(temp.values)]));
-</pre><img vspace="5" hspace="5" src="pub_heated_brick_tet_03.png" alt=""> <pre>Add the labels to the axes...</pre><pre class="codeinput">    labels ([])
+</pre><pre>Add the labels to the axes...</pre><pre class="codeinput">    labels ([])
 </pre><p>...and make the figure visible and interact with the view.</p><pre class="codeinput">    interact(gv);
-</pre><img vspace="5" hspace="5" src="pub_heated_brick_tet_04.png" alt=""> <p>We are going to present the temperatures using isosurfaces.  These are surfaces of constant temperature, which are going to be color-coded using a map from temperatures to colors.</p><p>Create the graphics viewer and reset the view.</p><pre class="codeinput">    close <span class="string">all</span>
+</pre><img vspace="5" hspace="5" src="pub_heated_brick_tet_01.png" alt=""> <p>We are going to present the temperatures using isosurfaces.  These are surfaces of constant temperature, which are going to be color-coded using a map from temperatures to colors.</p><p>Create the graphics viewer and reset the view.</p><pre class="codeinput">    close <span class="string">all</span>
     figure(<span class="string">'visible'</span>, <span class="string">'off'</span>)
     gv=graphic_viewer;
     gv=reset (gv,struct(<span class="string">'axes'</span>,gca));
-</pre><img vspace="5" hspace="5" src="pub_heated_brick_tet_05.png" alt=""> <p>Create the data colormap object for mapping temperatures to colors.</p><pre class="codeinput">    dcm=data_colormap(struct(<span class="string">'range'</span>,[min(temp.values),max(temp.values)],<span class="string">'colormap'</span>,hot));
+</pre><p>Create the data colormap object for mapping temperatures to colors.</p><pre class="codeinput">    dcm=data_colormap(struct(<span class="string">'range'</span>,[min(temp.values),max(temp.values)],<span class="string">'colormap'</span>,hot));
 </pre><p>Plot the boundary surface of the brick in wireframe rendering for reference.</p><pre class="codeinput">    draw(mesh_boundary (femm.fes, []), gv, struct (<span class="string">'x'</span>,geom, <span class="string">'u'</span>,0*geom,<span class="keyword">...</span>
         <span class="string">'facecolor'</span>,<span class="string">'none'</span>));
     <span class="keyword">for</span> isovalue = [0.5:0.25:3.0]
         draw_isosurface(fes,  gv, struct (<span class="string">'x'</span>,geom, <span class="string">'u'</span>,0*geom,<span class="keyword">...</span>
             <span class="string">'scalarfield'</span>,temp,<span class="string">'isovalue'</span>,isovalue,<span class="string">'color'</span>,map_data(dcm, isovalue)));
     <span class="keyword">end</span>
-</pre><img vspace="5" hspace="5" src="pub_heated_brick_tet_06.png" alt=""> <p>Add the color bar</p><pre class="codeinput">    draw_colorbar(gv, struct(<span class="string">'colormap'</span>,dcm.colormap,<span class="string">'label'</span>,<span class="string">'Temperature'</span>,<span class="keyword">...</span>
+</pre><p>Add the color bar</p><pre class="codeinput">    draw_colorbar(gv, struct(<span class="string">'colormap'</span>,dcm.colormap,<span class="string">'label'</span>,<span class="string">'Temperature'</span>,<span class="keyword">...</span>
         <span class="string">'minmax'</span>,[min(temp.values),max(temp.values)]));
-</pre><img vspace="5" hspace="5" src="pub_heated_brick_tet_07.png" alt=""> <pre>Add the labels to the axes...</pre><pre class="codeinput">    labels ([])
+</pre><pre>Add the labels to the axes...</pre><pre class="codeinput">    labels ([])
 </pre><p>Add lighting to aid in the interpretation of the scene.</p><pre class="codeinput">    headlight(gv);
-</pre><img vspace="5" hspace="5" src="pub_heated_brick_tet_08.png" alt=""> <p>...and make the figure visible and interact with the view.</p><pre class="codeinput">    interact(gv);
-</pre><img vspace="5" hspace="5" src="pub_heated_brick_tet_09.png" alt=""> <p>Temperature at point P: Find the node at that point using a bounding box,...</p><pre class="codeinput">    Pid=fenode_select(fens,struct(<span class="string">'box'</span>,bounding_box(P),<span class="keyword">...</span>
+</pre><p>...and make the figure visible and interact with the view.</p><pre class="codeinput">    interact(gv);
+</pre><img vspace="5" hspace="5" src="pub_heated_brick_tet_02.png" alt=""> <p>Temperature at point P: Find the node at that point using a bounding box,...</p><pre class="codeinput">    Pid=fenode_select(fens,struct(<span class="string">'box'</span>,bounding_box(P),<span class="keyword">...</span>
         <span class="string">'inflate'</span>, 1/1000)) ;
 </pre><p>...  and retrieve the temperature:</p><pre class="codeinput">    temp.values(Pid)
 </pre><pre class="codeoutput">

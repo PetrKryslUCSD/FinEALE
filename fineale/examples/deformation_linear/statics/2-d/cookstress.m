@@ -8,10 +8,10 @@ t=timetic; tic(t);
     Mid_edge  = [48, 52];% Location of tracked  deflection
     magn=1/free_height;% Magnitude of applied load
     convutip=23.97;
-    n=round(sqrt(170)); % number of elements per side
+    n=32;20*round(sqrt(170)/2); % number of elements per side
     tolerance=min(width,height)/n/1000;%Geometrical tolerance
     smult=0;% multiplier of random shift of nodes to produce poorly shaped elements
-    graphics=true;
+    graphics=~true;
     scale=1;
     
     [fens,fes] = T3_block (width,height, n, n, thickness);
@@ -46,8 +46,9 @@ t=timetic; tic(t);
     essential.fixed_value= 0;
     essential.node_list = fenode_select (fens,struct('box',[0,0,-inf, inf],'inflate',tolerance));
     model_data.boundary_conditions.essential{1} = essential;
-    
+    tic
     boundary_fes =  mesh_boundary (fes, struct( 'other_dimension',  thickness ));
+    toc 
     Toplist  =fe_select(fens,boundary_fes,struct('box',  [width, width, -inf, inf ], 'inflate',  tolerance));
     clear traction
     traction.fes= subset(boundary_fes,Toplist);
@@ -57,17 +58,20 @@ t=timetic; tic(t);
     
     
     % Solve
+    model_data.renumber = false;
     model_data =deformation_linear_statics(model_data);
     nl=fenode_select (fens,struct ('box',[Mid_edge(1),Mid_edge(1),Mid_edge(2),Mid_edge(2)],'inflate',tolerance));
     theutip=gather_values(model_data.u,nl);
     disp (['displacement =' num2str(theutip(2)) ' as compared to converged ' num2str(convutip)])
     
-    model_data.postprocessing.u_scale= scale;
-    model_data.postprocessing.draw_mesh= ~false;
-    model_data.postprocessing.boundary_only= false;
-    model_data.postprocessing.cmap= parula;
-    model_data=deformation_plot_deformation(model_data)
-    view (2);;
+    if graphics
+        model_data.postprocessing.u_scale= scale;
+        model_data.postprocessing.draw_mesh= ~false;
+        model_data.postprocessing.boundary_only= false;
+        model_data.postprocessing.cmap= parula;
+        model_data=deformation_plot_deformation(model_data)
+        view (2);;
+    end
     
     count(fens)
     toc(t)

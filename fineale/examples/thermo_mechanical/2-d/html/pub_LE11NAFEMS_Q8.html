@@ -6,7 +6,7 @@
    <!--
 This HTML was auto-generated from MATLAB code.
 To make changes, update the MATLAB code and republish this document.
-      --><title>Solid cylinder/taper/sphere&#8212;-temperature loading</title><meta name="generator" content="MATLAB 8.0"><link rel="schema.DC" href="http://purl.org/dc/elements/1.1/"><meta name="DC.date" content="2012-12-20"><meta name="DC.source" content="pub_LE11NAFEMS_Q8.m"><style type="text/css">
+      --><title>Solid cylinder/taper/sphere&#8212;-temperature loading</title><meta name="generator" content="MATLAB 8.0"><link rel="schema.DC" href="http://purl.org/dc/elements/1.1/"><meta name="DC.date" content="2015-01-18"><meta name="DC.source" content="pub_LE11NAFEMS_Q8.m"><style type="text/css">
 html,body,div,span,applet,object,iframe,h1,h2,h3,h4,h5,h6,p,blockquote,pre,a,abbr,acronym,address,big,cite,code,del,dfn,em,font,img,ins,kbd,q,s,samp,small,strike,strong,sub,sup,tt,var,b,u,i,center,dl,dt,dd,ol,ul,li,fieldset,form,label,legend,table,caption,tbody,tfoot,thead,tr,th,td{margin:0;padding:0;border:0;outline:0;font-size:100%;vertical-align:baseline;background:transparent}body{line-height:1}ol,ul{list-style:none}blockquote,q{quotes:none}blockquote:before,blockquote:after,q:before,q:after{content:'';content:none}:focus{outine:0}ins{text-decoration:none}del{text-decoration:line-through}table{border-collapse:collapse;border-spacing:0}
 
 html { min-height:100%; margin-bottom:1px; }
@@ -138,13 +138,13 @@ Definition of the geometry of the part</td></tr> </table> </p><p>The part is con
     dcm=data_colormap(struct (<span class="string">'range'</span>,[nvalmin,nvalmax], <span class="string">'colormap'</span>,jet));
     colorfield=nodal_field(struct (<span class="string">'name'</span>, [<span class="string">'colorfield'</span>], <span class="string">'data'</span>,map_data(dcm, nvalsa)));
     draw(femma, gv, struct (<span class="string">'x'</span>,geom,<span class="string">'u'</span>, 100*u, <span class="string">'colorfield'</span>,colorfield, <span class="string">'shrink'</span>,1));
-</pre><img vspace="5" hspace="5" src="pub_LE11NAFEMS_Q8_02.png" alt=""> <p>The undeformed geometry is shown using an outline.</p><pre class="codeinput">    draw(mesh_boundary(femma.fes,struct(<span class="string">'axisymm'</span>, true,<span class="string">'other_dimension'</span>, 0.1)), gv, struct (<span class="string">'x'</span>,geom,<span class="string">'u'</span>, 0*u, <span class="string">'edgecolor'</span>,<span class="string">'r'</span>));
+</pre><p>The undeformed geometry is shown using an outline.</p><pre class="codeinput">    draw(mesh_boundary(femma.fes,struct(<span class="string">'axisymm'</span>, true,<span class="string">'other_dimension'</span>, 0.1)), gv, struct (<span class="string">'x'</span>,geom,<span class="string">'u'</span>, 0*u, <span class="string">'edgecolor'</span>,<span class="string">'r'</span>));
 
     draw_colorbar(gv,struct(<span class="string">'position'</span>,[0.72 0.33 0.05 0.5],<span class="keyword">...</span>
         <span class="string">'minmax'</span>,[nvalmin,nvalmax],<span class="string">'label'</span>,<span class="string">'\sigma_{y}'</span>));
     view (2)
     set(gcf,<span class="string">'visible'</span>, <span class="string">'on'</span>)
-</pre><img vspace="5" hspace="5" src="pub_LE11NAFEMS_Q8_03.png" alt=""> <p>The  computed stress at the node that is located at the point A  is going to be now extracted from the nodal field for the stress.</p><pre class="codeinput">    nA =fenode_select(fens,struct(<span class="string">'box'</span>,[0 1 0 0],<span class="string">'inflate'</span>, tolerance));
+</pre><img vspace="5" hspace="5" src="pub_LE11NAFEMS_Q8_02.png" alt=""> <p>The  computed stress at the node that is located at the point A  is going to be now extracted from the nodal field for the stress.</p><pre class="codeinput">    nA =fenode_select(fens,struct(<span class="string">'box'</span>,[0 1 0 0],<span class="string">'inflate'</span>, tolerance));
     disp([<span class="string">'Stress at point A: '</span> num2str(nvalsa(nA)) <span class="string">', i. e.  '</span> num2str(nvalsa(nA)*pu.MEGA*pu.PA/sigma_z_A_ref*100) <span class="string">' %'</span>])
 </pre><pre class="codeoutput">Stress at point A: -85.7927, i. e.  81.7073 %
 </pre><h2>Discussion<a name="30"></a></h2><p>The accuracy of the computed stress depends on the fineness  of the mesh and also on the number of quadrature points.</p><div><ol><li>The fineness of the mesh affects the general accuracy of the solution.</li><li>The number of quadrature points affects the extrapolation procedure from the quadrature points to the nodes to create the smooth stress field.</li></ol></div><pre class="codeinput"><span class="keyword">end</span>

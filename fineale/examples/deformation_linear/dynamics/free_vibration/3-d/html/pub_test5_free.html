@@ -6,61 +6,64 @@
    <!--
 This HTML was auto-generated from MATLAB code.
 To make changes, update the MATLAB code and republish this document.
-      --><title>Free harmonic vibration of a deep beam.</title><meta name="generator" content="MATLAB 7.13"><link rel="schema.DC" href="http://purl.org/dc/elements/1.1/"><meta name="DC.date" content="2012-12-25"><meta name="DC.source" content="pub_test5_free.m"><style type="text/css">
+      --><title>Free harmonic vibration of a deep beam.</title><meta name="generator" content="MATLAB 8.0"><link rel="schema.DC" href="http://purl.org/dc/elements/1.1/"><meta name="DC.date" content="2015-01-18"><meta name="DC.source" content="pub_test5_free.m"><style type="text/css">
+html,body,div,span,applet,object,iframe,h1,h2,h3,h4,h5,h6,p,blockquote,pre,a,abbr,acronym,address,big,cite,code,del,dfn,em,font,img,ins,kbd,q,s,samp,small,strike,strong,sub,sup,tt,var,b,u,i,center,dl,dt,dd,ol,ul,li,fieldset,form,label,legend,table,caption,tbody,tfoot,thead,tr,th,td{margin:0;padding:0;border:0;outline:0;font-size:100%;vertical-align:baseline;background:transparent}body{line-height:1}ol,ul{list-style:none}blockquote,q{quotes:none}blockquote:before,blockquote:after,q:before,q:after{content:'';content:none}:focus{outine:0}ins{text-decoration:none}del{text-decoration:line-through}table{border-collapse:collapse;border-spacing:0}
 
-body {
-  background-color: white;
-  margin:10px;
-}
+html { min-height:100%; margin-bottom:1px; }
+html body { height:100%; margin:0px; font-family:Arial, Helvetica, sans-serif; font-size:10px; color:#000; line-height:140%; background:#fff none; overflow-y:scroll; }
+html body td { vertical-align:top; text-align:left; }
 
-h1 {
-  color: #990000; 
-  font-size: x-large;
-}
+h1 { padding:0px; margin:0px 0px 25px; font-family:Arial, Helvetica, sans-serif; font-size:1.5em; color:#d55000; line-height:100%; font-weight:normal; }
+h2 { padding:0px; margin:0px 0px 8px; font-family:Arial, Helvetica, sans-serif; font-size:1.2em; color:#000; font-weight:bold; line-height:140%; border-bottom:1px solid #d6d4d4; display:block; }
+h3 { padding:0px; margin:0px 0px 5px; font-family:Arial, Helvetica, sans-serif; font-size:1.1em; color:#000; font-weight:bold; line-height:140%; }
 
-h2 {
-  color: #990000;
-  font-size: medium;
-}
+a { color:#005fce; text-decoration:none; }
+a:hover { color:#005fce; text-decoration:underline; }
+a:visited { color:#004aa0; text-decoration:none; }
 
-/* Make the text shrink to fit narrow windows, but not stretch too far in 
-wide windows. */ 
-p,h1,h2,div.content div {
-  max-width: 600px;
-  /* Hack for IE6 */
-  width: auto !important; width: 600px;
-}
+p { padding:0px; margin:0px 0px 20px; }
+img { padding:0px; margin:0px 0px 20px; border:none; }
+p img, pre img, tt img, li img { margin-bottom:0px; } 
 
-pre.codeinput {
-  background: #EEEEEE;
-  padding: 10px;
-}
-@media print {
-  pre.codeinput {word-wrap:break-word; width:100%;}
-} 
+ul { padding:0px; margin:0px 0px 20px 23px; list-style:square; }
+ul li { padding:0px; margin:0px 0px 7px 0px; }
+ul li ul { padding:5px 0px 0px; margin:0px 0px 7px 23px; }
+ul li ol li { list-style:decimal; }
+ol { padding:0px; margin:0px 0px 20px 0px; list-style:decimal; }
+ol li { padding:0px; margin:0px 0px 7px 23px; list-style-type:decimal; }
+ol li ol { padding:5px 0px 0px; margin:0px 0px 7px 0px; }
+ol li ol li { list-style-type:lower-alpha; }
+ol li ul { padding-top:7px; }
+ol li ul li { list-style:square; }
 
-span.keyword {color: #0000FF}
-span.comment {color: #228B22}
-span.string {color: #A020F0}
-span.untermstring {color: #B20000}
-span.syscmd {color: #B28C00}
+.content { font-size:1.2em; line-height:140%; padding: 20px; }
 
-pre.codeoutput {
-  color: #666666;
-  padding: 10px;
-}
+pre, tt, code { font-size:12px; }
+pre { margin:0px 0px 20px; }
+pre.error { color:red; }
+pre.codeinput { padding:10px; border:1px solid #d3d3d3; background:#f7f7f7; }
+pre.codeoutput { padding:10px 11px; margin:0px 0px 20px; color:#4c4c4c; }
 
-pre.error {
-  color: red;
-}
+@media print { pre.codeinput, pre.codeoutput { word-wrap:break-word; width:100%; } }
 
-p.footer {
-  text-align: right;
-  font-size: xx-small;
-  font-weight: lighter;
-  font-style: italic;
-  color: gray;
-}
+span.keyword { color:#0000FF }
+span.comment { color:#228B22 }
+span.string { color:#A020F0 }
+span.untermstring { color:#B20000 }
+span.syscmd { color:#B28C00 }
+
+.footer { width:auto; padding:10px 0px; margin:25px 0px 0px; border-top:1px dotted #878787; font-size:0.8em; line-height:140%; font-style:italic; color:#878787; text-align:left; float:none; }
+.footer p { margin:0px; }
+.footer a { color:#878787; }
+.footer a:hover { color:#878787; text-decoration:underline; }
+.footer a:visited { color:#878787; }
+
+table th { padding:7px 5px; text-align:left; vertical-align:middle; border: 1px solid #d6d4d4; font-weight:bold; }
+table td { padding:7px 5px; text-align:left; vertical-align:top; border:1px solid #d6d4d4; }
+
+
+
+
 
   </style></head><body><div class="content"><h1>Free harmonic vibration of a deep beam.</h1><!--introduction--><!--/introduction--><h2>Contents</h2><div><ul><li><a href="#2">Description</a></li><li><a href="#16">Solution</a></li><li><a href="#31">Discussion</a></li></ul></div><p>Link to the  <a href="matlab:edit('pub_test5_free')">m-file</a>.</p><h2>Description<a name="2"></a></h2><p>This is a test recommended by the National Agency for Finite Element Methods and Standards (U.K.): Test 5 from NAFEMS &#8220;Selected Benchmarks for Forced Vibration,&#8221; R0016, March 1993.</p><p>The beam is going to be modeled as a three-dimensional solid, with solid elements. The beam geometry is given as</p><p><img vspace="5" hspace="5" src="../docs/pub_test5_harmonic_1.jpg" alt=""> </p><p>The beam is assumed to be simply supported at the ends transversely (<img src="pub_test5_free_eq91376.png" alt="$u_y=u_z=0$">). The cross-section at <img src="pub_test5_free_eq02368.png" alt="$x=0$"> is also pinned in the axial direction and rotation about the axis of the beam is prevented. In the cross-section at <img src="pub_test5_free_eq76225.png" alt="$x=L$"> both the axial rotation and the axial displacement are allowed.</p><p>For the solid 3-D beam this seems impossible to achieve with just the mechanism of essential boundary conditions.   In this tutorial we will apply multi point constraints (MPCs) to construct the pinned conditions.</p><p>The transverse and axial-rotation constrains at <img src="pub_test5_free_eq02368.png" alt="$x=0$"> is implemented by attaching rollers in the direction of the axes perpendicular to the beam in both directions on the entire cross-sectional area.</p><p>The axial constraint at <img src="pub_test5_free_eq02368.png" alt="$x=0$"> is implemented with a multi-point constraint of the form</p><p><img src="pub_test5_free_eq58625.png" alt="$\sum_i u_{ix}=0$"></p><p>where <img src="pub_test5_free_eq28128.png" alt="$i$"> are the nodes on the cross-section at <img src="pub_test5_free_eq02368.png" alt="$x=0$">.</p><p>The transverse constraint at the pin at <img src="pub_test5_free_eq76225.png" alt="$x=L$"> is implemented with two multi-point constraints of the form</p><p><img src="pub_test5_free_eq41043.png" alt="$\sum_i u_{iy}=0$"></p><p>and</p><p><img src="pub_test5_free_eq37805.png" alt="$\sum_i u_{iz}=0$"></p><p>where <img src="pub_test5_free_eq28128.png" alt="$i$"> are the nodes on the cross-section at <img src="pub_test5_free_eq02368.png" alt="$x=0$">.</p><h2>Solution<a name="16"></a></h2><p>The code is placed inside a Matlab function in order to be able to define the simulation in a nested function.</p><pre class="codeinput"><span class="keyword">function</span> pub_test5_free
 </pre><p>Define the material properties.</p><pre class="codeinput">    pu=physical_units_struct;
@@ -170,83 +173,83 @@ p.footer {
         <span class="string">'integration_rule'</span>,gauss_rule(struct(<span class="string">'dim'</span>,3, <span class="string">'order'</span>,2))));
     simulate(description, mf, femmf, 1:8);
 </pre><pre class="codeoutput">H20R: 
-Natural frequency 1 = 42.5683 [Hz]
- f/f_analytical=99.7897% (flexural)
-Natural frequency 2 = 42.5683 [Hz]
- f/f_analytical=99.7897% (flexural)
-Natural frequency 3 = 71.4701 [Hz]
- f/f_analytical=100.2935% (torsional)
-Natural frequency 4 = 119.2502 [Hz]
- f/f_analytical=95.4001% (extensional)
-Natural frequency 5 = 147.4046 [Hz]
- f/f_analytical=99.1155% (flexural)
-Natural frequency 6 = 147.4046 [Hz]
- f/f_analytical=99.1155% (flexural)
-Natural frequency 7 = 214.395 [Hz]
- f/f_analytical=100.2361% (torsional)
-Natural frequency 8 = 281.2767 [Hz]
- f/f_analytical=97.7198% (flexural)
-Natural frequency 9 = 281.2767 [Hz]
- f/f_analytical=97.7198% (flexural)
+Natural frequency 1 = 42.3744 [Hz]
+ f/f_analytical=99.3352% (flexural)
+Natural frequency 2 = 42.3744 [Hz]
+ f/f_analytical=99.3352% (flexural)
+Natural frequency 3 = 62.6239 [Hz]
+ f/f_analytical=87.8796% (torsional)
+Natural frequency 4 = 119.0475 [Hz]
+ f/f_analytical=95.238% (extensional)
+Natural frequency 5 = 145.0327 [Hz]
+ f/f_analytical=97.5207% (flexural)
+Natural frequency 6 = 145.0327 [Hz]
+ f/f_analytical=97.5207% (flexural)
+Natural frequency 7 = 186.4044 [Hz]
+ f/f_analytical=87.1496% (torsional)
+Natural frequency 8 = 271.7576 [Hz]
+ f/f_analytical=94.4127% (flexural)
+Natural frequency 9 = 271.7576 [Hz]
+ f/f_analytical=94.4127% (flexural)
 ====================================================
-Natural frequency 1 = 42.5683 [Hz]
- f/f_analytical=99.7897% (flexural)
-Mode 1, frequency 42.5683
+Natural frequency 1 = 42.3744 [Hz]
+ f/f_analytical=99.3352% (flexural)
+Mode 1, frequency 42.3744
 </pre><img vspace="5" hspace="5" src="pub_test5_free_01.png" alt=""> <pre class="codeoutput">====================================================
-Natural frequency 2 = 42.5683 [Hz]
- f/f_analytical=99.7897% (flexural)
-Mode 2, frequency 42.5683
+Natural frequency 2 = 42.3744 [Hz]
+ f/f_analytical=99.3352% (flexural)
+Mode 2, frequency 42.3744
 </pre><img vspace="5" hspace="5" src="pub_test5_free_02.png" alt=""> <pre class="codeoutput">====================================================
-Natural frequency 3 = 71.4701 [Hz]
- f/f_analytical=100.2935% (torsional)
-Mode 3, frequency 71.4701
+Natural frequency 3 = 62.6239 [Hz]
+ f/f_analytical=87.8796% (torsional)
+Mode 3, frequency 62.6239
 </pre><img vspace="5" hspace="5" src="pub_test5_free_03.png" alt=""> <pre class="codeoutput">====================================================
-Natural frequency 4 = 119.2502 [Hz]
- f/f_analytical=95.4001% (extensional)
-Mode 4, frequency 119.2502
+Natural frequency 4 = 119.0475 [Hz]
+ f/f_analytical=95.238% (extensional)
+Mode 4, frequency 119.0475
 </pre><img vspace="5" hspace="5" src="pub_test5_free_04.png" alt=""> <pre class="codeoutput">====================================================
-Natural frequency 5 = 147.4046 [Hz]
- f/f_analytical=99.1155% (flexural)
-Mode 5, frequency 147.4046
+Natural frequency 5 = 145.0327 [Hz]
+ f/f_analytical=97.5207% (flexural)
+Mode 5, frequency 145.0327
 </pre><img vspace="5" hspace="5" src="pub_test5_free_05.png" alt=""> <pre class="codeoutput">====================================================
-Natural frequency 6 = 147.4046 [Hz]
- f/f_analytical=99.1155% (flexural)
-Mode 6, frequency 147.4046
+Natural frequency 6 = 145.0327 [Hz]
+ f/f_analytical=97.5207% (flexural)
+Mode 6, frequency 145.0327
 </pre><img vspace="5" hspace="5" src="pub_test5_free_06.png" alt=""> <pre class="codeoutput">====================================================
-Natural frequency 7 = 214.395 [Hz]
- f/f_analytical=100.2361% (torsional)
-Mode 7, frequency 214.395
+Natural frequency 7 = 186.4044 [Hz]
+ f/f_analytical=87.1496% (torsional)
+Mode 7, frequency 186.4044
 </pre><img vspace="5" hspace="5" src="pub_test5_free_07.png" alt=""> <pre class="codeoutput">====================================================
-Natural frequency 8 = 281.2767 [Hz]
- f/f_analytical=97.7198% (flexural)
-Mode 8, frequency 281.2767
+Natural frequency 8 = 271.7576 [Hz]
+ f/f_analytical=94.4127% (flexural)
+Mode 8, frequency 271.7576
 </pre><img vspace="5" hspace="5" src="pub_test5_free_08.png" alt=""> <p>For this material (compressible)  and this type of structure  (massive) the fully-integrated hexahedron would also work well.  We can therefore use the same element with Gauss rule one order higher. The consistent mass matrix will no longer be singular.</p><pre class="codeinput">    femmf =@(fes)femm_deformation_linear(struct(<span class="string">'fes'</span>,fes, <span class="keyword">...</span>
         <span class="string">'material'</span>,mater,<span class="keyword">...</span>
         <span class="string">'integration_rule'</span>,gauss_rule(struct(<span class="string">'dim'</span>,3, <span class="string">'order'</span>,3))));
     simulate(description, mf, femmf, 3);
 </pre><pre class="codeoutput">H20R: 
-Natural frequency 1 = 42.607 [Hz]
- f/f_analytical=99.8804% (flexural)
-Natural frequency 2 = 42.607 [Hz]
- f/f_analytical=99.8804% (flexural)
-Natural frequency 3 = 71.7167 [Hz]
- f/f_analytical=100.6394% (torsional)
-Natural frequency 4 = 120.7623 [Hz]
- f/f_analytical=96.6099% (extensional)
-Natural frequency 5 = 147.8394 [Hz]
- f/f_analytical=99.4079% (flexural)
-Natural frequency 6 = 147.8394 [Hz]
- f/f_analytical=99.4079% (flexural)
-Natural frequency 7 = 215.2345 [Hz]
- f/f_analytical=100.6286% (torsional)
-Natural frequency 8 = 282.8189 [Hz]
- f/f_analytical=98.2556% (flexural)
-Natural frequency 9 = 282.8189 [Hz]
- f/f_analytical=98.2556% (flexural)
+Natural frequency 1 = 42.4087 [Hz]
+ f/f_analytical=99.4156% (flexural)
+Natural frequency 2 = 42.4087 [Hz]
+ f/f_analytical=99.4156% (flexural)
+Natural frequency 3 = 62.6895 [Hz]
+ f/f_analytical=87.9717% (torsional)
+Natural frequency 4 = 120.5636 [Hz]
+ f/f_analytical=96.4509% (extensional)
+Natural frequency 5 = 145.4239 [Hz]
+ f/f_analytical=97.7837% (flexural)
+Natural frequency 6 = 145.4239 [Hz]
+ f/f_analytical=97.7837% (flexural)
+Natural frequency 7 = 186.8188 [Hz]
+ f/f_analytical=87.3434% (torsional)
+Natural frequency 8 = 273.2808 [Hz]
+ f/f_analytical=94.9419% (flexural)
+Natural frequency 9 = 273.2808 [Hz]
+ f/f_analytical=94.9419% (flexural)
 ====================================================
-Natural frequency 3 = 71.7167 [Hz]
- f/f_analytical=100.6394% (torsional)
-Mode 3, frequency 71.7167
+Natural frequency 3 = 62.6895 [Hz]
+ f/f_analytical=87.9717% (torsional)
+Mode 3, frequency 62.6895
 </pre><img vspace="5" hspace="5" src="pub_test5_free_09.png" alt=""> <p>It is also possible to  use different quadrature rules for stiffness and mass calculations.  The tutorial pub_test5_free_sep explains how to do this.</p><p>The quadratic tetrahedron, the workhorse of many linear stress analysis packages, produces good-quality results.</p><pre class="codeinput">    description =<span class="string">'T10'</span>;<span class="comment">% tetrahedron</span>
     mf =@T10_block;
     femmf =@(fes)femm_deformation_linear(struct(<span class="string">'fes'</span>,fes,<span class="keyword">...</span>
@@ -254,31 +257,30 @@ Mode 3, frequency 71.7167
         <span class="string">'integration_rule'</span>,tet_rule(struct(<span class="string">'npts'</span>,4))));
     simulate(description, mf, femmf, 3);
 </pre><pre class="codeoutput">T10: 
-Natural frequency 1 = 42.6894 [Hz]
- f/f_analytical=100.0737% (flexural)
-Natural frequency 2 = 42.6957 [Hz]
- f/f_analytical=100.0885% (flexural)
-Natural frequency 3 = 72.5197 [Hz]
- f/f_analytical=101.7663% (torsional)
-Natural frequency 4 = 123.6338 [Hz]
- f/f_analytical=98.907% (extensional)
-Natural frequency 5 = 148.8174 [Hz]
- f/f_analytical=100.0655% (flexural)
-Natural frequency 6 = 148.8808 [Hz]
- f/f_analytical=100.1081% (flexural)
-Natural frequency 7 = 218.4128 [Hz]
- f/f_analytical=102.1145% (torsional)
-Natural frequency 8 = 286.401 [Hz]
- f/f_analytical=99.5001% (flexural)
-Natural frequency 9 = 286.6502 [Hz]
- f/f_analytical=99.5866% (flexural)
+Natural frequency 1 = 42.5942 [Hz]
+ f/f_analytical=99.8504% (flexural)
+Natural frequency 2 = 42.6274 [Hz]
+ f/f_analytical=99.9284% (flexural)
+Natural frequency 3 = 68.2454 [Hz]
+ f/f_analytical=95.7683% (torsional)
+Natural frequency 4 = 123.5991 [Hz]
+ f/f_analytical=98.8793% (extensional)
+Natural frequency 5 = 147.7806 [Hz]
+ f/f_analytical=99.3684% (flexural)
+Natural frequency 6 = 148.029 [Hz]
+ f/f_analytical=99.5354% (flexural)
+Natural frequency 7 = 204.8199 [Hz]
+ f/f_analytical=95.7594% (torsional)
+Natural frequency 8 = 282.8086 [Hz]
+ f/f_analytical=98.252% (flexural)
+Natural frequency 9 = 283.3553 [Hz]
+ f/f_analytical=98.442% (flexural)
 ====================================================
-Natural frequency 3 = 72.5197 [Hz]
- f/f_analytical=101.7663% (torsional)
-Mode 3, frequency 72.5197
+Natural frequency 3 = 68.2454 [Hz]
+ f/f_analytical=95.7683% (torsional)
+Mode 3, frequency 68.2454
 </pre><img vspace="5" hspace="5" src="pub_test5_free_10.png" alt=""> <h2>Discussion<a name="31"></a></h2><p>To compare vibration results produced by different finite element models needs to be done  both numerically and visually.  Even  though the frequencies may seem close, the mode shapes may be incorrect.</p><pre class="codeinput"><span class="keyword">end</span>
-</pre><p class="footer"><br>
-      Published with MATLAB&reg; 7.13<br></p></div><!--
+</pre><p class="footer"><br><a href="http://www.mathworks.com/products/matlab/">Published with MATLAB&reg; R2012b</a><br></p></div><!--
 ##### SOURCE BEGIN #####
 %% Free harmonic vibration of a deep beam.
 %

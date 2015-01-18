@@ -88,6 +88,7 @@ scale=1000;
 cmap = jet;
 fld = field_from_integration_points(model_data.region{1}.femm, model_data.geom, model_data.u, [], 'Cauchy',2);
 corner=fenode_select (fens,struct('box',1000*[2.0 2.0 0 0],'inflate',1/10000));
+disp( ['Corner displacement=' num2str(gather_values (model_data.u, corner)) ' M'])
 disp( ['Corner stress sigma_y=' num2str(gather_values (fld, corner)/(pu.MEGA*pu.PA)) ' MPa'])
 disp( [' i.e. ' num2str(gather_values (fld, corner)/sigma_yD*100) '% of the Reference value'])
 nvals=fld.values;%min(nvals),max(nvals)
