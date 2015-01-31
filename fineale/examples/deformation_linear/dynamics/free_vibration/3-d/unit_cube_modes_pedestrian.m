@@ -75,31 +75,38 @@ function unit_cube_modes
         model_data.fens =fens;
         
         clear region
-        region.fes= fes;
-        region.femm= eltyd(eix).femmf(fes);
-        model_data.region{1} =region;
+        femm= eltyd(eix).femmf(fes);
         
-        model_data.neigvs= 20;
-        model_data.omega_shift=(2*pi*0.01) ^ 2;
-        model_data.use_factorization= ~true;
-        % Solve
+        neigvs= 20;
+        omega_shift=(2*pi*0.01) ^ 2;
+       
+        % Geometry
+        geom = nodal_field(struct ('name',['geom'], 'dim', 3, 'fens',fens));
+        % Define the displacement field
+        u   = 0*geom; % zero out
+        
+        u   = apply_ebc (u);
+        % Number equations
+        u   = numberdofs (u);
+        % Assemble the system matrix
+         % Solve
         tic;
-        model_data = deformation_linear_modal_analysis(model_data);
+       K = stiffness(femm, sysmat_assembler_sparse, geom, u);
         toc
-        
-        f=model_data.Omega'/2/pi;
+          M = mass(femm, sysmat_assembler_sparse, geom, u);
+        %
+neigvs = 20;
+[W,Omega]=eigs(K+omega_shift*M,M,neigvs,'SM');
+[Omegas,ix]=sort(diag(Omega)-omega_shift);
+Omega= sqrt(Omegas);
+
+      
+        f=Omega'/2/pi;
         disp ([eltyd(eix).description  ': '])
         disp(['Frequency ' num2str(abs(f)) ' [Hz]' ]);
         disp(['Frequency ' num2str((f)) ' [Hz]' ]);
         %         disp(['             f/f_analytical=' num2str(f./f_fundamental(7:10)*100) '%']);
         %         clf;
-        
-        model_data.postprocessing.u_scale= 2;
-        model_data.postprocessing.modelist= 1:13;
-        model_data.postprocessing.save_frame= make_frames;
-        model_data.postprocessing.frame_name= [eltyd(eix).description '-n1-' num2str(n1)];
-        model_data=deformation_plot_modes(model_data);
-        
         
     end
 end

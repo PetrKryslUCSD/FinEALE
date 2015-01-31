@@ -13,20 +13,20 @@ Edge_integration_rule =gauss_rule(struct('dim', 1,'order', 2));
 Convertf=[];
 Style ='ks-'; Label='Q4';
 
-integration_rule = gauss_rule(struct('dim', 2,'order', 3));
-Edge_integration_rule =gauss_rule(struct('dim', 1,'order', 3));
-Convertf=@Q4_to_Q16;
-Style ='ks-'; Label='Q16';
-
-integration_rule = gauss_rule(struct('dim', 2,'order', 2));
-Edge_integration_rule =gauss_rule(struct('dim', 1,'order', 3));
-Convertf=@Q4_to_Q8;
-Style ='ks-'; Label='Q8';
-
-integration_rule = simpson_1_3_rule(struct('dim',2));
-Edge_integration_rule =simpson_1_3_rule(struct('dim',1));
-Convertf=@Q4_to_Q8;
-Style ='ks-'; Label='Q8';
+% integration_rule = gauss_rule(struct('dim', 2,'order', 3));
+% Edge_integration_rule =gauss_rule(struct('dim', 1,'order', 3));
+% Convertf=@Q4_to_Q16;
+% Style ='ks-'; Label='Q16';
+%
+% integration_rule = gauss_rule(struct('dim', 2,'order', 2));
+% Edge_integration_rule =gauss_rule(struct('dim', 1,'order', 3));
+% Convertf=@Q4_to_Q8;
+% Style ='ks-'; Label='Q8';
+%
+% integration_rule = simpson_1_3_rule(struct('dim',2));
+% Edge_integration_rule =simpson_1_3_rule(struct('dim',1));
+% Convertf=@Q4_to_Q8;
+% Style ='ks-'; Label='Q8';
 
 % 
 % Mesh'

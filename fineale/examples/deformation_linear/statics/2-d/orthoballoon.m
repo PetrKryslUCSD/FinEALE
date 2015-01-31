@@ -73,7 +73,7 @@ fens.xyz=xy;
     
     model_data.postprocessing.u_scale= 1;
     model_data.postprocessing.stress_component=3;
-    model_data.postprocessing.stress_range = 3*[-p,+p];
+    %model_data.postprocessing.stress_range = 3*[-p,+p];
     mmodel_data=deformation_plot_stress(model_data);
     view (2);;
     

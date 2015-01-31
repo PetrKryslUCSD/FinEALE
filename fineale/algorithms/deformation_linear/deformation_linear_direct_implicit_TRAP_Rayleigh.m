@@ -286,7 +286,7 @@ if (isfield(model_data.boundary_conditions, 'traction' ))
             'fes',traction.fes,...
             'integration_rule',traction.integration_rule));
         % If the traction boundary condition is to be time-dependent, the
-        % values must be supplied by a function.   Find out…
+        % values must be supplied by a function.   Find out...
         traction.time_dependent =(isa(traction.traction,'function_handle'));
         model_data.boundary_conditions.traction{j}=traction;
     end
