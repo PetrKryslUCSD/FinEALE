@@ -27,6 +27,14 @@ $RECYCLE.BIN/
 
 # Icon must end with two \r
 Icon
+# VTK
+.vtk
+
+# backup files
+.bak
+
+# log files
+.log
 
 # Thumbnails
 ._*
