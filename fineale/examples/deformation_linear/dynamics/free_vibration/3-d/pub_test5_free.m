@@ -143,7 +143,7 @@ function pub_test5_free
         mpc.umultipliers=ones(size(mpc.node_list));
         mpc.penfact=1e16;
         model_data.mpc{1} = mpc;
-        % At $x=L$ the transverse in support will be also implemented using
+        % At $x=L$ the transverse pin support will be also implemented using
         % MPC.
         clear mpc
         mpc.node_list = [fenode_select(fens, ...
