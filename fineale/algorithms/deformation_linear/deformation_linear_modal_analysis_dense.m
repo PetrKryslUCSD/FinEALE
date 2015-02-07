@@ -268,7 +268,7 @@ function model_data = deformation_linear_modal_analysis_dense(model_data)
             end
             % Now called the utility function to calculate the constraint
             % matrix
-            [Kmpc,Fmpc]=apply_penalty_mpc(u.nfreedofs,dofnums,mpc.umultipliers,0.0,mpc.penfact);;
+            [Kmpc,Fmpc]=apply_penalty_mpc(u.nfreedofs,dofnums,mpc.umultipliers,mpc.penfact);;
             K =K+Kmpc;
         end
     end

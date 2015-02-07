@@ -1,15 +1,20 @@
-function [K,F]=apply_penalty_mpc(nfreedofs,dofnums,umultipliers,rhsvalue,penfact)
+function [K,F]=apply_penalty_mpc(nfreedofs,dofnums,dofmultipliers,penfact)
 % Apply multi point constraints (MPC) through the penalty technique.
 %
-% function [K,F]=apply_penalty_mpc(nfreedofs,dofnums,umultipliers,rhsvalue,penfact)
+% function [K,F]=apply_penalty_mpc(nfreedofs,dofnums,dofmultipliers,rhsvalue,penfact)
 %
+% Output:
 % K= stiffness matrix
 % F= global load vector 
-% uebc = field which describes the constraints,
-% u= field which does not have the constraints applied, and serves as the source of equation numbers,
-% penfact= penalty multiplier
+%
+% Input:
+% nfreedofs= number of free degrees of freedom,
+% dofnums= array of degree of freedom numbers,
+% dofmultipliers= degree of freedom multipliers,
+% penfact= penalty factor
+
     sv=zeros(nfreedofs,1);
-    sv(dofnums)=reshape(umultipliers,length(dofnums),[]);
+    sv(dofnums)=reshape(dofmultipliers,length(dofnums),[]);
     K=penfact*sv*sv';
     F=penfact*sv;
 end

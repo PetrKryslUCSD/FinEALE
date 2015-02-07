@@ -311,7 +311,7 @@ function model_data = deformation_linear_statics(model_data)
                 dofnums(kx)=u.dofnums(mpc.node_list(kx),mpc.dof_list(kx));
             end
             % Now call the utility function to calculate the constraint matrix
-            [Kmpc,Fmpc]=apply_penalty_mpc(u.nfreedofs,dofnums,mpc.umultipliers,0.0,mpc.penfact);
+            [Kmpc,Fmpc]=apply_penalty_mpc(u.nfreedofs,dofnums,mpc.umultipliers,mpc.penfact);
             K = K + Kmpc;
             F = F + Fmpc;
         end
