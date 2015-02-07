@@ -217,7 +217,7 @@ function  pub_LE11NAFEMS_H20
     % We create the temperature field using the formula $T=r+z$.
     x=fens.xyz;
     dT = nodal_field(struct ('name',['dT'], 'dim', 1, ...
-        'data',sqrt(x(:,1).^2+x(:,3).^2)+x(:,2)));
+        'data',sqrt(x(:,1).^2+x(:,2).^2)+x(:,3)));
     
     %%
     % And we are ready to assemble the system matrix. Both the elastic stiffness of the hexahedral... elements key…
