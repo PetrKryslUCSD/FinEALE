@@ -4,7 +4,7 @@ function box = update_box(box,x)
 % function box = update_box(box,x)
 % 
 % box = either empty ([]), in which case a box is created using the
-% supplied location, or an existing box which has expanded to include the
+% supplied location, or an existing box which is expanded to include the
 % supplied location x.   The variable x  can hold multiple points in rows..
 % 
 % box = bounding box
