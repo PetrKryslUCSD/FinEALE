@@ -28,7 +28,7 @@ eltyd(eix).convertf =[];
 eltyd(eix).blf =@(fes)femm_deformation_nonlinear_h8msgso(struct ('material',mater, 'fes',fes, ...
     'integration_rule',gauss_rule(struct('dim',3,'order',2))));
 eltyd(eix).surface_integration_rule=gauss_rule(struct('dim',2,'order',2));
-eltyd(eix).ne= 8:-2:2;
+eltyd(eix).ne=16:-2:2;
 %               eltyd(eix).ne= 1;
 eix=eix+1;
 
@@ -83,7 +83,7 @@ for eix = 1:length(eltyd)
         %             for n=[2,4,8,16,24,32,64,128]
         %         for n=[4]
         options =struct('other_dimension', 1.0);
-        [fens,fes] = eltyd(eix).mf(48,44,40*1.0, n, aspect*n, 1);
+        [fens,fes] = eltyd(eix).mf(48,44,16/n, n, aspect*n, 1);
         dxy=min(48,44)/n/aspect/100;
         sxy=smult*dxy;
         rand('state',[0.3085,0.4953,0.0143,0.3137,0.7750,0.8827,0.6275,0.5996,0.3557,0.8033,0.4425,0.3749,0.3086,0.6245,0.0244,0.0309,0.1962,0.2670,0.8672,0.8259,0.3590,0.6446,0.3018,0.6694,0.5783,0.3251,0.0024,0.9082,0.4464,0.0331,0.9344,0.0261,0,0.0000,0.0000]');

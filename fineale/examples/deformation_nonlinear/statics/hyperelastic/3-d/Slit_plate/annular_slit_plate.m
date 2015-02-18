@@ -81,9 +81,9 @@ if (graphics),
     Cam= [ -4.065710717565406  -5.450150052184264   4.830127018922192   0.500000000000000   0.500000000000000   0.500000000000000                   0   0   1.000000000000000  90.095728615633746];
 end
 
-lambdas = []; uAs = []; uBs = [];
+lambdas = []; uAs = []; uBs = []; niters=[];
 femm  =update(femm,geom,u,u);
-   incr=1;
+incr=1;
 while (incr <= nincr)
     t = incr* tup / nincr;
     disp(['Increment ' num2str(incr) ]); % pause
@@ -125,16 +125,16 @@ while (incr <= nincr)
         end
         u1 = u1 + eta*du;   % increment displacement
         disp(['   It. ' num2str(iter) ': ||du||=' num2str(ndu) ' (eta=' num2str(eta) ')']);
-        if (ndu < utol) break; end;  % convergence check  
+        if (ndu < utol) break; end;  % convergence check
         prevndu =ndu;
         iter=iter+1;
     end
     femm  =update(femm,geom,u1,u);
-   disp(['    Converged for t=' num2str(t)]); % pause
+    disp(['    Converged for t=' num2str(t)]); % pause
     u = u1;                                               % update the displacement
     if graphics
         gv=reset(clear(gv,[]),[]);
-       draw(sfemm,gv, struct ('x', geom, 'u', 0*u,'facecolor','none', 'shrink',1.0));
+        draw(sfemm,gv, struct ('x', geom, 'u', 0*u,'facecolor','none', 'shrink',1.0));
         draw(sfemm,gv, struct ('x', geom, 'u', u,'facecolor','y', 'shrink',1.0));
         camset (gv,Cam);
         interact(gv);
@@ -144,7 +144,8 @@ while (incr <= nincr)
     uA=mean(gather_values(u,Al));
     uB=mean(gather_values(u,Bl));;
     lambdas = [lambdas,t]; uAs = [uAs,uA]; uBs = [uBs,uB];
+    niters=[niters,iter];
     incr = incr + 1;
 end
-save('res','lambdas','uAs','uBs');
+save('res','lambdas','uAs','uBs','niters');
 end
