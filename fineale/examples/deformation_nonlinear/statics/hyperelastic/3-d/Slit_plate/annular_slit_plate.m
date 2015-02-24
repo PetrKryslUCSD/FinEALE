@@ -16,10 +16,10 @@ nc=40;nT=3;nW=8;
 nc=20;nT=2;nW=8;
 nc=20;nT=2;nW=3;
 
-nincr = 100;
+nincr = 10;
 graphics = ~false;
 scale=1;
-utol = Thickness/1e9;
+utol = Thickness/1e6;
 
 prop = property_deformation_neohookean (struct('E',E,'nu',nu));
 mater = material_deformation_neohookean_triax(struct('property',prop));
@@ -71,7 +71,7 @@ u   = numberdofs (u);
 % Now comes the nonlinear solution
 tup = 1;
 u = u*0; % zero out the displacement
-utol =         utol*u.nfreedofs;
+% utol =         utol*u.nfreedofs;
 us={};
 
 if (graphics),
@@ -147,5 +147,5 @@ while (incr <= nincr)
     niters=[niters,iter];
     incr = incr + 1;
 end
-save('res','lambdas','uAs','uBs','niters');
+save('res8','lambdas','uAs','uBs','niters');
 end
