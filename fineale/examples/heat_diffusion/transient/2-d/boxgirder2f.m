@@ -68,14 +68,15 @@ Kmc = conductivity(feb_concrete, sysmat_assembler_sparse, geom, tempn);
 
 if online_graphics
     gv=graphic_viewer;
-    gv=reset (gv,struct('limits',[-4.85, 4.85, 0, 2.2, 0, 2.5],'peek',true));
+    gv=reset (gv,struct('limits',[-4.85, 4.85, 0, 2.2, 0, 2.5]));%,'peek',true));
     dcm=data_colormap(struct('range',[20, 70],'colormap',jet));
+    frame=1;
 end
 minmaxT = []; ts = [];
 t= 0; 
 while t<tend+0.1*dt % Time stepping
     if online_graphics
-        gv=reset (gv,struct('limits',[-4.85, 4.85, 0, 2.2, 0, 3.5],'peek',~true));
+        gv=reset (gv,struct('limits',[-4.85, 4.85, 0, 2.2, 0, 3.5]));%,'peek',~true));
         set(gca,'FontSize', 14)
         T=tempn.values;
         colorfield=nodal_field(struct('name',['colorfield'],'data',...
@@ -90,10 +91,13 @@ while t<tend+0.1*dt % Time stepping
         xlabel('X [m]');        ylabel('Y [m]');
         zl=zlabel('Temperature [{}^0{C}]');
         set(zl,'Rotation',0);
-        figure(gcf);
         hour =mod (round(t/3600), 24);
         day =floor(t/3600/24)+1;
-        title (['Day ' num2str(day) ', ' num2str(hour) ' hours']); hold off; pause(1);
+        title (['Day ' num2str(day) ', ' num2str(hour) ' hours']); hold off;
+        set(gcf,'renderer','zbuffer');pause(1)
+        gif_animation_add_frame(gcf,frame,'Moviefilename.gif',340) 
+        frame = frame+1;
+        
         %         saveas(gcf, ['shrinkfit-' num2str(t) '.png'], 'png');
     end
     tempn1 = tempn;
@@ -129,7 +133,7 @@ while t<tend+0.1*dt % Time stepping
 end
 if online_graphics
     interact(gv)
-    figure
+    figure(gcf)
 end
 plot(ts/3600,minmaxT(:, 1),settings.hot,'linewidth', 2); hold on
 plot(ts/3600,minmaxT(:, 2),settings.cold,'linewidth', 2)
