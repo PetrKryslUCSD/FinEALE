@@ -15,6 +15,6 @@ function [K,F]=apply_penalty_mpc(nfreedofs,dofnums,dofmultipliers,penfact)
 
     sv=zeros(nfreedofs,1);
     sv(dofnums)=reshape(dofmultipliers,length(dofnums),[]);
-    K=penfact*sv*sv';
+    K=penfact*(sv*sv');
     F=penfact*sv;
 end

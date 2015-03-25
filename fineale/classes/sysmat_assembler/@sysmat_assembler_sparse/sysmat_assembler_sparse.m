@@ -52,17 +52,25 @@ classdef sysmat_assembler_sparse < sysmat_assembler_base
         % Assembly of a rectangular matrix.
         % The method assembles a rectangular matrix using the two vectors of 
         % equation numbers for the rows and columns.
-            emask_row=dofnums_row>self.inv_dofum;
-            emask_col=dofnums_col>self.inv_dofum;
-            conns_row=dofnums_row(emask_row);
-            conns_col=dofnums_col(emask_col);
-            rmat=mat(emask_row,emask_col);
-            nrows=length(conns_row); ncolumns=length(conns_col);
+        %             emask_row=dofnums_row>self.inv_dofum;
+        %             emask_col=dofnums_col>self.inv_dofum;
+        %             conns_row=dofnums_row(emask_row);
+        %             conns_col=dofnums_col(emask_col);
+        %             rmat=mat(emask_row,emask_col);
+            nrows=length(dofnums_row); ncolumns=length(dofnums_col);
             ntotal =nrows*ncolumns;
             buffer_range=self.buffer_pointer:self.buffer_pointer+ntotal-1;
-            self.matbuffer(buffer_range) = reshape (rmat,1,ntotal); % serialized matrix
-            self.rowbuffer(buffer_range) = reshape (repmat(conns_row,1,ncolumns),1,ntotal);
-            self.colbuffer(buffer_range) = reshape (repmat(conns_col',nrows,1),1,ntotal);
+            self.matbuffer(buffer_range) = mat(:); % serialized matrix
+            buffer_range=self.buffer_pointer:self.buffer_pointer+nrows-1;
+            for   k=1:ncolumns
+                self.rowbuffer(buffer_range) = dofnums_row(:);
+                buffer_range=buffer_range+nrows;
+            end
+            buffer_range=self.buffer_pointer:self.buffer_pointer+ncolumns-1;
+            for   k=1:nrows
+                self.colbuffer(buffer_range) = dofnums_col(k);
+                buffer_range=buffer_range+ncolumns;
+            end
             self.buffer_pointer=self.buffer_pointer+ntotal;
         end
         
@@ -70,31 +78,30 @@ classdef sysmat_assembler_sparse < sysmat_assembler_base
         % Assembly of a square symmetric matrix.
         % The method assembles a square symmetric matrix using the vector of 
         % equation numbers for the rows and columns.
-            emask_row=dofnums >self.inv_dofnum;
-            conns_row=dofnums(emask_row);
-            rmat=mat(emask_row,emask_row);
-            nrows=length(conns_row); ncolumns=nrows;
-            ntotal =nrows*nrows;
-            tempinds = conns_row(:, ones(ncolumns, 1));
+        nrows=length(dofnums); ncolumns=nrows;
+            ntotal =nrows*ncolumns;
             buffer_range=self.buffer_pointer:self.buffer_pointer+ntotal-1;
-            self.matbuffer(buffer_range) = reshape (rmat,1,ntotal);%rmat; %
-            self.rowbuffer(buffer_range) = reshape(tempinds', [], 1);
-            self.colbuffer(buffer_range) = reshape(tempinds, [], 1);
+            self.matbuffer(buffer_range) = mat; % serialized matrix
+            self.rowbuffer(buffer_range) = reshape (repmat(dofnums,1,ncolumns),1,ntotal);
+            self.colbuffer(buffer_range) = reshape (repmat(dofnums',nrows,1),1,ntotal);
             self.buffer_pointer=self.buffer_pointer+ntotal;
         end
         
         function S= make_matrix (self)
-        % Make a sparse matrix.
-        % The method makes a sparse matrix from the assembly buffers.
+            % Make a sparse matrix.
+            % The method makes a sparse matrix from the assembly buffers.
+            self.rowbuffer(self.rowbuffer(:)<1)=self.ndofs_row+1;
+            self.colbuffer(self.colbuffer(:)<1)=self.ndofs_col+1;
             S = sparse(self.rowbuffer(1:self.buffer_pointer-1), ...
                 self.colbuffer(1:self.buffer_pointer-1), self.matbuffer(1:self.buffer_pointer-1), ...
-                self.ndofs_row, self.ndofs_col);
+                self.ndofs_row+1, self.ndofs_col+1);
+            S = S(1:end-1,1:end-1);% remove the extraneous rows and columns
             self.buffer_pointer=[];
             self.matbuffer=[];
             self.rowbuffer=[];
             self.colbuffer=[];
             self.buffer_pointer=[];
-            self.ndofs_row= []; self.ndofs_col=  [];    
+            self.ndofs_row= []; self.ndofs_col=  [];
         end
         
     end

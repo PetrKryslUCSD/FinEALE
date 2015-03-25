@@ -177,13 +177,34 @@ classdef nodal_field
         %   and conn=[1 3]
         %       gather_dofnums(f,conn) yields [ 1 2 3; 0 0 6 ]
         %
-            if (isempty(conn))
-                nfens = size(self.values, 1);
-                conn = (1:nfens);
-            end
+        if (isempty(conn))% return all
+            val = self.dofnums;
+        else
             val = self.dofnums(conn,:);
         end
+        end
         
+        function val = gather_dofnums_vec (self, conn)
+        % Gather the field degree of freedom numbers as a vector.
+        %
+        % function val = gather_dofnums_vec (self, conn)
+        %
+        % Gather the field degree of freedom numbers corresponding to the finite element node
+        % indices. Note: only the free degrees of freedom are given nonzero 
+        % numbers; the fixed degrees of freedom are given the number zero (0).
+        %
+        %       conn  - node numbers for which to gather stuff; if supplied as
+        %                 empty, all nodes are assumed to be implied; and
+        %
+        %       The data is returned in the form of a column vector.
+        %
+        %   For instance, if
+        %       f.dofnums=[ 1 2 3; 4 0 5; 0 0 6 ]
+        %   and conn=[1 3]
+        %       gather_dofnums_vec(f,conn) yields [ 1 2 3 0 0 6 ]'
+        %
+        val = reshape( self.dofnums(conn,:).',[],1);
+        end
         
         function val = gather_fixed_values (self, conn)
               % Gather the field fixed degree of freedom values.
