@@ -1,3 +1,5 @@
+- The stress output is inconsistent for 2-D surface elements embedded in 3-D.
+
 % –  Evaluate stresses for selective reduced integration by passing
 %  context to the update method that will request the appropriate 
 % constrained/unconstrained moduli.

@@ -1,3 +1,10 @@
+% 03/25/2015
+% - Sparse system matrix assembly reconfigured to use the trick with an additional unknown.
+% The assembly is speeded up by about 30%.
+% - Nodal field: added a method for extracting the degree of freedom numbers in vector form
+% in one shot instead of using two methods.  Faster.
+% - drawmesh(): Create rotation field for use by beam elements.
+
 % 01/01/2015
 % - mirror_mesh(): was  not using Point -- corrected.
 

@@ -1,0 +1,1 @@
+clean_sweep({'.dat','.msg','.sim','.sta','.prt','.odb','.com','.log','.inp','.odb_f'})
