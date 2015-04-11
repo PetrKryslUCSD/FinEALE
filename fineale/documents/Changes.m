@@ -1,3 +1,7 @@
+% 04/11/2015
+% - Abaqus export added from the research files.
+% - Added example with  2-D surface embedded in 3-D.
+
 % 03/25/2015
 % - Sparse system matrix assembly reconfigured to use the trick with an additional unknown.
 % The assembly is speeded up by about 30%.
