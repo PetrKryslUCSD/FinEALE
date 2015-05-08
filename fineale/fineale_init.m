@@ -14,8 +14,9 @@
 %
 function fineale_init(options)
     sep = filesep;
-    addpath(['.' sep 'util']);
-    homePath = fineale_path;
+    % set the homepath to the directory containing thei file
+    homePath = fileparts(which(mfilename()));
+    addpath(fullfile (homePath, 'util'));
     
     if ( ~exist('options','var')) || (isempty(options ))
         options.useCXSparse= true;
@@ -23,18 +24,18 @@ function fineale_init(options)
     
     % Set paths
     addpath(homePath,...
-        [homePath sep 'classes'],...
-        [homePath sep 'meshing'], ...
-        [homePath sep 'algorithms'],...
-        [homePath sep 'examples'],...
-        [homePath sep 'documents'],...
-        [homePath sep 'tutorials'],...
-        [homePath sep 'util']);
-    add_subdirs_to_path ([homePath sep 'classes'], sep);
-    add_subdirs_to_path ([homePath sep 'meshing'], sep);
-    add_subdirs_to_path ([homePath sep 'util'], sep);
-    add_subdirs_to_path ([homePath sep 'algorithms'], sep);
-    add_subdirs_to_path ([homePath sep 'examples'], sep);
+        fullfile (homePath, 'classes'),...
+        fullfile (homePath, 'meshing'), ...
+        fullfile (homePath, 'algorithms'),...
+        fullfile (homePath, 'examples'),...
+        fullfile (homePath, 'documents'),...
+        fullfile (homePath, 'tutorials'),...
+        fullfile (homePath, 'util'));
+    add_subdirs_to_path (fullfile (homePath, 'classes'), sep);
+    add_subdirs_to_path (fullfile (homePath, 'meshing'), sep);
+    add_subdirs_to_path (fullfile (homePath, 'util'), sep);
+    add_subdirs_to_path (fullfile (homePath, 'algorithms'), sep);
+    add_subdirs_to_path (fullfile (homePath, 'examples'), sep);
     if strcmp(version('-release'),'13')
         warning off MATLAB:m_warning_end_without_block
     end
@@ -56,9 +57,9 @@ function fineale_init(options)
         end
     end
     if (~Have_CXSparse) && exist('options','var') && isfield( options,'useCXSparse') && ( options.useCXSparse )
-    	if (exist([homePath sep '..' sep 'CXSparse']))
-    	    addpath([homePath sep '..' sep 'CXSparse/MATLAB/CSparse'],....
-    	    	    [homePath sep '..' sep 'CXSparse/MATLAB/UFget']);
+    	if (exist(fullfile(homePath, '..', 'CXSparse'), 'dir'))
+    	    addpath(fullfile(homePath, '..', 'CXSparse', 'MATLAB', 'CSparse'),....
+    	    	    fullfile(homePath, '..', 'CXSparse', 'MATLAB', 'UFget'));
     	end
     end
     
@@ -68,22 +69,24 @@ function fineale_init(options)
     
     return;
 
-    function add_subdirs_to_path(d, sep)
-        dl=dir(d);
-        for i=1:length(dl)
-            if (dl(i).isdir)
-                if      (~strcmp(dl(i).name,'.')) & ...
-                        (~strcmp(dl(i).name,'..')) & ...
-                        (~strcmp(dl(i).name,'CVS')) & ...
-                        (~strcmp(dl(i).name,'cvs')) & ...
-                        (~strcmp(dl(i).name,'private')) & ...
-                        (~strcmp(dl(i).name(1),'@'))
-                    addpath([d sep dl(i).name])
-                    add_subdirs_to_path([d sep dl(i).name], sep);
-                end
+end
+
+
+function add_subdirs_to_path(d,sep)
+    dl=dir(d);
+    for i=1:length(dl)
+        if (dl(i).isdir)
+            if      (~strcmp(dl(i).name,'.')) && ...
+                    (~strcmp(dl(i).name,'..')) && ...
+                    (~strcmp(dl(i).name,'CVS')) && ...
+                    (~strcmp(dl(i).name,'cvs')) && ...
+                    (~strcmp(dl(i).name,'private')) && ...
+                    (~strcmp(dl(i).name(1),'@'))
+                addpath(fullfile(d,dl(i).name))
+                add_subdirs_to_path(fullfile(d,dl(i).name), sep);
             end
         end
-        return;
     end
+    return;
 end
  
