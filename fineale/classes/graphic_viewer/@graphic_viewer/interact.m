@@ -40,11 +40,15 @@ function retobj = interact (self,context)
     if exist('context') && (~isempty(context)) && isfield(context,'snap_points')
         self.snap_points= context.snap_points;
     end
+    viewing_action_callback=[];
+    if exist('context') && (~isempty(context)) && isfield(context,'viewing_action_callback')
+        viewing_action_callback= context.viewing_action_callback;
+    end
     drawnow;
     F= find_parent_figure(self.axes);
     set(F,'visible','on'); % we definitely want that figure visible since we want to interact with it
     set(F,'CurrentAxes',self.axes);
-    mymanip3d(self.axes,self.snap_points);
+    mymanip3d(self.axes,self.snap_points,viewing_action_callback);
     retobj=self;
 end
 
@@ -58,14 +62,14 @@ end
 % -- Introduced setting of camera target
 % -- Introduced Variable rotation rate (vdata.Rotation_rate)
 % --------------------------------------------------------------------
-function mymanip3d(ax,snap_points)
+function mymanip3d(ax,snap_points,viewing_action_callback)
     fig= find_parent_figure(ax);
-    viewact(fig,ax,'rot',snap_points);
+    viewact(fig,ax,'rot',snap_points,viewing_action_callback);
     return;
     
     
     % ---------------------------------------------- activation ----------
-    function viewact(fig,ax,what,snap_points)
+    function viewact(fig,ax,what,snap_points,viewing_action_callback)
         % de-/activates mymanip3d for the given figure
         mymanip3dObj = findobj(allchild(fig),'Tag','mymanip3dObj');
         if strcmp(what,'off')
@@ -78,12 +82,16 @@ function mymanip3d(ax,snap_points)
             delete(mymanip3dObj);
         else
             if isempty(mymanip3dObj)
-                mymanip3dObj = makemymanip3dObj(fig,ax,snap_points);
+                mymanip3dObj = makemymanip3dObj(fig,ax,snap_points,viewing_action_callback);
             end
             vdata = get(mymanip3dObj,'UserData');
             vdata.what = what;
             vdata.Rotation_rate=0.1;
-            Set_pointer(vdata.what);
+            if isempty(vdata.viewing_action_callback)
+                Set_pointer(vdata.what);
+            else
+                vdata.viewing_action_callback(vdata.what);
+            end
             vdata.snap_points=snap_points;
             set(mymanip3dObj,'UserData',vdata);
         end
@@ -122,12 +130,16 @@ function mymanip3d(ax,snap_points)
                 vdata.Rotation_rate= vdata.Rotation_rate/2;
                 vdata.Rotation_rate= max([vdata.Rotation_rate,1e-4]);
             end
-            Set_pointer(vdata.what);
+            if isempty(vdata.viewing_action_callback)
+                Set_pointer(vdata.what);
+            else
+                vdata.viewing_action_callback(vdata.what);
+            end
             set(mymanip3dObj,'UserData',vdata)
         end
     
     % ---------------------------------------------- make mymanip3dObj ------
-    function mymanip3dObj = makemymanip3dObj(fig,ax,snap_points)
+    function mymanip3dObj = makemymanip3dObj(fig,ax,snap_points,viewing_action_callback)
         % ---------------------------------------------- mymanip3dDownFcn -------
         function mymanip3dDownFcn
             mymanip3dObj  = findobj(allchild(gcf),'Tag','mymanip3dObj');
@@ -196,7 +208,11 @@ function mymanip3d(ax,snap_points)
                 vdata.what='rot';
                 set(vdata.textbox,'string','Target selected');
                 set(gcf,'WindowButtonMotionFcn',[]);
-                Set_pointer(vdata.what);
+                if isempty(vdata.viewing_action_callback)
+                    Set_pointer(vdata.what);
+                else
+                    vdata.viewing_action_callback(vdata.what);
+                end
             else
                 if strcmp(mouseclick,'normal')
                     set(vdata.textbox,'string','Zoom');
@@ -247,7 +263,11 @@ function mymanip3d(ax,snap_points)
                 vdata.Rotation_rate= vdata.Rotation_rate/2;
                 vdata.Rotation_rate= max([vdata.Rotation_rate,1e-4]);
             end
-            Set_pointer(vdata.what);
+            if isempty(vdata.viewing_action_callback)
+                Set_pointer(vdata.what);
+            else
+                vdata.viewing_action_callback(vdata.what);
+            end
             set(mymanip3dObj,'UserData',vdata)
         end
         
@@ -338,6 +358,7 @@ function mymanip3d(ax,snap_points)
         vdata.textbox  = [];
         vdata.oldunits = [];
         vdata.snap_points=snap_points;
+        vdata.viewing_action_callback=viewing_action_callback;
         vdata.oldkeypressfcn = get(fig,'KeyPressFcn');
         % mymanip3dObj
         axposition=get(ax, 'position' );
