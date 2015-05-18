@@ -235,11 +235,11 @@ function model_data = deformation_linear_statics(model_data)
             else
                 prop=property_deformation_linear_iso(struct('E',region.E,'nu',region.nu));
             end
-            if (u.dim==1) || strcmp(region.reduction, 'uniaxial')
+            if (u.dim==1) || (isfield(region,'reduction') && strcmp(region.reduction, 'uniaxial'))
                 mater = material_deformation_linear_uniax (struct('property',prop ));
-            elseif (u.dim==2) || strcmp(region.reduction, 'strain')...
+            elseif (u.dim==2) || (isfield(region,'reduction') && (strcmp(region.reduction, 'strain')...
                     || strcmp(region.reduction, 'stress')...
-                    || strcmp(region.reduction, 'axisymm')
+                    || strcmp(region.reduction, 'axisymm')))
                 mater = material_deformation_linear_biax (struct('property',prop, ...
                     'reduction',region.reduction));
             else
