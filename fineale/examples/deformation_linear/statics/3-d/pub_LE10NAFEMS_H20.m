@@ -88,7 +88,7 @@ nt=round(nt*2)/2;
     
     %%
     % Now we are going to convert the mesh to the element type we desire.  Here
-    % we are going to use the 64-node hexahedron.
+    % we are going to use the 20-node hexahedron.
     [fens,fes] = H8_to_H20(fens,fes);
     
     %%
@@ -174,13 +174,26 @@ nt=round(nt*2)/2;
     
     Pn=fenode_select (fens,struct('box',[Ai,Ai,0,0,t,t],'inflate',tol));
     
-    model_data.u_scale=1000;
-     model_data.stress_component=2;
+    %%
+    % We are going to plot the stress using a nodal stress field.  It is
+    % extracted from the quadrature points.  In this case we are going to
+    % use the super convergent patch recovery (SPR),  which is an effective
+    % technique for transferring stresses from the quadrature points to the
+    % nodes.
+    model_data.postprocessing.u_scale=1000;
+     model_data.postprocessing.stress_component=2;
+     sigma2P=[];
     function observer(i, stressf,model_data)
-        disp( ['Stress at P=' num2str( gather_values( stressf,Pn)/(pu.MEGA*pu.PA)) ' MPa']);
+    %Collect the stress value at the node Pn
+        sigma2P = gather_values( stressf,Pn);
     end
-    model_data.observer =@ observer;
-    model_data.use_spr= true;
+    model_data.postprocessing.observer =@ observer;
+    model_data.postprocessing.use_spr= true;
     model_data=deformation_plot_stress(model_data);
-
+    
+%%
+    % The computed stress should be compared with -5.38 MPa as the reference value.
+    disp( ['Stress at P=' num2str(sigma2P/(pu.MEGA*pu.PA)) ' MPa']);
+    disp( ['i. e.  ' num2str(sigma2P/(pu.MEGA*pu.PA)/(-5.38)*100,5) '% of reference value']);
+    
 end

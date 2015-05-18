@@ -6,7 +6,7 @@
    <!--
 This HTML was auto-generated from MATLAB code.
 To make changes, update the MATLAB code and republish this document.
-      --><title>Transverse deflection of elliptical plate with elliptical hole; serendipity bricks</title><meta name="generator" content="MATLAB 8.0"><link rel="schema.DC" href="http://purl.org/dc/elements/1.1/"><meta name="DC.date" content="2015-01-18"><meta name="DC.source" content="pub_LE10NAFEMS_H20.m"><style type="text/css">
+      --><title>Transverse deflection of elliptical plate with elliptical hole; serendipity bricks</title><meta name="generator" content="MATLAB 8.4"><link rel="schema.DC" href="http://purl.org/dc/elements/1.1/"><meta name="DC.date" content="2015-05-18"><meta name="DC.source" content="pub_LE10NAFEMS_H20.m"><style type="text/css">
 html,body,div,span,applet,object,iframe,h1,h2,h3,h4,h5,h6,p,blockquote,pre,a,abbr,acronym,address,big,cite,code,del,dfn,em,font,img,ins,kbd,q,s,samp,small,strike,strong,sub,sup,tt,var,b,u,i,center,dl,dt,dd,ol,ul,li,fieldset,form,label,legend,table,caption,tbody,tfoot,thead,tr,th,td{margin:0;padding:0;border:0;outline:0;font-size:100%;vertical-align:baseline;background:transparent}body{line-height:1}ol,ul{list-style:none}blockquote,q{quotes:none}blockquote:before,blockquote:after,q:before,q:after{content:'';content:none}:focus{outine:0}ins{text-decoration:none}del{text-decoration:line-through}table{border-collapse:collapse;border-spacing:0}
 
 html { min-height:100%; margin-bottom:1px; }
@@ -23,7 +23,7 @@ a:visited { color:#004aa0; text-decoration:none; }
 
 p { padding:0px; margin:0px 0px 20px; }
 img { padding:0px; margin:0px 0px 20px; border:none; }
-p img, pre img, tt img, li img { margin-bottom:0px; } 
+p img, pre img, tt img, li img, h1 img, h2 img { margin-bottom:0px; } 
 
 ul { padding:0px; margin:0px 0px 20px 23px; list-style:square; }
 ul li { padding:0px; margin:0px 0px 7px 0px; }
@@ -38,11 +38,12 @@ ol li ul li { list-style:square; }
 
 .content { font-size:1.2em; line-height:140%; padding: 20px; }
 
-pre, tt, code { font-size:12px; }
+pre, code { font-size:12px; }
+tt { font-size: 1.2em; }
 pre { margin:0px 0px 20px; }
-pre.error { color:red; }
 pre.codeinput { padding:10px; border:1px solid #d3d3d3; background:#f7f7f7; }
 pre.codeoutput { padding:10px 11px; margin:0px 0px 20px; color:#4c4c4c; }
+pre.error { color:red; }
 
 @media print { pre.codeinput, pre.codeoutput { word-wrap:break-word; width:100%; } }
 
@@ -71,7 +72,7 @@ table td { padding:7px 5px; text-align:left; vertical-align:top; border:1px soli
 </td></tr>
 <tr><td>Figure 1. Definition of the geometry of the thick elliptical plate</td></tr>
 </table>
-</p><p>The <img src="pub_LE10NAFEMS_H20_eq47260.png" alt="$\sigma_y=\sigma_2$"> at the point <img src="pub_LE10NAFEMS_H20_eq86892.png" alt="$P$"> is to be determined. Since the target point is on the boundary of the domain it will not be an integration node as we use Gauss quadrature. The reference value is -5.38 MPa.</p><h2>Solution<a name="6"></a></h2><pre class="codeinput"><span class="keyword">function</span> pub_LE10NAFEMS
+</p><p>The <img src="pub_LE10NAFEMS_H20_eq17140447023640178547.png" alt="$\sigma_y=\sigma_2$"> at the point <img src="pub_LE10NAFEMS_H20_eq02661806082982697695.png" alt="$P$"> is to be determined. Since the target point is on the boundary of the domain it will not be an integration node as we use Gauss quadrature. The reference value is -5.38 MPa.</p><h2>Solution<a name="6"></a></h2><pre class="codeinput"><span class="keyword">function</span> pub_LE10NAFEMS
 </pre><pre class="codeinput">    pu=physical_units_struct;
 </pre><p>Define the material properties.</p><pre class="codeinput">    E = 210e3*pu.MEGA*pu.PA;
     nu = 0.3;
@@ -90,7 +91,7 @@ table td { padding:7px 5px; text-align:left; vertical-align:top; border:1px soli
 </pre><p>The rectangle is next extruded in the Z direction by the thickness. Note that the extrusion function simply adds the third dimension  to the coordinates of the nodes which are at this point in the Cartesian coordinates XY.</p><p>Check that the number of elements through the thickness is an even number, the application of the boundary conditions relies on it.</p><pre class="codeinput">nt=round(nt*2)/2;
 </pre><p>Extrude the quadrilaterals into hexahedra.</p><pre class="codeinput">    [fens,fes] = H8_extrude_Q4(fens,fes,nt,@(x,i)([x,0]+[0,0,t*i/nt]));
 </pre><p>The mesh looks like this at this point:</p><pre class="codeinput">    drawmesh({fens,fes},<span class="string">'fes'</span>,<span class="string">'facecolor'</span>,<span class="string">'r'</span>,<span class="string">'shrink'</span>, 0.9);
-</pre><img vspace="5" hspace="5" src="pub_LE10NAFEMS_H20_01.png" alt=""> <p>Now we are going to convert the mesh to the element type we desire.  Here we are going to use the 64-node hexahedron.</p><pre class="codeinput">    [fens,fes] = H8_to_H20(fens,fes);
+</pre><img vspace="5" hspace="5" src="pub_LE10NAFEMS_H20_01.png" alt=""> <p>Now we are going to convert the mesh to the element type we desire.  Here we are going to use the 20-node hexahedron.</p><pre class="codeinput">    [fens,fes] = H8_to_H20(fens,fes);
 </pre><p>At this point we will extract the boundary mesh.</p><pre class="codeinput">    bdry_fes = mesh_boundary(fes, struct(<span class="string">'other_dimension'</span>, 1.0));
 </pre><p>We will also select those finite elements  are on the  external elliptical boundary and those that are on the upper face of the plate. It is particularly easy because the mesh geometry is still a box.</p><pre class="codeinput">    exteriorbfl = fe_select(fens, bdry_fes, struct(<span class="string">'box'</span>, [1,1,0,pi/2,0,t],<span class="string">'inflate'</span>,tol));
     topbfl = fe_select(fens, bdry_fes, struct(<span class="string">'box'</span>, [0,1,0,pi/2,t,t],<span class="string">'inflate'</span>,tol));
@@ -150,17 +151,22 @@ table td { padding:7px 5px; text-align:left; vertical-align:top; border:1px soli
     model_data =deformation_linear_statics(model_data);
 
     Pn=fenode_select (fens,struct(<span class="string">'box'</span>,[Ai,Ai,0,0,t,t],<span class="string">'inflate'</span>,tol));
-
-    model_data.u_scale=1000;
-     model_data.stress_component=2;
+</pre><p>We are going to plot the stress using a nodal stress field.  It is extracted from the quadrature points.  In this case we are going to use the super convergent patch recovery (SPR),  which is an effective technique for transferring stresses from the quadrature points to the nodes.</p><pre class="codeinput">    model_data.postprocessing.u_scale=1000;
+     model_data.postprocessing.stress_component=2;
+     sigma2P=[];
     <span class="keyword">function</span> observer(i, stressf,model_data)
-        disp( [<span class="string">'Stress at P='</span> num2str( gather_values( stressf,Pn)/(pu.MEGA*pu.PA)) <span class="string">' MPa'</span>]);
+    <span class="comment">%Collect the stress value at the node Pn</span>
+        sigma2P = gather_values( stressf,Pn);
     <span class="keyword">end</span>
-    model_data.observer =@ observer;
-    model_data.use_spr= true;
+    model_data.postprocessing.observer =@ observer;
+    model_data.postprocessing.use_spr= true;
     model_data=deformation_plot_stress(model_data);
-</pre><img vspace="5" hspace="5" src="pub_LE10NAFEMS_H20_04.png" alt=""> <pre class="codeinput"><span class="keyword">end</span>
-</pre><p class="footer"><br><a href="http://www.mathworks.com/products/matlab/">Published with MATLAB&reg; R2012b</a><br></p></div><!--
+</pre><img vspace="5" hspace="5" src="pub_LE10NAFEMS_H20_04.png" alt=""> <p>The computed stress should be compared with -5.38 MPa as the reference value.</p><pre class="codeinput">    disp( [<span class="string">'Stress at P='</span> num2str(sigma2P/(pu.MEGA*pu.PA)) <span class="string">' MPa'</span>]);
+    disp( [<span class="string">'i. e.  '</span> num2str(sigma2P/(pu.MEGA*pu.PA)/(-5.38)*100,5) <span class="string">'% of reference value'</span>]);
+</pre><pre class="codeoutput">Stress at P=-4.1347 MPa
+i. e.  76.853% of reference value
+</pre><pre class="codeinput"><span class="keyword">end</span>
+</pre><p class="footer"><br><a href="http://www.mathworks.com/products/matlab/">Published with MATLAB&reg; R2014b</a><br></p></div><!--
 ##### SOURCE BEGIN #####
 %% Transverse deflection of elliptical plate with elliptical hole; serendipity bricks
 %
@@ -252,7 +258,7 @@ nt=round(nt*2)/2;
     
     %%
     % Now we are going to convert the mesh to the element type we desire.  Here
-    % we are going to use the 64-node hexahedron.
+    % we are going to use the 20-node hexahedron.
     [fens,fes] = H8_to_H20(fens,fes);
     
     %%
@@ -338,15 +344,28 @@ nt=round(nt*2)/2;
     
     Pn=fenode_select (fens,struct('box',[Ai,Ai,0,0,t,t],'inflate',tol));
     
-    model_data.u_scale=1000;
-     model_data.stress_component=2;
+    %%
+    % We are going to plot the stress using a nodal stress field.  It is
+    % extracted from the quadrature points.  In this case we are going to
+    % use the super convergent patch recovery (SPR),  which is an effective
+    % technique for transferring stresses from the quadrature points to the
+    % nodes.
+    model_data.postprocessing.u_scale=1000;
+     model_data.postprocessing.stress_component=2;
+     sigma2P=[];
     function observer(i, stressf,model_data)
-        disp( ['Stress at P=' num2str( gather_values( stressf,Pn)/(pu.MEGA*pu.PA)) ' MPa']);
+    %Collect the stress value at the node Pn
+        sigma2P = gather_values( stressf,Pn);
     end
-    model_data.observer =@ observer;
-    model_data.use_spr= true;
+    model_data.postprocessing.observer =@ observer;
+    model_data.postprocessing.use_spr= true;
     model_data=deformation_plot_stress(model_data);
-
+    
+%%
+    % The computed stress should be compared with -5.38 MPa as the reference value.
+    disp( ['Stress at P=' num2str(sigma2P/(pu.MEGA*pu.PA)) ' MPa']);
+    disp( ['i. e.  ' num2str(sigma2P/(pu.MEGA*pu.PA)/(-5.38)*100,5) '% of reference value']);
+    
 end
 ##### SOURCE END #####
 --></body></html>

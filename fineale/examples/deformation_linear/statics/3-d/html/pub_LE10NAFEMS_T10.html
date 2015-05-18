@@ -6,7 +6,7 @@
    <!--
 This HTML was auto-generated from MATLAB code.
 To make changes, update the MATLAB code and republish this document.
-      --><title>Elliptical plate with elliptical hole; T10 tetrahedra</title><meta name="generator" content="MATLAB 8.0"><link rel="schema.DC" href="http://purl.org/dc/elements/1.1/"><meta name="DC.date" content="2015-01-18"><meta name="DC.source" content="pub_LE10NAFEMS_T10.m"><style type="text/css">
+      --><title>Elliptical plate with elliptical hole; T10 tetrahedra</title><meta name="generator" content="MATLAB 8.4"><link rel="schema.DC" href="http://purl.org/dc/elements/1.1/"><meta name="DC.date" content="2015-05-18"><meta name="DC.source" content="pub_LE10NAFEMS_T10.m"><style type="text/css">
 html,body,div,span,applet,object,iframe,h1,h2,h3,h4,h5,h6,p,blockquote,pre,a,abbr,acronym,address,big,cite,code,del,dfn,em,font,img,ins,kbd,q,s,samp,small,strike,strong,sub,sup,tt,var,b,u,i,center,dl,dt,dd,ol,ul,li,fieldset,form,label,legend,table,caption,tbody,tfoot,thead,tr,th,td{margin:0;padding:0;border:0;outline:0;font-size:100%;vertical-align:baseline;background:transparent}body{line-height:1}ol,ul{list-style:none}blockquote,q{quotes:none}blockquote:before,blockquote:after,q:before,q:after{content:'';content:none}:focus{outine:0}ins{text-decoration:none}del{text-decoration:line-through}table{border-collapse:collapse;border-spacing:0}
 
 html { min-height:100%; margin-bottom:1px; }
@@ -23,7 +23,7 @@ a:visited { color:#004aa0; text-decoration:none; }
 
 p { padding:0px; margin:0px 0px 20px; }
 img { padding:0px; margin:0px 0px 20px; border:none; }
-p img, pre img, tt img, li img { margin-bottom:0px; } 
+p img, pre img, tt img, li img, h1 img, h2 img { margin-bottom:0px; } 
 
 ul { padding:0px; margin:0px 0px 20px 23px; list-style:square; }
 ul li { padding:0px; margin:0px 0px 7px 0px; }
@@ -38,11 +38,12 @@ ol li ul li { list-style:square; }
 
 .content { font-size:1.2em; line-height:140%; padding: 20px; }
 
-pre, tt, code { font-size:12px; }
+pre, code { font-size:12px; }
+tt { font-size: 1.2em; }
 pre { margin:0px 0px 20px; }
-pre.error { color:red; }
 pre.codeinput { padding:10px; border:1px solid #d3d3d3; background:#f7f7f7; }
 pre.codeoutput { padding:10px 11px; margin:0px 0px 20px; color:#4c4c4c; }
+pre.error { color:red; }
 
 @media print { pre.codeinput, pre.codeoutput { word-wrap:break-word; width:100%; } }
 
@@ -67,7 +68,7 @@ table td { padding:7px 5px; text-align:left; vertical-align:top; border:1px soli
 
   </style></head><body><div class="content"><h1>Elliptical plate with elliptical hole; T10 tetrahedra</h1><!--introduction--><!--/introduction--><h2>Contents</h2><div><ul><li><a href="#2">Description</a></li><li><a href="#6">Solution</a></li></ul></div><p>Link to the  <a href="matlab:edit('pub_LE10NAFEMS_T10')">m-file</a>.</p><h2>Description<a name="2"></a></h2><p>Thick elliptical plate with an elliptical hole is supported on its exterior boundary and is loaded at the top with transverse  pressure. This is a NAFEMS Benchmark, Test No. LE10.</p><p>In this tutorial, the plate is discretized with tetrahedral T10 solid elements. Because of the symmetries of the geometry and load, only quarter of the plate is modeled.</p><p> <table border=0><tr><td> <img src="../docs/pub_LE10NAFEMS.jpg"
 width="50%"> </td></tr> <tr><td>Figure 1. Definition of the geometry of
-the thick elliptical plate</td></tr> </table> </p><p>The <img src="pub_LE10NAFEMS_T10_eq47260.png" alt="$\sigma_y=\sigma_2$"> at the point <img src="pub_LE10NAFEMS_T10_eq86892.png" alt="$P$"> is to be determined. The reference value is -5.38 MPa.</p><h2>Solution<a name="6"></a></h2><pre class="codeinput"><span class="keyword">function</span> pub_LE10NAFEMS_T10
+the thick elliptical plate</td></tr> </table> </p><p>The <img src="pub_LE10NAFEMS_T10_eq17140447023640178547.png" alt="$\sigma_y=\sigma_2$"> at the point <img src="pub_LE10NAFEMS_T10_eq02661806082982697695.png" alt="$P$"> is to be determined. The reference value is -5.38 MPa.</p><h2>Solution<a name="6"></a></h2><pre class="codeinput"><span class="keyword">function</span> pub_LE10NAFEMS_T10
 </pre><pre class="codeinput">    pu=physical_units_struct;
 </pre><p>Define the material properties.</p><pre class="codeinput">    E = 210e3*pu.MEGA*pu.PA;
     nu = 0.3;
@@ -137,31 +138,31 @@ the thick elliptical plate</td></tr> </table> </p><p>The <img src="pub_LE10NAFEM
 </pre><p>Now we have our displacement results. The stress is to be calculated in the location of this node:</p><pre class="codeinput">    Pn=fenode_select (fens,struct(<span class="string">'box'</span>,[Ai,Ai,0,0,t,t],<span class="string">'inflate'</span>,tol));
 </pre><p>The transverse deflection at the point P is:</p><pre class="codeinput">    disp(num2str(somel(gather_values( model_data.u,Pn),3)))
 </pre><pre class="codeoutput">-9.9191e-05
-</pre><p>The <img src="pub_LE10NAFEMS_T10_eq32673.png" alt="$\sigma_2$"> stress at point P is going to be stored in this variable:</p><pre class="codeinput">    sigma2P = [];
-</pre><p>We are going to plot the stress using a nodal stress field.  It is extracted from the quadrature points.  The inverse-distance interpolation of the quadrature point data is used.</p><pre class="codeinput">    model_data.u_scale=1000;
-    model_data.stress_component=2;
-    model_data.colormap=cadcolors2;
+</pre><p>The <img src="pub_LE10NAFEMS_T10_eq18054342961793865731.png" alt="$\sigma_2$"> stress at point P is going to be stored in this variable:</p><pre class="codeinput">    sigma2P = [];
+</pre><p>We are going to plot the stress using a nodal stress field.  It is extracted from the quadrature points.  The inverse-distance interpolation of the quadrature point data is used.</p><pre class="codeinput">    model_data.postprocessing.u_scale=1000;
+    model_data.postprocessing.stress_component=2;
+    model_data.postprocessing.colormap=cadcolors2;
     <span class="keyword">function</span> observer(i, stressf,model_data)
         sigma2P = gather_values( stressf,Pn);
     <span class="keyword">end</span>
-    model_data.observer =@ observer;
+    model_data.postprocessing.observer =@ observer;
     model_data=deformation_plot_stress(model_data);
 </pre><img vspace="5" hspace="5" src="pub_LE10NAFEMS_T10_01.png" alt=""> <p>The computed stress should be compared with -5.38 MPa as the reference value.</p><pre class="codeinput">    disp( [<span class="string">'Stress at P='</span> num2str(sigma2P/(pu.MEGA*pu.PA)) <span class="string">' MPa'</span>]);
-    disp( [<span class="string">'i. e.  '</span> num2str(sigma2P/(pu.MEGA*pu.PA)/5.38*100,5) <span class="string">'% of reference value'</span>]);
-</pre><pre class="codeoutput">Stress at P= MPa
-i. e.  % of reference value
-</pre><p>The 10-node tetrahedron mesh does not deliver good accuracy of the stress distribution at the surface with the default inverse-distance interpolation of the stress.  The stress at the location of point P peaks at the surface.  The inverse-distance interpolation cannot take this into account.</p><p>A much more successful  stress post-processing strategy is to use the Super-convergent Patch Recovery (SPR).</p><p>Note that we are setting the flag <tt>use_spr</tt>.</p><pre class="codeinput">    model_data.u_scale=1000;
-    model_data.stress_component=2;
-    model_data.colormap=cadcolors2;
-    model_data.observer =@ observer;
-    model_data.use_spr= true;
+    disp( [<span class="string">'i. e.  '</span> num2str(sigma2P/(pu.MEGA*pu.PA)/(-5.38)*100,5) <span class="string">'% of reference value'</span>]);
+</pre><pre class="codeoutput">Stress at P=-2.5944 MPa
+i. e.  48.223% of reference value
+</pre><p>The 10-node tetrahedron mesh does not deliver good accuracy of the stress distribution at the surface with the default inverse-distance interpolation of the stress.  The stress at the location of point P peaks at the surface.  The inverse-distance interpolation cannot take this into account.</p><p>A much more successful  stress post-processing strategy is to use the Super-convergent Patch Recovery (SPR).</p><p>Note that we are setting the flag <tt>use_spr</tt>.</p><pre class="codeinput">    model_data.postprocessing.u_scale=1000;
+    model_data.postprocessing.stress_component=2;
+    model_data.postprocessing.colormap=cadcolors2;
+    model_data.postprocessing.observer =@ observer;
+    model_data.postprocessing.use_spr= true;
     model_data=deformation_plot_stress(model_data);
 </pre><img vspace="5" hspace="5" src="pub_LE10NAFEMS_T10_02.png" alt=""> <p>The computed stress should be compared with -5.38 MPa as the reference value.</p><pre class="codeinput">    disp( [<span class="string">'Stress at P='</span> num2str(sigma2P/(pu.MEGA*pu.PA)) <span class="string">' MPa'</span>]);
-    disp( [<span class="string">'i. e.  '</span> num2str(sigma2P/(pu.MEGA*pu.PA)/5.38*100,5) <span class="string">'% of reference value'</span>]);
-</pre><pre class="codeoutput">Stress at P= MPa
-i. e.  % of reference value
+    disp( [<span class="string">'i. e.  '</span> num2str(sigma2P/(pu.MEGA*pu.PA)/(-5.38)*100,5) <span class="string">'% of reference value'</span>]);
+</pre><pre class="codeoutput">Stress at P=-4.5895 MPa
+i. e.  85.306% of reference value
 </pre><p>The estimate of the peak stress improved considerably with the SPR technique.</p><pre class="codeinput"><span class="keyword">end</span>
-</pre><p class="footer"><br><a href="http://www.mathworks.com/products/matlab/">Published with MATLAB&reg; R2012b</a><br></p></div><!--
+</pre><p class="footer"><br><a href="http://www.mathworks.com/products/matlab/">Published with MATLAB&reg; R2014b</a><br></p></div><!--
 ##### SOURCE BEGIN #####
 %% Elliptical plate with elliptical hole; T10 tetrahedra
 %
@@ -351,13 +352,13 @@ function pub_LE10NAFEMS_T10
     % We are going to plot the stress using a nodal stress field.  It is
     % extracted from the quadrature points.  The inverse-distance
     % interpolation of the quadrature point data is used.
-    model_data.u_scale=1000;
-    model_data.stress_component=2;
-    model_data.colormap=cadcolors2;
+    model_data.postprocessing.u_scale=1000;
+    model_data.postprocessing.stress_component=2;
+    model_data.postprocessing.colormap=cadcolors2;
     function observer(i, stressf,model_data)
         sigma2P = gather_values( stressf,Pn);
     end
-    model_data.observer =@ observer;
+    model_data.postprocessing.observer =@ observer;
     model_data=deformation_plot_stress(model_data);
     
     
@@ -365,7 +366,7 @@ function pub_LE10NAFEMS_T10
     % The computed stress should be compared with -5.38 MPa as the
     % reference value.
     disp( ['Stress at P=' num2str(sigma2P/(pu.MEGA*pu.PA)) ' MPa']);
-    disp( ['i. e.  ' num2str(sigma2P/(pu.MEGA*pu.PA)/5.38*100,5) '% of reference value']);
+    disp( ['i. e.  ' num2str(sigma2P/(pu.MEGA*pu.PA)/(-5.38)*100,5) '% of reference value']);
     %%
     % The 10-node tetrahedron mesh does not deliver good accuracy of the
     % stress distribution at the surface with the default inverse-distance
@@ -377,11 +378,11 @@ function pub_LE10NAFEMS_T10
     % Super-convergent Patch Recovery (SPR).
     %%
     % Note that we are setting the flag |use_spr|.
-    model_data.u_scale=1000;
-    model_data.stress_component=2;
-    model_data.colormap=cadcolors2;
-    model_data.observer =@ observer;
-    model_data.use_spr= true;
+    model_data.postprocessing.u_scale=1000;
+    model_data.postprocessing.stress_component=2;
+    model_data.postprocessing.colormap=cadcolors2;
+    model_data.postprocessing.observer =@ observer;
+    model_data.postprocessing.use_spr= true;
     model_data=deformation_plot_stress(model_data);
     
     
@@ -389,7 +390,7 @@ function pub_LE10NAFEMS_T10
     % The computed stress should be compared with -5.38 MPa as the
     % reference value.
     disp( ['Stress at P=' num2str(sigma2P/(pu.MEGA*pu.PA)) ' MPa']);
-    disp( ['i. e.  ' num2str(sigma2P/(pu.MEGA*pu.PA)/5.38*100,5) '% of reference value']);
+    disp( ['i. e.  ' num2str(sigma2P/(pu.MEGA*pu.PA)/(-5.38)*100,5) '% of reference value']);
    
 %% 
 % The estimate of the peak stress improved considerably with the SPR

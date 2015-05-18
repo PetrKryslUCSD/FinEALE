@@ -26,6 +26,13 @@
 %     - Meshed with cubic H64 hexahedral elements.
 %     - Use of nodal quadrature (Newton-Cotes rule).
 %
+% <a href="matlab:showdemo 'pub_LE10NAFEMS_H20'">Elliptical plate with elliptical hole; serendipity bricks.</a> 
+%     Features:
+%     - Static stress analysis of true 3-D geometry  with curved surfaces.
+%     - Meshed with Serendipity H20 hexahedral elements.
+%     - Extraction of stress by extrapolation from quadrature points.
+%     - Use of Superconvergent Patch Recovery (SPR).
+%
 % <a href="matlab:showdemo 'pub_Floyd'">Floyd's pressure vessel.</a> 
 %     Features:
 %     - Static stress analysis of axially symmetric geometry.

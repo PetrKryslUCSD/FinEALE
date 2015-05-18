@@ -191,13 +191,14 @@ function pub_LE10NAFEMS_H64
     % simplifies the extraction procedure.  The procedure is also more accurate  than
     % extrapolation from quadrature points when they are not
     % co-located with the nodes.
-    model_data.u_scale=1000;
-    model_data.stress_component=2;
-    model_data.colormap=cadcolors2;
+    model_data.postprocessing.u_scale=1000;
+    model_data.postprocessing.stress_component=2;
+    model_data.postprocessing.colormap=cadcolors2;
     function observer(i, stressf,model_data)
+        %Collect the stress value at the node Pn
         sigma2P = gather_values( stressf,Pn);
     end
-    model_data.observer =@ observer;
+    model_data.postprocessing.observer =@ observer;
     
     model_data=deformation_plot_stress(model_data);
     
@@ -205,7 +206,7 @@ function pub_LE10NAFEMS_H64
     %%
     % The computed stress should be compared with -5.38 MPa as the reference value.
     disp( ['Stress at P=' num2str(sigma2P/(pu.MEGA*pu.PA)) ' MPa']);
-    disp( ['i. e.  ' num2str(sigma2P/(pu.MEGA*pu.PA)/5.38*100,5) '% of reference value']);
+    disp( ['i. e.  ' num2str(sigma2P/(pu.MEGA*pu.PA)/(-5.38)*100,5) '% of reference value']);
     %%
     % Clearly,  the  64-node hexahedron with nodal quadrature  is quite
     % accurate in the prediction  of the stress.
