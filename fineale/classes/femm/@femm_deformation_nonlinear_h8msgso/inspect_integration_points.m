@@ -67,7 +67,6 @@ end
 for m=1:length(fe_list)
     i=fe_list(m);
     conn = conns(i,:); % connectivity
-    conn =conns(i,:);
     X=Xs(conn,:);
     U=Us(conn,:);
     x1 = X + U; % current coordinates
