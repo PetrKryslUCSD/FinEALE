@@ -272,11 +272,20 @@ classdef  Abaqus_exporter  < handle
         end
         
         function BOUNDARY(self,NSET,dof)
-            % Write out the *BOUNDARY option.
-            %    is_fixed= array of Boolean flags (true means fixed, or prescribed),  one row per node,
-            %    fixed_value=array of displacements to which the corresponding displacement components is fixed
+            % Write out the *BOUNDARY option to fix displacements.
+            %    NSET= node set,
+            %    dof=Degree of freedom, 1, 2, 3
             self.status =fprintf(self.fid,'%s\n', '*BOUNDARY');
             self.status =fprintf(self.fid,'%s,%g\n', NSET,dof);
+        end
+        
+        
+        function BOUNDARY_type(self,NSET,dof,value)
+            % Write out the *BOUNDARY option to prescribed nonzero displacements.
+            %    NSET= node set,
+            %    dof=Degree of freedom, 1, 2, 3
+            self.status =fprintf(self.fid,'%s\n', '*BOUNDARY,TYPE=DISPLACEMENT');
+            self.status =fprintf(self.fid,'%s,%g,%g,%g\n', NSET,dof,dof,value);
         end
         
         function DLOAD(self,ELSET,traction)
