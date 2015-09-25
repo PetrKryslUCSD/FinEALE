@@ -64,8 +64,21 @@ classdef femm_deformation_nonlinear_h8msgso < femm_deformation_nonlinear
                     nu=0.3+ (self.material.property.nu-0.3)/2;
                 end
                 %                 nu=0.; % Experiment in
-                prop = property_deformation_neohookean (struct('E',E,'nu',nu));
-                self.stabilization_material = material_deformation_neohookean_triax(struct('property',prop));
+                if (isfield( Parameters, 'match_stabilization'))
+                    if (strcmp(class(self.material ),'material_deformation_stvk_triax'))
+                        prop = property_deformation_linear_iso(struct('E',E,'nu',nu));
+                        self.stabilization_material = material_deformation_stvk_triax(struct('property',prop));
+                    else
+                        prop = property_deformation_neohookean (struct('E',E,'nu',nu));
+                        self.stabilization_material = material_deformation_neohookean_triax(struct('property',prop));
+                    end
+                else
+                    prop = property_deformation_neohookean (struct('E',E,'nu',nu));
+                    self.stabilization_material = material_deformation_neohookean_triax(struct('property',prop));
+                end
+                %
+                %                 prop = property_deformation_neohookean (struct('E',E,'nu',nu));
+                %                 self.stabilization_material = material_deformation_neohookean_triax(struct('property',prop));
             end
             % Now try to figure out which Poisson ratio to use in the
             % optimal scaling factor (to account for geometry)
@@ -102,8 +115,11 @@ classdef femm_deformation_nonlinear_h8msgso < femm_deformation_nonlinear
             %             h2=[Jt(1,:)*J(:,1),Jt(2,:)*J(:,2),Jt(3,:)*J(:,3)];
             %             h2=sort(h2,'descend');
             %             h2=sort(h2,'descend');%Experiment
-            Phi= ( 2*(1+self.nu)*(min(h2)/max(h2)) );% Plane stress
-            %             Phi= ( 2*(1+self.nu)*(1-self.nu)/(1+self.nu)/(1-2*self.nu)*(min(h2)/max(h2)) );%  Plane-strain
+            Phistress= ( 2*(1+self.nu)*(min(h2)/max(h2)) );% Plane stress
+            Phistrain= ( 2*(1+self.nu)*(1-self.nu)/(1+self.nu)/(1-2*self.nu)*(min(h2)/max(h2)) );%  Plane-strain
+            Phi = (Phistress+Phistrain)/2;
+            %             Phi = (Phistrain);
+            %             Phi = (Phistress);
             phi = Phi/(1+Phi);
         end 
         
