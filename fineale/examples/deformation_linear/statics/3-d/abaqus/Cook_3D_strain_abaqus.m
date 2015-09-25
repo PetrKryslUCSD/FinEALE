@@ -17,12 +17,13 @@ ElType ='C3D8';
 ElType ='C3D8H';
 ElType ='C3D8I';
     ElType ='C3D8IH';
+    ElType ='C3D8';
 %          ElType ='C3D8RH';
 %     ElType ='C3D20R'; SurfElType ='SFM3D8';;
 
 ns= [2,4,8,16,32,64,128];
 ns=[2,4,8,16];
-% ns= [2,4,8,16,18];
+ns= [2,4,6];
 
 
 format long
@@ -36,12 +37,19 @@ mater = material_deformation_linear_triax (struct('property',prop ));
 clear eltyd
 eix=1;
 
-eltyd(eix).description ='H8MSGSO';
+eltyd(eix).description ='H8';% tetrahedron
 eltyd(eix).mf =@H8_block;
-eltyd(eix).femmf =@(fes)femm_deformation_nonlinear_h8msgso(struct('fes',fes,'material',mater,...
+eltyd(eix).femmf =@(fes)femm_deformation_linear(struct('fes',fes,'material',mater,...
     'integration_rule',gauss_rule(struct('dim',3, 'order',2))));
 eltyd(eix).surface_integration_rule=gauss_rule(struct('dim',2, 'order',2));
 eix=eix+1;
+
+% eltyd(eix).description ='H8MSGSO';
+% eltyd(eix).mf =@H8_block;
+% eltyd(eix).femmf =@(fes)femm_deformation_nonlinear_h8msgso(struct('fes',fes,'material',mater,...
+%     'integration_rule',gauss_rule(struct('dim',3, 'order',2))));
+% eltyd(eix).surface_integration_rule=gauss_rule(struct('dim',2, 'order',2));
+% eix=eix+1;
 
 % eltyd(eix).description ='H8MSGS';
 % eltyd(eix).mf =@H8_block;

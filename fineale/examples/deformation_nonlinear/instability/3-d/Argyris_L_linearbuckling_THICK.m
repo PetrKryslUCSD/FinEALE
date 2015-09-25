@@ -13,7 +13,7 @@ nL = 1;
 nt = 1;
 L=255;
 w=30;
-t=0.6;
+t=5;
 Fmag= 1e-5;
 
 rand('state',0);% try to comment out this line and compare

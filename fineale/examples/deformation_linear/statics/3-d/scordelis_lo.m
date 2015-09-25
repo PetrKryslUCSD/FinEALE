@@ -32,7 +32,7 @@ function gv =scordelis_lo
     
     mix = 1;
     clear mesd
-    mesd(mix).ref=[1:2:9];
+    mesd(mix).ref=[2,5,10];
     mesd(mix).nl=1;
     mesd(mix).nt=1;
     mix = mix+1;

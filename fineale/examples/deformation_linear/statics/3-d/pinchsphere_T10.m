@@ -47,13 +47,13 @@ function gv =pinchsphere_T10
 %         eltyd(eix).styl='gp-';
 %         eix=eix+1;
 %     
-%         eltyd(eix).description ='T10-GSRI';
-%         eltyd(eix).mf =@T10_block;
-%         eltyd(eix).femmf =@(fes)femm_deformation_linear_gsri(struct('fes',fes, 'material',mater,...
-%             'integration_rule_constrained',tet_rule(struct('npts',1)),...
-%             'integration_rule_unconstrained',tet_rule(struct('npts',4))));
-%         eltyd(eix).styl='r*-';
-%         eix=eix+1;
+        eltyd(eix).description ='T10-GSRI';
+        eltyd(eix).mf =@T10_block;
+        eltyd(eix).femmf =@(fes)femm_deformation_linear_gsri(struct('fes',fes, 'material',mater,...
+            'integration_rule_constrained',tet_rule(struct('npts',1)),...
+            'integration_rule_unconstrained',tet_rule(struct('npts',4))));
+        eltyd(eix).styl='r*-';
+        eix=eix+1;
     
     %     eltyd(eix).description ='T10-Bbar';
     %     eltyd(eix).mf =@T10_block;

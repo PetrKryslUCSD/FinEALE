@@ -15,6 +15,14 @@ L=255;
 w=30;
 t=0.6;
 Fmag= 1e-5;
+export_to_abaqus= true; SurfElType ='SFM3D4';;
+% ElType ='C3D8';
+%     ElType ='C3D8H';
+ElType ='C3D8I';
+%     ElType ='C3D8IH';
+% ElType ='C3D8RH';
+%         ElType ='C3D20R'; SurfElType ='SFM3D8';;
+% ElType ='C3D20H'; SurfElType ='SFM3D8';;
 
 rand('state',0);% try to comment out this line and compare
 %                   results for several subsequent runs
@@ -78,7 +86,7 @@ eix=eix+1;
 % eltyd(eix).surface_integration_rule=gauss_rule(struct('dim',2, 'order',4));
 % eltyd(eix).styl='r*-';
 % eix=eix+1;
-% 
+%
 % eltyd(eix).description ='H27';
 % eltyd(eix).mf =@h8H27;
 % eltyd(eix).blf =@femm_deformation_nonlinear;
@@ -131,8 +139,7 @@ eix=eix+1;
         u   = numberdofs (u);
         u = u*0; % zero out the displacement
         
-        
-        
+       
         femm  =update(femm,geom,u,u);
         femm1=femm;                                           % Make a copy of the state
         Traction=zeros(3,1); Traction(1) =Fmag/t/w;
@@ -164,31 +171,80 @@ eix=eix+1;
         %         [Omegas,ix]=sort(1./diag(Omega)) ;
         Omegas=(1./(diag(Omega)));
         Bucklen =Omegas(1); Bucklep=Omegas(2);
+        
+        if (export_to_abaqus)
+            date_now = clock;
+            s = strcat(num2str(date_now(1)),'-',num2str(date_now(2)),'-', num2str(date_now(3)), '-',num2str(date_now(4)), '-',num2str(date_now(5)));
+            AE=Abaqus_exporter;
+            AE.open([mfilename '-' ElType '-' num2str(nL) '-' s '.inp']);
+            AE.HEADING([mfilename ' ' 'ElType=' ElType ' ' 'nL=' num2str(nL)]);
+            AE.PART('PART1');
+            AE.END_PART();
+            AE.ASSEMBLY('ASSEM1');
+            AE.INSTANCE('INSTNC1','PART1');
+            AE.NODE(geom.values);
+            AE.ELEMENT(ElType,'All',1,femm1.fes.conn);
+            AE.ELEMENT(SurfElType,'Traction',count(femm1.fes)+1,efemm.fes.conn);
+            AE.ORIENTATION('Global', [1,0,0], [0,1,0]);
+            AE.SOLID_SECTION('Material','Global','All','Hourglass');
+            %             AE.SOLID_SECTION('Material','Global','All');
+            AE.SURFACE_SECTION('Traction');
+            AE.NSET_NSET('xfix',find(u.is_fixed(:,1)));
+            AE.NSET_NSET('yfix',find(u.is_fixed(:,2)));
+            AE.NSET_NSET('zfix',find(u.is_fixed(:,3)));
+            AE.END_INSTANCE();
+            AE.END_ASSEMBLY();
+            AE.MATERIAL('Material');
+            AE.ELASTIC_ISOTROPIC(E,nu);
+            AE.SECTION_CONTROLS('Hourglass','Hourglass = enhanced');
+            AE.STEP_PERTURBATION_BUCKLE('buckle',2);
+            AE.DLOAD('ASSEM1.INSTNC1.Traction',Traction);
+            AE.BOUNDARY('ASSEM1.INSTNC1.xfix',1);
+            AE.BOUNDARY('ASSEM1.INSTNC1.yfix',2);
+            AE.BOUNDARY('ASSEM1.INSTNC1.zfix',3);
+            AE.END_STEP();
+            AE.close();
+            %                 delete([AE.filename '.dat']);
+            system(['abaqus job=' [AE.filename ]]);
+            AW=Abaqus_lck_watcher();
+            AW.wait([AE.filename '.lck']);
+            try
+                AR=Abaqus_dat_reader();
+                d= AR.extract_buckling_from_abaqus_dat([AE.filename '.dat'],...
+                    'MODE NO      EIGENVALUE',neigvs);
+            catch,
+                d=[0,0, 0]; energy = 0;
+            end
+            Bucklen =d(1); Bucklep=d(2);
+        end
+        
         % Plot
-        scale=100;
-        for i=(1:neigvs)
-            phi = scatter_sysvec(u,W(:,i));
-            phiv = phi.values;
-            %             norm(K*gather_sysvec(phi) +Omegas(i)*Kgeo*gather_sysvec(phi))
-            %             disp(['  Buckling load '  num2str((Omegas(i)*Fmag)) ]);
-            %     clf;
-            if (graphics)
-                gv=graphic_viewer;
-                gv=reset (gv,[]);
-                scale =L/3/max(abs(gather_sysvec(phi)));
-                phivmag = sqrt(phiv(:,1).^2+phiv(:,2).^2+phiv(:,3).^2);
-                dcm=data_colormap(struct ('range',[min(phivmag),max(phivmag)], 'colormap',colormap('parula')));
-                colors=map_data(dcm, phivmag);
-                colorfield = nodal_field(struct ('name',['cf'], 'dim', 3, 'data',colors));
-                gv=reset (gv,[]);
-                %                 set(gca,'FontSize',16)
-                %     camset(gv,[-0.1591    0.0085   -0.3252    0.0001    0.0043    0.0013   -0.8985    0.0237    0.4383    5.4322]);
-                draw(femm,gv, struct ('x', geom,'u',0*phi, 'facecolor','none'));
-                draw(femm,gv, struct ('x', geom,'u',+scale*phi,'colorfield',colorfield));
-                camset(gv,1.0e+003 *[1.9128   -1.0031    0.6488    0.1593    0.1575   -0.0344         0         0    0.0010    0.0048]);
-                %     text(0,1.1*R,1.1*R,['\omega_' num2str(i) '=' num2str(sqrt(Omega(i,i))/2/pi) ],'FontSize',24);
-                axis off; set_graphics_defaults
-                %                 pause
+        if graphics
+            scale=100;
+            for i=(1:neigvs)
+                phi = scatter_sysvec(u,W(:,i));
+                phiv = phi.values;
+                %             norm(K*gather_sysvec(phi) +Omegas(i)*Kgeo*gather_sysvec(phi))
+                %             disp(['  Buckling load '  num2str((Omegas(i)*Fmag)) ]);
+                %     clf;
+                if (graphics)
+                    gv=graphic_viewer;
+                    gv=reset (gv,[]);
+                    scale =L/3/max(abs(gather_sysvec(phi)));
+                    phivmag = sqrt(phiv(:,1).^2+phiv(:,2).^2+phiv(:,3).^2);
+                    dcm=data_colormap(struct ('range',[min(phivmag),max(phivmag)], 'colormap',colormap('parula')));
+                    colors=map_data(dcm, phivmag);
+                    colorfield = nodal_field(struct ('name',['cf'], 'dim', 3, 'data',colors));
+                    gv=reset (gv,[]);
+                    %                 set(gca,'FontSize',16)
+                    %     camset(gv,[-0.1591    0.0085   -0.3252    0.0001    0.0043    0.0013   -0.8985    0.0237    0.4383    5.4322]);
+                    draw(femm,gv, struct ('x', geom,'u',0*phi, 'facecolor','none'));
+                    draw(femm,gv, struct ('x', geom,'u',+scale*phi,'colorfield',colorfield));
+                    camset(gv,1.0e+003 *[1.9128   -1.0031    0.6488    0.1593    0.1575   -0.0344         0         0    0.0010    0.0048]);
+                    %     text(0,1.1*R,1.1*R,['\omega_' num2str(i) '=' num2str(sqrt(Omega(i,i))/2/pi) ],'FontSize',24);
+                    axis off; set_graphics_defaults
+                    %                 pause
+                end
             end
         end
     end
@@ -205,7 +261,12 @@ for eix = 1:length(eltyd)
     disp([num2str(nelperedge,15)]);
     disp([num2str(Bucklens,15)]);
     disp([num2str(Buckleps,15)]);
-    disp(['];' 'Style{end+1}=''' name_to_style(eltyd(eix).description) ''';' 'Legends{end+1} =''' eltyd(eix).description ''';']);
+    if (export_to_abaqus)
+        disp(['];' 'Style{end+1}=''' name_to_style(ElType) ''';' 'Legends{end+1} =''' ElType ''';']);
+    else
+        disp(['];' 'Style{end+1}=''' name_to_style(eltyd(eix).description) ''';' 'Legends{end+1} =''' eltyd(eix).description ''';']);
+    end
+    %     disp(['];' 'Style{end+1}=''' name_to_style(eltyd(eix).description) ''';' 'Legends{end+1} =''' eltyd(eix).description ''';']);
     %         load_displacement
     %         Bucklens, Buckleps
 end
