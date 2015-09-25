@@ -11,11 +11,11 @@ function S = connection_matrix (self, assembler, u)
 %
 % Return a matrix representing the connections between the finite element nodes
 % expressed by the  finite elements.
-    fes = self.fes;% grab the finite elements to work on
-    % Retrieve data for efficiency
-    tconns =transpose(fes.conn);% connectivity, Transposed for efficiency
+    
+% Retrieve data for efficiency
+    tconns =transpose(self.fes.conn);% connectivity, Transposed for efficiency
     % Prepare assembler
-    Kedim =fes.nfens; Ke = ones(Kedim,Kedim);
+    Kedim =self.fes.nfens; Ke = ones(Kedim,Kedim);
     start_assembly(assembler, Kedim, Kedim, size(tconns,2), u.nfens, u.nfens);
     % Now loop over all fes in the block
     for i=1:size(tconns,2)
