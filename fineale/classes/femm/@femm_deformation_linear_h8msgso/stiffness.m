@@ -80,4 +80,6 @@ for i=1:size(conns,1)
     assemble_symmetric(assembler, Ke, dofnums);
 end
 K = make_matrix (assembler);
+disp( 'Remove this test' )
+test (self, assembler, geom, u1);
 end
