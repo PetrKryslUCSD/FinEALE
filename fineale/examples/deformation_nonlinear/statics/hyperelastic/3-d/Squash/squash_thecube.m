@@ -1,5 +1,5 @@
 function squash_thecube(ntmult)
-    if ~exist('ntmult','var'), ntmult=2; end
+    if ~exist('ntmult','var'), ntmult=7; end
     % A new locking-free brick element technique for large
     % deformation problems in elasticity p
     % S. Reese a, *, P. Wriggers a , B.D. Reddy
@@ -16,7 +16,7 @@ function squash_thecube(ntmult)
     %     nu=.0;
     Fmag= 80*4;
     utol = 1e-9;
-    nincr = 2*60;
+    nincr = 40;
     graphics = false;
     scale=1;
     nt = [ntmult*[2,2,2]];
@@ -70,20 +70,20 @@ function squash_thecube(ntmult)
     eix=1;
     clear eltyd
     
-    eltyd(eix).description='H8MSGSO(U)';
-    eltyd(eix).mf =@h8H8u;
-    eltyd(eix).blf =@(fes)femm_deformation_nonlinear_h8msgso(struct ('material',mater, ...
-        'fes',fes,  'stabilization_material',stabmater,...
-        'integration_rule',gauss_rule(struct('dim',3,'order',2))));
-    eltyd(eix).surface_integration_rule=gauss_rule(struct('dim',2,'order',2));
-    eix=eix+1;
-    
     %     eltyd(eix).description='H8MSGSO(U)';
     %     eltyd(eix).mf =@h8H8u;
-    %     eltyd(eix).blf =@(fes)femm_deformation_nonlinear_h8msgso(struct ('material',mater, 'fes',fes, ...
+    %     eltyd(eix).blf =@(fes)femm_deformation_nonlinear_h8msgso(struct ('material',mater, ...
+    %         'fes',fes,  'stabilization_material',stabmater,...
     %         'integration_rule',gauss_rule(struct('dim',3,'order',2))));
     %     eltyd(eix).surface_integration_rule=gauss_rule(struct('dim',2,'order',2));
     %     eix=eix+1;
+    
+        eltyd(eix).description='H8MSGSO(U)';
+        eltyd(eix).mf =@h8H8u;
+        eltyd(eix).blf =@(fes)femm_deformation_nonlinear_h8msgso(struct ('material',mater, 'fes',fes, ...
+            'integration_rule',gauss_rule(struct('dim',3,'order',2))));
+        eltyd(eix).surface_integration_rule=gauss_rule(struct('dim',2,'order',2));
+        eix=eix+1;
     
     %     eltyd(eix).description='H8MSGS(U)';
     %     eltyd(eix).mf =@h8H8u;

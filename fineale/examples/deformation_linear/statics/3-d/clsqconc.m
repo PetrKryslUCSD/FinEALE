@@ -7,7 +7,7 @@ function clsqconc
 % 
   disp('% Timoshenko: clamped square plate with center load');
 % Parameters:
-graphics =false; % graphic output
+graphics =~false; % graphic output
 % Mesh
 neqs=[]; normalized_deflections = [];
 for nt=2
