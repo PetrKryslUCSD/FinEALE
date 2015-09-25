@@ -211,7 +211,7 @@ classdef  Abaqus_exporter  < handle
             %    ORIENTATION= orientation name
             %    ELSET=  element set to which  the section applies
             self.status =fprintf(self.fid,'%s\n', ['*SECTION CONTROLS, NAME=' NAME ',' WHAT]);
-        end 	
+        end
         
         function SOLID_SECTION(self, MATERIAL,ORIENTATION,ELSET,CONTROLS)
             % Write out the *SOLID SECTION option.
@@ -231,10 +231,10 @@ classdef  Abaqus_exporter  < handle
             % *SOLID SECTION,ELSET=SOLID3,MATERIAL=MAT,CONTROL=A
             % *HOURGLASS STIFFNESS
             % 5.E8
-
+            
             self.status =fprintf(self.fid,'%s\n', ['*HOURGLASS ' WHICH]);
             self.status =fprintf(self.fid,'%g\n', VALUE);
-        end 	
+        end
         
         function SURFACE_SECTION(self, ELSET)
             % Write out the *SURFACE SECTION option.
@@ -247,6 +247,19 @@ classdef  Abaqus_exporter  < handle
             % Write out the *STEP,PERTURBATION option.
             self.status =fprintf(self.fid,'%s\n', '*STEP,PERTURBATION');
             self.status =fprintf(self.fid,'%s\n', '*STATIC');
+        end
+        
+        function STEP_PERTURBATION_STATIC(self, Text)
+            % Write out the *STEP,PERTURBATION option for linear static analysis.
+            self.status =fprintf(self.fid,'%s\n', '*STEP,PERTURBATION');
+            self.status =fprintf(self.fid,'%s\n', '*STATIC');
+        end
+        
+        function STEP_PERTURBATION_BUCKLE(self, Text, neigv)
+            % Write out the *STEP,PERTURBATION option for linear buckling analysis.
+            self.status =fprintf(self.fid,'%s\n', '*STEP, name=Buckling, nlgeom=NO, perturbation');
+            self.status =fprintf(self.fid,'%s\n', '*BUCKLE');
+            self.status =fprintf(self.fid,'%d, , , , \n', neigv);
         end
         
         function STEP_FREQUENCY(self, Nmodes)
@@ -292,14 +305,15 @@ classdef  Abaqus_exporter  < handle
             % Write out the *DLOAD option.
             %    ELSET= element set to which the traction is applied,
             %    traction=traction vector
-            self.status =fprintf(self.fid,'%s\n', '*DLOAD');
+            self.status =fprintf(self.fid,'%s\n', '*DLOAD, follower=NO');
             self.status =fprintf(self.fid,'%s,%s,%g,%g,%g,%g\n', ELSET,'TRVEC',norm(traction),traction/norm(traction));
         end
+        
         
         function CLOAD(self,NSET,dof, magnitude)
             % Write out the *CLOAD option.
             %    NSET=Number of node
-            %    dof= 1, 2, 3, 
+            %    dof= 1, 2, 3,
             %    magnitude= signed multiplier
             self.status =fprintf(self.fid,'%s\n', '*CLOAD');
             self.status =fprintf(self.fid,'%s,%g,%g\n', NSET,dof, magnitude);
@@ -328,6 +342,74 @@ classdef  Abaqus_exporter  < handle
             self.status =fprintf(self.fid,'%s\n', '*END STEP');
         end
         
+        
+        function A= extract_energy_from_abaqus_dat(File,Tagline)
+            A=[];
+            try
+                fid=fopen(File,'r');
+                while true
+                    temp = fgetl(fid);   if ~ischar(temp), break, end
+                    temp=deblank(fliplr(deblank(temp(end:-1:1))));
+                    if (strcmpi(temp,Tagline))
+                        for j=1:3
+                            temp = fgetl(fid);
+                        end
+                        temp = fgetl(fid);
+                        A = sscanf(temp(40:end), '%g');
+                        fclose(fid);
+                        return;
+                    end
+                end
+            catch,fclose(fid);end
+        end
+        
+        function d= extract_displacement_from_abaqus_dat(File,Tagline,nnodes)
+            if (~exist('nnodes','var') ),nnodes=1;end
+            d=zeros(nnodes,3);
+            try
+                fid=fopen(File,'r');
+                while true
+                    temp = fgetl(fid);   if ~ischar(temp), break, end
+                    temp=deblank(fliplr(deblank(temp(end:-1:1))));
+                    if (strcmpi(temp,Tagline))
+                        for j=1:4
+                            temp = fgetl(fid);
+                        end
+                        for j=1:nnodes
+                            temp = fgetl(fid);
+                            A = sscanf(temp, '%g %g %g %g');
+                            d(j,:)=A(2:end);
+                        end
+                        fclose(fid);
+                        return;
+                    end
+                end
+            catch,fclose(fid);end
+        end
+        
+        function d= extract_buckling_from_abaqus_dat(File,Tagline,neigv)
+            if (~exist('neigv','var') ),neigv=1;end
+            d=zeros(neigv,1);
+            try
+                fid=fopen(File,'r');
+                while true
+                    temp = fgetl(fid);   if ~ischar(temp), break, end
+                    temp=deblank(fliplr(deblank(temp(end:-1:1))));
+                    if (strcmpi(temp,Tagline))
+                        for j=1:2
+                            temp = fgetl(fid);
+                        end
+                        for j=1:neigv
+                            temp = fgetl(fid);
+                            A = sscanf(temp, '%g %g');
+                            d(j,:)=A(2:end);
+                        end
+                        fclose(fid);
+                        return;
+                    end
+                end
+            catch,fclose(fid);end
+        end
         
         
         
