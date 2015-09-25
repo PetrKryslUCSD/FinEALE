@@ -8,6 +8,7 @@ function [fens,fes] = H8_to_H27(fens,fes)
 % fens= finite element node set
 % fes = finite element set
 %
+    label = fes.label;
     nedges=12;
     nfaces=6;
     ec = [1, 2; 2, 3; 3, 4; 4, 1; 5, 6; 6, 7; 7, 8; 8, 5; 1, 5; 2, 6; 3, 7; 4, 8;];
@@ -176,6 +177,6 @@ function [fens,fes] = H8_to_H27(fens,fes)
         nc= nc+ 1;
     end
     fens.xyz=xyz;
-    fes=fe_set_H27(struct('conn',nconns)) ;
+    fes=fe_set_H27(struct('conn',nconns,'label',label)) ;
     return;
 end
