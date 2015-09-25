@@ -122,7 +122,10 @@ function model_data = deformation_linear_statics(model_data)
 %          The MPC looks like this: sum_i m_i u_{dof(i),node(i)} =0
 %          where m_i is the multiplier.
 %
-% 
+% For thermal loading (optional):
+% model_data.temperature= temperature field (obtained with precisely the same mesh)
+%
+%
 % Control parameters:
 % The following attributes  may be supplied as fields of the model_data struct:
 %      renumber = true or false flag (default is true)
@@ -224,16 +227,32 @@ function model_data = deformation_linear_statics(model_data)
         % Create  the finite element model machine, if not supplied
         if (~isfield( region, 'femm'))
             if (isfield(region, 'property' ))
-                if (strcmp( region.  property, 'orthotropic' ))
+                if (strcmp(region.property, 'orthotropic' ))
+                    alpha1=0.0; alpha2=0.0; alpha3=0.0;% CTE
+                    if (isfield(region, 'alpha1' ))
+                        alpha1= region.alpha1; alpha2= region.alpha2; alpha3= region.alpha3;
+                    end
                     prop = property_deformation_linear_ortho (...
-                        struct('E1',region.E1,'E2',region.E2,'E3',region.E3,'G12',region.G12,'G13',region.G13,'G23',region.G23,'nu12',region.nu12,'nu13',region.nu13,'nu23',region.nu23));
+                        struct('E1',region.E1,'E2',region.E2,'E3',region.E3,'G12',region.G12,'G13',region.G13,'G23',region.G23,'nu12',region.nu12,'nu13',region.nu13,'nu23',region.nu23,'alpha1',alpha1,'alpha2',alpha2,'alpha3',alpha3));
                 elseif (strcmp( region.  property, 'isotropic' ))
-                    prop=property_deformation_linear_iso(struct('E',region.E,'nu',region.nu));
+                    alpha=0.0;% CTE
+                    if (isfield(region, 'alpha' ))
+                        alpha= region.alpha;
+                    end
+                    prop=property_deformation_linear_iso(struct('E',region.E,'nu',region.nu,'alpha',alpha));
                 else% default
-                    prop=property_deformation_linear_iso(struct('E',region.E,'nu',region.nu));
+                    alpha=0.0;% CTE
+                    if (isfield(region, 'alpha' ))
+                        alpha= region.alpha;
+                    end
+                    prop=property_deformation_linear_iso(struct('E',region.E,'nu',region.nu,'alpha',alpha));
                 end
             else
-                prop=property_deformation_linear_iso(struct('E',region.E,'nu',region.nu));
+                alpha=0.0;% CTE
+                if (isfield(region, 'alpha' ))
+                    alpha= region.alpha;
+                end
+                prop=property_deformation_linear_iso(struct('E',region.E,'nu',region.nu,'alpha',alpha));
             end
             if (u.dim==1) || (isfield(region,'reduction') && strcmp(region.reduction, 'uniaxial'))
                 mater = material_deformation_linear_uniax (struct('property',prop ));
@@ -291,17 +310,15 @@ function model_data = deformation_linear_statics(model_data)
         clear traction fi  femm
     end
     
-    % Process the nodal force boundary condition
-    if (isfield(model_data.boundary_conditions, 'nodal_force' ))
-        for j=1:length(model_data.boundary_conditions.nodal_force)
-            nodal_force =model_data.boundary_conditions.nodal_force{j};
-            femm = femm_deformation_linear (struct ('material',[],...
-                'fes',fe_set_P1(struct('conn',reshape(nodal_force.node_list,[],1))),...
-                'integration_rule',point_rule));
-            fi= force_intensity(struct('magn',nodal_force.force));
-            F = F + distrib_loads(femm, sysvec_assembler, geom, u, fi, 0);          
+    % Process the thermal loads
+    if (isfield(model_data,'temperature'))
+        temperature = model_data.temperature;
+        for i=1:length(model_data.region)
+            region =model_data.region{i};
+            F = F + thermal_strain_loads(region.femm, sysvec_assembler, geom, u, temperature);
+            clear region 
         end
-        clear nodal_force fi femm
+        
     end
     
     % Apply multi point constraints

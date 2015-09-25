@@ -7,6 +7,7 @@ function model_data=deformation_plot_deformation(model_data)
 % model_data= model data as produced by deformation_linear_statics()
 % model_data.postprocessing = optional struct with optional fields
 %     u_scale = deflection scale, default 1.0;
+%     quantity='U' (magnitude, default), or 'Un'  (displacement component n)
 %     camera  = camera, default is [] which means use the default 
 %           orientation of the view;
 %     draw_mesh= should the mesh be rendered?  Boolean.  Default true.
@@ -22,6 +23,12 @@ function model_data=deformation_plot_deformation(model_data)
     if (isfield(model_data, 'postprocessing'))
         if (isfield(model_data.postprocessing, 'u_scale'))
             u_scale = model_data.postprocessing.u_scale;
+        end
+    end
+    quantity = 'U';
+    if (isfield(model_data, 'postprocessing'))
+        if (isfield(model_data.postprocessing, 'quantity'))
+            quantity = model_data.postprocessing.quantity;
         end
     end
     camera  = [];
@@ -84,12 +91,29 @@ function model_data=deformation_plot_deformation(model_data)
         set_graphics_defaults;
     end
     
-    % Create the color mapping
-    dcm=data_colormap(struct('range',[0,max(u_magnitude.values)],'colormap',cmap));
     
     % Create the color field
-    colorfield=nodal_field(struct ('name', ['colorfield'], 'data',...
-        map_data(dcm, u_magnitude.values)));
+    if (strcmp( quantity, 'U1'))
+        % Create the color mapping
+        dcm=data_colormap(struct('range',[min(u.values(:,1)),max(u.values(:,1))],'colormap',cmap));
+        colorfield=nodal_field(struct ('name', ['colorfield'], 'data',...
+            map_data(dcm, u.values(:,1))));
+    elseif (strcmp( quantity, 'U2'))
+        % Create the color mapping
+        dcm=data_colormap(struct('range',[min(u.values(:,2)),max(u.values(:,2))],'colormap',cmap));
+        colorfield=nodal_field(struct ('name', ['colorfield'], 'data',...
+            map_data(dcm, u.values(:,2))));
+    elseif (strcmp( quantity, 'U3'))
+        % Create the color mapping
+        dcm=data_colormap(struct('range',[min(u.values(:,3)),max(u.values(:,3))],'colormap',cmap));
+        colorfield=nodal_field(struct ('name', ['colorfield'], 'data',...
+            map_data(dcm, u.values(:,3))));
+    else
+        % Create the color mapping
+        dcm=data_colormap(struct('range',[0,max(u_magnitude.values)],'colormap',cmap));
+        colorfield=nodal_field(struct ('name', ['colorfield'], 'data',...
+            map_data(dcm, u_magnitude.values)));
+    end
     
     % Plot the surface for each region
     for i=1:length(model_data.region)
