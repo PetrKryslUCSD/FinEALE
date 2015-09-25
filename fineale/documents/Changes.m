@@ -1,3 +1,20 @@
+% 09/23/2015
+% - added Pagano_laminate_n_layer() benchmark solution
+
+% 09/20/2015
+% - added thermal loads to the linear-statics algorithm
+% - added color-coding  by displacement components to the deformation plot
+
+% 09/18/2015
+% - T4 NAFEMS example supplemented with thermal-load simulation (verified with Abaqus)
+
+% 08/25/2015
+% - Abaqus exporter enhanced to support Buckling steps. Added Abaqus DAT
+% reader and watcher of the lock file (LCK).
+
+% 05/18/2015
+% - v_select() now supports selection of points within a convex hull
+
 % 04/11/2015
 % - Abaqus export added from the research files.
 % - Added example with  2-D surface embedded in 3-D.
