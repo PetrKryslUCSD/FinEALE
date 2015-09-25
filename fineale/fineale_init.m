@@ -41,7 +41,7 @@ function fineale_init(options)
     end
 
     disp(' ');
-    disp(['fineale (C) 2014, Petr Krysl.']);
+    disp(['fineale (C) 2015, Petr Krysl.']);
     disp(['   See the README  file for details.']);
     disp('   -------------------------------------------------------------');
     disp('   To get started, run some of the scripts in the "examples" ')
