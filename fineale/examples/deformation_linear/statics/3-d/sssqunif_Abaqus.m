@@ -7,18 +7,28 @@ function sssqunif
     disp('% MSC.Marc: simply supported square plate with uniform load');
     % Parameters:
     um=physical_units_machine;;
-    q=1*um('PSI'); a=60*um('in'); E=2e7*um('PSI'); h=2*um('in'); nu=0.3;
+    q=1*um('PSI'); a=60*um('in'); E=2e7*um('PSI'); h=00.3*um('in'); nu=0.3;
     w_max = 0.0444*q*a^4/(E*h^3);
     scale = a/4/w_max;
-    graphics = ~false; % graphic output
+    graphics = false; % graphic output
+    export_to_abaqus= ~true; SurfElType ='SFM3D4';;
+    ElType ='C3D8';
+    %     ElType ='C3D8H';
+    %     ElType ='C3D8I';
+    %     ElType ='C3D8IH';
+    %          ElType ='C3D8RH';
+    %         ElType ='C3D20R'; SurfElType ='SFM3D8';;
+        % ElType ='C3D20H'; SurfElType ='SFM3D8';;
+
+
     % Mesh
     neqs=[]; normalized_deflections = [];
     for nt=2
-        for na =2:2:12
+        for na =2:2:8
             % tic;
             [fens,fes] = H8_block (a/2,a/2,h,na,na,nt);
-                        ir=gauss_rule(struct('dim',3,'order',2)); description  ='H8';
-                        [fens,fes] = H8_to_H20(fens,fes);
+            ir=gauss_rule(struct('dim',3,'order',2)); description  ='H8';
+                                    [fens,fes] = H8_to_H20(fens,fes);
                                     ir=gauss_rule(struct('dim',3,'order',2)); description  ='H20R';
             %                         ir=gauss_rule(struct('dim',3,'order',3)); description  ='H20';
             % Material
@@ -64,7 +74,56 @@ function sssqunif
             u = scatter_sysvec(u, K\F);
             corn=fenode_select (fens,struct('box',[0 0 0 0 0 h],'inflate',h/100));
             ucorn= gather_values(u, corn);
-            nd=abs(mean(ucorn(:,3))/w_max)
+            nd=abs(mean(ucorn(:,3))/w_max);
+            
+            if (export_to_abaqus)
+                date_now = clock;
+                s = strcat(num2str(date_now(1)),'-',num2str(date_now(2)),'-', num2str(date_now(3)), '-',num2str(date_now(4)), '-',num2str(date_now(5)));
+                AE=Abaqus_exporter;
+                AE.open([mfilename '-' ElType '-' num2str(na) '-' s '.inp']);
+                AE.HEADING([mfilename ' ' 'ElType=' ElType ' ' 'na=' num2str(na)]);
+                AE.PART('PART1');
+                AE.END_PART();
+                AE.ASSEMBLY('ASSEM1');
+                AE.INSTANCE('INSTNC1','PART1');
+                AE.NODE(geom.values);
+                AE.ELEMENT(ElType,'All',1,fes.conn);
+                AE.ELEMENT(SurfElType,'Traction',count(fes)+1,ttopf.conn);
+                AE.NSET_NSET('Corner',corn);
+                AE.ORIENTATION('Global', [1,0,0], [0,1,0]);
+                AE.SOLID_SECTION('Material','Global','All','Hourglass');
+                AE.SURFACE_SECTION('Traction');
+                AE.NSET_NSET('xfix',find(u.is_fixed(:,1)));
+                AE.NSET_NSET('yfix',find(u.is_fixed(:,2)));
+                AE.NSET_NSET('zfix',find(u.is_fixed(:,3)));
+                AE.END_INSTANCE();
+                AE.END_ASSEMBLY();
+                AE.MATERIAL('Material');
+                AE.ELASTIC_ISOTROPIC(E,nu);
+                %                                 AE.SECTION_CONTROLS('Hourglass','Hourglass = enhanced');
+                AE.STEP_PERTURBATION('Linear solution');
+                AE.DLOAD('ASSEM1.INSTNC1.Traction',[0;0;-q]);
+                AE.BOUNDARY('ASSEM1.INSTNC1.xfix',1);
+                AE.BOUNDARY('ASSEM1.INSTNC1.yfix',2);
+                AE.BOUNDARY('ASSEM1.INSTNC1.zfix',3);
+                AE.NODE_PRINT('ASSEM1.INSTNC1.Corner');
+                AE.ENERGY_PRINT();
+                AE.END_STEP();
+                AE.close();
+                %                 delete([AE.filename '.dat']);
+                system(['abaqus job=' [AE.filename ]]);
+                pause(5);
+                try
+                    d= extract_displacement_from_abaqus_dat([AE.filename '.dat'],...
+                        'THE FOLLOWING TABLE IS PRINTED FOR NODES BELONGING TO NODE SET ASSEM1_INSTNC1_CORNER',...
+                        length(corn));
+                catch,
+                    d=[0,0, 0]; energy = 0;
+                end
+                nd=abs(mean(d(:,3))/w_max);
+            
+            end
+            
             disp(['nel=',num2str(na),', Normalized deflection =', num2str(nd),' (deflection =', num2str(w_max/um('in')),')' ])
             %toc
             normalized_deflections = [normalized_deflections,nd];
