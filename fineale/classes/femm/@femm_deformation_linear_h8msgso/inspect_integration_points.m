@@ -97,6 +97,11 @@ for m=1:length(fe_list)
         case 'Cauchy'
             out =self.material.stress_vector_rotation(Rm')*out;%  To global coordinate system
             if (~outputRm_identity)
+                if (~outputRm_constant)
+                    c =mean(X);% physical location of the quadrature point
+                    if (~isempty(labels )),  outputRm=outputRmh(c,[],labels(i));%  No Jacobian matrix?
+                    else,                    outputRm =outputRmh(c,[],[]);                end
+                end
                 out =self.material.stress_vector_rotation(outputRm)*out;% To output coordinate system
             end
     end

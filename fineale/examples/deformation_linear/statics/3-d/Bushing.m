@@ -12,7 +12,8 @@ E=1*2*(1+1/2);
 % uzex=  0.005060249250000;
 % %     %         nu=0.4999;
 % %     %         uzex=  0.005062274992500;
-nu=0.499999999;
+nu=0.499999999;% This is the correct Poisson ratio
+nu=0.499;% This is not the correct Poisson ratio
 Ri=0.25;
 Re=1.0;
 L=Ri/2;
@@ -26,8 +27,8 @@ Plot_stress = ~graphics;
 
 mix = 1;
 clear mesd
-mesd(mix).nR=11;
-mesd(mix).nc=17;
+mesd(mix).nR=10;
+mesd(mix).nc=28;
 mesd(mix).nt=1;
 mix = mix+1;
 
@@ -36,6 +37,23 @@ mater = material_deformation_linear_triax (struct('property',prop ));
 
 clear eltyd
 eix=1;
+
+
+        eltyd(eix).description ='C8MS';% tetrahedron
+        eltyd(eix).mf =@C8_block;
+        eltyd(eix).femmf =@(fes)femm_deformation_linear_c8ms(struct('fes',fes,'material',mater,...
+        'integration_rule',tet_rule(struct('npts',1))));
+        eltyd(eix).surface_integration_rule=tri_rule(struct('npts',1));
+        eltyd(eix).styl='b^-';
+        eix=eix+1;
+    
+        eltyd(eix).description='H8MSGSO(U)';
+        eltyd(eix).mf =@H8_block_u;
+        eltyd(eix).femmf =@(fes)femm_deformation_linear_h8msgso(struct ('material',mater, 'fes',fes, ...
+            'integration_rule',gauss_rule(struct('dim',3,'order',2))));
+        eltyd(eix).surface_integration_rule=gauss_rule(struct('dim',2,'order',2));
+        eix=eix+1;
+    
 %
 % stabscheme='L';
 % eltyd(eix).description =['THEX-' stabscheme];% tetrahedron
@@ -253,6 +271,7 @@ for eix = 1:length(eltyd)
                     model_data.boundary_conditions.essential{6} = essential;
                     
                     % Solve
+                    model_data.factorize=false;
                     model_data =deformation_linear_statics(model_data);
                     
                     %% Transfer the solution to the field u

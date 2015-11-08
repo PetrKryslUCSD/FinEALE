@@ -5,7 +5,6 @@ stabfact=0.1;
 L= 150*u.MM; % Length of the plate
 H = 75*u.MM; % Width
 W = 10*u.MM; % Thickness of the plate
-nL=26;nH=17;nW=2;
 nL=16;nH=7;nW=1;
 magn=0.3e6*u.PA;
 maxit = 15;
@@ -13,23 +12,26 @@ nincr =1;
 utol = 0.00001;
 
     % Anisotropic, but much stronger anisotropy
-    E1=1000*1e6*u.PA; E2=1*1e6*u.PA; G12=0.5e6*u.PA; nu= 0.25; 
+    E1=10*1e6*u.PA; E2=1*1e6*u.PA; E3=E2; G12=0.2e6*u.PA;  G13=G12; G23=0.2e6*u.PA;
+    nu12= 0.25; nu13= 0.25; nu23= 0.25;
     aangle =+45;
 Rm= rotmat(aangle/180*pi* [0,0,1]);
     % [xestim, beta, c, residual] = richextrapol([],[1,2,4])
-    prop = property_deformation_linear_transv_iso(...
-        struct('E1',E1,'E2',E2,'G12',G12,'nu12',nu,'nu23',nu));
-    stabprop = property_deformation_linear_iso (struct('E',E2,'nu',nu));
+    prop = property_deformation_linear_ortho (...
+        struct('E1',E1,'E2',E2,'E3',E3,...
+        'G12',G12,'G13',G13,'G23',G23,...
+        'nu12',nu12,'nu13',nu13,'nu23',nu23));
+    stabprop = property_deformation_linear_iso (struct('E',E3,'nu',0.4));
     
 
 [fens,fes] = H8_block(L,H,W,nL,nH,nW);
 % [fens,fes] = H8_to_H27(fens,fes);
 
-mater = material_deformation_bb_transviso_triax(struct('property',prop));
+mater = material_deformation_hencky_triax(struct('property',prop));
 stabmater = material_deformation_stvk_triax(struct('property',stabprop));
 
 
-femm = femm_deformation_nonlinear_h8msgso(struct ('material',mater,...
+femm = femm_deformation_nonlinear_h8msgs(struct ('material',mater,...
     'stabilization_material',stabmater, 'Rm',Rm,'fes',fes, ...
     'integration_rule',gauss_rule(struct('dim',3,'order',2))));
 
@@ -58,8 +60,7 @@ efemm = femm_deformation_nonlinear(struct ('material',mater, 'fes',subset(bdry_f
     'integration_rule',gauss_rule(struct('dim',2,'order',4))));
 
 gv=graphic_viewer;
-[femm] = update(femm,geom,u,u);        % final update
-    dt= 1/nincr;
+dt= 1/nincr;
 t=0; % time=load magnitude
 incr=1;
 while (incr <= nincr)
@@ -120,38 +121,6 @@ if graphics,
     gv=reset(clear(gv,[]),[]);camset (gv,cam);
     draw(femm,gv, struct ('x', geom,'u',u, 'facecolor','red'));
     draw(femm,gv, struct ('x', geom,'u',0*u, 'facecolor','none','alpha', 0.2));
-end
-if graphics
-    gv=graphic_viewer;
-    gv=reset (gv,struct ([]));
-    scale=1;
-    cmap=jet;
-    options.outputRm=Rm;
-    fld = field_from_integration_points(femm, geom, u, [], 'Cauchy', 4, options);
-    nvals=fld.values;%min(nvals),max(nvals)
-    nvalsrange=[min(nvals),max(nvals)]; nvalsrange=[-300000,30000];
-    dcm=data_colormap(struct ('range',nvalsrange, 'colormap',cmap));
-    colorfield=nodal_field(struct ('name', ['colorfield'], 'data',map_data(dcm, nvals)));
-    bdry_fes = mesh_boundary(fes, []);
-    draw(bdry_fes,gv, struct ('x', geom,'u',0*u, 'facecolor',0.8*[1,1,1],'facealpha',0.5));
-    draw(femm,gv, struct ('x', geom, 'u', scale*u,'colorfield',colorfield,...
-        'edgecolor',0.8*[1,1,1],'shrink',1.0));
-    xlabel('X','FontName','Times')
-    ylabel('Y','FontName','Times')
-    set(gca,'FontSize',14);
-    set(gca,'FontName','Times')
-    colormap(cmap);
-    cbh=colorbar;
-    set(cbh,'FontSize',14);
-    set(cbh,'FontName','Times')
-    set(cbh,...
-        'Position',[0.625 0.247 0.035 0.51],...
-        'YLim',[0,1],...
-        'YTick',[0,1],...
-        'YTickLabel',{[num2str(nvalsrange(1))],[num2str(nvalsrange(2))]});%{[num2str((min(nvals)))],[num2str((max(nvals)))]}
-    %             set(get(cbh,'XLabel'),'String','Volumetric strain');
-    view (2)
-    
 end
 %         camset(gv, [  -75.6602  613.9688  210.2074   20.6651   38.3517 20.5774         0         0    1.0000    5.3084]);
 clear K

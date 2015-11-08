@@ -1,3 +1,7 @@
+% 11/08/2015
+% - Some FEMMs were missing code to set up an output orientation matrix
+% from a supplied function handle.
+
 % 09/23/2015
 % - added Pagano_laminate_n_layer() benchmark solution
 

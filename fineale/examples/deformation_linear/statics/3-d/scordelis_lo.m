@@ -78,6 +78,13 @@ function gv =scordelis_lo
             eltyd(eix).volume_integration_rule=tet_rule(struct('npts',4));
             eix=eix+1;
     
+            eltyd(eix).description ='T4';
+            eltyd(eix).mf =@T4_blocka;
+            eltyd(eix).femmf =@(fes)femm_deformation_linear(struct('fes',fes, 'material',mater,...
+                'integration_rule',tet_rule(struct('npts',1))));
+            eltyd(eix).volume_integration_rule=tet_rule(struct('npts',1));
+            eix=eix+1;
+    
     %
     mix=1;
     

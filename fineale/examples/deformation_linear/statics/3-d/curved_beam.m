@@ -19,7 +19,7 @@ function curved_beam
     %         dir=2;% in plane
     load(dir)=p;
     htol=min([t])/1000;
-    graphics = true;
+    graphics = ~true;
     stress_range = [-30,30];
     u_scale=10;
     
@@ -27,7 +27,7 @@ function curved_beam
     mater = material_deformation_linear_triax (struct('property',prop ));
     
     format long
-    clc
+    %     clc
     disp(['% ' mfilename]);
     disp(['dir=' num2str(dir,12) ';']);
     disp(['udex=' num2str(udex,12) ';']);
@@ -35,12 +35,35 @@ function curved_beam
     clear mesd
     mix = 1;
     mesd(mix).ref= [1,2,3];%[1,2,4];
-    mesd(mix).nl=6;
+    mesd(mix).nl=16;
     mesd(mix).nt=1;
     mix = mix+1;
     
     clear eltyd
     eix=1;
+    
+    % eltyd(eix).description ='T4';% tetrahedron
+    %         eltyd(eix).mf =@T4_blocka;
+    %         eltyd(eix).femmf =@(fes)femm_deformation_linear(struct('fes',fes,'material',mater,...
+    %         'integration_rule',tet_rule(struct('npts',1))));
+    %         eltyd(eix).surface_integration_rule=tri_rule(struct('npts',1));
+    %         eltyd(eix).styl='b^-';
+    %         eix=eix+1;
+        
+        eltyd(eix).description ='C8MS';% tetrahedron
+            eltyd(eix).mf =@C8_block;
+            eltyd(eix).femmf =@(fes)femm_deformation_nonlinear_c8ms(struct('fes',fes,'material',mater,...
+            'integration_rule',tet_rule(struct('npts',1))));
+            eltyd(eix).surface_integration_rule=tri_rule(struct('npts',1));
+            eltyd(eix).styl='b^-';
+            eix=eix+1;
+    %
+%     eltyd(eix).description ='T10MS';% tetrahedron
+%     eltyd(eix).mf =@T10MS_block;
+%     eltyd(eix).femmf =@(fes)femm_deformation_nonlinear_t10ms(struct('fes',fes,'material',mater,'integration_rule',tet_rule(struct('npts',4))));
+%     eltyd(eix).surface_integration_rule=tri_rule(struct('npts',3));
+%     eltyd(eix).styl='b^-';
+%     eix=eix+1;
     
     eltyd(eix).description ='H20R';
     eltyd(eix).mf =@H20_block;

@@ -52,3 +52,18 @@ Temporary Items
 
 *.asv
 *.vtk
+fineale/work/in
+fineale/try_it.m
+fineale/symbolicD.m
+fineale/work/out
+fineale/profile/HtmlPanel/mwblank1.html
+fineale/examples/deformation_nonlinear/statics/hyperelastic/3-d/Squash/squash_thecube-nt10  10  10-H8MSGSO.mat
+fineale/examples/deformation_nonlinear/instability/3-d/bathtub_buckling-H8MSGSO-nw9-m1.eps
+fineale/examples/deformation_nonlinear/instability/3-d/bathtub_buckling-H8MSGSO-nw9-m2.eps
+fineale/examples/deformation_nonlinear/statics/hyperelastic/3-d/Squash/squash_thecube-nt14  14  14-H8MSGSO(U).mat
+fineale/examples/deformation_nonlinear/statics/hyperelastic/3-d/Squash/squash_thecube-nt14  14  14-H8MSGSO.mat
+fineale/examples/deformation_nonlinear/statics/hyperelastic/3-d/upsetting_block/tryspeed-nt10   5  10-H8MSGSO(U).mat
+fineale/examples/heat_diffusion/pencil_and_paper/T3-example-plot.eps
+fineale/examples/heat_diffusion/pencil_and_paper/T3-example-plot.fig
+fineale/profile/matlab.settings
+fineale/profile/MATLABDesktop.xml.prev

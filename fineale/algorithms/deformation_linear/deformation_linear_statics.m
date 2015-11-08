@@ -112,6 +112,8 @@ function model_data = deformation_linear_statics(model_data)
 %     force  = force density vector
 %     fes = finite element set to which the load applies
 %     integration_rule= integration rule
+%     Alternatively, FEMM may be specified instead of fes, integration_rule:
+%     femm= FEMM for the evaluation of the body load
 %
 % For multi point constraints (MPC) (optional):
 % model_data.mpc= cell array of structs, each for one MPC.
@@ -288,9 +290,13 @@ function model_data = deformation_linear_statics(model_data)
     if (isfield(model_data, 'body_load' ))
         for j=1:length(model_data.body_load)
             body_load =model_data.body_load{j};
-            femm = femm_deformation_linear (struct ('material',[],...
+            if (~isfield( body_load, 'femm'))
+                femm = femm_deformation_linear (struct ('material',[],...
                 'fes',body_load.fes,...
-                'integration_rule',body_load.integration_rule));
+                'integration_rule',body_load.integration_rule)); 
+            else
+                femm=body_load.femm;
+            end
             fi= force_intensity(struct('magn',body_load.force));
             F = F + distrib_loads(femm, sysvec_assembler, geom, u, fi, 3);        
         end
@@ -336,7 +342,7 @@ function model_data = deformation_linear_statics(model_data)
         end
         clear Kmpc Fmpc
     end
-    
+     
     % Solve the system of linear algebraic equations
     if (factorize)
         % Factorize the left-hand side matrix (Choleski)

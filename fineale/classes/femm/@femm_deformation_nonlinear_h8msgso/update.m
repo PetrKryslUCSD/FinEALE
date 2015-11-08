@@ -77,21 +77,6 @@ for i=1:size(conns,1)
     context.F =Rm'*F1bar*Rm;% Deformation gradient wrt  material orientation 
     % Update the stress for the real material
     [cauchy,self.matstates{i}] = update(self.material, self.matstates{i}, context);
-    % Update the stress for the stabilization material
-    %     [stabcauchy,~] = update(self.stabilization_material, [], context);
-    %     Bbar = self.hBlmat(self,[],gradN_mean/F1bar,[],[]);% strain-displacement d/dx
-    %     gcauchy =self.material.stress_vector_rotation(Rm')*(cauchy-f*stabcauchy); % to global
-    %     Fe =  - Bbar'* (gcauchy * (V* det(F1bar))) ; % note the sign
-    %     %     Now we update the stress for the stabilization material for the second time; this time for the full quadrature  rule
-    %     for j=1:npts
-    %         F1 =x1'*gradN{j};
-    %         context.F = Rm'*F1*Rm;% Current deformation gradient wrt material orientation
-    %         [stabcauchy,~] = update(self.stabilization_material, [], context);
-    %         B = self.hBlmat(self,[],gradN{j}/F1,[],[]);% strain-displacement
-    %         gcauchy =self.material.stress_vector_rotation(Rm')*(f*stabcauchy); % to global
-    %         Fe = Fe - B'* (gcauchy * (Jac{j} * w(j)* det(F1))) ; % note the sign
-    %     end
-%     assemble(assembler, Fe, dofnums);
 end
 % F = make_vector (assembler);
 return;

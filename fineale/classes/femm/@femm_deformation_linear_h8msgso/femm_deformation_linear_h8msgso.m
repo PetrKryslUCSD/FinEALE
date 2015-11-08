@@ -42,6 +42,11 @@ classdef femm_deformation_linear_h8msgso < femm_deformation_linear
                 %     We will have to make our own stabilization material.
                 try
                     E = self.material.property.E;% Isotropic  material?
+                    if (self.material.property.nu<0.3)
+                        nu=self.material.property.nu;
+                    else
+                        nu=0.3+ (self.material.property.nu-0.3)/2;
+                    end
                 catch
                     try % Orthotropic material?
                         E = self.material.property.E1;
@@ -54,14 +59,10 @@ classdef femm_deformation_linear_h8msgso < femm_deformation_linear
                         catch
                         end
                         E=min(E);;
+                        nu=min([self.material.property.nu12,self.material.property.nu13,self.material.property.nu23]);
                     catch
                         error('Do not know how to create stabilization material');
                     end
-                end
-                if (self.material.property.nu<0.2)
-                    nu=self.material.property.nu;
-                else
-                    nu=0.2+ (self.material.property.nu-0.2)/2;
                 end
                 %                 nu=0.; % Experiment in
                 prop = property_deformation_linear_iso (struct('E',E,'nu',nu));

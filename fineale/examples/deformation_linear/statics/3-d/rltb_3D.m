@@ -28,7 +28,7 @@ function rltb_3D
     mater = material_deformation_linear_triax (struct('property',prop ));
                 
     mix = 1;
-    mesd(mix).mult=2;
+    mesd(mix).mult=10;
     mesd(mix).ns=[2,4,8];
     mesd(mix).ns=[1,2,4];
     mix = mix+1;
@@ -36,6 +36,21 @@ function rltb_3D
     clear eltyd
     eix=1;
  
+        eltyd(eix).description ='C8MS';% tetrahedron
+        eltyd(eix).mf =@C8_block;
+        eltyd(eix).femmf =@(fes)femm_deformation_nonlinear_c8ms(struct('fes',fes,'material',mater,...
+        'integration_rule',tet_rule(struct('npts',1))));
+        eltyd(eix).surface_integration_rule=tri_rule(struct('npts',1));
+        eltyd(eix).styl='b^-';
+        eix=eix+1;
+    
+    %     eltyd(eix).description ='T10MS';% tetrahedron
+    %     eltyd(eix).mf =@T10MS_block;
+    %     eltyd(eix).femmf =@(fes)femm_deformation_nonlinear_t10ms(struct('fes',fes,'material',mater,'integration_rule',tet_rule(struct('npts',4))));
+    %     eltyd(eix).surface_integration_rule=tri_rule(struct('npts',3));
+    %     eltyd(eix).styl='b^-';
+    %     eix=eix+1;
+    
     eltyd(eix).description ='T10';% tetrahedron
     eltyd(eix).mf =@T10_block;
     eltyd(eix).femmf =@(fes)femm_deformation_linear(struct('fes',fes,'material',mater,'integration_rule',tet_rule(struct('npts',4))));
@@ -127,8 +142,8 @@ function rltb_3D
                     clear options
                     model_data.postprocessing.u_scale= u_scale;
                     model_data.postprocessing.stress_component=2;
-%                     options=deformation_plot_stress(model_data, options)
-                    model_data=deformation_plot_deformation(model_data);
+                          model_data=deformation_plot_stress(model_data);
+                       %            model_data=deformation_plot_deformation(model_data);
                 else
                     %                     plot(ns,uzs/uzex,eltyd(eix).styl,'linewidth',3); hold on
                     %                     figure (gcf); pause (1)

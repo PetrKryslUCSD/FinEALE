@@ -22,7 +22,7 @@ function  Twisted_beam
     %     Loading in the Z direction
     loadv=[0;0;p];dir=3;uzex=0.005424534868469; % Harder: 5.424e-3;
     %     Loading in the Y direction
-    loadv=[0;p;0];dir=2;uzex=0.001753248285256; % Harder: 1.754e-3;
+    %     loadv=[0;p;0];dir=2;uzex=0.001753248285256; % Harder: 1.754e-3;
     graphics = ~true;
     u_scale=1000;
     
@@ -34,21 +34,44 @@ function  Twisted_beam
     eix=1;
     
     
-    eltyd(eix).description ='H64';
-    eltyd(eix).mf =@H64_block;
-    eltyd(eix).femmf =@(fes)femm_deformation_linear(struct('fes',fes, 'material',mater,...
-        'integration_rule',gauss_rule(struct('dim',3, 'order',4))));
-    eltyd(eix).surface_integration_rule=gauss_rule(struct('dim',2, 'order',4));
-    eltyd(eix).styl='k*--';
-    eix=eix+1;
+        eltyd(eix).description ='H8MS';% tetrahedron
+        eltyd(eix).mf =@H8_block;
+        eltyd(eix).femmf =@(fes)femm_deformation_nonlinear_h8msgso(struct('fes',fes,'material',mater,...
+        'integration_rule',gauss_rule(struct('dim',3, 'order',2))));
+        eltyd(eix).surface_integration_rule=gauss_rule(struct('dim',2, 'order',2));
+        eltyd(eix).styl='b^-';
+        eix=eix+1;
     
-    eltyd(eix).description ='H27';
-    eltyd(eix).mf =@H27_block;
-    eltyd(eix).femmf =@(fes)femm_deformation_linear(struct('fes',fes, 'material',mater,...
-        'integration_rule',gauss_rule(struct('dim',3, 'order',3))));
-    eltyd(eix).surface_integration_rule=gauss_rule(struct('dim',2, 'order',4));
-    eltyd(eix).styl='ks--';
-    eix=eix+1;
+        eltyd(eix).description ='C8MS';% tetrahedron
+        eltyd(eix).mf =@C8_block;
+        eltyd(eix).femmf =@(fes)femm_deformation_nonlinear_c8ms(struct('fes',fes,'material',mater,...
+        'integration_rule',tet_rule(struct('npts',1))));
+        eltyd(eix).surface_integration_rule=tri_rule(struct('npts',1));
+        eltyd(eix).styl='b^-';
+        eix=eix+1;
+    
+    %     eltyd(eix).description ='H64';
+    %     eltyd(eix).mf =@H64_block;
+    %     eltyd(eix).femmf =@(fes)femm_deformation_linear(struct('fes',fes, 'material',mater,...
+    %         'integration_rule',gauss_rule(struct('dim',3, 'order',4))));
+    %     eltyd(eix).surface_integration_rule=gauss_rule(struct('dim',2, 'order',4));
+    %     eltyd(eix).styl='k*--';
+    %     eix=eix+1;
+    
+    %     eltyd(eix).description ='T10MS';% tetrahedron
+    %     eltyd(eix).mf =@T10MS_block;
+    %     eltyd(eix).femmf =@(fes)femm_deformation_nonlinear_t10ms(struct('fes',fes,'material',mater,'integration_rule',tet_rule(struct('npts',4))));
+    %     eltyd(eix).surface_integration_rule=tri_rule(struct('npts',3));
+    %     eltyd(eix).styl='b^-';
+    %     eix=eix+1;
+    
+%     eltyd(eix).description ='H27';
+%     eltyd(eix).mf =@H27_block;
+%     eltyd(eix).femmf =@(fes)femm_deformation_linear(struct('fes',fes, 'material',mater,...
+%         'integration_rule',gauss_rule(struct('dim',3, 'order',3))));
+%     eltyd(eix).surface_integration_rule=gauss_rule(struct('dim',2, 'order',4));
+%     eltyd(eix).styl='ks--';
+%     eix=eix+1;
     
     eltyd(eix).description ='T10';% tetrahedron
     eltyd(eix).mf =@T10_block;
@@ -57,14 +80,14 @@ function  Twisted_beam
     eltyd(eix).styl='k^--';
     eix=eix+1;
     
-    eltyd(eix).description ='T10-SRI';
-    eltyd(eix).mf =@T10_block;
-    eltyd(eix).femmf =@(fes)femm_deformation_linear_sri(struct('fes',fes, 'material',mater,...
-        'integration_rule_volumetric',tet_rule(struct('npts',1)),...
-        'integration_rule_deviatoric',tet_rule(struct('npts',4))));
-    eltyd(eix).surface_integration_rule=tri_rule(struct('npts',3));
-    eltyd(eix).styl='kv-';
-    eix=eix+1;
+%     eltyd(eix).description ='T10-SRI';
+%     eltyd(eix).mf =@T10_block;
+%     eltyd(eix).femmf =@(fes)femm_deformation_linear_sri(struct('fes',fes, 'material',mater,...
+%         'integration_rule_volumetric',tet_rule(struct('npts',1)),...
+%         'integration_rule_deviatoric',tet_rule(struct('npts',4))));
+%     eltyd(eix).surface_integration_rule=tri_rule(struct('npts',3));
+%     eltyd(eix).styl='kv-';
+%     eix=eix+1;
     
     eltyd(eix).description ='H20R';
     eltyd(eix).mf =@H20_block;

@@ -3,7 +3,7 @@
 % pressure of 1.0 units. A wedge   with unit thickness and a 90-degree
 % angle sector is considered for the finite element analysis. The material
 % properties are taken as  isotropic linear elastic with E=1000 and
-% nu=0·4999 to represent nearly incompressible behavior.
+% ?=0·4999 to represent nearly incompressible behavior.
 % This problem has been proposed to by MacNeal and Harter [33] as a test on
 % an elements ability to
 % represent proper behavior for a nearly incompressible material.
@@ -24,11 +24,11 @@ function thick_pipe
     %     %     uzex=  0.005060249250000;
     %         nu=0.4999;
     %         uzex=  0.005062274992500;
-            nu=0.499999999;
-            uzex= 0.005062499997750;
+    %     nu=0.499999999;
+    %     uzex= 0.005062499997750;
     R= 6;
     t=6;
-    L=2*t;
+    L=t;
     ang=90/180*pi;
     p=  1;
     randshiftmult= 0.37;
@@ -36,15 +36,15 @@ function thick_pipe
     parshiftmult= 0.5;
     parshiftmult= 0.;
     graphics =  ~true;
-    u_scale=500;
+    u_scale=200;
     Plot_stress =  true;
     
     mix = 1;
     clear mesd
-    mesd(mix).ref=1;[4:2:10];
-    mesd(mix).ny=4;
-    mesd(mix).nc=8;
-    mesd(mix).nt=4;
+    mesd(mix).ref=4;[4:2:10];
+    mesd(mix).ny=1;
+    mesd(mix).nc=4;
+    mesd(mix).nt=1;
     mix = mix+1;
     
     prop=property_deformation_linear_iso(struct('E',E,'nu',nu));
@@ -53,22 +53,6 @@ function thick_pipe
     clear eltyd
     eix=1;
     
-    %             eltyd(eix).description ='H8MSGSO';% tetrahedron
-    %             eltyd(eix).mf =@H8_block;
-    %             eltyd(eix).femmf =@(fes)femm_deformation_linear_h8msgso(struct('fes',fes,'material',mater,...
-    %             'integration_rule',gauss_rule(struct('dim',3, 'order',2))));
-    %             eltyd(eix).surface_integration_rule=gauss_rule(struct('dim',2, 'order',2));
-    %             eltyd(eix).styl='b^-';
-    %                 eix=eix+1;
-    
-                        eltyd(eix).description ='C8MS';% tetrahedron
-                        eltyd(eix).mf =@C8_block;
-                        eltyd(eix).femmf =@(fes)femm_deformation_linear_c8ms(struct('fes',fes,'material',mater,...
-                        'integration_rule',tet_rule(struct('npts',1))));
-                        eltyd(eix).surface_integration_rule=tri_rule(struct('npts',1));
-                        eltyd(eix).styl='r^-';
-                        eix=eix+1;
-        %
     %             eltyd(eix).description ='H64';
     %             eltyd(eix).mf =@H64_block;
     %             eltyd(eix).femmf =@(fes)femm_deformation_linear(struct('fes',fes, 'material',mater,...
@@ -76,23 +60,15 @@ function thick_pipe
     %             eltyd(eix).surface_integration_rule=gauss_rule(struct('dim',2, 'order',4));
     %             eltyd(eix).styl='k*--';
     %             eix=eix+1;
-%             
-        eltyd(eix).description ='T10MS';% tetrahedron
-        eltyd(eix).mf =@T10MS_block;
-        eltyd(eix).femmf =@(fes)femm_deformation_nonlinear_t10ms(struct('fes',fes,'material',mater,...
-        'integration_rule',tet_rule(struct('npts',1))));
-        eltyd(eix).surface_integration_rule=tri_rule(struct('npts',1));
-        eltyd(eix).styl='b^-';
-        eix=eix+1;
-%     
-    %                      eltyd(eix).description ='H64-SRI';
-    %                 eltyd(eix).mf =@H64_block;
-    %                 eltyd(eix).femmf =@(fes)femm_deformation_linear_sri(struct('fes',fes, 'material',mater,...
-    %                     'integration_rule_volumetric',gauss_rule(struct('dim',3, 'order',3)),...
-    %                     'integration_rule_deviatoric',gauss_rule(struct('dim',3, 'order',4))));
-    %                 eltyd(eix).surface_integration_rule=gauss_rule(struct('dim',2, 'order',4));
-    %                 eltyd(eix).styl='k*--';
-    %                 eix=eix+1;
+            
+                 eltyd(eix).description ='H64-SRI';
+            eltyd(eix).mf =@H64_block;
+            eltyd(eix).femmf =@(fes)femm_deformation_linear_sri(struct('fes',fes, 'material',mater,...
+                'integration_rule_volumetric',gauss_rule(struct('dim',3, 'order',3)),...
+                'integration_rule_deviatoric',gauss_rule(struct('dim',3, 'order',4))));
+            eltyd(eix).surface_integration_rule=gauss_rule(struct('dim',2, 'order',4));
+            eltyd(eix).styl='k*--';
+            eix=eix+1;
     %
     %         eltyd(eix).description ='H27';
     %         eltyd(eix).mf =@H27_block;
@@ -194,18 +170,18 @@ function thick_pipe
                         essential.fixed_value= 0;
                         essential.node_list = fenode_select (fens,struct ('box',[-100*R 100*R 0 0 -100*R 100*R],'inflate',t/10000));
                         model_data.boundary_conditions.essential{2} = essential;
-                        %
-                        %                         clear essential
-                        %                         essential.component= [2];
-                        %                         essential.fixed_value= 0;
-                        %                         essential.node_list = fenode_select (fens,struct ('box',[-100*R 100*R L/2 L/2 -100*R 100*R],'inflate',t/10000));
-                        %                         model_data.boundary_conditions.essential{3} = essential;
+                        
+                        clear essential
+                        essential.component= [2];
+                        essential.fixed_value= 0;
+                        essential.node_list = fenode_select (fens,struct ('box',[-100*R 100*R L/2 L/2 -100*R 100*R],'inflate',t/10000));
+                        model_data.boundary_conditions.essential{3} = essential;
                         
                         clear essential
                         essential.component= [3];
                         essential.fixed_value= 0;
                         essential.node_list = fenode_select (fens,struct ('box',[-100*R 100*R 0 L/2 0 0],'inflate',t/10000));
-                        model_data.boundary_conditions.essential{3} = essential;
+                        model_data.boundary_conditions.essential{4} = essential;
                         
                         clear traction
                         traction.fes =subset(bdry_fes,bcl);;
@@ -240,14 +216,13 @@ function thick_pipe
                             model_data.postprocessing.u_scale= u_scale;
                             model_data.postprocessing.stress_component=3;
                             model_data.postprocessing.stress_range=[-p,+p];
-                            model_data=deformation_plot_stress_elementwise(model_data);
+                            model_data=deformation_plot_stress(model_data);
                             %                     options=deformation_plot_deformation(model_data, options);
                         else
                             if (Plot_stress )
                                 r  =linspace(a,b,100);
-                                idat.component =1; %  Radial component of stress
-                                %                                 idat.component =3; %  Axial component of stress
-                               plot(r,p*a.^2/(b^2-a^2).*(1-b^2./r.^2),'k.-','linewidth',3); hold on
+                                idat.component =3; %Axial component of stress
+                                plot(r,p*a.^2/(b^2-a^2).*(1-b^2./r.^2),'k.-','linewidth',3); hold on
                                 %                                 idat.component =2; %  Hoop component of stress
                                 %                                 plot(r,p*a.^2/(b^2-a^2).*(1+b^2./r.^2),'k.-','linewidth',3); hold on
                                 context. output='Cauchy';
@@ -282,7 +257,7 @@ function thick_pipe
         end
     end
     
-    function idat =inspector(idat, out, xyz, uxyz, pc)
+    function idat =inspector(idat, out, xyz, u,pc)
         %         if (isempty(idat.r))
         Projection=[xyz(1),0,xyz(3)];
         r=norm(Projection);
