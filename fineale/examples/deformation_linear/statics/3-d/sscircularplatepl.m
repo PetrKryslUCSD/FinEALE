@@ -1,24 +1,21 @@
-function sscircularplatedl
-disp('Simply supported square plate with distributed load');
+function sscircularplatepl
+disp('Clamped square plate with concentrated force');
 % Data listed in the Simo 1990 paper "A class of... "
-    E=10.92;
+E=10.92e6;% The Young's modulus is taken  much larger to limit the amount of deflection
 nu=0.3;
-Magnitude=1;
-R=5;
-graphics =  ~false;
+Magnitude=1.0;
+R=5.0;
+graphics =  true;
+nt=1;
 for thickness = 0.1;
     tolerance=0.0001*thickness;
-    % analytical solution for the vertical deflection under the load
-    % Zienkiewicz, Taylor, The finite element method, fifth edition, volume 2,
-    %
-    %     analyt_sol= 1/64*((5+nu)/(1+nu))/(E/(1-nu^2)/12*(thickness^3));
     % Solution listed in the Simo 1990 paper "A class of... "
     analyt_sol= Magnitude/64*((5+nu)/(1+nu) +4/3*(3+nu)/(1-nu^2)*(thickness^2/R^2))*R^4/(E/(1-nu^2)/12*(thickness^3));
     
-    nt=1;
+    
     % Mesh
     Normalized_Deflection =[];
-    for nperradius=[4,8,16,32]
+    for nperradius=[2,4,8,12]
         nt=nt+1;
         [fens,fes] = Q4_circle_n(R, nperradius, 1.0);
         [fens,fes] = H8_extrude_Q4(fens,fes,nt,@(x,k)([x(1),x(2),k*thickness/nt]));
@@ -37,6 +34,8 @@ for thickness = 0.1;
         y0l=fe_select(fens, bdry_fes, ...
             struct ('box',[-inf inf 0 0   0 thickness],'inflate',tolerance));
         cyll=setdiff(1:count(bdry_fes),[topl,botl,x0l,y0l]);
+        
+        enl=fenode_select (fens,struct ('box',[0,0, 0,0, 0,thickness],'inflate',tolerance));
         
         % Compose the model data
         clear model_data
@@ -66,6 +65,7 @@ for thickness = 0.1;
         model_data.boundary_conditions.essential{3} = essential;
         
         
+        
         clear traction
         traction.fes =subset(bdry_fes,topl);;
         traction.traction= [0;0;Magnitude];
@@ -73,7 +73,6 @@ for thickness = 0.1;
         model_data.boundary_conditions.traction{1} = traction;
         
         
-        enl=fenode_select (fens,struct ('box',[0,0, 0,0, 0,thickness],'inflate',tolerance));
         
         % Solve
         model_data =deformation_linear_statics(model_data);
@@ -84,11 +83,24 @@ for thickness = 0.1;
         %         Number_of_elements= [Number_of_elements,n];
         % Plot
         if graphics
-            model_data.postprocessing.u_scale= R/4/(mean(u0(:,3)));
-                model_data.postprocessing.show_mesh= 1;
-                model_data=deformation_plot_deformation(model_data);
+            model_data.postprocessing.u_scale= R/8/analyt_sol*(mean(u0(:,3))/analyt_sol);
+            %             model_data.postprocessing.show_mesh= 1;
+            %             model_data=deformation_plot_deformation(model_data);
+                        model_data.postprocessing.output='Cauchy';
+                        model_data.postprocessing.stress_component=5;
+                        model_data.postprocessing.outputRm=@cylindrical_Rm;
+                        model_data.postprocessing.cmap=cadcolors2;
+                        %                         model_data=deformation_plot_stress_elementwise(model_data);
+                        model_data=deformation_plot_stress(model_data);
         end
     end
-    Normalized_Deflection
-    Normalized_Deflection/analyt_sol*100
+    
+end
+
+    function Rm= cylindrical_Rm(x,J,label)
+        eR=[x(:,1:2),0]'; eZ=[0;0;1];
+        eR=eR/norm(eR);
+        eT=skewmat(eR)*eZ;
+        Rm= [eR,eT,eZ];
+    end
 end
