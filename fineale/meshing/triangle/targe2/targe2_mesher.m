@@ -110,7 +110,7 @@ function [fens,fes,groups,edge_fes,edge_groups] = targe2_mesher(fs,thickness,var
         exec=['"' fineale_path filesep 'meshing' filesep 'triangle' filesep 'targe2' filesep 'targe2_GLNXA64"'];
         c=[exec ' ' ' -i ' in ' -f  2 -o ' out ];
         system(['chmod +x ' exec]);
-    elseif strcmp(computer,'MACI')
+    elseif strcmp(computer,'MACI')||strcmp(computer,'MACI64')
         exec=['"' fineale_path filesep 'meshing' filesep 'triangle' filesep 'targe2' filesep 'targe2_MACI"'];
         c=[exec ' -i ' in ' -f  2 -o ' out ];
         system(['chmod +x ' exec]);
