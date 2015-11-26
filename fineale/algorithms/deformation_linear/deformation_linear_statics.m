@@ -316,6 +316,19 @@ function model_data = deformation_linear_statics(model_data)
         clear traction fi  femm
     end
     
+    % Process the nodal force boundary condition
+    if (isfield(model_data.boundary_conditions, 'nodal_force' ))
+        for j=1:length(model_data.boundary_conditions.nodal_force)
+            nodal_force =model_data.boundary_conditions.nodal_force{j};
+            femm = femm_deformation_linear (struct ('material',[],...
+                'fes',fe_set_P1(struct('conn',reshape(nodal_force.node_list,[],1))),...
+                'integration_rule',point_rule));
+            fi= force_intensity(struct('magn',nodal_force.force));
+            F = F + distrib_loads(femm, sysvec_assembler, geom, u, fi, 0);
+        end
+        clear nodal_force fi femm
+    end
+    
     % Process the thermal loads
     if (isfield(model_data,'temperature'))
         temperature = model_data.temperature;
