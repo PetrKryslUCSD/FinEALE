@@ -144,7 +144,7 @@ function gv =pinchcyl
             model_data =deformation_linear_statics(model_data);
             
             corn=fenode_select (fens,struct('box',[0 0 L/2 L/2 -10000 10000],'inflate',tolerance));
-    uv= gather_values(model_data.u, corn);
+            uv= gather_values(model_data.u, corn);
             uz=sum(uv(:,3))/length(corn) ;
             nd=abs(uz/uzex);
             disp(['% ' eltyd(eix).description ': ' 'Deflection under the load: ' num2str(nd*100) '%'])

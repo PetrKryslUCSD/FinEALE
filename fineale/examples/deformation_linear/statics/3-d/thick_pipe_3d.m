@@ -53,21 +53,21 @@ function thick_pipe
     clear eltyd
     eix=1;
     
-    %             eltyd(eix).description ='H8MSGSO';% tetrahedron
-    %             eltyd(eix).mf =@H8_block;
-    %             eltyd(eix).femmf =@(fes)femm_deformation_linear_h8msgso(struct('fes',fes,'material',mater,...
-    %             'integration_rule',gauss_rule(struct('dim',3, 'order',2))));
-    %             eltyd(eix).surface_integration_rule=gauss_rule(struct('dim',2, 'order',2));
-    %             eltyd(eix).styl='b^-';
-    %                 eix=eix+1;
+                eltyd(eix).description ='H8MSGSO';% tetrahedron
+                eltyd(eix).mf =@H8_block;
+                eltyd(eix).femmf =@(fes)femm_deformation_linear_h8msgso(struct('fes',fes,'material',mater,...
+                'integration_rule',gauss_rule(struct('dim',3, 'order',2))));
+                eltyd(eix).surface_integration_rule=gauss_rule(struct('dim',2, 'order',2));
+                eltyd(eix).styl='b^-';
+                    eix=eix+1;
     
-                        eltyd(eix).description ='C8MS';% tetrahedron
-                        eltyd(eix).mf =@C8_block;
-                        eltyd(eix).femmf =@(fes)femm_deformation_linear_c8ms(struct('fes',fes,'material',mater,...
-                        'integration_rule',tet_rule(struct('npts',1))));
-                        eltyd(eix).surface_integration_rule=tri_rule(struct('npts',1));
-                        eltyd(eix).styl='r^-';
-                        eix=eix+1;
+    %                         eltyd(eix).description ='C8MS';% tetrahedron
+    %                         eltyd(eix).mf =@C8_block;
+    %                         eltyd(eix).femmf =@(fes)femm_deformation_linear_c8ms(struct('fes',fes,'material',mater,...
+    %                         'integration_rule',tet_rule(struct('npts',1))));
+    %                         eltyd(eix).surface_integration_rule=tri_rule(struct('npts',1));
+    %                         eltyd(eix).styl='r^-';
+    %                         eix=eix+1;
         %
     %             eltyd(eix).description ='H64';
     %             eltyd(eix).mf =@H64_block;
@@ -77,13 +77,13 @@ function thick_pipe
     %             eltyd(eix).styl='k*--';
     %             eix=eix+1;
 %             
-        eltyd(eix).description ='T10MS';% tetrahedron
-        eltyd(eix).mf =@T10MS_block;
-        eltyd(eix).femmf =@(fes)femm_deformation_nonlinear_t10ms(struct('fes',fes,'material',mater,...
-        'integration_rule',tet_rule(struct('npts',1))));
-        eltyd(eix).surface_integration_rule=tri_rule(struct('npts',1));
-        eltyd(eix).styl='b^-';
-        eix=eix+1;
+%         eltyd(eix).description ='T10MS';% tetrahedron
+%         eltyd(eix).mf =@T10MS_block;
+%         eltyd(eix).femmf =@(fes)femm_deformation_nonlinear_t10ms(struct('fes',fes,'material',mater,...
+%         'integration_rule',tet_rule(struct('npts',1))));
+%         eltyd(eix).surface_integration_rule=tri_rule(struct('npts',1));
+%         eltyd(eix).styl='b^-';
+%         eix=eix+1;
 %     
     %                      eltyd(eix).description ='H64-SRI';
     %                 eltyd(eix).mf =@H64_block;

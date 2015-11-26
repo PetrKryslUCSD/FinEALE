@@ -34,7 +34,7 @@ function  Twisted_beam
     eix=1;
     
     
-        eltyd(eix).description ='H8MS';% tetrahedron
+        eltyd(eix).description ='h8msgso';% tetrahedron
         eltyd(eix).mf =@H8_block;
         eltyd(eix).femmf =@(fes)femm_deformation_nonlinear_h8msgso(struct('fes',fes,'material',mater,...
         'integration_rule',gauss_rule(struct('dim',3, 'order',2))));
@@ -42,13 +42,13 @@ function  Twisted_beam
         eltyd(eix).styl='b^-';
         eix=eix+1;
     
-        eltyd(eix).description ='C8MS';% tetrahedron
-        eltyd(eix).mf =@C8_block;
-        eltyd(eix).femmf =@(fes)femm_deformation_nonlinear_c8ms(struct('fes',fes,'material',mater,...
-        'integration_rule',tet_rule(struct('npts',1))));
-        eltyd(eix).surface_integration_rule=tri_rule(struct('npts',1));
-        eltyd(eix).styl='b^-';
-        eix=eix+1;
+        %         eltyd(eix).description ='C8MS';% tetrahedron
+        %         eltyd(eix).mf =@C8_block;
+        %         eltyd(eix).femmf =@(fes)femm_deformation_nonlinear_c8ms(struct('fes',fes,'material',mater,...
+        %         'integration_rule',tet_rule(struct('npts',1))));
+        %         eltyd(eix).surface_integration_rule=tri_rule(struct('npts',1));
+        %         eltyd(eix).styl='b^-';
+        %         eix=eix+1;
     
     %     eltyd(eix).description ='H64';
     %     eltyd(eix).mf =@H64_block;

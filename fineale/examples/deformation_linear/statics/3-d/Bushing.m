@@ -39,14 +39,6 @@ clear eltyd
 eix=1;
 
 
-        eltyd(eix).description ='C8MS';% tetrahedron
-        eltyd(eix).mf =@C8_block;
-        eltyd(eix).femmf =@(fes)femm_deformation_linear_c8ms(struct('fes',fes,'material',mater,...
-        'integration_rule',tet_rule(struct('npts',1))));
-        eltyd(eix).surface_integration_rule=tri_rule(struct('npts',1));
-        eltyd(eix).styl='b^-';
-        eix=eix+1;
-    
         eltyd(eix).description='H8MSGSO(U)';
         eltyd(eix).mf =@H8_block_u;
         eltyd(eix).femmf =@(fes)femm_deformation_linear_h8msgso(struct ('material',mater, 'fes',fes, ...
@@ -54,6 +46,14 @@ eix=1;
         eltyd(eix).surface_integration_rule=gauss_rule(struct('dim',2,'order',2));
         eix=eix+1;
     
+        %         eltyd(eix).description ='C8MS';% tetrahedron
+        %         eltyd(eix).mf =@C8_block;
+        %         eltyd(eix).femmf =@(fes)femm_deformation_linear_c8ms(struct('fes',fes,'material',mater,...
+        %         'integration_rule',tet_rule(struct('npts',1))));
+        %         eltyd(eix).surface_integration_rule=tri_rule(struct('npts',1));
+        %         eltyd(eix).styl='b^-';
+        %         eix=eix+1;
+        %
 %
 % stabscheme='L';
 % eltyd(eix).description =['THEX-' stabscheme];% tetrahedron

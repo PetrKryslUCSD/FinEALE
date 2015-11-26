@@ -50,13 +50,13 @@ function curved_beam
     %         eltyd(eix).styl='b^-';
     %         eix=eix+1;
         
-        eltyd(eix).description ='C8MS';% tetrahedron
-            eltyd(eix).mf =@C8_block;
-            eltyd(eix).femmf =@(fes)femm_deformation_nonlinear_c8ms(struct('fes',fes,'material',mater,...
-            'integration_rule',tet_rule(struct('npts',1))));
-            eltyd(eix).surface_integration_rule=tri_rule(struct('npts',1));
-            eltyd(eix).styl='b^-';
-            eix=eix+1;
+    %         eltyd(eix).description ='C8MS';% tetrahedron
+    %             eltyd(eix).mf =@C8_block;
+    %             eltyd(eix).femmf =@(fes)femm_deformation_nonlinear_c8ms(struct('fes',fes,'material',mater,...
+    %             'integration_rule',tet_rule(struct('npts',1))));
+    %             eltyd(eix).surface_integration_rule=tri_rule(struct('npts',1));
+    %             eltyd(eix).styl='b^-';
+    %             eix=eix+1;
     %
 %     eltyd(eix).description ='T10MS';% tetrahedron
 %     eltyd(eix).mf =@T10MS_block;
