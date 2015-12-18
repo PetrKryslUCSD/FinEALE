@@ -9,34 +9,13 @@ function KS_sandwich_vibration_ss
     % moduli is variable, and the number of layers also varies.
     % E1/E2 = 3, 10, 40
     
-%     % One particular case from the paper:
-%     L_t =5;
-%     E1_E2 = 3;% this ratio is variable
-%     % Anti-symmetric layup
-%     angles =[0 90 0 90];
-%     omega_bar=6.5455; % the fundamental frequency multiplier
+    % One particular case from the paper:
+    L_t =5;
+    E1_E2 = 3;% this ratio is variable
+    % Anti-symmetric layup
+    angles =[0 90 0 90];
+    omega_bar=6.5455; % the fundamental frequency multiplier
     
-%         % One particular case from the paper:
-%         L_t =10;
-%         E1_E2 = 40;% this ratio is variable
-%         % Anti-symmetric layup
-%         angles =[0 90 ];
-%         omega_bar=10.4319; % the fundamental frequency multiplier
-    
-        %         % One particular case from the paper:
-        %         L_t =20;
-        %         E1_E2 = 40;% this ratio is variable
-        %         % Anti-symmetric layup
-        %         angles =[0 90 ];
-        %         omega_bar=11.0663; % the fundamental frequency multiplier
-    
-        % One particular case from the paper:
-        L_t =100;
-        E1_E2 = 40;% this ratio is variable
-        % Anti-symmetric layup
-        angles =[0 90 ];
-        omega_bar=11.2988; % the fundamental frequency multiplier
- 
     % More anisotropy:
     % L_t =5;
     % E1_E2 = 40;% this ratio is variable
@@ -58,11 +37,10 @@ function KS_sandwich_vibration_ss
     
     % Fundamental frequency
     omega_fundamental =omega_bar*t/W^2*sqrt(E2/rho);
-    f_fundamental=omega_fundamental/2/pi;
-    disp(['Analytical f_fundamental =',num2str(f_fundamental)])
+    f_fundamental =omega_fundamental/2/pi
     
     nLayers =length(angles);
-    [nL,nW] =adeal(2*[4,4]);
+    [nL,nW] =adeal(5*[4,4]);
     nts= 1*ones(length(angles));% number of elements per layer
     ts= t/length(angles)*ones(length(angles));% layer thicknesses
     graphics = ~false;
@@ -118,20 +96,18 @@ function KS_sandwich_vibration_ss
         'inflate',0.001*t))];
     model_data.boundary_conditions.essential{2} = essential;
     
-    model_data.neigvs=6;
     model_data.omega_shift=(2*pi*40) ^ 2;
     model_data.use_factorization= true;
     % Solve
-    tic; model_data = deformation_linear_modal_analysis(model_data);
-    toc
+    model_data = deformation_linear_modal_analysis(model_data);
+   
     
     f=model_data.Omega(1)/2/pi;
     disp(['  Eigenvector ' num2str(1) ' frequency ' num2str(f) ' [Hz]' ', f/f_analytical=' num2str(f/f_fundamental)]);
     %         clf;
     
-    clear options
     model_data.postprocessing.u_scale= 2;
-    model_data.postprocessing.modelist= 1:model_data.neigvs;
+    model_data.postprocessing.modelist= 1;
     model_data=deformation_plot_modes(model_data);
     
     
