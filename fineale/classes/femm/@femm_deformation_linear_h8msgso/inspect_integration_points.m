@@ -47,6 +47,8 @@ if (~outputRm_constant)
 else
     if (~outputRm_identity)
         outputRm = context.outputRm;
+    else
+        outputRm = Rm;
     end
 end
 if ~isfield(context,'output')

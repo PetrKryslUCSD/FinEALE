@@ -46,6 +46,8 @@ function idat = inspect_integration_points(self, ...
     else
         if (~outputRm_identity)
             outputRm = context.outputRm;
+        else
+            outputRm = Rm;
         end
     end    
     if ~isfield(context,'output')
@@ -100,8 +102,6 @@ function idat = inspect_integration_points(self, ...
                         Rmc =mean(x);% physical location of the quadrature point
                         if (~isempty(labels )),  outputRm=outputRmh(Rmc,[],labels(i));%  No Jacobian matrix?
                         else,                    outputRm =outputRmh(Rmc,[],[]);                end
-                    else
-                        outputRm=Rm;
                     end
                     %         From material, to global, to output
                     out =mat.stress_vector_rotation((Rm'*outputRm))*out;% To output coordinate system
