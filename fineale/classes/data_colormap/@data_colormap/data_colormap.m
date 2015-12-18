@@ -24,6 +24,10 @@ classdef data_colormap
             end
             self.rmin = min(Parameters.range);
             self.rmax = max(Parameters.range);
+            if (self.rmax==self.rmin)
+                self.rmax=self.rmax+eps(self.rmax);
+            end
+            
             self.colormap = hot;
             if (isfield(Parameters,'colormap'))
                 self.colormap = Parameters.colormap;
