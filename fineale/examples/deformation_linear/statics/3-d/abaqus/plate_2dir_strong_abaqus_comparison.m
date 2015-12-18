@@ -161,17 +161,14 @@ function plate_2dir_strong_abaqus_comparison
                 AE.close();
                 %                 delete([AE.filename '.dat']);
                 system(['abaqus job=' [AE.filename ]]);
-                pause(5);
+                AW=Abaqus_lck_watcher();
+                AW.wait([AE.filename '.lck']);
                 try
-                    d =[0,0,0];
-                    %                     d= extract_displacement_from_abaqus_dat([AE.filename '.dat'],'THE FOLLOWING TABLE IS PRINTED FOR NODES BELONGING TO NODE SET ASSEM1_INSTNC1_CORN');
-                    energy= extract_energy_from_abaqus_dat([AE.filename '.dat'],'APPROXIMATE ENERGY TOTALS -');
+                    AR=Abaqus_dat_reader();
+                    energy= AR.extract_energy_from_abaqus_dat([AE.filename '.dat'],'APPROXIMATE ENERGY TOTALS -');
                 catch,
-                    disp('failed');
-                    d=[0,0, 0]; energy = 0;
+                    energy= 0;
                 end
-                abz=d(3);
-                aby=d(2);
                 eltyd(eix).description=ElType;
             end
             

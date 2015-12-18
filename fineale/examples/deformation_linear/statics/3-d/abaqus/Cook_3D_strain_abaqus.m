@@ -16,8 +16,8 @@ export_to_abaqus= true; SurfElType ='SFM3D4';;
 ElType ='C3D8';
 ElType ='C3D8H';
 ElType ='C3D8I';
-    ElType ='C3D8IH';
-    ElType ='C3D8';
+ElType ='C3D8IH';
+%     ElType ='C3D8';
 %          ElType ='C3D8RH';
 %     ElType ='C3D20R'; SurfElType ='SFM3D8';;
 
@@ -366,7 +366,7 @@ for eix = 1:length(eltyd)
             AE.END_ASSEMBLY();
             AE.MATERIAL('Material');
             AE.ELASTIC_ISOTROPIC(E,nu);
-            %                                 AE.SECTION_CONTROLS('Hourglass','Hourglass = enhanced');
+            AE.SECTION_CONTROLS('Hourglass','Hourglass = enhanced');
             AE.STEP_PERTURBATION('Linear solution');
             AE.DLOAD('ASSEM1.INSTNC1.Traction',model_data.boundary_conditions.traction{1}.traction);
             AE.BOUNDARY('ASSEM1.INSTNC1.xfix',1);
@@ -378,9 +378,11 @@ for eix = 1:length(eltyd)
             AE.close();
             %                 delete([AE.filename '.dat']);
             system(['abaqus job=' [AE.filename ]]);
-            pause(5);
+            AW=Abaqus_lck_watcher();
+            AW.wait([AE.filename '.lck']);
             try
-                d= extract_displacement_from_abaqus_dat([AE.filename '.dat'],...
+                AR=Abaqus_dat_reader();
+                d= AR.extract_displacement_from_abaqus_dat([AE.filename '.dat'],...
                     'THE FOLLOWING TABLE IS PRINTED FOR NODES BELONGING TO NODE SET ASSEM1_INSTNC1_CORNER',...
                     length(enl));
             catch,

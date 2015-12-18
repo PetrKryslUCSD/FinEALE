@@ -68,3 +68,4 @@ fineale/examples/heat_diffusion/pencil_and_paper/T3-example-plot.fig
 fineale/profile/matlab.settings
 fineale/profile/MATLABDesktop.xml.prev
 *.bak
+*.dat
