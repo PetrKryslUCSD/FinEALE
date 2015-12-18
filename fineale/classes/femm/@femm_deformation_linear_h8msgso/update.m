@@ -65,18 +65,18 @@ for i=1:size(conns,1)
         V =V+dV;
         self.phis(i)=max([self.phis(i),stab_fraction(self,J)]);
     end
-    gradN_mean=gradN_mean/V; % Finish the calculation of the mean basis function gradient matrix
+    %     gradN_mean=gradN_mean/V; % Finish the calculation of the mean basis function gradient matrix
     %     Material orientation?
-    if (~Rm_constant)% do I need to evaluate the local material orientation?
-        c =mean(X);% physical location of the quadrature point
-        if (~isempty(labels )),  Rm =Rmh(c,[],labels(i));%  No Jacobian matrix?
-        else,                    Rm =Rmh(c,[],[]);                end
-    end
+    %     if (~Rm_constant)% do I need to evaluate the local material orientation?
+    %         c =mean(X);% physical location of the quadrature point
+    %         if (~isempty(labels )),  Rm =Rmh(c,[],labels(i));%  No Jacobian matrix?
+    %         else,                    Rm =Rmh(c,[],[]);                end
+    %     end
     % Now we calculate the mean deformation gradient dx/dX   
-    F1bar =x1'*gradN_mean;% wrt global material coordinates
-    context.F =Rm'*F1bar*Rm;% Deformation gradient wrt  material orientation 
+    %     F1bar =x1'*gradN_mean;% wrt global material coordinates
+    %     context.F =Rm'*F1bar*Rm;% Deformation gradient wrt  material orientation
     % Update the stress for the real material
-    [cauchy,~] = update(self.material, [], context);
+    %     [cauchy,~] = update(self.material, [], context);
     % Update the stress for the stabilization material
     %     [stabcauchy,~] = update(self.stabilization_material, [], context);
     %     Bbar = self.hBlmat(self,[],gradN_mean/F1bar,[],[]);% strain-displacement d/dx
