@@ -95,10 +95,15 @@ function idat = inspect_integration_points(self, ...
             [out,ignore] = update(mat, context.ms, context);
             switch context.output
                 case 'Cauchy'
-                    out =mat.stress_vector_rotation(Rm')*out;%  To global coordinate system
-                    if (~outputRm_identity)
-                        out =mat.stress_vector_rotation(outputRm)*out;% To output coordinate system
+                    if (~outputRm_constant)
+                        Rmc =mean(X);% physical location of the quadrature point
+                        if (~isempty(labels )),  outputRm=outputRmh(Rmc,[],labels(i));%  No Jacobian matrix?
+                        else,                    outputRm =outputRmh(Rmc,[],[]);                end
+                    else
+                        outputRm=Rm;
                     end
+                    %         From material, to global, to output
+                    out =mat.stress_vector_rotation((Rm'*outputRm))*out;% To output coordinate system
             end
             if ~isempty (inspector)
                 idat =feval(inspector,idat,out,c,u_c,pc(j,:));
