@@ -190,14 +190,15 @@ function pub_thick_pipe_ps
         model_data.postprocessing.u_scale= 200;
         model_data.postprocessing.stress_component=1;
         model_data.postprocessing.stress_range=[-p,0];
-        % Note that we are supplying output orientation matrix for the
+        % Note that we are supplying an output orientation matrix for the
         % stress.
-        model_data.postprocessing.outputRm =@outputRm;
+        model_data.postprocessing.outputRm =@outputRm2D;
+        model_data.postprocessing.use_spr= true;% Superconvergent Patch Recovery
         model_data=deformation_plot_stress(model_data);
         draw_annotation(model_data.postprocessing.gv,...
             [0.35, 0.8, 0.35, 0.075],description,...
             struct('backgroundcolor','w'))
-        view(2);
+        view(2); pause(1);
         
         % Produce a plot of the solution components in the cylindrical
         % coordinate system.
@@ -232,7 +233,7 @@ function pub_thick_pipe_ps
     % This is a helper function for the calculation of the integration-point
     % stresses.
     function idat =inspector(idat, out, xyz, u, pc)
-        Rm= outputRm(xyz,[],[]);% transformation matrix for the stress
+        Rm= outputRm3D(xyz,[],[]);% transformation matrix for the stress
         tm = stress_4v_to_3x3t (mater,out);% stress in global XYZ
         tpm = Rm'*tm*Rm;%  stress matrix in cylindrical coordinates
         sp = stress_3x3t_to_6v(mater,tpm);% stress vector in cylindr. coord.
@@ -242,7 +243,7 @@ function pub_thick_pipe_ps
     
     % This is the function to compute the local orientation orthonormal
     % basis vectors for the cylindrical coordinate system.
-    function R=outputRm(c,J,lab)
+    function R=outputRm3D(c,J,lab)
         theNormal=c;
         r=norm(theNormal);% distance from the axis of symmetry
         theNormal =theNormal/r;% compute the unit normal vector
@@ -250,6 +251,13 @@ function pub_thick_pipe_ps
         e3p=[0,0,1]';% this one points along the axis of the cylinder
         e2p=skewmat(e3p)*e1p;% this one is along the hoop direction
         R= [e1p,e2p,e3p];% transformation matrix for the stress
+    end
+    
+    % This is the function to compute the local orientation orthonormal
+    % basis vectors for the cylindrical coordinate system.
+    function R=outputRm2D(c,J,lab)
+        R= outputRm3D(c,J,lab);
+        R=R(1:2,1:2);
     end
     
     

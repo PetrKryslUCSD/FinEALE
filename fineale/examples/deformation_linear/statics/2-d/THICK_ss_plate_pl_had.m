@@ -1,12 +1,10 @@
-
-% Data listed in the Simo 1990 paper "A class of... " H-adaptive analysis.
 function  THICK_ss_plate_pl_had
-disp('Simply-supported square plate with pressure load');
+    disp('Simply-supported circular plate with pressure load');
     E=10.92e6;% The Young's modulus is taken  much larger to limit the amount of deflection
-nu=0.3;
-Magnitude=1.0;
-R=5.0;
-thickness=  1.0;
+    nu=0.3;
+    Magnitude=1.0;
+    R=5.0;
+    thickness=  1.0;
     Pressure=1.0;% Applied pressure
     
     Region_definition={...
@@ -14,18 +12,18 @@ thickness=  1.0;
         ['curve 2 line ' num2str(R) ' ' num2str(0) ' ' num2str(R) ' ' num2str(thickness) ],...
         ['curve 3 line ' num2str(R) ' ' num2str(thickness)  ' ' num2str(0) ' ' num2str(thickness) ],...
         ['curve 4 line ' num2str(0) ' ' num2str(thickness)  ' ' num2str(0) ' ' num2str(0) ],...
-       ['subregion 1  property 1 boundary 1 2 3 4 ']};
+        ['subregion 1  property 1 boundary 1 2 3 4 ']};
     Mesh_options =struct('axisymm',true,'quadratic',true);
     Targetnel=600;
     convergence_rate=1.5;
     graphics=~false;
     sigj=4;
-
+    
     % Mesh'
     mesh_size=R/4;
     [fens,fes,groups,edge_fes,edge_groups]...
         =targe2_mesher(cat(2,Region_definition,{['m-ctl-point constant ' num2str(mesh_size)]}), 1.0, Mesh_options);
-%     drawmesh({fens,fes},'fes','facecolor','red');  view(2); return
+    %     drawmesh({fens,fes},'fes','facecolor','red');  view(2); return
     
     
     for Adapt=1:7
@@ -74,14 +72,14 @@ thickness=  1.0;
         [hcurs, hests] =T3_mesh_sizes(fes.conn,geom.values,targeterr,elerrs,convergence_rate);
         
         fld1 = field_from_integration_points(femm, geom, u, [], 'Cauchy',sigj);
-         nvals=fld1.values;%min(nvals),max(nvals)
-           
+        nvals=fld1.values;%min(nvals),max(nvals)
+        
         if (graphics)
             gv=graphic_viewer;
             gv=reset (gv,struct ('limits',[0 1.06*R -0.5*thickness 1.6*thickness]));
             scale=1e4;
             cmap = jet;
-             nvalsrange=[min(nvals),max(nvals)];
+            nvalsrange=[min(nvals),max(nvals)];
             dcm=data_colormap(struct ('range',nvalsrange, 'colormap',cmap));
             colorfield=nodal_field(struct ('name', ['colorfield'], 'data',map_data(dcm, nvals)));
             geom3=nodal_field(struct ('name', ['geom3'], ...
