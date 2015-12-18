@@ -5,12 +5,14 @@ classdef femm_deformation < femm_base
     properties
         N= [];% Normal to the FE set (meaningful only for manifold dimension <3)
         % Coefficient for surface normal spring boundary condition, in units of
-         % force per unit area per unit length
-        surface_normal_spring_coefficient= []; 
+        % force per unit area per unit length
+        surface_normal_spring_coefficient= [];
     end
     
     properties (Hidden, SetAccess = protected)
         hBlmat= [];% handle to the strain-displacement matrix function
+        hdivmat=[];
+        hvgradmat=[];
     end
     
     
@@ -54,16 +56,21 @@ classdef femm_deformation < femm_base
                 case 1
                     self.hBlmat=@Blmat1;
                     if (isempty(self.Rm)),self.Rm=eye(1);end % for identity transformation
+                    self.hdivmat=@divmat1;
                 case 2
                     if self.fes.axisymm
                         self.hBlmat=@Blmat2axisymm;
+                        self.hdivmat=@divmat2axisymm;
                     else
                         self.hBlmat=@Blmat2;
+                        self.hdivmat=@divmat2;
                     end
                     if (isempty(self.Rm)),self.Rm=eye(2);end % for identity transformation
                 case 3
                     self.hBlmat=@Blmat3;
                     if (isempty(self.Rm)),self.Rm=eye(3);end % for identity transformation
+                    self.hdivmat=@divmat3;
+                    self.hvgradmat=@vgradmat3;
                 otherwise
                     error (' Not implemented');
             end
@@ -73,7 +80,7 @@ classdef femm_deformation < femm_base
     
     methods (Hidden, Access = protected)
         
-        function B = Blmat1(self,N,Ndersp,c,Rm)
+        function B = Blmat1(~,N,Ndersp,c,Rm)
             % Compute the strain-displacement matrix for a one-manifold element.
             %
             % B = Blmat1(self,N,Ndersp,c,Rm)
@@ -156,7 +163,7 @@ classdef femm_deformation < femm_base
                 B(2,2:dim:end) =Ndersp(:,2)';
                 B(3,1:dim:end) =B(2,2:dim:end);
                 B(3,2:dim:end) =B(1,1:dim:end);
-             else% global-to-local transformation is requested
+            else% global-to-local transformation is requested
                 RmT=Rm(:,1:2)';
                 for i= 1:nfn
                     B(:,dim*(i-1)+1:dim*i)=...
@@ -326,6 +333,84 @@ classdef femm_deformation < femm_base
         end
         
         
+        
+        function B = divmat1(self,Ndersp,c)
+            nfn= size(Ndersp,1);
+            dim =size(Ndersp,2);
+            B = zeros(1,nfn*dim);
+            if (isempty(Rm))% there is no global-to-local transformation
+                for i= 1:nfn
+                    B(:,dim*(i-1)+1:dim*i)=  Ndersp(i,1);
+                end
+            else% global-to-local transformation is requested
+                for i= 1:nfn
+                    B(:,dim*(i-1)+1:dim*i)=  Ndersp(i,1) *Rm(:,1)' ;
+                end
+            end
+        end
+        
+        function B = divmat2(self, N,Ndersp,c)
+            nfn= size(Ndersp,1);
+            dim =size(Ndersp,2);
+            B = zeros(1,nfn*dim);
+            if (isempty(Rm))% there is no global-to-local transformation
+                for i= 1:nfn
+                    B(:,2*(i-1)+1:2*i)= [Ndersp(i,1)    Ndersp(i,2) ];
+                end
+            else% global-to-local transformation is requested
+                RmT=Rm(:,1:2)';
+                for i= 1:nfn
+                    B(:,2*(i-1)+1:2*i)= [Ndersp(i,1)    Ndersp(i,2) ] *RmT ;
+                end
+            end
+        end
+        
+        function B = divmat2axisymm(self,Ndersp,c)
+            nfn= size(Ndersp,1);
+            r=c(1); if r==0,r=eps; end
+            B = zeros(2,nfn*dim);
+            for i= 1:nfn
+                B(:,dim*(i-1)+1:dim*i)=...
+                    [Ndersp(i,1) 0; ...
+                    0           Ndersp(i,2); ...
+                    N(i)/r 0]*Rm(:,1:2)';
+            end
+            return;
+        end
+        
+        function B = divmat3(self,N,Ndersp,c,Rm)
+            nfn= size(Ndersp,1);
+            B = zeros(1,nfn*3);
+            if (isempty(Rm)) % there is no global-to-local transformation
+                for i= 1:nfn
+                    B(:,3*(i-1)+1:3*i)  = [ Ndersp(i,1)  Ndersp(i,2)  Ndersp(i,3) ];
+                end
+            else % global-to-local transformation is requested
+                RmT=Rm';
+                for i= 1:nfn
+                    B(:,3*(i-1)+1:3*i)  = [ Ndersp(i,1)  Ndersp(i,2)  Ndersp(i,3) ]*RmT;
+                end
+            end
+        end
+        
+        function B = vgradmat2(self,N,Ndersp,c)
+            nfens= size(Ndersp,1);
+            dim=2;
+            B = zeros(dim*dim,nfens*dim);
+            for i= 1:dim
+                B(dim*(i-1)+1:dim*i,i:dim:nfens*dim-dim+i)=Ndersp';
+            end
+        end
+        
+        function B = vgradmat3(self,N,Ndersp,c,Rm)
+            nfens= size(Ndersp,1);
+            dim=3;
+            B = zeros(dim*dim,nfens*dim);
+            for i= 1:dim
+                B(dim*(i-1)+1:dim*i,i:dim:nfens*dim-dim+i)=Ndersp';
+            end
+        end
+        
         function norml = normal(self,c,J)
             % Compute local normal. This makes sense for bounding surfaces only.
             %
@@ -345,7 +430,7 @@ classdef femm_deformation < femm_base
                     norml= [J(2,1);-J(1,1)];% outer normal to the contour
                     norml=norml/norm(norml);
                 else
-                    error(['No definition of normal vector']);                
+                    error(['No definition of normal vector']);
                 end
             else
                 if  strcmp(class(norml),'function_handle')
@@ -360,80 +445,3 @@ classdef femm_deformation < femm_base
 end
 
 
-
-% function B = divmat1(self,Ndersp,c)
-% nfn= size(Ndersp,1);
-% dim =size(Ndersp,2);
-% B = zeros(1,nfn*dim);
-% if (isempty(Rm))% there is no global-to-local transformation
-% for i= 1:nfn
-% B(:,dim*(i-1)+1:dim*i)=  Ndersp(i,1);
-% end
-% else% global-to-local transformation is requested
-% for i= 1:nfn
-% B(:,dim*(i-1)+1:dim*i)=  Ndersp(i,1) *Rm(:,1)' ;
-% end
-% end
-% end
-
-% function B = divmat2(self, N,Ndersp,c)
-% nfn= size(Ndersp,1);
-% dim =size(Ndersp,2);
-% B = zeros(1,nfn*dim);
-% if (isempty(Rm))% there is no global-to-local transformation
-% for i= 1:nfn
-% B(:,2*(i-1)+1:2*i)= [Ndersp(i,1)    Ndersp(i,2) ];
-% end
-% else% global-to-local transformation is requested
-% RmT=Rm(:,1:2)';
-% for i= 1:nfn
-% B(:,2*(i-1)+1:2*i)= [Ndersp(i,1)    Ndersp(i,2) ] *RmT ;
-% end
-% end
-% end
-
-% function B = divmat2axisymm(self,Ndersp,c)
-% nfn= size(Ndersp,1);
-% r=c(1); if r==0,r=eps; end
-% B = zeros(2,nfn*dim);
-% for i= 1:nfn
-% B(:,dim*(i-1)+1:dim*i)=...
-% [Ndersp(i,1) 0; ...
-% 0           Ndersp(i,2); ...
-% N(i)/r 0]*Rm(:,1:2)';
-% end
-% return;
-% end
-
-% function B = divmat3(self,N,Ndersp,c)
-% nfn= size(Ndersp,1);
-% B = zeros(1,nfn*3);
-% if (isempty(Rm)) % there is no global-to-local transformation
-% for i= 1:nfn
-% B(:,3*(i-1)+1:3*i)  = [ Ndersp(i,1)  Ndersp(i,2)  Ndersp(i,3) ];
-% end
-% else % global-to-local transformation is requested
-% RmT=Rm';
-% for i= 1:nfn
-% B(:,3*(i-1)+1:3*i)  = [ Ndersp(i,1)  Ndersp(i,2)  Ndersp(i,3) ]*RmT;
-% end
-% end
-% end
-
-% function B = vgradmat2(self,N,Ndersp,c)
-% nfens= size(Ndersp,1);
-% dim=2;
-% B = zeros(dim*dim,nfens*dim);
-% for i= 1:dim
-% B(dim*(i-1)+1:dim*i,i:dim:nfens*dim-dim+i)=Ndersp';
-% end
-% end
-
-% function B = vgradmat3(self,N,Ndersp,c)
-% nfens= size(Ndersp,1);
-% dim=3;
-% B = zeros(dim*dim,nfens*dim);
-% for i= 1:dim
-% B(dim*(i-1)+1:dim*i,i:dim:nfens*dim-dim+i)=Ndersp';
-% end
-% end

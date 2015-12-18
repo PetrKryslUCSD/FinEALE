@@ -1,3 +1,19 @@
+% 12/17/2015
+% - SPR field construction: incorrect calculation of the location of the
+% quadrature point resulted in singular matrices.
+% - stress_vector_rotation(), strain_vector_rotation(), for a biaxial
+%     material were incorrectly defined to be the same for axially
+%     symmetric and plane strain reduction: They need to be different
+%     because the order of the stress components is different
+% - reset() method is now being passed default limits when called from
+% an algorithm, such as  deformation_plot_stress()
+% - inspect_integration_points(): the transformation  between the material
+% coordinate system and the output material coordinate system needs to be
+% done as 
+%     out =mat.stress_vector_rotation((Rm'*outputRm))*out;
+% to accommodate models  of lower dimension embedded in
+% higher dimension (such as plane stress embedded in 3-D).
+
 % 11/08/2015
 % - Some FEMMs were missing code to set up an output orientation matrix
 % from a supplied function handle.
@@ -5,7 +21,7 @@
 % 09/23/2015
 % - added Pagano_laminate_n_layer() benchmark solution
 
-% 09/20/2015
+% 09/20/2015 
 % - added thermal loads to the linear-statics algorithm
 % - added color-coding  by displacement components to the deformation plot
 
