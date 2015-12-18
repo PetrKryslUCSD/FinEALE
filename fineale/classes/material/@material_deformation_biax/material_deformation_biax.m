@@ -98,6 +98,14 @@ classdef material_deformation_biax < material_deformation
         % Calculate the rotation of the 'plain' stress vector to the
         % 'bar' coordinate system given by the columns of the rotation matrix Rm.
         %
+        % For the axially symmetric reduction the stress vector components
+        % need to be ordered as:
+        %         sigma_x, sigma_y, sigma_z, tau_xy.
+        % For the plane-strain model reduction:
+        %         sigma_x, sigma_y, tau_xy, sigma_z.
+        % For plane stress:
+        %         sigma_x, sigma_y, tau_xy.
+        %
         % Example:
         % The stress vector "stress" is given in the material coordinate
         % system defined by the orientation matrix Rm. The following two
@@ -153,11 +161,16 @@ classdef material_deformation_biax < material_deformation
         a11=Rm(1,1);a12=Rm(1,2);
         a21=Rm(2,1);a22=Rm(2,2);
         switch self.reduction
-            case {'axisymm','strain'}
+            case {'axisymm'}
                 T =[[   a11^2,   a21^2, 0,         2*a11*a21]
                     [   a12^2,   a22^2, 0,         2*a12*a22]
                     [       0,       0, 1,                 0]
                     [ a11*a12, a21*a22, 0, a11*a22 + a12*a21]];
+            case {'strain'}
+                T =[[   a11^2,   a21^2,         2*a11*a21, 0]
+                    [   a12^2,   a22^2,         2*a12*a22, 0]
+                    [ a11*a12, a21*a22, a11*a22 + a12*a21, 0]
+                    [       0,       0,                 0, 1]];
             otherwise                %             case 'stress'
                 T =[[   a11^2,   a21^2,         2*a11*a21]
                     [   a12^2,   a22^2,         2*a12*a22]
@@ -181,11 +194,16 @@ classdef material_deformation_biax < material_deformation
         a11=Rm(1,1);a12=Rm(1,2); 
         a21=Rm(2,1);a22=Rm(2,2); 
         switch self.reduction
-            case {'axisymm','strain'}
+            case {'axisymm'}
                 Tbar =[ [     a11^2,     a21^2, 0,           a11*a21]
                         [     a12^2,     a22^2, 0,           a12*a22]
                         [         0,         0, 1,                 0]
                         [ 2*a11*a12, 2*a21*a22, 0, a11*a22 + a12*a21]];
+            case {'strain'}
+                Tbar =[ [     a11^2,     a21^2,           a11*a21, 0]
+                        [     a12^2,     a22^2,           a12*a22, 0]
+                        [ 2*a11*a12, 2*a21*a22, a11*a22 + a12*a21, 0]
+                        [         0,         0,                 0, 1]];
             otherwise%   case 'stress'
                 Tbar =[ [     a11^2,     a21^2,           a11*a21]
                         [     a12^2,     a22^2,           a12*a22]

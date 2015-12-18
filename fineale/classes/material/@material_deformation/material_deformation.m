@@ -253,6 +253,14 @@ classdef material_deformation < material_base
             t(5,1) = v(8);
             t(6,1) = v(6);
         end
+        
+        function v = tensor_3x3t_double_contraction(A,B)
+            % Compute a tensor double contraction (scaler).
+            %
+            % function v = tensor_3x3t_double_contraction(A,B)
+
+            v = sum(sum(A.*B));
+        end
          
         function cout=Lagrangean_to_Eulerian(self, C, F)
             % Convert a Lagrangean constitutive matrix to an Eulerian one.

@@ -93,7 +93,9 @@ classdef material_deformation_linear_biax < material_deformation_biax
         %
         %   It is assumed that stress is output in m-component vector 
         %           form. m=3 for plane stress, m=4 for plane strain or axially 
-        %           symmetric
+        %           symmetric.
+        % The stress components are ordered in the "out" argument as:
+        % 
         %   The output arguments are
         %     out=requested quantity
         %     newms=new material state; don't forget that if the update is final
