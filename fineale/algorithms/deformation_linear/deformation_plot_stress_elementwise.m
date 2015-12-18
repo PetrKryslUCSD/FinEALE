@@ -91,7 +91,8 @@ if (isfield(model_data, 'postprocessing'))
 end
 if (isempty(gv))
     gv=graphic_viewer;
-    gv=reset (gv,[]);
+    umax= norm( model_data.u,inf);
+    gv=reset (gv,struct('limits', inflate_box(bounding_box(model_data.fens.xyz),u_scale*umax)));
     set_graphics_defaults;
 end
 
