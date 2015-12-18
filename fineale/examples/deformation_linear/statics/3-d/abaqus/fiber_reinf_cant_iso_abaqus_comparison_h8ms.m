@@ -15,12 +15,12 @@ function fiber_reinf_cant_iso_abaqus_comparison_h8ms
     
     [na,nb,nt] =adeal(1*[1,1,1]);
     refs = [1,2,3,4];
-            refs = [2,3,4,6];
+    %             refs = [2,3,4,6];
             %         refs = [2,4,8];
     tolerance =t/nt/100;
     u_scale  = 10000;
     graphics = ~true;
-    export_to_abaqus= ~true; SurfElType ='SFM3D4';;
+    export_to_abaqus= true; SurfElType ='SFM3D4';;
     ElType ='C3D8';
     ElType ='C3D8H';
     %     ElType ='C3D8I';
@@ -239,9 +239,12 @@ function fiber_reinf_cant_iso_abaqus_comparison_h8ms
                 AE.close();
                 %                 delete([AE.filename '.dat']);
                 system(['abaqus job=' [AE.filename ]]);
-                pause(5);
+                AW=Abaqus_lck_watcher();
+                AW.wait([AE.filename '.lck']);
                 try
-                    d= extract_displacement_from_abaqus_dat([AE.filename '.dat'],'THE FOLLOWING TABLE IS PRINTED FOR NODES BELONGING TO NODE SET ASSEM1_INSTNC1_CORNER');
+                    AR=Abaqus_dat_reader();
+                    d= AR.extract_displacement_from_abaqus_dat([AE.filename '.dat'],...
+                        'THE FOLLOWING TABLE IS PRINTED FOR NODES BELONGING TO NODE SET ASSEM1_INSTNC1_CORNER');
                 catch,
                     d=[0,0, 0]; energy = 0;
                 end
