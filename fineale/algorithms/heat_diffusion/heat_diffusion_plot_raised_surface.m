@@ -54,7 +54,8 @@ function model_data=heat_diffusion_plot_raised_surface(model_data)
     end
     if (isempty(gv))
         gv=graphic_viewer;
-        gv=reset (gv,[]);
+        umax= max(temp.values)-min(temp.values);
+        gv=reset (gv,struct('limits', inflate_box(bounding_box(model_data.fens.xyz),umax)));
         set_graphics_defaults;
     end
     
@@ -96,7 +97,7 @@ function model_data=heat_diffusion_plot_raised_surface(model_data)
     end
     
     draw_colorbar(gv,struct('colormap',dcm.colormap,...
-                'position',[0.86, 0.1, 0.025, 0.5],...
+                'position',[0.8, 0.1, 0.025, 0.5],...
                 'minmax', dcm.range,...
                 'label','Temp.', 'fontname', 'Times', 'interpreter', 'latex'));
                 
