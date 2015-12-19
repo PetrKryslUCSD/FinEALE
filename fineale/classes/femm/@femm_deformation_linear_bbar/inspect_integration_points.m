@@ -47,8 +47,6 @@ function idat = inspect_integration_points(self, ...
     else
         if (~outputRm_identity)
             outputRm = context.outputRm;
-        else
-            outputRm = Rm;
         end
     end    
     if ~isfield(context,'output')
@@ -135,8 +133,11 @@ function idat = inspect_integration_points(self, ...
                         if (~isempty(labels )),  outputRm=outputRmh(Rmc,[],labels(i));%  No Jacobian matrix?
                         else,                    outputRm =outputRmh(Rmc,[],[]);                end
                     end
-                    %         From material, to global, to output
-                    out =mat.stress_vector_rotation((Rm'*outputRm))*out;% To output coordinate system
+                    if (outputRm_identity)
+                        out =mat.stress_vector_rotation((Rm'))*out;% To output coordinate system
+                    else % From material, to global, to output
+                        out =mat.stress_vector_rotation((Rm'*outputRm))*out;% To output coordinate system
+                    end
             end
             if ~isempty (inspector)
                 idat =feval(inspector,idat,out,c,u_c,pc_u(j,:));
