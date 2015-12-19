@@ -6,7 +6,7 @@
    <!--
 This HTML was auto-generated from MATLAB code.
 To make changes, update the MATLAB code and republish this document.
-      --><title>Elliptical plate with elliptical hole; T10 tetrahedra</title><meta name="generator" content="MATLAB 8.4"><link rel="schema.DC" href="http://purl.org/dc/elements/1.1/"><meta name="DC.date" content="2015-05-18"><meta name="DC.source" content="pub_LE10NAFEMS_T10.m"><style type="text/css">
+      --><title>Elliptical plate with elliptical hole; T10 tetrahedra</title><meta name="generator" content="MATLAB 8.4"><link rel="schema.DC" href="http://purl.org/dc/elements/1.1/"><meta name="DC.date" content="2015-12-19"><meta name="DC.source" content="pub_LE10NAFEMS_T10.m"><style type="text/css">
 html,body,div,span,applet,object,iframe,h1,h2,h3,h4,h5,h6,p,blockquote,pre,a,abbr,acronym,address,big,cite,code,del,dfn,em,font,img,ins,kbd,q,s,samp,small,strike,strong,sub,sup,tt,var,b,u,i,center,dl,dt,dd,ol,ul,li,fieldset,form,label,legend,table,caption,tbody,tfoot,thead,tr,th,td{margin:0;padding:0;border:0;outline:0;font-size:100%;vertical-align:baseline;background:transparent}body{line-height:1}ol,ul{list-style:none}blockquote,q{quotes:none}blockquote:before,blockquote:after,q:before,q:after{content:'';content:none}:focus{outine:0}ins{text-decoration:none}del{text-decoration:line-through}table{border-collapse:collapse;border-spacing:0}
 
 html { min-height:100%; margin-bottom:1px; }
@@ -151,7 +151,9 @@ the thick elliptical plate</td></tr> </table> </p><p>The <img src="pub_LE10NAFEM
     disp( [<span class="string">'i. e.  '</span> num2str(sigma2P/(pu.MEGA*pu.PA)/(-5.38)*100,5) <span class="string">'% of reference value'</span>]);
 </pre><pre class="codeoutput">Stress at P=-2.5944 MPa
 i. e.  48.223% of reference value
-</pre><p>The 10-node tetrahedron mesh does not deliver good accuracy of the stress distribution at the surface with the default inverse-distance interpolation of the stress.  The stress at the location of point P peaks at the surface.  The inverse-distance interpolation cannot take this into account.</p><p>A much more successful  stress post-processing strategy is to use the Super-convergent Patch Recovery (SPR).</p><p>Note that we are setting the flag <tt>use_spr</tt>.</p><pre class="codeinput">    model_data.postprocessing.u_scale=1000;
+</pre><p>The 10-node tetrahedron mesh does not deliver good accuracy of the stress distribution at the surface with the default inverse-distance interpolation of the stress.  The stress at the location of point P peaks at the surface.  The inverse-distance interpolation cannot take this into account.</p><p>A much more successful  stress post-processing strategy is to use the Super-convergent Patch Recovery (SPR).</p><p>Note that we are setting the flag <tt>use_spr</tt>.</p><pre class="codeinput">    model_data.postprocessing=rmfield(model_data.postprocessing, <span class="keyword">...</span>
+        fieldnames(model_data.postprocessing)); <span class="comment">% Zero out postprocessing options</span>
+    model_data.postprocessing.u_scale=1000;
     model_data.postprocessing.stress_component=2;
     model_data.postprocessing.colormap=cadcolors2;
     model_data.postprocessing.observer =@ observer;
@@ -378,6 +380,8 @@ function pub_LE10NAFEMS_T10
     % Super-convergent Patch Recovery (SPR).
     %%
     % Note that we are setting the flag |use_spr|.
+    model_data.postprocessing=rmfield(model_data.postprocessing, ...
+        fieldnames(model_data.postprocessing)); % Zero out postprocessing options
     model_data.postprocessing.u_scale=1000;
     model_data.postprocessing.stress_component=2;
     model_data.postprocessing.colormap=cadcolors2;

@@ -6,7 +6,7 @@
    <!--
 This HTML was auto-generated from MATLAB code.
 To make changes, update the MATLAB code and republish this document.
-      --><title>Thick pipe with internal pressure: axially symmetric model</title><meta name="generator" content="MATLAB 8.4"><link rel="schema.DC" href="http://purl.org/dc/elements/1.1/"><meta name="DC.date" content="2015-12-18"><meta name="DC.source" content="pub_thick_pipe_axi.m"><style type="text/css">
+      --><title>Thick pipe with internal pressure: axially symmetric model</title><meta name="generator" content="MATLAB 8.4"><link rel="schema.DC" href="http://purl.org/dc/elements/1.1/"><meta name="DC.date" content="2015-12-19"><meta name="DC.source" content="pub_thick_pipe_axi.m"><style type="text/css">
 html,body,div,span,applet,object,iframe,h1,h2,h3,h4,h5,h6,p,blockquote,pre,a,abbr,acronym,address,big,cite,code,del,dfn,em,font,img,ins,kbd,q,s,samp,small,strike,strong,sub,sup,tt,var,b,u,i,center,dl,dt,dd,ol,ul,li,fieldset,form,label,legend,table,caption,tbody,tfoot,thead,tr,th,td{margin:0;padding:0;border:0;outline:0;font-size:100%;vertical-align:baseline;background:transparent}body{line-height:1}ol,ul{list-style:none}blockquote,q{quotes:none}blockquote:before,blockquote:after,q:before,q:after{content:'';content:none}:focus{outine:0}ins{text-decoration:none}del{text-decoration:line-through}table{border-collapse:collapse;border-spacing:0}
 
 html { min-height:100%; margin-bottom:1px; }
@@ -158,31 +158,11 @@ surface_integration_rule = surface integration rule</pre><pre class="codeinput">
         model_data.postprocessing.u_scale= 200;
         model_data.postprocessing.stress_component=1;
         model_data.postprocessing.stress_range=[-p,0];
-        <span class="comment">%         model_data.postprocessing.outputRm =[cos(90/180*pi),-sin(90/180*pi);</span>
-        <span class="comment">%             sin(90/180*pi),cos(90/180*pi)];</span>
         model_data=deformation_plot_stress(model_data);
         draw_annotation(model_data.postprocessing.gv,<span class="keyword">...</span>
-            [0.35, 0.8, 0.35, 0.075],[description,<span class="string">'-Cylindrical'</span>],<span class="keyword">...</span>
+            [0.35, 0.8, 0.35, 0.075],description,<span class="keyword">...</span>
             struct(<span class="string">'backgroundcolor'</span>,<span class="string">'w'</span>))
         view(2);
-        snapnow;
-
-        <span class="comment">% Produce a plot of the radial stress component in an ad hoc output coordinate system.</span>
-        <span class="comment">% This coordinate system is rotated from the cylindrical coordinate</span>
-        <span class="comment">% system in the plane of the generating section by 90?. Therefore,</span>
-        <span class="comment">% the radial stress component will be 2.</span>
-        model_data.postprocessing.u_scale= 200;
-        model_data.postprocessing.stress_component=2;
-        model_data.postprocessing.stress_range=[-p,0];
-        <span class="comment">% Define the output coordinate system:</span>
-        model_data.postprocessing.outputRm =[cos(90/180*pi),-sin(90/180*pi);
-            sin(90/180*pi),cos(90/180*pi)];
-        model_data=deformation_plot_stress(model_data);
-        draw_annotation(model_data.postprocessing.gv,<span class="keyword">...</span>
-            [0.35, 0.8, 0.35, 0.075],[description,<span class="string">'-Ad hoc'</span>],<span class="keyword">...</span>
-            struct(<span class="string">'backgroundcolor'</span>,<span class="string">'w'</span>))
-        view(2);
-        snapnow;
 
         <span class="comment">% Produce a plot of the solution components in the cylindrical</span>
         <span class="comment">% coordinate system.</span>
@@ -223,7 +203,7 @@ surface_integration_rule = surface integration rule</pre><pre class="codeinput">
     surface_integration_rule=gauss_rule(struct(<span class="string">'dim'</span>,1, <span class="string">'order'</span>, 3));
     execute_simulation (description, mf, femmf, surface_integration_rule);
 </pre><pre class="codeoutput">(Approximate/true displacement) at the internal surface: 99.837%
-</pre><img vspace="5" hspace="5" src="pub_thick_pipe_axi_01.png" alt=""> <img vspace="5" hspace="5" src="pub_thick_pipe_axi_02.png" alt=""> <img vspace="5" hspace="5" src="pub_thick_pipe_axi_03.png" alt=""> <p>The same remedy of selective reduced integration as in full 3-D models will also work here.  Is demonstrated by the simulation with the selective reduced integration quadratic triangle.</p><p><b>Selective reduced integration quadratic triangle</b></p><pre class="codeinput">    description =<span class="string">'T6-SRI'</span>;
+</pre><img vspace="5" hspace="5" src="pub_thick_pipe_axi_01.png" alt=""> <img vspace="5" hspace="5" src="pub_thick_pipe_axi_02.png" alt=""> <p>The same remedy of selective reduced integration as in full 3-D models will also work here.  Is demonstrated by the simulation with the selective reduced integration quadratic triangle.</p><p><b>Selective reduced integration quadratic triangle</b></p><pre class="codeinput">    description =<span class="string">'T6-SRI'</span>;
     mf =@T6_block;
     femmf =@(fes)femm_deformation_linear_sri(struct(<span class="string">'fes'</span>,fes,<span class="keyword">...</span>
         <span class="string">'material'</span>,mater,<span class="keyword">...</span>
@@ -232,7 +212,7 @@ surface_integration_rule = surface integration rule</pre><pre class="codeinput">
     surface_integration_rule=gauss_rule(struct(<span class="string">'dim'</span>,1, <span class="string">'order'</span>, 3));
     execute_simulation (description, mf, femmf, surface_integration_rule);
 </pre><pre class="codeoutput">(Approximate/true displacement) at the internal surface: 100.3951%
-</pre><img vspace="5" hspace="5" src="pub_thick_pipe_axi_04.png" alt=""> <img vspace="5" hspace="5" src="pub_thick_pipe_axi_05.png" alt=""> <img vspace="5" hspace="5" src="pub_thick_pipe_axi_06.png" alt=""> <p>The selective reduced integration works very well with the T6 triangle.</p><p>An element that is often used in these situations is the uniformly under integrated serendipity (8-node) quadrilateral.</p><p><b>Reduced integration serendipity quadrilateral</b></p><pre>The same finite
+</pre><img vspace="5" hspace="5" src="pub_thick_pipe_axi_03.png" alt=""> <img vspace="5" hspace="5" src="pub_thick_pipe_axi_04.png" alt=""> <p>The selective reduced integration works very well with the T6 triangle.</p><p>An element that is often used in these situations is the uniformly under integrated serendipity (8-node) quadrilateral.</p><p><b>Reduced integration serendipity quadrilateral</b></p><pre>The same finite
 element model machine as above is used, and the integration is the 2
 x 2 Gauss rule (one order lower than that required for full
 integration which would be 3 x 3).</pre><pre class="codeinput">    description =<span class="string">'Q8R'</span>;
@@ -243,7 +223,7 @@ integration which would be 3 x 3).</pre><pre class="codeinput">    description =
     surface_integration_rule=gauss_rule(struct(<span class="string">'dim'</span>,1, <span class="string">'order'</span>,3));
     execute_simulation (description, mf, femmf, surface_integration_rule);
 </pre><pre class="codeoutput">(Approximate/true displacement) at the internal surface: 100%
-</pre><img vspace="5" hspace="5" src="pub_thick_pipe_axi_07.png" alt=""> <img vspace="5" hspace="5" src="pub_thick_pipe_axi_08.png" alt=""> <img vspace="5" hspace="5" src="pub_thick_pipe_axi_09.png" alt=""> <p><b>Full integration serendipity quadrilateral</b></p><p>Using the full-integration Gauss rule of 3 x 3 points clearly leads to disaster.</p><pre class="codeinput">    description =<span class="string">'Q8'</span>;
+</pre><img vspace="5" hspace="5" src="pub_thick_pipe_axi_05.png" alt=""> <img vspace="5" hspace="5" src="pub_thick_pipe_axi_06.png" alt=""> <p><b>Full integration serendipity quadrilateral</b></p><p>Using the full-integration Gauss rule of 3 x 3 points clearly leads to disaster.</p><pre class="codeinput">    description =<span class="string">'Q8'</span>;
     mf =@Q8_block;
     femmf =@(fes)femm_deformation_linear(struct(<span class="string">'fes'</span>,fes,<span class="keyword">...</span>
         <span class="string">'material'</span>,mater,<span class="keyword">...</span>
@@ -251,7 +231,7 @@ integration which would be 3 x 3).</pre><pre class="codeinput">    description =
     surface_integration_rule=gauss_rule(struct(<span class="string">'dim'</span>,1, <span class="string">'order'</span>,3));
     execute_simulation (description, mf, femmf, surface_integration_rule);
 </pre><pre class="codeoutput">(Approximate/true displacement) at the internal surface: 95.2401%
-</pre><img vspace="5" hspace="5" src="pub_thick_pipe_axi_10.png" alt=""> <img vspace="5" hspace="5" src="pub_thick_pipe_axi_11.png" alt=""> <img vspace="5" hspace="5" src="pub_thick_pipe_axi_12.png" alt=""> <p>The stress is now totally unacceptable.</p><h2>Discussion<a name="36"></a></h2><p>The axially symmetric model is clearly very effective computationally, as the size is much reduced compared to the 3-D model.  In conjunction with  uniform or selective reduced integration it can be very accurate as well.</p><pre class="codeinput"><span class="keyword">end</span>
+</pre><img vspace="5" hspace="5" src="pub_thick_pipe_axi_07.png" alt=""> <img vspace="5" hspace="5" src="pub_thick_pipe_axi_08.png" alt=""> <p>The stress is now totally unacceptable.</p><h2>Discussion<a name="36"></a></h2><p>The axially symmetric model is clearly very effective computationally, as the size is much reduced compared to the 3-D model.  In conjunction with  uniform or selective reduced integration it can be very accurate as well.</p><pre class="codeinput"><span class="keyword">end</span>
 </pre><p class="footer"><br><a href="http://www.mathworks.com/products/matlab/">Published with MATLAB&reg; R2014b</a><br></p></div><!--
 ##### SOURCE BEGIN #####
 %% Thick pipe with internal pressure: axially symmetric model
@@ -434,31 +414,11 @@ function pub_thick_pipe_axi
         model_data.postprocessing.u_scale= 200;
         model_data.postprocessing.stress_component=1;
         model_data.postprocessing.stress_range=[-p,0];
-        %         model_data.postprocessing.outputRm =[cos(90/180*pi),-sin(90/180*pi);
-        %             sin(90/180*pi),cos(90/180*pi)];
         model_data=deformation_plot_stress(model_data);
         draw_annotation(model_data.postprocessing.gv,...
-            [0.35, 0.8, 0.35, 0.075],[description,'-Cylindrical'],...
+            [0.35, 0.8, 0.35, 0.075],description,...
             struct('backgroundcolor','w'))
         view(2);
-        snapnow;
-        
-        % Produce a plot of the radial stress component in an ad hoc output coordinate system.  
-        % This coordinate system is rotated from the cylindrical coordinate
-        % system in the plane of the generating section by 90?. Therefore,
-        % the radial stress component will be 2.
-        model_data.postprocessing.u_scale= 200;
-        model_data.postprocessing.stress_component=2;
-        model_data.postprocessing.stress_range=[-p,0];
-        % Define the output coordinate system:
-        model_data.postprocessing.outputRm =[cos(90/180*pi),-sin(90/180*pi);
-            sin(90/180*pi),cos(90/180*pi)];
-        model_data=deformation_plot_stress(model_data);
-        draw_annotation(model_data.postprocessing.gv,...
-            [0.35, 0.8, 0.35, 0.075],[description,'-Ad hoc'],...
-            struct('backgroundcolor','w'))
-        view(2);
-        snapnow;
         
         % Produce a plot of the solution components in the cylindrical
         % coordinate system.

@@ -6,7 +6,7 @@
    <!--
 This HTML was auto-generated from MATLAB code.
 To make changes, update the MATLAB code and republish this document.
-      --><title>Solid cylinder/taper/sphere&#8212;-temperature loading</title><meta name="generator" content="MATLAB 8.0"><link rel="schema.DC" href="http://purl.org/dc/elements/1.1/"><meta name="DC.date" content="2015-01-18"><meta name="DC.source" content="pub_LE11NAFEMS_Q8.m"><style type="text/css">
+      --><title>Solid cylinder/taper/sphere&#8212;-temperature loading</title><meta name="generator" content="MATLAB 8.4"><link rel="schema.DC" href="http://purl.org/dc/elements/1.1/"><meta name="DC.date" content="2015-12-19"><meta name="DC.source" content="pub_LE11NAFEMS_Q8.m"><style type="text/css">
 html,body,div,span,applet,object,iframe,h1,h2,h3,h4,h5,h6,p,blockquote,pre,a,abbr,acronym,address,big,cite,code,del,dfn,em,font,img,ins,kbd,q,s,samp,small,strike,strong,sub,sup,tt,var,b,u,i,center,dl,dt,dd,ol,ul,li,fieldset,form,label,legend,table,caption,tbody,tfoot,thead,tr,th,td{margin:0;padding:0;border:0;outline:0;font-size:100%;vertical-align:baseline;background:transparent}body{line-height:1}ol,ul{list-style:none}blockquote,q{quotes:none}blockquote:before,blockquote:after,q:before,q:after{content:'';content:none}:focus{outine:0}ins{text-decoration:none}del{text-decoration:line-through}table{border-collapse:collapse;border-spacing:0}
 
 html { min-height:100%; margin-bottom:1px; }
@@ -23,7 +23,7 @@ a:visited { color:#004aa0; text-decoration:none; }
 
 p { padding:0px; margin:0px 0px 20px; }
 img { padding:0px; margin:0px 0px 20px; border:none; }
-p img, pre img, tt img, li img { margin-bottom:0px; } 
+p img, pre img, tt img, li img, h1 img, h2 img { margin-bottom:0px; } 
 
 ul { padding:0px; margin:0px 0px 20px 23px; list-style:square; }
 ul li { padding:0px; margin:0px 0px 7px 0px; }
@@ -38,11 +38,12 @@ ol li ul li { list-style:square; }
 
 .content { font-size:1.2em; line-height:140%; padding: 20px; }
 
-pre, tt, code { font-size:12px; }
+pre, code { font-size:12px; }
+tt { font-size: 1.2em; }
 pre { margin:0px 0px 20px; }
-pre.error { color:red; }
 pre.codeinput { padding:10px; border:1px solid #d3d3d3; background:#f7f7f7; }
 pre.codeoutput { padding:10px 11px; margin:0px 0px 20px; color:#4c4c4c; }
+pre.error { color:red; }
 
 @media print { pre.codeinput, pre.codeoutput { word-wrap:break-word; width:100%; } }
 
@@ -65,9 +66,9 @@ table td { padding:7px 5px; text-align:left; vertical-align:top; border:1px soli
 
 
 
-  </style></head><body><div class="content"><h1>Solid cylinder/taper/sphere&#8212;-temperature loading</h1><!--introduction--><!--/introduction--><h2>Contents</h2><div><ul><li><a href="#2">Description</a></li><li><a href="#6">Solution</a></li><li><a href="#30">Discussion</a></li></ul></div><p>Link to the  <a href="matlab:edit('pub_LE11NAFEMS_Q8')">m-file</a>.</p><h2>Description<a name="2"></a></h2><p>The solid cylinder/taper/sphere axially-symmetric part represented in Figure 1 is exposed to linearly varying temperature in the plane of the cross-section. The temperature in the coordinates <img src="pub_LE11NAFEMS_Q8_eq25861.png" alt="$r$">  (the radial coordinate) and <img src="pub_LE11NAFEMS_Q8_eq88768.png" alt="$z$"> (the axial ccoordinate)  is given as <img src="pub_LE11NAFEMS_Q8_eq20286.png" alt="$T=r+z$">. The goal is to find  the mechanical stress at the point A induced by the thermal expansion.</p><p> <table border=0><tr><td> <img
+  </style></head><body><div class="content"><h1>Solid cylinder/taper/sphere&#8212;-temperature loading</h1><!--introduction--><!--/introduction--><h2>Contents</h2><div><ul><li><a href="#2">Description</a></li><li><a href="#6">Solution</a></li><li><a href="#30">Discussion</a></li></ul></div><p>Link to the  <a href="matlab:edit('pub_LE11NAFEMS_Q8')">m-file</a>.</p><h2>Description<a name="2"></a></h2><p>The solid cylinder/taper/sphere axially-symmetric part represented in Figure 1 is exposed to linearly varying temperature in the plane of the cross-section. The temperature in the coordinates <img src="pub_LE11NAFEMS_Q8_eq04958265083611378313.png" alt="$r$">  (the radial coordinate) and <img src="pub_LE11NAFEMS_Q8_eq17119888974628994297.png" alt="$z$"> (the axial ccoordinate)  is given as <img src="pub_LE11NAFEMS_Q8_eq09365230122856568004.png" alt="$T=r+z$">. The goal is to find  the mechanical stress at the point A induced by the thermal expansion.</p><p> <table border=0><tr><td> <img
 src="../docs/pub_LE11NAFEMS_Q8_2.jpg"> </td></tr> <tr><td>Figure 1.
-Definition of the geometry of the part</td></tr> </table> </p><p>The part is constrained against axial expansion along the lines of HI and AB. The Young's modulus is 210 GPa, the Poisson's ratio is .3, and the coefficient of thermal expansion is 2.3e-4/degree Celsius.</p><p>This is a test recommended by the National Agency for Finite Element Methods and Standards (U.K.): Test LE11 from NAFEMS Publication TNSB, Rev. 3, &#8220;The Standard NAFEMS Benchmarks,&#8221; October 1990.</p><p>Target solution: Compressive  axial stress <img src="pub_LE11NAFEMS_Q8_eq80373.png" alt="$\sigma_z$">  = &#8211;105 MPa at point A.</p><h2>Solution<a name="6"></a></h2><pre class="codeinput"><span class="keyword">function</span>  pub_LE11NAFEMS_Q8
+Definition of the geometry of the part</td></tr> </table> </p><p>The part is constrained against axial expansion along the lines of HI and AB. The Young's modulus is 210 GPa, the Poisson's ratio is .3, and the coefficient of thermal expansion is 2.3e-4/degree Celsius.</p><p>This is a test recommended by the National Agency for Finite Element Methods and Standards (U.K.): Test LE11 from NAFEMS Publication TNSB, Rev. 3, &#8220;The Standard NAFEMS Benchmarks,&#8221; October 1990.</p><p>Target solution: Compressive  axial stress <img src="pub_LE11NAFEMS_Q8_eq03553880439733365620.png" alt="$\sigma_z$">  = &#8211;105 MPa at point A.</p><h2>Solution<a name="6"></a></h2><pre class="codeinput"><span class="keyword">function</span>  pub_LE11NAFEMS_Q8
 </pre><p>The toolkit has a helpful physical-units facility.  The variable <tt>pu</tt> is a structure with fields that define basic  units and basic multipliers (for instance, mega).</p><pre class="codeinput">    pu= physical_units_struct;
 </pre><p>Set the material properties.</p><pre class="codeinput">    Ea= 210000*pu.MEGA*pu.PA;<span class="comment">% Young's modulus</span>
     nua= 0.3;<span class="comment">% Poisson ratio</span>
@@ -148,7 +149,7 @@ Definition of the geometry of the part</td></tr> </table> </p><p>The part is con
     disp([<span class="string">'Stress at point A: '</span> num2str(nvalsa(nA)) <span class="string">', i. e.  '</span> num2str(nvalsa(nA)*pu.MEGA*pu.PA/sigma_z_A_ref*100) <span class="string">' %'</span>])
 </pre><pre class="codeoutput">Stress at point A: -85.7927, i. e.  81.7073 %
 </pre><h2>Discussion<a name="30"></a></h2><p>The accuracy of the computed stress depends on the fineness  of the mesh and also on the number of quadrature points.</p><div><ol><li>The fineness of the mesh affects the general accuracy of the solution.</li><li>The number of quadrature points affects the extrapolation procedure from the quadrature points to the nodes to create the smooth stress field.</li></ol></div><pre class="codeinput"><span class="keyword">end</span>
-</pre><p class="footer"><br><a href="http://www.mathworks.com/products/matlab/">Published with MATLAB&reg; R2012b</a><br></p></div><!--
+</pre><p class="footer"><br><a href="http://www.mathworks.com/products/matlab/">Published with MATLAB&reg; R2014b</a><br></p></div><!--
 ##### SOURCE BEGIN #####
 %% Solid cylinder/taper/sphere—-temperature loading
 %

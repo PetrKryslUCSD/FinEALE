@@ -6,7 +6,7 @@
    <!--
 This HTML was auto-generated from MATLAB code.
 To make changes, update the MATLAB code and republish this document.
-      --><title>Free harmonic vibration of a deep beam.</title><meta name="generator" content="MATLAB 8.0"><link rel="schema.DC" href="http://purl.org/dc/elements/1.1/"><meta name="DC.date" content="2015-01-18"><meta name="DC.source" content="pub_test5_free.m"><style type="text/css">
+      --><title>Free harmonic vibration of a deep beam.</title><meta name="generator" content="MATLAB 8.4"><link rel="schema.DC" href="http://purl.org/dc/elements/1.1/"><meta name="DC.date" content="2015-12-19"><meta name="DC.source" content="pub_test5_free.m"><style type="text/css">
 html,body,div,span,applet,object,iframe,h1,h2,h3,h4,h5,h6,p,blockquote,pre,a,abbr,acronym,address,big,cite,code,del,dfn,em,font,img,ins,kbd,q,s,samp,small,strike,strong,sub,sup,tt,var,b,u,i,center,dl,dt,dd,ol,ul,li,fieldset,form,label,legend,table,caption,tbody,tfoot,thead,tr,th,td{margin:0;padding:0;border:0;outline:0;font-size:100%;vertical-align:baseline;background:transparent}body{line-height:1}ol,ul{list-style:none}blockquote,q{quotes:none}blockquote:before,blockquote:after,q:before,q:after{content:'';content:none}:focus{outine:0}ins{text-decoration:none}del{text-decoration:line-through}table{border-collapse:collapse;border-spacing:0}
 
 html { min-height:100%; margin-bottom:1px; }
@@ -23,7 +23,7 @@ a:visited { color:#004aa0; text-decoration:none; }
 
 p { padding:0px; margin:0px 0px 20px; }
 img { padding:0px; margin:0px 0px 20px; border:none; }
-p img, pre img, tt img, li img { margin-bottom:0px; } 
+p img, pre img, tt img, li img, h1 img, h2 img { margin-bottom:0px; } 
 
 ul { padding:0px; margin:0px 0px 20px 23px; list-style:square; }
 ul li { padding:0px; margin:0px 0px 7px 0px; }
@@ -38,11 +38,12 @@ ol li ul li { list-style:square; }
 
 .content { font-size:1.2em; line-height:140%; padding: 20px; }
 
-pre, tt, code { font-size:12px; }
+pre, code { font-size:12px; }
+tt { font-size: 1.2em; }
 pre { margin:0px 0px 20px; }
-pre.error { color:red; }
 pre.codeinput { padding:10px; border:1px solid #d3d3d3; background:#f7f7f7; }
 pre.codeoutput { padding:10px 11px; margin:0px 0px 20px; color:#4c4c4c; }
+pre.error { color:red; }
 
 @media print { pre.codeinput, pre.codeoutput { word-wrap:break-word; width:100%; } }
 
@@ -65,7 +66,7 @@ table td { padding:7px 5px; text-align:left; vertical-align:top; border:1px soli
 
 
 
-  </style></head><body><div class="content"><h1>Free harmonic vibration of a deep beam.</h1><!--introduction--><!--/introduction--><h2>Contents</h2><div><ul><li><a href="#2">Description</a></li><li><a href="#16">Solution</a></li><li><a href="#31">Discussion</a></li></ul></div><p>Link to the  <a href="matlab:edit('pub_test5_free')">m-file</a>.</p><h2>Description<a name="2"></a></h2><p>This is a test recommended by the National Agency for Finite Element Methods and Standards (U.K.): Test 5 from NAFEMS &#8220;Selected Benchmarks for Forced Vibration,&#8221; R0016, March 1993.</p><p>The beam is going to be modeled as a three-dimensional solid, with solid elements. The beam geometry is given as</p><p><img vspace="5" hspace="5" src="../docs/pub_test5_harmonic_1.jpg" alt=""> </p><p>The beam is assumed to be simply supported at the ends transversely (<img src="pub_test5_free_eq91376.png" alt="$u_y=u_z=0$">). The cross-section at <img src="pub_test5_free_eq02368.png" alt="$x=0$"> is also pinned in the axial direction and rotation about the axis of the beam is prevented. In the cross-section at <img src="pub_test5_free_eq76225.png" alt="$x=L$"> both the axial rotation and the axial displacement are allowed.</p><p>For the solid 3-D beam this seems impossible to achieve with just the mechanism of essential boundary conditions.   In this tutorial we will apply multi point constraints (MPCs) to construct the pinned conditions.</p><p>The transverse and axial-rotation constrains at <img src="pub_test5_free_eq02368.png" alt="$x=0$"> is implemented by attaching rollers in the direction of the axes perpendicular to the beam in both directions on the entire cross-sectional area.</p><p>The axial constraint at <img src="pub_test5_free_eq02368.png" alt="$x=0$"> is implemented with a multi-point constraint of the form</p><p><img src="pub_test5_free_eq58625.png" alt="$\sum_i u_{ix}=0$"></p><p>where <img src="pub_test5_free_eq28128.png" alt="$i$"> are the nodes on the cross-section at <img src="pub_test5_free_eq02368.png" alt="$x=0$">.</p><p>The transverse constraint at the pin at <img src="pub_test5_free_eq76225.png" alt="$x=L$"> is implemented with two multi-point constraints of the form</p><p><img src="pub_test5_free_eq41043.png" alt="$\sum_i u_{iy}=0$"></p><p>and</p><p><img src="pub_test5_free_eq37805.png" alt="$\sum_i u_{iz}=0$"></p><p>where <img src="pub_test5_free_eq28128.png" alt="$i$"> are the nodes on the cross-section at <img src="pub_test5_free_eq02368.png" alt="$x=0$">.</p><h2>Solution<a name="16"></a></h2><p>The code is placed inside a Matlab function in order to be able to define the simulation in a nested function.</p><pre class="codeinput"><span class="keyword">function</span> pub_test5_free
+  </style></head><body><div class="content"><h1>Free harmonic vibration of a deep beam.</h1><!--introduction--><!--/introduction--><h2>Contents</h2><div><ul><li><a href="#2">Description</a></li><li><a href="#16">Solution</a></li><li><a href="#31">Discussion</a></li></ul></div><p>Link to the  <a href="matlab:edit('pub_test5_free')">m-file</a>.</p><h2>Description<a name="2"></a></h2><p>This is a test recommended by the National Agency for Finite Element Methods and Standards (U.K.): Test 5 from NAFEMS &#8220;Selected Benchmarks for Forced Vibration,&#8221; R0016, March 1993.</p><p>The beam is going to be modeled as a three-dimensional solid, with solid elements. The beam geometry is given as</p><p><img vspace="5" hspace="5" src="../docs/pub_test5_harmonic_1.jpg" alt=""> </p><p>The beam is assumed to be simply supported at the ends transversely (<img src="pub_test5_free_eq14673981730706621864.png" alt="$u_y=u_z=0$">). The cross-section at <img src="pub_test5_free_eq17014082639638836868.png" alt="$x=0$"> is also pinned in the axial direction and rotation about the axis of the beam is prevented. In the cross-section at <img src="pub_test5_free_eq11873756527255776957.png" alt="$x=L$"> both the axial rotation and the axial displacement are allowed.</p><p>For the solid 3-D beam this seems impossible to achieve with just the mechanism of essential boundary conditions.   In this tutorial we will apply multi point constraints (MPCs) to construct the pinned conditions.</p><p>The transverse and axial-rotation constrains at <img src="pub_test5_free_eq17014082639638836868.png" alt="$x=0$"> is implemented by attaching rollers in the direction of the axes perpendicular to the beam in both directions on the entire cross-sectional area.</p><p>The axial constraint at <img src="pub_test5_free_eq17014082639638836868.png" alt="$x=0$"> is implemented with a multi-point constraint of the form</p><p><img src="pub_test5_free_eq05269588968275177580.png" alt="$\sum_i u_{ix}=0$"></p><p>where <img src="pub_test5_free_eq05671228016298599287.png" alt="$i$"> are the nodes on the cross-section at <img src="pub_test5_free_eq17014082639638836868.png" alt="$x=0$">.</p><p>The transverse constraint at the pin at <img src="pub_test5_free_eq11873756527255776957.png" alt="$x=L$"> is implemented with two multi-point constraints of the form</p><p><img src="pub_test5_free_eq07246411609463031044.png" alt="$\sum_i u_{iy}=0$"></p><p>and</p><p><img src="pub_test5_free_eq12807347489065702896.png" alt="$\sum_i u_{iz}=0$"></p><p>where <img src="pub_test5_free_eq05671228016298599287.png" alt="$i$"> are the nodes on the cross-section at <img src="pub_test5_free_eq17014082639638836868.png" alt="$x=0$">.</p><h2>Solution<a name="16"></a></h2><p>The code is placed inside a Matlab function in order to be able to define the simulation in a nested function.</p><pre class="codeinput"><span class="keyword">function</span> pub_test5_free
 </pre><p>Define the material properties.</p><pre class="codeinput">    pu=physical_units_struct;
     <span class="comment">% Parameters:</span>
     E = 200e3*pu.MEGA*pu.PA;
@@ -121,7 +122,7 @@ table td { padding:7px 5px; text-align:left; vertical-align:top; border:1px soli
         mpc.umultipliers=ones(size(mpc.node_list));
         mpc.penfact=1e16;
         model_data.mpc{1} = mpc;
-        <span class="comment">% At $x=L$ the transverse in support will be also implemented using</span>
+        <span class="comment">% At $x=L$ the transverse pin support will be also implemented using</span>
         <span class="comment">% MPC.</span>
         clear <span class="string">mpc</span>
         mpc.node_list = [fenode_select(fens, <span class="keyword">...</span>
@@ -280,7 +281,7 @@ Natural frequency 3 = 68.2454 [Hz]
  f/f_analytical=95.7683% (torsional)
 Mode 3, frequency 68.2454
 </pre><img vspace="5" hspace="5" src="pub_test5_free_10.png" alt=""> <h2>Discussion<a name="31"></a></h2><p>To compare vibration results produced by different finite element models needs to be done  both numerically and visually.  Even  though the frequencies may seem close, the mode shapes may be incorrect.</p><pre class="codeinput"><span class="keyword">end</span>
-</pre><p class="footer"><br><a href="http://www.mathworks.com/products/matlab/">Published with MATLAB&reg; R2012b</a><br></p></div><!--
+</pre><p class="footer"><br><a href="http://www.mathworks.com/products/matlab/">Published with MATLAB&reg; R2014b</a><br></p></div><!--
 ##### SOURCE BEGIN #####
 %% Free harmonic vibration of a deep beam.
 %
@@ -427,7 +428,7 @@ function pub_test5_free
         mpc.umultipliers=ones(size(mpc.node_list));
         mpc.penfact=1e16;
         model_data.mpc{1} = mpc;
-        % At $x=L$ the transverse in support will be also implemented using
+        % At $x=L$ the transverse pin support will be also implemented using
         % MPC.
         clear mpc
         mpc.node_list = [fenode_select(fens, ...

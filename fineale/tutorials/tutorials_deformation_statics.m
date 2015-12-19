@@ -7,7 +7,7 @@
 %       analytical results.
 %     - Use of material orientation matrix to formulate uniaxial model of deformation.
 %
-% <a href="matlab:showdemo 'pub_plane_w_hole'">Infinite plane with a circular hole.</a> 
+% <a href="matlab:showdemo 'pub_plane_w_hole_m'">Infinite plane with a circular hole.</a> 
 %     Features:
 %     - Static stress analysis of equivalent 2-D and 3-D models. 
 %     - Stress concentration factor compared with analytical results.

@@ -6,7 +6,7 @@
    <!--
 This HTML was auto-generated from MATLAB code.
 To make changes, update the MATLAB code and republish this document.
-      --><title>Thick pipe with internal pressure</title><meta name="generator" content="MATLAB 8.4"><link rel="schema.DC" href="http://purl.org/dc/elements/1.1/"><meta name="DC.date" content="2015-12-17"><meta name="DC.source" content="pub_thick_pipe.m"><style type="text/css">
+      --><title>Thick pipe with internal pressure</title><meta name="generator" content="MATLAB 8.4"><link rel="schema.DC" href="http://purl.org/dc/elements/1.1/"><meta name="DC.date" content="2015-12-19"><meta name="DC.source" content="pub_thick_pipe.m"><style type="text/css">
 html,body,div,span,applet,object,iframe,h1,h2,h3,h4,h5,h6,p,blockquote,pre,a,abbr,acronym,address,big,cite,code,del,dfn,em,font,img,ins,kbd,q,s,samp,small,strike,strong,sub,sup,tt,var,b,u,i,center,dl,dt,dd,ol,ul,li,fieldset,form,label,legend,table,caption,tbody,tfoot,thead,tr,th,td{margin:0;padding:0;border:0;outline:0;font-size:100%;vertical-align:baseline;background:transparent}body{line-height:1}ol,ul{list-style:none}blockquote,q{quotes:none}blockquote:before,blockquote:after,q:before,q:after{content:'';content:none}:focus{outine:0}ins{text-decoration:none}del{text-decoration:line-through}table{border-collapse:collapse;border-spacing:0}
 
 html { min-height:100%; margin-bottom:1px; }
@@ -177,28 +177,15 @@ surface_integration_rule = surface integration rule</pre><pre class="codeinput">
         disp([<span class="string">'(Approximate/true displacement) at the internal surface: '</span><span class="keyword">...</span>
             num2str(mean(ur)/urex*100) <span class="string">'%'</span>])
 
-        <span class="comment">% Produce a plot of the Cartesian stress component in the global</span>
-        <span class="comment">% coordinates (sigma_z). Note that this is the usual representation of stress</span>
-        <span class="comment">% using nodal stress field.</span>
+        <span class="comment">% Produce a plot of the Cartesian stress component. Note that this</span>
+        <span class="comment">% is the usual representation of stress using nodal stress field.</span>
         model_data.postprocessing.u_scale= 200;
         model_data.postprocessing.stress_component=3;
         model_data.postprocessing.stress_range=[-p,+p];
         model_data=deformation_plot_stress(model_data);
         draw_annotation(model_data.postprocessing.gv,<span class="keyword">...</span>
             [0.35, 0.8, 0.35, 0.075],description,<span class="keyword">...</span>
-            struct(<span class="string">'backgroundcolor'</span>,<span class="string">'w'</span>));
-        snapnow;
-
-        <span class="comment">% Produce a plot of the Cartesian stress component in the CYLINDRICAL coordinates. This is the hoop stress.</span>
-        model_data.postprocessing=struct(<span class="string">'u_scale'</span>,1); <span class="comment">% Reset postprocessing options</span>
-        model_data.postprocessing.u_scale= 200;
-        model_data.postprocessing.stress_component=2;
-        model_data.postprocessing.outputRm =@outputRm3D;
-        model_data=deformation_plot_stress(model_data);
-        draw_annotation(model_data.postprocessing.gv,<span class="keyword">...</span>
-            [0.35, 0.8, 0.35, 0.075],description,<span class="keyword">...</span>
-            struct(<span class="string">'backgroundcolor'</span>,<span class="string">'w'</span>));
-        snapnow;
+            struct(<span class="string">'backgroundcolor'</span>,<span class="string">'w'</span>))
 
         <span class="comment">% Produce a plot of the solution components in the cylindrical</span>
         <span class="comment">% coordinate system.</span>
@@ -229,25 +216,18 @@ surface_integration_rule = surface integration rule</pre><pre class="codeinput">
 
     <span class="keyword">end</span>
 </pre><p>This is a helper function for the calculation of the integration-point stresses.</p><pre class="codeinput">    <span class="keyword">function</span> idat =inspector(idat, out, xyz, u_xyz, pc)
-        Rm=outputRm3D(xyz,[],0);<span class="comment">% See below</span>
+        theNormal=[xyz(1),0,xyz(3)];
+        r=norm(theNormal);<span class="comment">% distance from the axis of symmetry</span>
+        theNormal =theNormal/r;<span class="comment">% compute the unit normal vector</span>
+        e1p=theNormal';<span class="comment">% local cylindrical coordinate system basis vectors</span>
+        e3p=[0,1,0]';<span class="comment">% this one points along the axis of the cylinder</span>
+        e2p=skewmat(e3p)*e1p;<span class="comment">% this one is along the hoop direction</span>
+        Rm= [e1p,e2p,e3p];<span class="comment">% transformation matrix for the stress</span>
         tm = stress_6v_to_3x3t (mater,out);<span class="comment">% stress in global XYZ</span>
         tpm = Rm'*tm*Rm;<span class="comment">%  stress matrix in cylindrical coordinates</span>
         sp = stress_3x3t_to_6v(mater,tpm);<span class="comment">% stress vector in cylindr. coord.</span>
-        idat.r(end+1) =sqrt(xyz(1)^2+xyz(3)^2);
+        idat.r(end+1) =r;
         idat.s(end+1)=sp(idat.component);
-    <span class="keyword">end</span>
-
-
-    <span class="comment">% This is the function to compute the local orientation orthonormal</span>
-    <span class="comment">% basis vectors for the cylindrical coordinate system.</span>
-    <span class="keyword">function</span> R=outputRm3D(c,J,lab)
-        theNormal=c; theNormal(2)=0;
-        r=norm(theNormal);<span class="comment">% distance from the axis of symmetry</span>
-        theNormal =theNormal/r;<span class="comment">% compute the unit normal vector</span>
-        e1p=[theNormal'];<span class="comment">% local cylind. coordinate  basis vectors (Radial)</span>
-        e3p=[0,1,0]';<span class="comment">% this one points along the axis of the cylinder</span>
-        e2p=skewmat(e3p)*e1p;<span class="comment">% this one is along the hoop direction</span>
-        R= [e1p,e2p,e3p];<span class="comment">% transformation matrix for the stress</span>
     <span class="keyword">end</span>
 </pre><p><b>Regular quadratic tetrahedron</b></p><p>We start with the workhorse of most commonly used finite element packages, the quadratic tetrahedron. The finite element model machine is just the default used by the static solver, and the four-point quadrature rule  is also standard for this element.</p><pre class="codeinput">    description =<span class="string">'T10'</span>;<span class="comment">% tetrahedron</span>
     mf =@T10_block;
@@ -256,7 +236,7 @@ surface_integration_rule = surface integration rule</pre><pre class="codeinput">
     surface_integration_rule=tri_rule(struct(<span class="string">'npts'</span>,3));
     execute_simulation (description, mf, femmf, surface_integration_rule);
 </pre><pre class="codeoutput">(Approximate/true displacement) at the internal surface: 99.3758%
-</pre><img vspace="5" hspace="5" src="pub_thick_pipe_01.png" alt=""> <img vspace="5" hspace="5" src="pub_thick_pipe_02.png" alt=""> <img vspace="5" hspace="5" src="pub_thick_pipe_03.png" alt=""> <p>Nothing seems terribly wrong at first sight.  The  nodal stress plot shows a little bit of discoloration in patches, but the displacement  is only less than a percent off.</p><p>However, when we look at the radial stress plot we can see that there's trouble. The stress at the integration points is way off from the analytical solution.</p><p>Why is the nodal stress field okay then?  This may be attributed to the averaging, or smoothing, of the integration point values when they are getting converted into the node-based stress field.  That process will take care of all that jumping around and settled to the "average" which may not be  far away from the true stress.</p><p><b>Reduced integration serendipity hexahedron</b></p><p>An element that is often used in these situations is the uniformly under integrated serendipity (20-node) hexahedron. The same finite element model machine as above is used, and the integration is the Gauss rule one order lower than that required for full integration (which would be  3 x 3 x 3).</p><pre class="codeinput">    description =<span class="string">'H20R'</span>;
+</pre><img vspace="5" hspace="5" src="pub_thick_pipe_01.png" alt=""> <img vspace="5" hspace="5" src="pub_thick_pipe_02.png" alt=""> <p>Nothing seems terribly wrong at first sight.  The  nodal stress plot shows a little bit of discoloration in patches, but the displacement  is only less than a percent off.</p><p>However, when we look at the radial stress plot we can see that there's trouble. The stress at the integration points is way off from the analytical solution.</p><p>Why is the nodal stress field okay then?  This may be attributed to the averaging, or smoothing, of the integration point values when they are getting converted into the node-based stress field.  That process will take care of all that jumping around and settled to the "average" which may not be  far away from the true stress.</p><p><b>Reduced integration serendipity hexahedron</b></p><p>An element that is often used in these situations is the uniformly under integrated serendipity (20-node) hexahedron. The same finite element model machine as above is used, and the integration is the Gauss rule one order lower than that required for full integration (which would be  3 x 3 x 3).</p><pre class="codeinput">    description =<span class="string">'H20R'</span>;
     mf =@H20_block;
     femmf =@(fes)femm_deformation_linear(struct(<span class="string">'fes'</span>,fes,<span class="keyword">...</span>
         <span class="string">'material'</span>,mater,<span class="keyword">...</span>
@@ -264,7 +244,7 @@ surface_integration_rule = surface integration rule</pre><pre class="codeinput">
     surface_integration_rule=gauss_rule(struct(<span class="string">'dim'</span>,2, <span class="string">'order'</span>,2));
     execute_simulation (description, mf, femmf, surface_integration_rule);
 </pre><pre class="codeoutput">(Approximate/true displacement) at the internal surface: 100.0168%
-</pre><img vspace="5" hspace="5" src="pub_thick_pipe_04.png" alt=""> <img vspace="5" hspace="5" src="pub_thick_pipe_05.png" alt=""> <img vspace="5" hspace="5" src="pub_thick_pipe_06.png" alt=""> <p>We can see that all the output points towards great performance from this element.  The stress is smooth, in fact right on top of the analytical prediction.</p><p><b>Full integration serendipity hexahedron</b></p><p>It isn't difficult to spoil this picture.  Here we use the same element, except for replacing the quadrature with full  3 x 3 x 3 Gauss rule (indicated by %&lt;==).</p><pre class="codeinput"> description =<span class="string">'H20'</span>;
+</pre><img vspace="5" hspace="5" src="pub_thick_pipe_03.png" alt=""> <img vspace="5" hspace="5" src="pub_thick_pipe_04.png" alt=""> <p>We can see that all the output points towards great performance from this element.  The stress is smooth, in fact right on top of the analytical prediction.</p><p><b>Full integration serendipity hexahedron</b></p><p>It isn't difficult to spoil this picture.  Here we use the same element, except for replacing the quadrature with full  3 x 3 x 3 Gauss rule (indicated by %&lt;==).</p><pre class="codeinput"> description =<span class="string">'H20'</span>;
     mf =@H20_block;
     femmf =@(fes)femm_deformation_linear(struct(<span class="string">'fes'</span>,fes,<span class="keyword">...</span>
         <span class="string">'material'</span>,mater,<span class="keyword">...</span>
@@ -272,7 +252,7 @@ surface_integration_rule = surface integration rule</pre><pre class="codeinput">
     surface_integration_rule=gauss_rule(struct(<span class="string">'dim'</span>,2, <span class="string">'order'</span>,2));
     execute_simulation (description, mf, femmf, surface_integration_rule);
 </pre><pre class="codeoutput">(Approximate/true displacement) at the internal surface: 95.2348%
-</pre><img vspace="5" hspace="5" src="pub_thick_pipe_07.png" alt=""> <img vspace="5" hspace="5" src="pub_thick_pipe_08.png" alt=""> <img vspace="5" hspace="5" src="pub_thick_pipe_09.png" alt=""> <p>The stress is now totally unacceptable.</p><p><b>Lagrange 27-node quadratic hexahedron</b></p><p>Using a Lagrange 27-node quadratic hexahedron instead of the serendipity 20-node hexahedron  does not help.</p><pre class="codeinput">    description =<span class="string">'H27'</span>;
+</pre><img vspace="5" hspace="5" src="pub_thick_pipe_05.png" alt=""> <img vspace="5" hspace="5" src="pub_thick_pipe_06.png" alt=""> <p>The stress is now totally unacceptable.</p><p><b>Lagrange 27-node quadratic hexahedron</b></p><p>Using a Lagrange 27-node quadratic hexahedron instead of the serendipity 20-node hexahedron  does not help.</p><pre class="codeinput">    description =<span class="string">'H27'</span>;
     mf =@H27_block;
     femmf =@(fes)femm_deformation_linear(struct(<span class="string">'fes'</span>,fes,<span class="keyword">...</span>
         <span class="string">'material'</span>,mater,<span class="keyword">...</span>
@@ -280,14 +260,14 @@ surface_integration_rule = surface integration rule</pre><pre class="codeinput">
     surface_integration_rule=gauss_rule(struct(<span class="string">'dim'</span>,2, <span class="string">'order'</span>,4));
     execute_simulation (description, mf, femmf, surface_integration_rule);
 </pre><pre class="codeoutput">(Approximate/true displacement) at the internal surface: 95.2399%
-</pre><img vspace="5" hspace="5" src="pub_thick_pipe_10.png" alt=""> <img vspace="5" hspace="5" src="pub_thick_pipe_11.png" alt=""> <img vspace="5" hspace="5" src="pub_thick_pipe_12.png" alt=""> <p>In fact, the results are as bad if not worse. Unfortunately, the remedy of using reduced  (under) integration that worked for the 20 node hexahedron is now   not available anymore.</p><p><b>Regular cubic hexahedron</b></p><p>Would it help to go to a cubic Lagrange hexahedron?</p><pre class="codeinput">    description =<span class="string">'H64'</span>;
+</pre><img vspace="5" hspace="5" src="pub_thick_pipe_07.png" alt=""> <img vspace="5" hspace="5" src="pub_thick_pipe_08.png" alt=""> <p>In fact, the results are as bad if not worse. Unfortunately, the remedy of using reduced  (under) integration that worked for the 20 node hexahedron is now   not available anymore.</p><p><b>Regular cubic hexahedron</b></p><p>Would it help to go to a cubic Lagrange hexahedron?</p><pre class="codeinput">    description =<span class="string">'H64'</span>;
     mf =@H64_block;
     femmf =@(fes)femm_deformation_linear(struct(<span class="string">'fes'</span>,fes, <span class="string">'material'</span>,mater,<span class="keyword">...</span>
         <span class="string">'integration_rule'</span>,gauss_rule(struct(<span class="string">'dim'</span>,3, <span class="string">'order'</span>,4))));
     surface_integration_rule=gauss_rule(struct(<span class="string">'dim'</span>,2, <span class="string">'order'</span>,4));
     execute_simulation (description, mf, femmf, surface_integration_rule);
 </pre><pre class="codeoutput">(Approximate/true displacement) at the internal surface: 99.9405%
-</pre><img vspace="5" hspace="5" src="pub_thick_pipe_13.png" alt=""> <img vspace="5" hspace="5" src="pub_thick_pipe_14.png" alt=""> <img vspace="5" hspace="5" src="pub_thick_pipe_15.png" alt=""> <p>Unfortunately, the answer is no.  The stress still oscillates.</p><p>The remedy both for the 27- and 64-node hexahedron is <i>selective</i> reduced integration. In contrast to the uniform reduced integration (which is not available for these elements as they would be producing singular stiffness matrices), the selective reduced integration applies different integration rules to compute terms associated with dilatation (volumetric) strains and those associated with shear (deviatoric) strains.</p><p><b>Selective reduced integration cubic hexahedron</b></p><p>The finite element model machine is now replaced with a specialized version  that can use different integration rules for different terms. The volumetric rule is the reduced integration rule, in the case of the cubic hexahedron 3 x 3 x 3.  The shear-strain rule is the full Gauss rule appropriate for this element.</p><pre class="codeinput">    description =<span class="string">'H64-SRI'</span>;
+</pre><img vspace="5" hspace="5" src="pub_thick_pipe_09.png" alt=""> <img vspace="5" hspace="5" src="pub_thick_pipe_10.png" alt=""> <p>Unfortunately, the answer is no.  The stress still oscillates.</p><p>The remedy both for the 27- and 64-node hexahedron is <i>selective</i> reduced integration. In contrast to the uniform reduced integration (which is not available for these elements as they would be producing singular stiffness matrices), the selective reduced integration applies different integration rules to compute terms associated with dilatation (volumetric) strains and those associated with shear (deviatoric) strains.</p><p><b>Selective reduced integration cubic hexahedron</b></p><p>The finite element model machine is now replaced with a specialized version  that can use different integration rules for different terms. The volumetric rule is the reduced integration rule, in the case of the cubic hexahedron 3 x 3 x 3.  The shear-strain rule is the full Gauss rule appropriate for this element.</p><pre class="codeinput">    description =<span class="string">'H64-SRI'</span>;
     mf =@H64_block;
     femmf =@(fes)femm_deformation_linear_sri(struct(<span class="string">'fes'</span>,fes, <span class="keyword">...</span>
         <span class="string">'material'</span>,mater,<span class="keyword">...</span>
@@ -298,7 +278,7 @@ surface_integration_rule = surface integration rule</pre><pre class="codeinput">
     surface_integration_rule=gauss_rule(struct(<span class="string">'dim'</span>,2, <span class="string">'order'</span>,4));
     execute_simulation (description, mf, femmf, surface_integration_rule);
 </pre><pre class="codeoutput">(Approximate/true displacement) at the internal surface: 99.9999%
-</pre><img vspace="5" hspace="5" src="pub_thick_pipe_16.png" alt=""> <img vspace="5" hspace="5" src="pub_thick_pipe_17.png" alt=""> <img vspace="5" hspace="5" src="pub_thick_pipe_18.png" alt=""> <p>Clearly, the selective reduced integration removed all the oscillations and the  approximation of the stress is right on the money.</p><p>The same remedy also works for the 27-node hexahedron.  We just have to reduce the Gauss rule orders by one.</p><pre class="codeinput">        description =<span class="string">'H27-SRI'</span>;
+</pre><img vspace="5" hspace="5" src="pub_thick_pipe_11.png" alt=""> <img vspace="5" hspace="5" src="pub_thick_pipe_12.png" alt=""> <p>Clearly, the selective reduced integration removed all the oscillations and the  approximation of the stress is right on the money.</p><p>The same remedy also works for the 27-node hexahedron.  We just have to reduce the Gauss rule orders by one.</p><pre class="codeinput">        description =<span class="string">'H27-SRI'</span>;
     mf =@H27_block;
     femmf =@(fes)femm_deformation_linear_sri(struct(<span class="string">'fes'</span>,fes, <span class="keyword">...</span>
         <span class="string">'material'</span>,mater,<span class="keyword">...</span>
@@ -309,7 +289,7 @@ surface_integration_rule = surface integration rule</pre><pre class="codeinput">
     surface_integration_rule=gauss_rule(struct(<span class="string">'dim'</span>,2, <span class="string">'order'</span>,4));
     execute_simulation (description, mf, femmf, surface_integration_rule);
 </pre><pre class="codeoutput">(Approximate/true displacement) at the internal surface: 99.9781%
-</pre><img vspace="5" hspace="5" src="pub_thick_pipe_19.png" alt=""> <img vspace="5" hspace="5" src="pub_thick_pipe_20.png" alt=""> <img vspace="5" hspace="5" src="pub_thick_pipe_21.png" alt=""> <p>Again, oscillations gone, stress is very accurate overall.</p><p>As a matter of fact, even the least accurate hexahedron available, the H8 hexahedron with 8  nodes which does not give an acceptable accuracy as a rule, is in this case just fine when the selective reduced integration is applied.</p><p><b>Selective reduced integration H8 hexahedron</b></p><pre class="codeinput">    description =<span class="string">'H8-SRI'</span>;
+</pre><img vspace="5" hspace="5" src="pub_thick_pipe_13.png" alt=""> <img vspace="5" hspace="5" src="pub_thick_pipe_14.png" alt=""> <p>Again, oscillations gone, stress is very accurate overall.</p><p>As a matter of fact, even the least accurate hexahedron available, the H8 hexahedron with 8  nodes which does not give an acceptable accuracy as a rule, is in this case just fine when the selective reduced integration is applied.</p><p><b>Selective reduced integration H8 hexahedron</b></p><pre class="codeinput">    description =<span class="string">'H8-SRI'</span>;
     mf =@H8_block;
     femmf =@(fes)femm_deformation_linear_sri(struct(<span class="string">'fes'</span>,fes, <span class="keyword">...</span>
         <span class="string">'material'</span>,mater,<span class="keyword">...</span>
@@ -320,7 +300,7 @@ surface_integration_rule = surface integration rule</pre><pre class="codeinput">
     surface_integration_rule=gauss_rule(struct(<span class="string">'dim'</span>,2, <span class="string">'order'</span>,2));
     execute_simulation (description, mf, femmf, surface_integration_rule);
 </pre><pre class="codeoutput">(Approximate/true displacement) at the internal surface: 97.9954%
-</pre><img vspace="5" hspace="5" src="pub_thick_pipe_22.png" alt=""> <img vspace="5" hspace="5" src="pub_thick_pipe_23.png" alt=""> <img vspace="5" hspace="5" src="pub_thick_pipe_24.png" alt=""> <p>Finally we come back to the T10 tetrahedron. The same remedy, selective reduced integration, also works for the quadratic tetrahedron.  The deviatoric rule is  the original 4-point one, and the volumetric rule is just a single-point quadrature.</p><p><b>Selective reduced integration quadratic tetrahedron</b></p><pre class="codeinput">    description =<span class="string">'T10-SRI'</span>;
+</pre><img vspace="5" hspace="5" src="pub_thick_pipe_15.png" alt=""> <img vspace="5" hspace="5" src="pub_thick_pipe_16.png" alt=""> <p>Finally we come back to the T10 tetrahedron. The same remedy, selective reduced integration, also works for the quadratic tetrahedron.  The deviatoric rule is  the original 4-point one, and the volumetric rule is just a single-point quadrature.</p><p><b>Selective reduced integration quadratic tetrahedron</b></p><pre class="codeinput">    description =<span class="string">'T10-SRI'</span>;
     mf =@T10_block;
     femmf =@(fes)femm_deformation_linear_sri(struct(<span class="string">'fes'</span>,fes,<span class="keyword">...</span>
         <span class="string">'material'</span>,mater,<span class="keyword">...</span>
@@ -329,7 +309,7 @@ surface_integration_rule = surface integration rule</pre><pre class="codeinput">
     surface_integration_rule=tri_rule(struct(<span class="string">'npts'</span>,3));
     execute_simulation (description, mf, femmf, surface_integration_rule);
 </pre><pre class="codeoutput">(Approximate/true displacement) at the internal surface: 100.0129%
-</pre><img vspace="5" hspace="5" src="pub_thick_pipe_25.png" alt=""> <img vspace="5" hspace="5" src="pub_thick_pipe_26.png" alt=""> <img vspace="5" hspace="5" src="pub_thick_pipe_27.png" alt=""> <p>The stresses show a little bit of a loss of accuracy, which presumably is due to the fact that the tetrahedral mesh has some unsymmetry associated with it whereas the hexahedral mesh is perfectly aligned with the boundaries of the modeled wedge/slice.</p><h2>Discussion<a name="51"></a></h2><p>If we were simulating the response of  compressible material, for instance for <img src="pub_thick_pipe_eq00495845292348252579.png" alt="$\nu=0.3$"> (steel) the finite elements tested above  would <i>all</i> work fine. For Poisson's ratio approaching 1/2 ordinary isoparametric displacement-based finite elements may fail.</p><p>For nearly incompressible materials with displacement-based finite elements (all of those above) we are always better off using a trick such as the selective reduced integration  (or uniform reduced integration for the H20 hexahedron) than the full integration.    Sometimes we have the option of switching to methods specially designed to deal with incompressibility, such as the mixed approximation of pressure plus displacement. If that is not available, displacement-only  finite element with  a selective reduced integration is a good bet.</p><pre class="codeinput"><span class="keyword">end</span>
+</pre><img vspace="5" hspace="5" src="pub_thick_pipe_17.png" alt=""> <img vspace="5" hspace="5" src="pub_thick_pipe_18.png" alt=""> <p>The stresses show a little bit of a loss of accuracy, which presumably is due to the fact that the tetrahedral mesh has some unsymmetry associated with it whereas the hexahedral mesh is perfectly aligned with the boundaries of the modeled wedge/slice.</p><h2>Discussion<a name="51"></a></h2><p>If we were simulating the response of  compressible material, for instance for <img src="pub_thick_pipe_eq00495845292348252579.png" alt="$\nu=0.3$"> (steel) the finite elements tested above  would <i>all</i> work fine. For Poisson's ratio approaching 1/2 ordinary isoparametric displacement-based finite elements may fail.</p><p>For nearly incompressible materials with displacement-based finite elements (all of those above) we are always better off using a trick such as the selective reduced integration  (or uniform reduced integration for the H20 hexahedron) than the full integration.    Sometimes we have the option of switching to methods specially designed to deal with incompressibility, such as the mixed approximation of pressure plus displacement. If that is not available, displacement-only  finite element with  a selective reduced integration is a good bet.</p><pre class="codeinput"><span class="keyword">end</span>
 </pre><p class="footer"><br><a href="http://www.mathworks.com/products/matlab/">Published with MATLAB&reg; R2014b</a><br></p></div><!--
 ##### SOURCE BEGIN #####
 %% Thick pipe with internal pressure
@@ -525,28 +505,15 @@ function pub_thick_pipe
         disp(['(Approximate/true displacement) at the internal surface: '...
             num2str(mean(ur)/urex*100) '%'])
         
-        % Produce a plot of the Cartesian stress component in the global
-        % coordinates (sigma_z). Note that this is the usual representation of stress
-        % using nodal stress field.
+        % Produce a plot of the Cartesian stress component. Note that this
+        % is the usual representation of stress using nodal stress field.
         model_data.postprocessing.u_scale= 200;
         model_data.postprocessing.stress_component=3;
         model_data.postprocessing.stress_range=[-p,+p];
         model_data=deformation_plot_stress(model_data);
         draw_annotation(model_data.postprocessing.gv,...
             [0.35, 0.8, 0.35, 0.075],description,...
-            struct('backgroundcolor','w'));
-        snapnow;
-        
-        % Produce a plot of the Cartesian stress component in the CYLINDRICAL coordinates. This is the hoop stress.
-        model_data.postprocessing=struct('u_scale',1); % Reset postprocessing options
-        model_data.postprocessing.u_scale= 200;
-        model_data.postprocessing.stress_component=2;
-        model_data.postprocessing.outputRm =@outputRm3D;
-        model_data=deformation_plot_stress(model_data);
-        draw_annotation(model_data.postprocessing.gv,...
-            [0.35, 0.8, 0.35, 0.075],description,...
-            struct('backgroundcolor','w'));
-        snapnow;
+            struct('backgroundcolor','w'))
         
         % Produce a plot of the solution components in the cylindrical
         % coordinate system.
@@ -581,26 +548,20 @@ function pub_thick_pipe
 % This is a helper function for the calculation of the integration-point
 % stresses.
     function idat =inspector(idat, out, xyz, u_xyz, pc)
-        Rm=outputRm3D(xyz,[],0);% See below
+        theNormal=[xyz(1),0,xyz(3)];
+        r=norm(theNormal);% distance from the axis of symmetry
+        theNormal =theNormal/r;% compute the unit normal vector
+        e1p=theNormal';% local cylindrical coordinate system basis vectors
+        e3p=[0,1,0]';% this one points along the axis of the cylinder
+        e2p=skewmat(e3p)*e1p;% this one is along the hoop direction
+        Rm= [e1p,e2p,e3p];% transformation matrix for the stress
         tm = stress_6v_to_3x3t (mater,out);% stress in global XYZ
         tpm = Rm'*tm*Rm;%  stress matrix in cylindrical coordinates
         sp = stress_3x3t_to_6v(mater,tpm);% stress vector in cylindr. coord.
-        idat.r(end+1) =sqrt(xyz(1)^2+xyz(3)^2);
+        idat.r(end+1) =r;
         idat.s(end+1)=sp(idat.component);
     end
     
-    
-    % This is the function to compute the local orientation orthonormal
-    % basis vectors for the cylindrical coordinate system.
-    function R=outputRm3D(c,J,lab)
-        theNormal=c; theNormal(2)=0;
-        r=norm(theNormal);% distance from the axis of symmetry
-        theNormal =theNormal/r;% compute the unit normal vector
-        e1p=[theNormal'];% local cylind. coordinate  basis vectors (Radial)
-        e3p=[0,1,0]';% this one points along the axis of the cylinder 
-        e2p=skewmat(e3p)*e1p;% this one is along the hoop direction
-        R= [e1p,e2p,e3p];% transformation matrix for the stress
-    end
     
 %% 
 % *Regular quadratic tetrahedron*

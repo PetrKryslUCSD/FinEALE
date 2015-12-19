@@ -2,7 +2,7 @@
 %
 
 %%
-% Link to the  <matlab:edit('pub_plane_w_hole') m-file>.
+% Link to the  <matlab:edit('pub_plane_w_hole_m') m-file>.
 %
 
 %% Description
@@ -13,7 +13,8 @@
 % (Figure 1). The symmetry of the problem allows us to consider just
 % quarter of the immediate neighborhood of the hole, where the remainder
 % of the infinite medium is replaced with tractions applied  on the
-% exterior boundary.
+% exterior boundary. There is no strain in the direction of the hole:
+% The situation may be modeled either as fully 3-D or as plane strain 2d model.
 
 %%
 %
@@ -51,7 +52,7 @@
 % This tutorial uses the mechanism of bundled algorithms. The solution
 % is obtained with the algorithm deformation_linear_statics().
 
-function pub_plane_w_hole
+function pub_plane_w_hole_m
     
     %%
     % We consider  the material properties of steel here, but the solution is

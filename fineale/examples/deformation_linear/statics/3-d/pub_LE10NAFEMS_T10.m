@@ -212,6 +212,8 @@ function pub_LE10NAFEMS_T10
     % Super-convergent Patch Recovery (SPR).
     %%
     % Note that we are setting the flag |use_spr|.
+    model_data.postprocessing=rmfield(model_data.postprocessing, ...
+        fieldnames(model_data.postprocessing)); % Zero out postprocessing options
     model_data.postprocessing.u_scale=1000;
     model_data.postprocessing.stress_component=2;
     model_data.postprocessing.colormap=cadcolors2;

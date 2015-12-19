@@ -6,7 +6,7 @@
    <!--
 This HTML was auto-generated from MATLAB code.
 To make changes, update the MATLAB code and republish this document.
-      --><title>Vibration analysis of laminated composite plate</title><meta name="generator" content="MATLAB 8.0"><link rel="schema.DC" href="http://purl.org/dc/elements/1.1/"><meta name="DC.date" content="2015-01-18"><meta name="DC.source" content="pub_KS_sandwich_vibration_ss.m"><style type="text/css">
+      --><title>Vibration analysis of laminated composite plate</title><meta name="generator" content="MATLAB 8.4"><link rel="schema.DC" href="http://purl.org/dc/elements/1.1/"><meta name="DC.date" content="2015-12-19"><meta name="DC.source" content="pub_KS_sandwich_vibration_ss.m"><style type="text/css">
 html,body,div,span,applet,object,iframe,h1,h2,h3,h4,h5,h6,p,blockquote,pre,a,abbr,acronym,address,big,cite,code,del,dfn,em,font,img,ins,kbd,q,s,samp,small,strike,strong,sub,sup,tt,var,b,u,i,center,dl,dt,dd,ol,ul,li,fieldset,form,label,legend,table,caption,tbody,tfoot,thead,tr,th,td{margin:0;padding:0;border:0;outline:0;font-size:100%;vertical-align:baseline;background:transparent}body{line-height:1}ol,ul{list-style:none}blockquote,q{quotes:none}blockquote:before,blockquote:after,q:before,q:after{content:'';content:none}:focus{outine:0}ins{text-decoration:none}del{text-decoration:line-through}table{border-collapse:collapse;border-spacing:0}
 
 html { min-height:100%; margin-bottom:1px; }
@@ -23,7 +23,7 @@ a:visited { color:#004aa0; text-decoration:none; }
 
 p { padding:0px; margin:0px 0px 20px; }
 img { padding:0px; margin:0px 0px 20px; border:none; }
-p img, pre img, tt img, li img { margin-bottom:0px; } 
+p img, pre img, tt img, li img, h1 img, h2 img { margin-bottom:0px; } 
 
 ul { padding:0px; margin:0px 0px 20px 23px; list-style:square; }
 ul li { padding:0px; margin:0px 0px 7px 0px; }
@@ -38,11 +38,12 @@ ol li ul li { list-style:square; }
 
 .content { font-size:1.2em; line-height:140%; padding: 20px; }
 
-pre, tt, code { font-size:12px; }
+pre, code { font-size:12px; }
+tt { font-size: 1.2em; }
 pre { margin:0px 0px 20px; }
-pre.error { color:red; }
 pre.codeinput { padding:10px; border:1px solid #d3d3d3; background:#f7f7f7; }
 pre.codeoutput { padding:10px 11px; margin:0px 0px 20px; color:#4c4c4c; }
+pre.error { color:red; }
 
 @media print { pre.codeinput, pre.codeoutput { word-wrap:break-word; width:100%; } }
 
@@ -65,7 +66,7 @@ table td { padding:7px 5px; text-align:left; vertical-align:top; border:1px soli
 
 
 
-  </style></head><body><div class="content"><h1>Vibration analysis of laminated composite plate</h1><!--introduction--><!--/introduction--><h2>Contents</h2><div><ul><li><a href="#2">Description</a></li><li><a href="#5">Solution</a></li><li><a href="#21">Discussion</a></li></ul></div><p>Link to the  <a href="matlab:edit('pub_KS_sandwich_vibration_ss')">m-file</a>.</p><h2>Description<a name="2"></a></h2><p>Free-vibration problem is solved for laminated composite square plate, simply-supported on the circumference.</p><p>Reference: Analytical solutions for free vibration of laminated composite and sandwich plates based on the higher-order refined theory, T. Kant and K. Swaminathan, Composite Structures 53  (2001) 73-85.</p><p>The plate lamination considered here is one particular case from the cited reference, <img src="pub_KS_sandwich_vibration_ss_eq77006.png" alt="$(0/90)_2$">, and we consider orthotropic material properties for individual layers with <img src="pub_KS_sandwich_vibration_ss_eq95389.png" alt="$E_1/E_2=3$">, <img src="pub_KS_sandwich_vibration_ss_eq87913.png" alt="$E_3 =E_2$">, <img src="pub_KS_sandwich_vibration_ss_eq69279.png" alt="$G_{12}=G_{13}=0.6E_2$">, <img src="pub_KS_sandwich_vibration_ss_eq68038.png" alt="$G_{23}=0.5E_2$">, <img src="pub_KS_sandwich_vibration_ss_eq94737.png" alt="$\nu_{12}=\nu_{13}=\nu_{23}= 0.25$">.</p><p>The plate is discretized with solid elements. The simple support condition is approximated by distributed rollers on the boundary.</p><h2>Solution<a name="5"></a></h2><pre class="codeinput"><span class="keyword">function</span> pub_KS_sandwich_vibration_ss
+  </style></head><body><div class="content"><h1>Vibration analysis of laminated composite plate</h1><!--introduction--><!--/introduction--><h2>Contents</h2><div><ul><li><a href="#2">Description</a></li><li><a href="#5">Solution</a></li><li><a href="#21">Discussion</a></li></ul></div><p>Link to the  <a href="matlab:edit('pub_KS_sandwich_vibration_ss')">m-file</a>.</p><h2>Description<a name="2"></a></h2><p>Free-vibration problem is solved for laminated composite square plate, simply-supported on the circumference.</p><p>Reference: Analytical solutions for free vibration of laminated composite and sandwich plates based on the higher-order refined theory, T. Kant and K. Swaminathan, Composite Structures 53  (2001) 73-85.</p><p>The plate lamination considered here is one particular case from the cited reference, <img src="pub_KS_sandwich_vibration_ss_eq09830797202036433717.png" alt="$(0/90)_2$">, and we consider orthotropic material properties for individual layers with <img src="pub_KS_sandwich_vibration_ss_eq03819915235869741220.png" alt="$E_1/E_2=3$">, <img src="pub_KS_sandwich_vibration_ss_eq01060817090193439389.png" alt="$E_3 =E_2$">, <img src="pub_KS_sandwich_vibration_ss_eq09546609326799254000.png" alt="$G_{12}=G_{13}=0.6E_2$">, <img src="pub_KS_sandwich_vibration_ss_eq09614648102308565017.png" alt="$G_{23}=0.5E_2$">, <img src="pub_KS_sandwich_vibration_ss_eq00352984178377672523.png" alt="$\nu_{12}=\nu_{13}=\nu_{23}= 0.25$">.</p><p>The plate is discretized with solid elements. The simple support condition is approximated by distributed rollers on the boundary.</p><h2>Solution<a name="5"></a></h2><pre class="codeinput"><span class="keyword">function</span> pub_KS_sandwich_vibration_ss
 </pre><p>Material: The data from the above cited article. The ratio of the Young's moduli is variable, and the number of layers also varies. Here we consider E1/E2 = 3, and four layers with a layup (0/90)_2.</p><pre class="codeinput">    L_t =5;<span class="comment">% span to thickness ratio (a/h in the paper)</span>
     E1_E2 = 3;<span class="comment">% this ratio is variable</span>
     angles =[0 90 0 90];<span class="comment">% Anti-symmetric layup</span>
@@ -130,7 +131,7 @@ f_fundamental =
     disp([<span class="string">'Fundamental frequency '</span> num2str(1) <span class="string">': '</span> num2str(f) <span class="string">' [Hz]'</span> <span class="string">', f/f_analytical='</span> num2str(100*f/f_fundamental) <span class="string">'%'</span>]);
 </pre><pre class="codeoutput">Fundamental frequency 1: 6546.9255 [Hz], f/f_analytical=99.0926%
 </pre><p>The accuracy of less than 1% error seems to be quite adequate. However, if we refine the mesh our results will converge to a frequency that is approximately .62% lower than the reference solution. Since all the cited numbers in the Reference article are in fact lower (around 1% lower) than the 3-D elasticity solution,  and since our numerical method is in agreement with the other three  cited solutions, we may venture a guess that the 3-D elasticity solution may be in error.</p><pre class="codeinput"><span class="keyword">end</span>
-</pre><p class="footer"><br><a href="http://www.mathworks.com/products/matlab/">Published with MATLAB&reg; R2012b</a><br></p></div><!--
+</pre><p class="footer"><br><a href="http://www.mathworks.com/products/matlab/">Published with MATLAB&reg; R2014b</a><br></p></div><!--
 ##### SOURCE BEGIN #####
 %% Vibration analysis of laminated composite plate
 %

@@ -31,7 +31,7 @@
 %%
 %
 % <html> <table border=0><tr><td> <img src="../docs/pub_T3NAFEMS_axi.png" width
-% ="20%"> </td></tr> <tr><td>Figure 1. Definition of the geometry of the
+% ="40%"> </td></tr> <tr><td>Figure 1. Definition of the geometry of the
 % benchmark</td></tr> </table> </html>
 
 %%
@@ -144,14 +144,18 @@ R=L/4;% thickness
         Tn =gather_values(model_data.temp, targetn);
         Tfifth = [Tfifth Tn];
         ts=[ts,t];
-        model_data=heat_diffusion_plot_raised_surface(model_data);;
+        model_data=heat_diffusion_plot_raised_surface(model_data); view(3);
     end
-    model_data.observer = @observer;
-    model_data.postprocessing.range = [0,Tampl];
-    model_data.postprocessing.z_scale = 0.001;
+    
     %%
-    % Run the transient solver.
+    % Run the transient solver. Note that we initialize the arrays that
+    % will hold the results. The observer function is registered in
+    % |model_data|. The postprocessing parameters are also set for
+    % visualization that happens in the observer function.
     Tfifth = []; ts=[];
+    model_data.observer = @observer;
+    %     model_data.postprocessing.range = [0,Tampl];
+    model_data.postprocessing.z_scale = 0.001;
     model_data =heat_diffusion_transient(model_data);
     
     %%

@@ -6,7 +6,7 @@
    <!--
 This HTML was auto-generated from MATLAB code.
 To make changes, update the MATLAB code and republish this document.
-      --><title>Heated brick.  Solution with  linear hexahedra (H8).</title><meta name="generator" content="MATLAB 8.0"><link rel="schema.DC" href="http://purl.org/dc/elements/1.1/"><meta name="DC.date" content="2015-01-18"><meta name="DC.source" content="pub_heated_brick.m"><style type="text/css">
+      --><title>Heated brick.  Solution with  linear hexahedra (H8).</title><meta name="generator" content="MATLAB 8.4"><link rel="schema.DC" href="http://purl.org/dc/elements/1.1/"><meta name="DC.date" content="2015-12-19"><meta name="DC.source" content="pub_heated_brick.m"><style type="text/css">
 html,body,div,span,applet,object,iframe,h1,h2,h3,h4,h5,h6,p,blockquote,pre,a,abbr,acronym,address,big,cite,code,del,dfn,em,font,img,ins,kbd,q,s,samp,small,strike,strong,sub,sup,tt,var,b,u,i,center,dl,dt,dd,ol,ul,li,fieldset,form,label,legend,table,caption,tbody,tfoot,thead,tr,th,td{margin:0;padding:0;border:0;outline:0;font-size:100%;vertical-align:baseline;background:transparent}body{line-height:1}ol,ul{list-style:none}blockquote,q{quotes:none}blockquote:before,blockquote:after,q:before,q:after{content:'';content:none}:focus{outine:0}ins{text-decoration:none}del{text-decoration:line-through}table{border-collapse:collapse;border-spacing:0}
 
 html { min-height:100%; margin-bottom:1px; }
@@ -23,7 +23,7 @@ a:visited { color:#004aa0; text-decoration:none; }
 
 p { padding:0px; margin:0px 0px 20px; }
 img { padding:0px; margin:0px 0px 20px; border:none; }
-p img, pre img, tt img, li img { margin-bottom:0px; } 
+p img, pre img, tt img, li img, h1 img, h2 img { margin-bottom:0px; } 
 
 ul { padding:0px; margin:0px 0px 20px 23px; list-style:square; }
 ul li { padding:0px; margin:0px 0px 7px 0px; }
@@ -38,11 +38,12 @@ ol li ul li { list-style:square; }
 
 .content { font-size:1.2em; line-height:140%; padding: 20px; }
 
-pre, tt, code { font-size:12px; }
+pre, code { font-size:12px; }
+tt { font-size: 1.2em; }
 pre { margin:0px 0px 20px; }
-pre.error { color:red; }
 pre.codeinput { padding:10px; border:1px solid #d3d3d3; background:#f7f7f7; }
 pre.codeoutput { padding:10px 11px; margin:0px 0px 20px; color:#4c4c4c; }
+pre.error { color:red; }
 
 @media print { pre.codeinput, pre.codeoutput { word-wrap:break-word; width:100%; } }
 
@@ -65,7 +66,7 @@ table td { padding:7px 5px; text-align:left; vertical-align:top; border:1px soli
 
 
 
-  </style></head><body><div class="content"><h1>Heated brick.  Solution with  linear hexahedra (H8).</h1><!--introduction--><!--/introduction--><h2>Contents</h2><div><ul><li><a href="#2">Description</a></li><li><a href="#5">Solution</a></li><li><a href="#40">Discussion</a></li></ul></div><p>Link to the  <a href="matlab:edit('pub_heated_brick')">m-file</a>.</p><h2>Description<a name="2"></a></h2><p>The brick represented in Figure 1 has insulated lateral surfaces (BCGF, CDHG, DAEH, ABFE).  The  surface  ABCD  is  maintained  at  constant temperature  T  =  0  degrees,  and  the temperature is linearly distributed at EFGH surface so that T = 0 degrees at E point, T = 1 degrees at H and T = 2 degrees at point F. Find temperature at the point P. The reference solution for the temperature at point P is 0.901 degrees. Thermal conductivity <img src="pub_heated_brick_eq94486.png" alt="$\kappa = 1$">.</p><p>
+  </style></head><body><div class="content"><h1>Heated brick.  Solution with  linear hexahedra (H8).</h1><!--introduction--><!--/introduction--><h2>Contents</h2><div><ul><li><a href="#2">Description</a></li><li><a href="#5">Solution</a></li><li><a href="#40">Discussion</a></li></ul></div><p>Link to the  <a href="matlab:edit('pub_heated_brick')">m-file</a>.</p><h2>Description<a name="2"></a></h2><p>The brick represented in Figure 1 has insulated lateral surfaces (BCGF, CDHG, DAEH, ABFE).  The  surface  ABCD  is  maintained  at  constant temperature  T  =  0  degrees,  and  the temperature is linearly distributed at EFGH surface so that T = 0 degrees at E point, T = 1 degrees at H and T = 2 degrees at point F. Find temperature at the point P. The reference solution for the temperature at point P is 0.901 degrees. Thermal conductivity <img src="pub_heated_brick_eq03188964142886151932.png" alt="$\kappa = 1$">.</p><p>
 <table border=0><tr><td>
 <img src="../docs/pub_heated_brick_2.jpg">
 </td></tr>
@@ -142,7 +143,7 @@ ans =
    9.2337e-01
 
 </pre><p>This may be compared with the analytical solution of 0.901 degrees at point P. With the given mesh we are therefore within 2.5% of the analytical solution.</p><pre class="codeinput"><span class="keyword">end</span>
-</pre><p class="footer"><br><a href="http://www.mathworks.com/products/matlab/">Published with MATLAB&reg; R2012b</a><br></p></div><!--
+</pre><p class="footer"><br><a href="http://www.mathworks.com/products/matlab/">Published with MATLAB&reg; R2014b</a><br></p></div><!--
 ##### SOURCE BEGIN #####
 %% Heated brick.  Solution with  linear hexahedra (H8).
 %

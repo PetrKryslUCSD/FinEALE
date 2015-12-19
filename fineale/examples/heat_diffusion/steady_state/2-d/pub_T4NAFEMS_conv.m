@@ -26,7 +26,7 @@
 
 %%
 % The reference temperature at the point A  is 18.25 °C according to the
-% NAFEMS publication ( hich cites the book Carslaw, H.S. and J.C. Jaeger,
+% NAFEMS publication (which cites the book Carslaw, H.S. and J.C. Jaeger,
 % Conduction of Heat in Solids. 1959: Oxford University Press).
 
 %%
