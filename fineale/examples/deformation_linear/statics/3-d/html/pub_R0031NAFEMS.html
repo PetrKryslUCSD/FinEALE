@@ -6,7 +6,7 @@
    <!--
 This HTML was auto-generated from MATLAB code.
 To make changes, update the MATLAB code and republish this document.
-      --><title>Laminated Strip Under Three-Point Bending</title><meta name="generator" content="MATLAB 8.4"><link rel="schema.DC" href="http://purl.org/dc/elements/1.1/"><meta name="DC.date" content="2015-12-19"><meta name="DC.source" content="pub_R0031NAFEMS.m"><style type="text/css">
+      --><title>Laminated Strip Under Three-Point Bending</title><meta name="generator" content="MATLAB 8.4"><link rel="schema.DC" href="http://purl.org/dc/elements/1.1/"><meta name="DC.date" content="2015-12-20"><meta name="DC.source" content="pub_R0031NAFEMS.m"><style type="text/css">
 html,body,div,span,applet,object,iframe,h1,h2,h3,h4,h5,h6,p,blockquote,pre,a,abbr,acronym,address,big,cite,code,del,dfn,em,font,img,ins,kbd,q,s,samp,small,strike,strong,sub,sup,tt,var,b,u,i,center,dl,dt,dd,ol,ul,li,fieldset,form,label,legend,table,caption,tbody,tfoot,thead,tr,th,td{margin:0;padding:0;border:0;outline:0;font-size:100%;vertical-align:baseline;background:transparent}body{line-height:1}ol,ul{list-style:none}blockquote,q{quotes:none}blockquote:before,blockquote:after,q:before,q:after{content:'';content:none}:focus{outine:0}ins{text-decoration:none}del{text-decoration:line-through}table{border-collapse:collapse;border-spacing:0}
 
 html { min-height:100%; margin-bottom:1px; }
@@ -154,10 +154,14 @@ the thick elliptical plate</td></tr> </table> </p><p>We realize the simple suppo
     model_data.boundary_conditions.traction{1} = traction;
 </pre><p>The model is defined and we obtain  the displacement solution:</p><pre class="codeinput">    model_data =deformation_linear_statics(model_data);
 </pre><p>The results are now presented graphically. Scale for the deflections:</p><pre class="codeinput">    u_scale=2;
-
+    model_data.postprocessing=rmfield(model_data.postprocessing,fieldnames(model_data.postprocessing));
     model_data.postprocessing.u_scale= u_scale;
     model_data=deformation_plot_deformation(model_data);
-</pre><img vspace="5" hspace="5" src="pub_R0031NAFEMS_02.png" alt=""> <p>The results of the displacement and stresses will be reported at nodes located at the appropriate points.</p><pre class="codeinput">    nE=[fenode_select(fens, struct(<span class="string">'box'</span>, [0,0,0,0,0,0],<span class="keyword">...</span>
+</pre><pre class="codeoutput error">Reference to non-existent field 'postprocessing'.
+
+Error in pub_R0031NAFEMS (line 237)
+    model_data.postprocessing=rmfield(model_data.postprocessing,fieldnames(model_data.postprocessing));
+</pre><p>The results of the displacement and stresses will be reported at nodes located at the appropriate points.</p><pre class="codeinput">    nE=[fenode_select(fens, struct(<span class="string">'box'</span>, [0,0,0,0,0,0],<span class="keyword">...</span>
         <span class="string">'inflate'</span>,tolerance))];
     nC=[fenode_select(fens, struct(<span class="string">'box'</span>, [0,0,0,0,TH,TH],<span class="keyword">...</span>
         <span class="string">'inflate'</span>,tolerance))];
@@ -165,9 +169,8 @@ the thick elliptical plate</td></tr> </table> </p><p>We realize the simple suppo
         <span class="string">'inflate'</span>,tolerance))];
 </pre><p>The displacement is reported at the bottom surface:</p><pre class="codeinput">    wc=gather_values(model_data.u,nE);
     disp([<span class="string">'Center deflection='</span> num2str(wc(3)/u.MM) <span class="string">' mm, wc/wc_ref='</span> num2str(wc(3)/wEref*100) <span class="string">'%'</span>])
-</pre><pre class="codeoutput">Center deflection=-1.0568 mm, wc/wc_ref=99.698%
 </pre><p>We are going to plot the stress using a nodal stress field.  It is extracted from the quadrature points.</p><p>In order to see the details of the stress field around the output locations we provide camera settings. These settings may be obtained by using the graphic_viewer  method <tt>camget</tt> as     <tt>camget(model_data.gv)</tt>.</p><pre class="codeinput">    detail_camera =[-0.1106 -0.1459 0.1040 0.0047 0.0043 -0.0054 0 0 1.0 1.7035];;
-
+    model_data.postprocessing=struct([]);
     model_data.postprocessing.u_scale=u_scale;
     model_data.postprocessing.colormap=cadcolors2;
     model_data.postprocessing.stress_component=1;<span class="comment">% sigma_X= sigma_11= sigma_1</span>
@@ -181,7 +184,9 @@ the thick elliptical plate</td></tr> </table> </p><p>We realize the simple suppo
             sigma11D2= gather_values(stressf,nD);
         <span class="keyword">end</span>
     <span class="keyword">end</span>
-    model_data.postprocessing.observer =@ observer11;
+    model_data.postprocessing=struct([]);
+    model_data.postprocessing.u_scale=u_scale;
+    model_data.postprocessing.observer =@observer11;
     model_data.postprocessing.use_spr=true;
     model_data.postprocessing.outputRm=eye(3);<span class="comment">%output in the global coordinate system</span>
     model_data.postprocessing.stress_units=(u.MEGA*u.PA);<span class="comment">% set the stress units</span>
@@ -190,18 +195,15 @@ the thick elliptical plate</td></tr> </table> </p><p>We realize the simple suppo
     camset(model_data.postprocessing.gv,detail_camera);<span class="comment">%  zoom in</span>
     snapnow; <span class="comment">% capture the  current image</span>
     model_data.postprocessing.gv=[];
-</pre><img vspace="5" hspace="5" src="pub_R0031NAFEMS_03.png" alt=""> <img vspace="5" hspace="5" src="pub_R0031NAFEMS_04.png" alt=""> <p>The axial stress is reported:</p><pre class="codeinput">    disp([<span class="string">'Point C sigma11='</span> num2str(sigma11C) <span class="string">' MPa'</span>])
+</pre><p>The axial stress is reported:</p><pre class="codeinput">    disp([<span class="string">'Point C sigma11='</span> num2str(sigma11C) <span class="string">' MPa'</span>])
     disp([<span class="string">'Point D, layer 1, sigma11='</span> num2str(sigma11D1) <span class="string">' MPa'</span>])
     disp([<span class="string">'Point D, layer 2, sigma11='</span> num2str(sigma11D2) <span class="string">' MPa'</span>])
     disp([<span class="string">'Point E sigma11='</span> num2str(sigma11E) <span class="string">' MPa '</span><span class="keyword">...</span>
         <span class="string">'(relative error '</span> num2str((sigma11E*(u.MEGA*u.PA)-sigma11Eref)/(sigma11Eref)*100) <span class="string">'%)'</span>])
     disp([<span class="string">'     to be compared with reference at E, sigma11='</span> num2str(sigma11Eref/((u.MEGA*u.PA))) <span class="string">' MPa'</span> ])
-</pre><pre class="codeoutput">Point C sigma11=-673.2407 MPa
-Point D, layer 1, sigma11=548.1924 MPa
-Point D, layer 2, sigma11=25.8357 MPa
-Point E sigma11=673.3373 MPa (relative error -1.5589%)
-     to be compared with reference at E, sigma11=684 MPa
-</pre><p>The transverse shear is reported at all three points again, but the reference value is available only at point D. Note that the stress vector component is sigma_XZ= sigma_13= sigma_5</p><pre class="codeinput">    model_data.postprocessing.stress_component=5;;
+</pre><p>The transverse shear is reported at all three points again, but the reference value is available only at point D. Note that the stress vector component is sigma_XZ= sigma_13= sigma_5</p><pre class="codeinput">    model_data.postprocessing=struct([]);
+    model_data.postprocessing.u_scale=u_scale;
+    model_data.postprocessing.stress_component=5;;
 </pre><p>Given that point D  is shared by the two regions (by two layers of those regions), in general we need to report to values even though theoretically the stress should be continuous.</p><pre class="codeinput">    sigma13C=[]; sigma13D1=[]; sigma13D2=[]; sigma13E=[];
     <span class="keyword">function</span> observer13(iregion, stressf,model_data)
         <span class="keyword">if</span> (iregion==1),
@@ -220,18 +222,13 @@ Point E sigma11=673.3373 MPa (relative error -1.5589%)
     snapnow; <span class="comment">% capture the  current image</span>
     camset(model_data.postprocessing.gv,detail_camera);<span class="comment">%  zoom in</span>
     snapnow; <span class="comment">% capture the  current image</span>
-</pre><img vspace="5" hspace="5" src="pub_R0031NAFEMS_05.png" alt=""> <img vspace="5" hspace="5" src="pub_R0031NAFEMS_06.png" alt=""> <p>The shear stress in the plane XZ (13) is reported next:</p><pre class="codeinput">    disp([<span class="string">'Point C sigma13='</span> num2str(sigma13C) <span class="string">' MPa'</span>])
+</pre><p>The shear stress in the plane XZ (13) is reported next:</p><pre class="codeinput">    disp([<span class="string">'Point C sigma13='</span> num2str(sigma13C) <span class="string">' MPa'</span>])
     disp([<span class="string">'Point D, layer 1, sigma13='</span> num2str(sigma13D1) <span class="string">' MPa '</span><span class="keyword">...</span>
         <span class="string">'(relative error '</span> num2str((sigma13D1*(u.MEGA*u.PA)-sigma13Dref)/(sigma13Dref)*100) <span class="string">'%)'</span>])
     disp([<span class="string">'Point D, layer 2, sigma13='</span> num2str(sigma13D2) <span class="string">' MPa '</span><span class="keyword">...</span>
         <span class="string">'(relative error '</span> num2str((sigma13D2*(u.MEGA*u.PA)-sigma13Dref)/(sigma13Dref)*100) <span class="string">'%)'</span>])
     disp([<span class="string">'     to be compared with reference at D, sigma13='</span> num2str(sigma13Dref/(u.MEGA*u.PA)) <span class="string">' MPa'</span>])
     disp([<span class="string">'Point E sigma13='</span> num2str(sigma13E) <span class="string">' MPa'</span>])
-</pre><pre class="codeoutput">Point C sigma13=3.9963 MPa
-Point D, layer 1, sigma13=5.321 MPa (relative error 29.7811%)
-Point D, layer 2, sigma13=4.4415 MPa (relative error 8.3292%)
-     to be compared with reference at D, sigma13=4.1 MPa
-Point E sigma13=2.6496 MPa
 </pre><h2>Discussion<a name="48"></a></h2><p>The present model  delivers results with accuracy comparable to those reported for equivalent finite element models for Abaqus 6.11.</p><p>One has to be careful and not try to  get the model to converge by increasing the number of elements.  The simple-support boundary condition along a line (curve) and the load on the top face along a line are both strictly-speaking  illegal for the continuum-element model.  The coarse model can deliver reasonable results as long as we are not looking directly at the singularity, but it cannot go beyond that.</p><pre class="codeinput"><span class="keyword">end</span>
 </pre><p class="footer"><br><a href="http://www.mathworks.com/products/matlab/">Published with MATLAB&reg; R2014b</a><br></p></div><!--
 ##### SOURCE BEGIN #####
@@ -471,7 +468,7 @@ function pub_R0031NAFEMS
     %%
     % The results are now presented graphically. Scale for the deflections:
     u_scale=2;
-    
+    model_data.postprocessing=rmfield(model_data.postprocessing,fieldnames(model_data.postprocessing));
     model_data.postprocessing.u_scale= u_scale;
     model_data=deformation_plot_deformation(model_data);
     
@@ -501,7 +498,7 @@ function pub_R0031NAFEMS
     % by using the graphic_viewer  method |camget| as
     %     |camget(model_data.gv)|.
     detail_camera =[-0.1106 -0.1459 0.1040 0.0047 0.0043 -0.0054 0 0 1.0 1.7035];;
-    
+    model_data.postprocessing=struct([]);
     model_data.postprocessing.u_scale=u_scale;
     model_data.postprocessing.colormap=cadcolors2;
     model_data.postprocessing.stress_component=1;% sigma_X= sigma_11= sigma_1
@@ -520,7 +517,9 @@ function pub_R0031NAFEMS
             sigma11D2= gather_values(stressf,nD);
         end
     end
-    model_data.postprocessing.observer =@ observer11;
+    model_data.postprocessing=struct([]);
+    model_data.postprocessing.u_scale=u_scale;
+    model_data.postprocessing.observer =@observer11;
     model_data.postprocessing.use_spr=true;
     model_data.postprocessing.outputRm=eye(3);%output in the global coordinate system
     model_data.postprocessing.stress_units=(u.MEGA*u.PA);% set the stress units
@@ -544,6 +543,9 @@ function pub_R0031NAFEMS
     % The transverse shear is reported at all three points again, but the
     % reference value is available only at point D. Note that the stress
     % vector component is sigma_XZ= sigma_13= sigma_5
+    
+    model_data.postprocessing=struct([]);
+    model_data.postprocessing.u_scale=u_scale;
     model_data.postprocessing.stress_component=5;;
     %%
     % Given that point D  is shared by the two regions (by two layers of

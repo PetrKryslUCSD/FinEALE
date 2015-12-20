@@ -234,7 +234,6 @@ function pub_R0031NAFEMS
     %%
     % The results are now presented graphically. Scale for the deflections:
     u_scale=2;
-    
     model_data.postprocessing.u_scale= u_scale;
     model_data=deformation_plot_deformation(model_data);
     
@@ -264,7 +263,7 @@ function pub_R0031NAFEMS
     % by using the graphic_viewer  method |camget| as
     %     |camget(model_data.gv)|.
     detail_camera =[-0.1106 -0.1459 0.1040 0.0047 0.0043 -0.0054 0 0 1.0 1.7035];;
-    
+    model_data.postprocessing=rmfield(model_data.postprocessing,fieldnames(model_data.postprocessing));
     model_data.postprocessing.u_scale=u_scale;
     model_data.postprocessing.colormap=cadcolors2;
     model_data.postprocessing.stress_component=1;% sigma_X= sigma_11= sigma_1
@@ -283,7 +282,9 @@ function pub_R0031NAFEMS
             sigma11D2= gather_values(stressf,nD);
         end
     end
-    model_data.postprocessing.observer =@ observer11;
+    model_data.postprocessing=rmfield(model_data.postprocessing,fieldnames(model_data.postprocessing));
+    model_data.postprocessing.u_scale=u_scale;
+    model_data.postprocessing.observer =@observer11;
     model_data.postprocessing.use_spr=true;
     model_data.postprocessing.outputRm=eye(3);%output in the global coordinate system
     model_data.postprocessing.stress_units=(u.MEGA*u.PA);% set the stress units
@@ -307,6 +308,9 @@ function pub_R0031NAFEMS
     % The transverse shear is reported at all three points again, but the
     % reference value is available only at point D. Note that the stress
     % vector component is sigma_XZ= sigma_13= sigma_5
+    
+    model_data.postprocessing=rmfield(model_data.postprocessing,fieldnames(model_data.postprocessing));
+    model_data.postprocessing.u_scale=u_scale;
     model_data.postprocessing.stress_component=5;;
     %%
     % Given that point D  is shared by the two regions (by two layers of
