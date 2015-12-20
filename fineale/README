@@ -1,4 +1,5 @@
 fineale: Finite Element Analysis Learning Environment
+    fineale 6.0 (C) 12/13/2015, Petr Krysl.
     fineale 5.0 (C) 11/13/2014, Petr Krysl.
     fineale 4.0 (C) 09/13/2014, Petr Krysl.
     fineale 3.0 (C) 02/13/2014, Petr Krysl.
@@ -101,12 +102,17 @@ with various versions of Matlab (see below).
 
 The executable for the automatic generator of triangle
 meshes is at this point distributed only for 
-–Windows (computer==PCWIN: XP, Vista), 
-–Intel-based Mac (computer==MACI), and 
-–Linux (computer==GLNX86); 
+â€“Windows (computer==PCWIN: XP, Vista), 
+â€“Intel-based Mac (computer==MACI), and 
+â€“Linux (computer==GLNX86); 
 however, the generator may be built from the sources, since it too 
 is open-source (http://hogwarts.ucsd.edu/~pkrysl/software.html).
 
+
+Tested in 2015 on systems:
+
+-- Windows 10  64-bit
+Fully functional with R2014b.
 
 Tested in 2014 on systems:
 
