@@ -9,17 +9,17 @@ function show_field_as_arrows(gv,options)
 % nl= list of nodes, if empty then all nodes are used
 %
 % options may have further attributes which are interpreted by
-% draw_arrow().
+% the draw_arrow() method of the graphic viewer.
 %
     x= options.x;
     u= options.u;
     if isfield(options,'nl')
         nl = options.nl;
     else
-        nl =(1: get (x,'nfens'));
+        nl =(1:x.nfens);
     end
-    p=gather(x,nl,'values','noreshape');
-    v=gather(u,nl,'values','noreshape');
+    p=gather_values(x,nl);
+    v=gather_values(u,nl);
     for i= nl
         draw_arrow (gv,p(i,:),v(i,:),options);
     end
