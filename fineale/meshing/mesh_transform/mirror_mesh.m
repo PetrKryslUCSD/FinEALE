@@ -3,7 +3,7 @@ function [fens1,fes1] = mirror_mesh(fens, fes, Normal, Point, renumb)
 %
 % function [fens1,fes1] = mirror_mesh(fens, fes, Normal, Point, renumb)
 %
-% fens, gcells= mesh, 
+% fens, fes= mesh, 
 % Normal, Point= 2-D arrays
 %  
 % Warning: The code to relies on the numbering of the cells: to reverse
@@ -14,7 +14,7 @@ function [fens1,fes1] = mirror_mesh(fens, fes, Normal, Point, renumb)
 % of the connectivity needs to be supplied..
 %
 % For instance: H8 elements require  the renumbering function to be supplied as
-% [fens1,gcells1] = mirror_mesh(fens, gcells,...
+% [fens1,fes1] = mirror_mesh(fens, fes,...
 %           [-1,0,0], [0,0,0], @(c)c([1, 4, 3, 2, 5, 8, 7, 6]));
 % 
 % 

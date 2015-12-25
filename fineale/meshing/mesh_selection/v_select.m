@@ -26,7 +26,7 @@ function vlist = v_select(v, options)
 %   v_select(v,struct ('cylinder',[x, y, z, R, h])) for 3D
 %
 % the orientation of the cylinder can be changed by supplying the option
-% 'orientation'. x,y,z specify the centre of the clyinder, and R and h the
+% 'orientation'. x,y,z specify the centre of the cylinder, and R and h the
 % radius and height.
 %
 % Example: v_select(v,struct ('cylinder',[0 0 0, 1, 2])), selects locations

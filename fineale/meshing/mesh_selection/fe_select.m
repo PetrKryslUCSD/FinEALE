@@ -52,11 +52,27 @@ function felist = fe_select(fens, fes, options)
 % Example: fe_select(fens,fes,struct ('distance',0.5, 'from',[1 -1])), selects
 % elements whose nodes are Less than 0.5 units removed from the point [1 -1].
 %
+% cylinder
+%
+% locations are selected because they are inside a cylinder or on its
+% surface. Called as :
+%
+%   fe_select(fens,fes,struct ('cylinder',[x, y, R, h]))  for 2D
+%   fe_select(fens,fes,struct ('cylinder',[x, y, z, R, h])) for 3D
+%
+% the orientation of the cylinder can be changed by supplying the option
+% 'orientation'. x,y,z specify the centre of the cylinder, and R and h the
+% radius and height.
+%
+% Example: v_select(v,struct ('cylinder',[0 0 0, 1, 2])), selects locations
+% which are strictly inside the cylinder with centre located at (0,0,0),
+% having radius 1 and height 2.
+%
 % smoothpatch
 %
 % Select all FEs that are part of a smooth surface. 
 % For instance, starting from the finite element number 13, select all finite elements 
-% whose normals defer from the normal of the Neighbor element by less than
+% whose normals differ from the normal of the Neighbor element by less than
 % 0.05 in the sense that dot(n1,n2)>sqrt(1-0.05^2).
 %     fe_select(fens,fes,struct ('flood', true, 'startfe', 13,  'normaldelta',0.05))
 % % Select all FEs "facing" in the direction [x(1),x(2),0] (away from the z-axis):
@@ -89,6 +105,7 @@ facing = false;
 smoothpatch= false;
 label = [];
 overlapping_box = false;
+cylinder = false;
 nearestto = false;
 if isfield(options,'anynode')
     inside = false;
@@ -146,6 +163,15 @@ end
 if isfield(options, 'nearestto')
     nearestto = true;
     locations = options.nearestto;
+end
+if isfield(options,'cylinder')
+    cylinder = true;
+    orientation='z';
+    cylinderdata=options.cylinder;
+    inflate =0;
+    if isfield(options,'inflate')
+        inflate = (options.inflate);
+    end
 end
 
 %     Select based on fe label
@@ -354,7 +380,33 @@ if (nearestto)
     
 end
 
-%     Select based on location of nodes
+
+% get the finite elements within the supplied cylinder
+if (cylinder)
+    
+    felist = [];
+    
+    %     Select  the nodes that satisfy this criteria
+    vl=v_select(fens.xyz,struct ('cylinder',cylinderdata,'inflate',inflate)) ;
+   
+    % get the connectivity of all the FEs
+    conns = fes.conn;
+    
+    for i = 1:size(conns,1)
+        ix=intersect(vl,conns(i,:));
+        % If all the nodes of the element are  captured by the cylinder, or
+        % if any node will do
+        if (length(ix)==size(conns,2)) || (anynode && (length(ix)>0))
+            felist(end+1) =i;
+        end
+    end
+    
+    return;
+    
+end
+
+
+%  Default (implicit) selection method:   Select based on location of nodes
 nodelist=fenode_select(fens, options);
 conn=fes.conn;
 felist= [];
@@ -372,7 +424,7 @@ for i=1: size(conn,1)
     end
 end
 
-end
+end % fe_select
 
 function N = normal (Tangents,sdim, mdim)
 [sdim, mdim] = size(Tangents);
