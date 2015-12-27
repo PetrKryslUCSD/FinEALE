@@ -1,6 +1,6 @@
 % Lug and pin.
 % Penalty contact approach.
-function  pin_and_lug_contact_aug_S2S_h8
+function  pin_and_lug_contact_pen_S2S_h8
 disp('Lug and pin: the cylindrical pin surface is  rigid. Penalty contact algorithm.');
 
 c =clock; disp(['Started ' num2str(c(4)) ':' num2str(c(5)) ':' num2str(c(6)) ' '])

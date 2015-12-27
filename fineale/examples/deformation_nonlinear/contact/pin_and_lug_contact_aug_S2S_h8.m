@@ -1,5 +1,5 @@
 % Lug and pin.
-% Augmented Lagrangean contact approach. Surface-to-surface contact.
+% Augmented Lagrangean contact approach.
 function  pin_and_lug_contact_aug_S2S_h8
 disp('Lug and pin: the cylindrical pin surface is  rigid. Augmented Lagrangean contact algorithm.');
 
