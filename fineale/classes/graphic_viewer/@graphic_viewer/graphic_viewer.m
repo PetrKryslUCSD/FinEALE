@@ -31,7 +31,7 @@ classdef graphic_viewer
             if (isfield(Parameters,'axes' ))
                 self.axes =Parameters.axes;
             else
-                h=gv_default_figure_('visible','off');
+                h=figure('visible','off');
                 self.axes =[];
             end
             self.pk_defaults =0;

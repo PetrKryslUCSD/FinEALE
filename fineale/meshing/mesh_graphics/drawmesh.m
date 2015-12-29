@@ -109,11 +109,12 @@ function gv = drawmesh(aMesh,varargin)
     % Geometry
     xyz=fens.xyz;
     geom = nodal_field(struct ('name', ['geom'], 'dim', size(xyz,2), 'fens',fens));
+    limits=bounding_box(xyz);
 
     % Clear the figure
     if isempty(gv)
         gv=graphic_viewer;
-        gv=reset (gv,struct ([]));
+        gv=reset (gv,struct ('limits',limits));
     end
     Rfld= nodal_field(struct ('name',['Rfield'], 'dim', 9, 'data', ones(geom.nfens,1)*reshape(eye(3),1,9)));
     context = struct ('x',geom,'u',0*geom,'R',Rfld,...

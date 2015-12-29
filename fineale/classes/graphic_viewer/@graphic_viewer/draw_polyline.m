@@ -1,7 +1,7 @@
 function draw_polyline(self, x, edge, context)
 % Draw polyline.
 %
-% function draw_polyline(self, x, face, context)
+% function draw_polyline(self, x, edge, context)
 %
 % required arguments:
 % x=array of nvert number of rows and 3 columns; the coordinates
