@@ -44,7 +44,7 @@ mater = material_deformation_linear_biax (struct('property',prop, 'reduction','a
 % Finite element block
 femm = femm_deformation_linear(struct('fes',fes, 'material',mater,...
     'integration_rule',gauss_rule(struct('dim',2, 'order',2))));
-penetrationfemm = femm_deformation_linear_penetration (struct('fes',penetration_fes,...
+penetrationfemm = femm_deformation_linear_penetration_aug_lag (struct('fes',penetration_fes,...
     'integration_rule', gauss_rule(struct('dim',1, 'order',4)),'get_penetration',@get_penetration,'surface_data',surface_data,'penalty',penalty));
 
 % Geometry
@@ -76,12 +76,12 @@ for augit= 1:5
     disp([' Augmented Iteration ' num2str(augit)])
     iter=1;
     while 1
-        gl = contact_loads(penetrationfemm, sysvec_assembler, geom, u1);
+        Fc = contact_loads(penetrationfemm, sysvec_assembler, geom, u1);
         U1= gather_sysvec(u1);
         Fr  = -(Ks*U1);
         Kg =stiffness(penetrationfemm, sysmat_assembler_sparse, geom, u1);
         K = Ks +  Kg;
-        du = scatter_sysvec(du, K\(lm+gl+Fr));
+        du = scatter_sysvec(du, K\(Fc+Fr));
         u1 = u1 + du;   % increment displacement
         disp(['   It. ' num2str(iter) ': ||du||=' num2str(norm(du))]);
         if (max(max(abs(du.values))) < utol) break; end;                    % convergence check
@@ -97,10 +97,12 @@ for augit= 1:5
         %     labels; pause(1);
         
     end
-    lm=lm+gl;
-    %     resultant_force(u,lm)
-    disp(['   Augmented Lagrange It. ' num2str(augit) ': ||gl||/||lm||=' num2str(norm(gl)/norm(lm))]);
-    if (norm(gl)<=augtol*norm(lm)), break,end
+    prevlm=penetrationfemm.lm;
+    [~,penetrationfemm] = contact_loads(penetrationfemm, sysvec_assembler, geom, u1);
+    currlm=penetrationfemm.lm;
+    disp(['   Augmented Lagrange It. ' num2str(augit) ': ||dlm||/||lm||=' num2str(norm(currlm-prevlm)/norm(currlm))]);
+    if (norm(currlm-prevlm)<=augtol*norm(currlm)), break,end
+    
     
     %     gv=reset (graphic_viewer,struct('limits',inflate_box(bounding_box(fens.xyz),a)));
     %     draw(bdry_fes,gv, struct ('x', geom, 'u', sscale*u1,'facecolor','none'));
