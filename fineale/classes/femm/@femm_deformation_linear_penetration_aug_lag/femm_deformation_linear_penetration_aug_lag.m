@@ -2,7 +2,7 @@
 % surface
 % 
 %
-classdef femm_deformation_linear_penetration_aug_lag < femm_deformation
+classdef femm_deformation_linear_penetration_aug_lag < femm_deformation_linear
     
     properties %(Hidden, SetAccess = private)
         surface_data = [];% Whatever you wish to have passed into the get_penetration() function.
@@ -19,7 +19,7 @@ classdef femm_deformation_linear_penetration_aug_lag < femm_deformation
             if nargin <1
                 Parameters = struct('surface_data',[]);
             end
-            self = self@femm_deformation(Parameters);
+            self = self@femm_deformation_linear(Parameters);
             if (isfield(Parameters,'get_penetration'))
                 self.get_penetration = Parameters.get_penetration;
                 self.penalty =  Parameters.penalty;
