@@ -1,6 +1,6 @@
 % Fear squashed between two rigid planes
 % Penalty contact approach.
-function  Sphere_plane_contact_aug_S2S_q4_axi
+function  sphere_down_up_plane_contact_aug_S2S_q4_axi
 disp('Sphere squashed between two rigid planes. Augmented Lagrangean contact algorithm.');
 
 c =clock; disp(['Started ' num2str(c(4)) ':' num2str(c(5)) ':' num2str(c(6)) ' '])
