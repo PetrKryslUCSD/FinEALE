@@ -16,7 +16,7 @@ nL=15;nH=4;nW=15;na=25;tolerance=min([L,W,a,H])/1e5;
 tol = a*10e-7;
 sigma0=100*U.MEGA*U.PA;
 sscale=1.0;
-penalty = 100*E;
+penalty = 1000*E;
 utol=1e-15*U.M;
 augtol=1e-12;
 Rrat= 0.9599;
