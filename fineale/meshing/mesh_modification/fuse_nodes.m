@@ -34,24 +34,29 @@ function [fens,new_indexes_of_fens1_nodes] = fuse_nodes(fens1, fens2, tolerance)
     c1=ones(size(xyz2,1),1);
     % Mark nodes from the first array that are duplicated in the second
     if (tolerance>0)% should we attempt to merge nodes?
+        Box2= inflate_box(bounding_box(xyz2), tolerance);
         for i=1:count(fens1)
             XYZ =xyz1(i,:);
             % Note  that we are looking for  distances  of this node to nodes in the OTHER node set
-            xyzd=abs(xyz2-c1*XYZ);% find the distances along  coordinate directions
-            jx=find(sum(xyzd')'<tolerance);
-            if (~isempty(jx))
-                minn=min(jx);
-                id1(i) =-minn;
+            if (in_box (Box2,XYZ))% This check makes this run much faster
+                xyzd=abs(xyz2-c1*XYZ);% find the distances along  coordinate directions
+                jx=find(sum(xyzd')'<tolerance);
+                if (~isempty(jx))
+                    minn=min(jx);
+                    id1(i) =-minn;
+                end
             end
         end
-        %         for i=1:count(fens1)
-        %             xyz =xyz1(i,:);
-        %             xyzd=abs(xyz2-c1*xyz);
-        %             j=find(sum(xyzd')'<tolerance);
-        %             if (~isempty(j))
-        %                 id1(i) =-j(1);
-        %             end
-        %         end
+        %                 for i=1:count(fens1)
+        %                         XYZ =xyz1(i,:);
+        %                         % Note  that we are looking for  distances  of this node to nodes in the OTHER node set
+        %                         xyzd=abs(xyz2-c1*XYZ);% find the distances along  coordinate directions
+        %                         jx=find(sum(xyzd')'<tolerance);
+        %                         if (~isempty(jx))
+        %                             minn=min(jx);
+        %                             id1(i) =-minn;
+        %                         end
+        %                     end
     end
     % Generate  fused arrays of the nodes
     xyzm = zeros(count(fens1)+count(fens2),dim);
