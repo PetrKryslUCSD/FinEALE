@@ -82,6 +82,12 @@ if (isfield(model_data, 'postprocessing'))
         cmap = model_data.postprocessing.cmap;
     end
 end
+boundary_only= (model_data.geom.dim>=3);
+if (isfield(model_data, 'postprocessing'))
+    if (isfield(model_data.postprocessing, 'boundary_only'))
+        boundary_only = model_data.postprocessing.boundary_only;
+    end
+end
 observer =[];
 if (isfield(model_data, 'postprocessing'))
     if (isfield(model_data.postprocessing, 'observer'))
@@ -138,7 +144,7 @@ for i=1:length(model_data.region)
     end
     colorfield=nodal_field(struct ('name', ['colorfield'], 'data',...
         map_data(dcm, fld.values)));
-    if (region.femm.fes.dim>2)
+    if boundary_only
         boundaryfes = mesh_boundary (region.femm.fes,[]);
         draw(boundaryfes, gv, struct ('x',geom, 'u',u_scale*u,...
             'colorfield',colorfield, 'shrink',1.0));
