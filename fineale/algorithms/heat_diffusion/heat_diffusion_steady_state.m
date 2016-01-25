@@ -181,7 +181,7 @@ function model_data =heat_diffusion_steady_state(model_data)
     for i=1:length(model_data.region)
         region =model_data.region{i};
         % Add up all the conductivity matrices for all the regions        
-        K = K + conductivity(region.femm, sysmat_assembler_sparse, geom, temp); 
+        K = K + conductivity(region.femm, sysmat_assembler_sparse_fixed_symm, geom, temp); 
         Q = 0;% default is no internal heat generation rate
         if (isfield( region, 'Q'))%  Was it defined?
             Q= region.Q;
@@ -215,7 +215,7 @@ function model_data =heat_diffusion_steady_state(model_data)
             % but in reality we are modifying the ambient temperature
             amb = set_ebc(amb, fenids, fixed, comp, val);
             amb = apply_ebc (amb);
-            K = K + surface_transfer(convection.fem, sysmat_assembler_sparse, geom, temp);   
+            K = K + surface_transfer(convection.fem, sysmat_assembler_sparse_fixed_symm, geom, temp);   
             F = F + surface_transfer_loads(convection.fem, sysvec_assembler, geom, temp, amb); 
             % Note that EBC will contribute through the surface heat transfer matrix            
             if (isfield(model_data.boundary_conditions, 'essential' ))
