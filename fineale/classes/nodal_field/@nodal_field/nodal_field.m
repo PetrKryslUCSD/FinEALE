@@ -89,9 +89,12 @@ classdef nodal_field
         % function  val=reshape (self,val)
         %
         % First call gather_xxx(), and then reshape() (if needed).
-        
-        %         Note: this needs to be the non-conjugate  transpose.  We are
-        %         simply interested the same numbers, except reshaped into a different array.
+        %
+        % The shape returned is a vector (column matrix). 
+        %
+        % Note: this needs to be the non-conjugate  transpose.  We are
+        % simply interested the same numbers, except reshaped into a
+        % different array.
             val = reshape(val.',[],1);
         end
         
