@@ -5,8 +5,8 @@ function draw_marker(self, c, context)
   %
   % required arguments:
   % c= coordinates of the center,  one point per row;
-  % markersize= marker size;
   % context = struct with following optional fields
+  %    markersize= marker size;
   %    color = color if marker should be drawn in solid color
   %    length_units= number, representing the length units in which the
   %         graphic should be displayed
