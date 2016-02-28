@@ -149,7 +149,10 @@ function model_data=deformation_plot_steady_vibration(model_data)
                 struct('color','k','backgroundcolor','w','fontsize',20));
             %             draw_axes (gv,struct('length',axis_length));
             headlight(gv);
-            pause(0.5);
+            pause(0.05);
+            % Interact with the plot
+            interact(gv);
+            camera=camget(gv);
             if save_movie % Should we save a movie?
                 imn =frame_name('.',[movie_name '-f' num2str(Jj) '-'],frame,'png');
                 saveas(gv.figure, imn,'png');
@@ -158,7 +161,7 @@ function model_data=deformation_plot_steady_vibration(model_data)
         end
         
         % Interact with the plot
-%         interact(gv);
+        %         interact(gv);
         
         % Return options for further use
         model_data.postprocessing.gv=gv;
