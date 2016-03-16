@@ -9,8 +9,7 @@ function Status=paraview (datafile)
     % See also: vtk_export_mesh
     
     if ispc 
-        %         executable = 'C:\Program Files (x86)\ParaView 3.12.0\bin\paraview.exe';
-        executable ='C:\Program Files\ParaView 4.4.0\bin\paraview.exe'; 
+        executable = 'C:\Program Files\ParaView 4.4.0\bin\paraview.exe';
     elseif isunix
         executable = 'paraview';
     else
