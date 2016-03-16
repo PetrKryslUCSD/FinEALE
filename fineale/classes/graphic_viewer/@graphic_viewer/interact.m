@@ -45,9 +45,11 @@ function retobj = interact (self,context)
         viewing_action_callback= context.viewing_action_callback;
     end
     drawnow;
-    F= find_parent_figure(self.axes);
-    set(F,'visible','on'); % we definitely want that figure visible since we want to interact with it
-    set(F,'CurrentAxes',self.axes);
+    if (isvalid(self.axes))
+        F= find_parent_figure(self.axes);
+        set(F,'visible','on'); % we definitely want that figure visible since we want to interact with it
+        set(F,'CurrentAxes',self.axes);
+    end
     mymanip3d(self.axes,self.snap_points,viewing_action_callback);
     retobj=self;
 end
@@ -520,10 +522,14 @@ end
 function fig= find_parent_figure(ax)
     child=ax;
     while true
-        fig=get(child, 'parent' );
-        if (strcmpi(get(fig, 'type' ),'Figure')) || (fig==0)
-            break;
+        try
+            fig=get(child, 'parent' );
+            if (strcmpi(get(fig, 'type' ),'Figure')) || (fig==0)
+                break;
+            end
+            child=fig;
+        catch,
+            fig=gcf; return
         end
-        child=fig;
     end
 end
