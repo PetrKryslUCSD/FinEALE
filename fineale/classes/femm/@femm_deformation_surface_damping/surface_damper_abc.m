@@ -11,13 +11,12 @@ function C = surface_damper_abc(self, assembler, geom, u)
     % Integration rule: compute the data needed for  numerical quadrature
     [npts Ns Nders w] = integration_data (self);
     % Material orientation
-    Rm_identity = is_material_orientation_identity(self);% if identity, work not needed
     Rm_constant = is_material_orientation_constant(self);% if not constant, need to compute  at each point
     if (~Rm_constant)
         Rmh = self.Rm;% handle to a function  to evaluate Rm
     else
-        Rm = self.Rm;
-    end    
+        Rm = self.Rm;% constant material orientation matrix
+    end   
     % Retrieve data for efficiency
     conns = fes.conn; % connectivity
     labels = fes.label; % connectivity
@@ -40,11 +39,6 @@ function C = surface_damper_abc(self, assembler, geom, u)
             if (~Rm_constant)% do I need to evaluate the local material orientation?
                 if (~isempty(labels )),  Rm =Rmh(c,J,labels(i));
                 else,                    Rm =Rmh(c,J,[]);                end
-            end
-            if (Rm_identity)
-                Ndersp = Nders{j}/J;% derivatives wrt global coor
-            else
-                Ndersp = Nders{j}/(Rm'*J);% derivatives wrt local coor
             end
             Jac = Jacobian_surface(fes,conn, Ns{j}, J, x);
             if (Jac<=0),error('Non-positive Jacobian');end
