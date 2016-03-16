@@ -25,6 +25,9 @@ function F = nz_ebc_loads(self, assembler, geom, u)
     D_constant = are_tangent_moduli_constant (mat);
     if (D_constant)
         D = tangent_moduli(mat,[]);
+        [Princd,W]=eig(D);
+        [ignore,ix]=sort(diag(W));
+        Wmean=(W(ix(1),ix(1))+W(ix(2),ix(2)))/2;
     end
     % Retrieve data for efficiency
     conns = fes.conn; % connectivity
@@ -45,9 +48,24 @@ function F = nz_ebc_loads(self, assembler, geom, u)
                 end
                 Bnodal= self.hBlmat (self,bfun_gradients{nix}.Nspd,c,Rm);
                 if (~D_constant)
-                    D = tangent_moduli(mat,struct('xyz',c));
+                    D = tangent_moduli (mat, struct ('xyz',c));% material tangent
+                    [Princd,W]=eig(D);
+                    [ignore,ix]=sort(diag(W));
+                    Wmean=(W(ix(1),ix(1))+W(ix(2),ix(2)))/2;
                 end
                 Ke = Bnodal'*D*Bnodal * bfun_gradients{nix}.Vpatch;
+                if (self.stabfact>0)
+                    lx = xs(bfun_gradients{nix}.patchconn,:); % coordinates of nodes
+                    Phi =self.hPhi(self,u.dim,np,lx,c);
+                    lastwarn('','')
+                    A1 =Phi* ((Phi'*Phi)\Phi');
+                    [msgstr, msgid] = lastwarn;
+                    if (isempty(msgid))
+                        Ke=Ke + self.stabfact*Wmean*(eye(size(A1))-A1);
+                    else
+                        disp(msgid)
+                    end
+                end
                 eqnums =reshape(u,gather_dofnums(u,bfun_gradients{nix}.patchconn));
                 Fe =  -Ke*pu;
                 assemble(assembler, Fe, eqnums);
