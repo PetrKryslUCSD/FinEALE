@@ -44,9 +44,13 @@ Data{end+1}=[
 %   2.7500    3.1429    3.6667    4.4000    5.5000    7.3333   11.0000   22.0000
 %     6.8906    6.8728    6.8429    6.7885    6.6780    6.4214    5.9233    5.0134
 %    ];'';Description{end+1} ='H8MSGSO';% for thickness 10.0
+% This data was computed with the Phi parameter computed for the
+% plane--stress model and also the Poisson ratio clamped to 0.3
 Data{end+1}=[  2.7500    3.1429    3.6667    4.4000    5.5000    7.3333   11.0000   22.0000
     6.8627    6.8502    6.8325    6.8056    6.7605    6.6711    6.4273    5.4664
-   
+   ];'';Description{end+1} ='H8MSGSO';% for thickness 16/n
+Data{end+1}=[  2.7500    3.1429    3.6667    4.4000    5.5000    7.3333   11.0000   22.0000
+     6.6195    6.5539    6.4604    6.3196    6.0921    5.6894    4.8963    3.1970
    ];'';Description{end+1} ='H8MSGSO';% for thickness 16/n
 
 

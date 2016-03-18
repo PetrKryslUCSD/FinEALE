@@ -10,7 +10,7 @@ nu= 0.4999;
 %     nu= 0.3;
 %     E=G*(3*lambda+2*G)/(G+lambda);
 E=240.565;%MPa
-magn =100/16;
+magn =100/16;% For plane-strain analysis the total edge load is 100 units. Here we assume the thickness of the slab is 16 units.
 nincr =29;
 % Data: Elguedj et al. CMAME 2008
 %

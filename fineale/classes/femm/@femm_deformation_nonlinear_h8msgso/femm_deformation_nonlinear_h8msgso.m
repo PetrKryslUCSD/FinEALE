@@ -42,6 +42,10 @@ classdef femm_deformation_nonlinear_h8msgso < femm_deformation_nonlinear
                 %     We will have to make our own stabilization material.
                 try
                     E = self.material.property.E;% Isotropic  material?
+%                     nu= 0.3;% The original formulation In the "Mean-strain 8-node Hexahedron with Optimized
+                    % Energy-Sampling Stabilization for Large-strain
+                    % Deformation" paper clamped the Poisson ratio. Also,
+                    % the plane-stress approximation formula was used.
                     if (self.material.property.nu<0.3)
                         nu=self.material.property.nu;
                     else
@@ -118,9 +122,16 @@ classdef femm_deformation_nonlinear_h8msgso < femm_deformation_nonlinear
             %             h2=sort(h2,'descend');%Experiment
             Phistress= ( 2*(1+self.nu)*(min(h2)/max(h2)) );% Plane stress
             Phistrain= ( 2*(1+self.nu)*(1-self.nu)/(1+self.nu)/(1-2*self.nu)*(min(h2)/max(h2)) );%  Plane-strain
+            %             The "Optimized stabilization" paper used this
+            %             mixture of formulas for the stabilization
+            %             parameter Phi
             Phi = (Phistress+Phistrain)/2;
             %             Phi = (Phistrain);
-            %             Phi = (Phistress);
+            % The original formulation In the "Mean-strain 8-node Hexahedron with Optimized
+            % Energy-Sampling Stabilization for Large-strain
+            % Deformation" paper clamped the Poisson ratio. Also,
+            % the plane-stress approximation formula was used.
+%             Phi = (Phistress);
             phi = Phi/(1+Phi);
         end 
         
