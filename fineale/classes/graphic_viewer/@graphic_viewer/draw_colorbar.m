@@ -44,6 +44,9 @@ function draw_colorbar(self, context)
     if isfield(context,'range')
         minmax= context.range;
     end
+    if (min(minmax)==max(minmax))% If the range is empty, enlarge it a bit down and up
+        minmax=[min(minmax)-eps(min(minmax)),max(minmax)+eps(max(minmax))];
+    end
     label = ' Data';
     if isfield(context,'label')
         label= context.label;
