@@ -64,12 +64,8 @@ classdef sysmat_assembler_sparse < sysmat_assembler_base
             buffer_range=self.buffer_pointer:self.buffer_pointer+nrows-1;
             for   k=1:ncolumns
                 self.rowbuffer(buffer_range) = dofnums_row(:);
-                buffer_range=buffer_range+nrows;
-            end
-            buffer_range=self.buffer_pointer:self.buffer_pointer+ncolumns-1;
-            for   k=1:nrows
                 self.colbuffer(buffer_range) = dofnums_col(k);
-                buffer_range=buffer_range+ncolumns;
+                buffer_range=buffer_range+nrows;
             end
             self.buffer_pointer=self.buffer_pointer+ntotal;
         end
@@ -78,13 +74,7 @@ classdef sysmat_assembler_sparse < sysmat_assembler_base
         % Assembly of a square symmetric matrix.
         % The method assembles a square symmetric matrix using the vector of 
         % equation numbers for the rows and columns.
-        nrows=length(dofnums); ncolumns=nrows;
-            ntotal =nrows*ncolumns;
-            buffer_range=self.buffer_pointer:self.buffer_pointer+ntotal-1;
-            self.matbuffer(buffer_range) = mat; % serialized matrix
-            self.rowbuffer(buffer_range) = reshape (repmat(dofnums,1,ncolumns),1,ntotal);
-            self.colbuffer(buffer_range) = reshape (repmat(dofnums',nrows,1),1,ntotal);
-            self.buffer_pointer=self.buffer_pointer+ntotal;
+        self.assemble(mat, dofnums, dofnums);
         end
         
         function S= make_matrix (self)
