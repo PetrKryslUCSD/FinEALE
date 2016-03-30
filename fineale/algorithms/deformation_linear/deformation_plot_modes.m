@@ -15,6 +15,7 @@ function model_data=deformation_plot_modes(model_data)
 %      camera  = camera, default is [] which means use the default orientation 
 %           of the view;
 %      cmap= colormap (default: jet)
+%      animate= should the mode shape be animated? true or false (default)
  %
 % Output
 % model_data = structure on input updated with
