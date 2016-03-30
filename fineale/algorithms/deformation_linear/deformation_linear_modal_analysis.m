@@ -191,11 +191,7 @@ function model_data = deformation_linear_modal_analysis(model_data)
             if (isempty(component))
                 component =1:u.dim;
             end
-            fixed_value =0;
-            if (isfield( essential, 'fixed_value' ))
-                fixed_value = essential.fixed_value;
-            end
-            val=zeros(length(fenids),1)+fixed_value;
+            val=zeros(length(fenids),1);% All supports are immovable
             for k=1:length( component)
                 u = set_ebc(u, fenids, is_fixed, component(k), val);
             end

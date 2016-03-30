@@ -124,6 +124,15 @@ function model_data = deformation_linear_steady_state_vibration(model_data)
 %     traction.integration_rule =gauss_rule(struct('dim', 2,'order', 2));
 %     model_data.boundary_conditions.traction{1} = traction;
 %    
+% For body loads (optional):
+% model_data.body_load = cell array of struct,
+%          each piece of the domain can have each its own body load
+%     force  = force density vector
+%     fes = finite element set to which the load applies
+%     integration_rule= integration rule
+%   Alternatively, FEMM may be specified instead of fes, integration_rule:
+%     femm= FEMM for the evaluation of the body load
+%
 % For absorbing boundary conditions (optional):
 % [[Description needs to be written]]
 %    
@@ -301,6 +310,28 @@ F0 = zeros(size(K,1),1);% Zero out the load
 F0d = zeros(size(K,1),1);% Zero out the load
 F0a = zeros(size(K,1),1);% Zero out the load
 
+
+% Process the body load
+if (isfield(model_data, 'body_load' ))
+    for j=1:length(model_data.body_load)
+        body_load =model_data.body_load{j};
+        if (~isfield( body_load, 'femm'))
+            body_load.femm = femm_deformation_linear (struct ('material',[],...
+                'fes',body_load.fes,...
+                'integration_rule',body_load.integration_rule));
+        end
+        femm=body_load.femm;
+        body_load.frequency_dependent =(isa(body_load.force,'function_handle'));
+        if (~body_load.frequency_dependent)
+            fi= force_intensity(struct('magn',body_load.force));
+            F0 = F0 + distrib_loads(femm, sysvec_assembler, geom, u, fi, 3);
+        end
+        body_load.femm=femm;
+        model_data.body_load{j}=body_load;
+    end
+    clear body_load fi  femm
+end
+    
 % Process the traction boundary condition
 if (isfield(model_data.boundary_conditions, 'traction' ))
     for j=1:length(model_data.boundary_conditions.traction)
@@ -388,6 +419,17 @@ for k=1:length(frequencies)
             if (traction.frequency_dependent)
                 fi= force_intensity(struct('magn',traction.traction(frequency)));
                 F1 = F1 + distrib_loads(traction.femm, sysvec_assembler, model_data.geom, model_data.u, fi, 2);
+            end
+        end
+        clear traction fi
+    end
+    % Process the frequency-dependent body load
+    if (isfield(model_data, 'body_load' ))
+        for j=1:length(model_data.body_load)
+            body_load =model_data.body_load{j};
+            if (body_load.frequency_dependent)
+                fi= force_intensity(struct('magn',body_load.force(frequency)));
+                F1 = F1 + distrib_loads(body_load.femm, sysvec_assembler, model_data.geom, model_data.u, fi, 3);
             end
         end
         clear traction fi
