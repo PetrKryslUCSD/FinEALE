@@ -1,11 +1,11 @@
 % H-adaptive analysis of stress distribution in a shear wall
-function [utip]=shear_wall_had
+function [utip]=bracket_had
 % Parameters:
 E=70e9;
 magn=1e7;
 graphics=true;
 Plot_errors=0;
-scale=100;
+scale=10;
 nu=0.33;
 a=0.08; b=0.12; c=0.04; d=0.06; e= 0.05; R1= 0.01; R2= 0.005; f= 0.02; t=  0.005;
 bkgh=R2;
@@ -21,7 +21,7 @@ Region_definition={...
     ['curve 9 Circle Center ' num2str(a-f) ' ' num2str(b-f) ' Radius ' num2str(R2)],...
     ['subregion 1  property 1 boundary  1  2 3 4 5 6 7 hole -8 -9 ']
     };
-Mesh_options =struct('quadratic',~true);
+Mesh_options =struct('quadratic',~true,'other_dimension',t);
 Targetnel= 7000;
 convergence_rate=1.5;
 sigj=3;

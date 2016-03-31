@@ -209,7 +209,7 @@ function [fens,fes,groups,edge_fes,edge_groups] = targe2_mesher(fs,thickness,var
         
         nedges=size(es, 1);
         options.conn =zeros(nedges,2);
-        options.other_dimension=1.0;
+        %         options.other_dimension=1.0;
         for i=1:nedges
             options.conn(i,:) =es(i,2:3);
         end

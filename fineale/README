@@ -1,4 +1,5 @@
 fineale: Finite Element Analysis Learning Environment
+    fineale 7.0 (C) 03/31/2016, Petr Krysl.
     fineale 6.0 (C) 12/13/2015, Petr Krysl.
     fineale 5.0 (C) 11/13/2014, Petr Krysl.
     fineale 4.0 (C) 09/13/2014, Petr Krysl.
@@ -108,6 +109,10 @@ meshes is at this point distributed only for
 however, the generator may be built from the sources, since it too 
 is open-source (http://hogwarts.ucsd.edu/~pkrysl/software.html).
 
+Tested in 2016 on systems:
+
+-- Windows 10  64-bit
+Fully functional with R2015b, R2016a.
 
 Tested in 2015 on systems:
 
