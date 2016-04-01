@@ -1,15 +1,15 @@
-function Perforated_strip_neohook_linesearch
+function bias_test
 u= physical_units_struct;
 graphics= ~~true;
 stabfact=0.1;
-L= 100*u.MM; % Length of the plate
-H = 50*u.MM; % Width
+L= 150*u.MM; % Length of the plate
+H = 75*u.MM; % Width
 W = 10*u.MM; % Thickness of the plate
-nL=1;nH=1;nW=1;
-magn=9e6*u.PA;
+nL=16;nH=7;nW=1;
+magn=0.1e6*u.PA;
 maxit = 15;
 nincr =10;
-utol = 0.000001;
+utol = 0.00001;
 
     % Anisotropic, but much stronger anisotropy
     E1=1000*1e6*u.PA; E2=1000*1e6*u.PA; E3=1*1e6*u.PA; G12=0.2e6*u.PA;  G13=G12; G23=0.2e6*u.PA;
@@ -29,9 +29,14 @@ Rm= rotmat(aangle/180*pi* [0,0,1]);
 
 mater = material_deformation_stvk_triax(struct('property',prop));
 stabmater = material_deformation_stvk_triax(struct('property',stabprop));
-femm = femm_deformation_nonlinear_h8msgs(struct ('material',mater,...
-    'stabilization_material',stabmater, 'Rm',Rm,'fes',fes, ...
+
+
+femm = femm_deformation_nonlinear_h8msgso(struct ('material',mater,...
+    'Rm',Rm,'fes',fes, ...
     'integration_rule',gauss_rule(struct('dim',3,'order',2))));
+
+
+
 % Geometry
 geom = nodal_field(struct ('name',['geom'], 'dim', 3, 'fens',fens));
 % Define the displacement field
@@ -42,13 +47,7 @@ ebc_fenids=fenode_select (fens,struct('box',[0,0,-Inf,Inf,-Inf,Inf],'inflate',1/
 ebc_prescribed=ones(1,length (ebc_fenids));
 ebc_val=ebc_fenids*0;
 u   = set_ebc(u, ebc_fenids, ebc_prescribed, 1, ebc_val);
-ebc_fenids=fenode_select (fens,struct('box',[0,0,0,0,-Inf,Inf],'inflate',1/1000));
-ebc_prescribed=ones(1,length (ebc_fenids));
-ebc_val=ebc_fenids*0;
 u   = set_ebc(u, ebc_fenids, ebc_prescribed, 2, ebc_val);
-ebc_fenids=fenode_select (fens,struct('box',[0,0,0,0,0,0],'inflate',1/1000));
-ebc_prescribed=ones(1,length (ebc_fenids));
-ebc_val=ebc_fenids*0;
 u   = set_ebc(u, ebc_fenids, ebc_prescribed, 3, ebc_val);
 u   = apply_ebc (u);
 % Number equations
@@ -60,6 +59,7 @@ bcl = fe_select(fens, bdry_fes, ...
 efemm = femm_deformation_nonlinear(struct ('material',mater, 'fes',subset(bdry_fes,bcl),...
     'integration_rule',gauss_rule(struct('dim',2,'order',4))));
 
+femm = update(femm,  geom, u, u);
 gv=graphic_viewer;
 dt= 1/nincr;
 t=0; % time=load magnitude
