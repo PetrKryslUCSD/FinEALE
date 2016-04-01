@@ -127,7 +127,7 @@ function T = texlabel(varargin)
     %   Copyright 1984-2008 The MathWorks, Inc.
     %   $Revision: 1.12.4.8 $  $Date: 2008/05/01 20:14:24 $
     
-    error(nargchk(1,2,nargin,'struct'));
+    narginchk(1,2);% Required for 2016
     switch nargin
         % texlabel(f)
         case 1
