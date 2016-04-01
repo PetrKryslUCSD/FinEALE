@@ -150,7 +150,7 @@ for thickness = 1.0;
             AE.END_STEP();
             AE.close();
             %                 delete([AE.filename '.dat']);
-            system(['abaqus job=' [AE.filename ]]);
+            abaqus_job([AE.filename ]);
             pause(5);
             try
                 d= extract_displacement_from_abaqus_dat([AE.filename '.dat'],...

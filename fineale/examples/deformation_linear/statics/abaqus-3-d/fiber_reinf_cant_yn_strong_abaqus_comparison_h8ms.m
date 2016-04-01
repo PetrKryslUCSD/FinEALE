@@ -6,7 +6,7 @@ function fiber_reinf_cant_yn_strong_abaqus_comparison_h8ms
     nu12= 0.25; nu13= 0.25; nu23= 0.25;
     aangle =-45;
     % [xestim, beta, c, residual] = richextrapol(uz(end-2:end),hs)
-    uz_ref =  -1.119145781010554e-05;
+    uz_ref =  -5.9189e-06;
     prop = property_deformation_linear_ortho (...
         struct('E1',E1,'E2',E2,'E3',E3,...
         'G12',G12,'G13',G13,'G23',G23,...
@@ -22,7 +22,7 @@ function fiber_reinf_cant_yn_strong_abaqus_comparison_h8ms
     tolerance =t/nt/100;
     u_scale  = 10000;
     graphics = ~true;
-    export_to_abaqus=  ~true; SurfElType ='SFM3D4';;
+    export_to_abaqus=  true; SurfElType ='SFM3D4';;
     %     ElType ='C3D8IH';
     ElType ='C3D8';
         ElType ='C3D8H';
@@ -30,13 +30,22 @@ function fiber_reinf_cant_yn_strong_abaqus_comparison_h8ms
                 ElType ='C3D8RH';
         %         ElType ='C3D20R'; SurfElType ='SFM3D8';;
     
-    Rm= rotmat(aangle/180*pi* [0,0,1]);
+    Rm= rotmat(aangle/180*pi* [0,1,0]);
     
     mater = material_deformation_linear_triax (struct('property',prop ));
     
+prop_stab=property_deformation_linear_iso(struct('E',00.2*G23,'nu',0));
+mater_stab = material_deformation_linear_triax (struct('property',prop_stab ));
+
     clear eltyd
     eix=1;
 
+        
+    % eltyd(eix).description ='H8MSNIS';
+    % eltyd(eix).mf =@(ref)H8_block(a,b,t,2*ref*na,2*ref*nb,2*ref*nt);
+    % eltyd(eix).femmf =@(fes)femm_deformation_linear_h8msnis(struct('fes',fes,'material',mater,'Rm',Rm,'nconstrained',1, 'stab_fraction',0.15));
+    % eltyd(eix).surface_integration_rule=gauss_rule(struct('dim',2, 'order',2));
+    % eix=eix+1;
         
           eltyd(eix).description ='H8MSGSO';
     eltyd(eix).mf =@(ref)H8_block(a,b,t,2*ref*na,2*ref*nb,2*ref*nt);
@@ -45,30 +54,21 @@ function fiber_reinf_cant_yn_strong_abaqus_comparison_h8ms
     eltyd(eix).surface_integration_rule=gauss_rule(struct('dim',2, 'order',2));
     eix=eix+1;
     
-    % eltyd(eix).description ='H8MSNIS';
-    % eltyd(eix).mf =@(ref)H8_block(a,b,t,2*ref*na,2*ref*nb,2*ref*nt);
-    % eltyd(eix).femmf =@(fes)femm_deformation_linear_h8msnis(struct('fes',fes,'material',mater,'Rm',Rm,'nconstrained',1, 'stab_fraction',0.15));
-    % eltyd(eix).surface_integration_rule=gauss_rule(struct('dim',2, 'order',2));
-    % eix=eix+1;
-        
 
     %           eltyd(eix).description ='H8MSGS';
     %     eltyd(eix).mf =@(ref)H8_block(a,b,t,2*ref*na,2*ref*nb,2*ref*nt);
-    %     eltyd(eix).femmf =@(fes)femm_deformation_linear_h8msgs(struct('fes',fes,'material',mater,'Rm',Rm,...
-    %         'integration_rule',gauss_rule(struct('dim',3, 'order',2)),'stab_fraction',0.001,'weights',E2/E1));
+    %     eltyd(eix).femmf =@(fes)femm_deformation_linear_h8msgs(struct('fes',fes,'material',mater,'Rm',Rm,'integration_rule',gauss_rule(struct('dim',3,'order',2)), 'stab_fraction',0.1,'weights',E2/E1));
+    %     eltyd(eix).surface_integration_rule=gauss_rule(struct('dim',2, 'order',2));
+    %     eix=eix+1;
+    %
+    %
+    %           eltyd(eix).description ='H8MSGS';
+    %     eltyd(eix).mf =@(ref)H8_block(a,b,t,2*ref*na,2*ref*nb,2*ref*nt);
+    %     eltyd(eix).femmf =@(fes)femm_deformation_linear_h8msgs(struct('fes',fes,...
+    %         'material',mater,'Rm',Rm,'integration_rule',gauss_rule(struct('dim',3,'order',2)), 'stabilization_material',mater_stab));
     %     eltyd(eix).surface_integration_rule=gauss_rule(struct('dim',2, 'order',2));
     %     eix=eix+1;
     
-
-    % eltyd(eix).description ='H8-GSRI';%
-    % eltyd(eix).mf =@(ref)H8_block(a,b,t,2*ref*na,2*ref*nb,2*ref*nt);
-    % eltyd(eix).femmf =@(fes)femm_deformation_linear_gsri(struct('fes',fes,'material',mater,...
-    %     'Rm',Rm,...
-    %     'integration_rule_constrained',gauss_rule(struct('dim',3, 'order',1)),...
-    %     'integration_rule_unconstrained',gauss_rule(struct('dim',3, 'order',2))));
-    % eltyd(eix).surface_integration_rule=gauss_rule(struct('dim',2, 'order',2));
-    % eix=eix+1;
- 
     %         eltyd(eix).description ='H20R';
     %         eltyd(eix).mf =@(ref)H20_block(a,b,t,ref*na,ref*nb,ref*nt);
     %         eltyd(eix).femmf =@(fes)femm_deformation_linear(struct('fes',fes, 'material',mater,...
@@ -147,15 +147,15 @@ function fiber_reinf_cant_yn_strong_abaqus_comparison_h8ms
     % eix=eix+1;
     % %
     %
-    % eltyd(eix).description ='H20-Bbar';
-    % eltyd(eix).mf =@(ref)H20_block(a,b,t,ref*na,ref*nb,ref*nt);
-    % eltyd(eix).femmf =@(fes)femm_deformation_linear_bbar(struct('fes',fes, 'material',mater,...
-    %     'Rm',Rm,...
-    %    'integration_rule_constrained',gauss_rule(struct('dim',3, 'order',2)),...
-    %     'integration_rule_unconstrained',gauss_rule(struct('dim',3, 'order',3)),...
-    %     'pv_bfun',@(p)[1;p(1);p(2);p(3)],'nconstrained',1));
-    % eltyd(eix).surface_integration_rule=gauss_rule(struct('dim',2, 'order',2));
-    % eix=eix+1;
+    eltyd(eix).description ='H20-Bbar';
+    eltyd(eix).mf =@(ref)H20_block(a,b,t,ref*na,ref*nb,ref*nt);
+    eltyd(eix).femmf =@(fes)femm_deformation_linear_bbar(struct('fes',fes, 'material',mater,...
+        'Rm',Rm,...
+       'integration_rule_constrained',gauss_rule(struct('dim',3, 'order',2)),...
+        'integration_rule_unconstrained',gauss_rule(struct('dim',3, 'order',3)),...
+        'pv_bfun',@(p)[1;p(1);p(2);p(3)],'nconstrained',1));
+    eltyd(eix).surface_integration_rule=gauss_rule(struct('dim',2, 'order',2));
+    eix=eix+1;
     %
     %                eltyd(eix).description ='H8-Bbar-ISO';
     %             eltyd(eix).mf =@(ref)H8_block(a,b,t,2*ref*na,2*ref*nb,2*ref*nt);
@@ -251,7 +251,7 @@ function fiber_reinf_cant_yn_strong_abaqus_comparison_h8ms
                 AE.END_STEP();
                 AE.close();
                 %                 delete([AE.filename '.dat']);
-                system(['abaqus job=' [AE.filename ]]);
+                abaqus_job([AE.filename ]);
                 AW=Abaqus_lck_watcher();
                 AW.wait([AE.filename '.lck']);
                 try
@@ -309,7 +309,7 @@ function fiber_reinf_cant_yn_strong_abaqus_comparison_h8ms
     labels(  'Number of equations', 'Estimated true error')
     grid on
     
-    %     set_decades_on_axis (gca)
+    set_decades_on_axis (gca)
     set_pub_defaults
     % printeps(gcf,'motiv-fiber_reinf_cant_z_strong','fontsize',20)
     % clear options

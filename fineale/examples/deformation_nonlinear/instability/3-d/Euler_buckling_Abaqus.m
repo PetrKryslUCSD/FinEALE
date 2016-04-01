@@ -1,5 +1,5 @@
 %
-function Euler_buckling_Abaqus
+function Euler_buckling
 E=100;
 nu=0.3;
 L= 28; % Length of the beam
@@ -11,7 +11,7 @@ magn=magn_cr;
 magn_cr_other = E*max([H,W])^3*min([H,W])/12*pi^2/(2*L)^2/W/H;
 nW=4; nH=4;
 graphics= ~true;  scale=5;
-export_to_abaqus= true; SurfElType ='SFM3D4';;
+export_to_abaqus= ~true; SurfElType ='SFM3D4';;
 ElType ='C3D8';
     ElType ='C3D8H';
 % ElType ='C3D8I';
@@ -170,7 +170,7 @@ eix=eix+1;
             AE.END_STEP();
             AE.close();
             %                 delete([AE.filename '.dat']);
-            system(['abaqus job=' [AE.filename ]]);
+            abaqus_job([AE.filename ]);
             AW=Abaqus_lck_watcher();
             AW.wait([AE.filename '.lck']);
             try

@@ -6,8 +6,8 @@ W = 1; % Thickness of the plate
 H = 10; % Width
 R= 3;
 nL=4;nH=4;nR=3;
-magn=90;
-tapp=0.1;
+magn=60;
+tapp=0.05;
 tend =  2*tapp;
 rho=1e-3;
 lambda = 0.75e4;
@@ -23,8 +23,8 @@ E=G*(3*lambda+2*G)/(G+lambda);
 
 prop = property_deformation_linear_iso (struct('E',E,'nu',nu,'rho',rho));
 mater = material_deformation_stvk_triax(struct('property',prop));
-femm = femm_deformation_nonlinear_h8msgs(struct ('material',mater, 'fes',fes, ...
-    'integration_rule',gauss_rule(struct('dim',3,'order',2)),'stab_fraction',0.3));
+femm = femm_deformation_nonlinear_h8msgso(struct ('material',mater, 'fes',fes, ...
+    'integration_rule',gauss_rule(struct('dim',3,'order',2))));
 % Geometry
 geom = nodal_field(struct ('name',['geom'], 'dim', 3, 'fens',fens));
 % Define the displacement field
@@ -74,6 +74,7 @@ end
 v=0*u;
 
 % Solve
+[femm] = update(femm,  geom, u, u);
 t=0;
 U0= gather_sysvec(u);
 V0= gather_sysvec(v);
@@ -85,8 +86,7 @@ A0 =A1;
 step =0;
 while t <tend
     step = step  +1;
-    disp(['Time ' num2str(t)])
-    t=t+dt;
+     t=t+dt;
     fi= force_intensity(struct ('magn',((t<tapp)*(t/tapp)+(t>=tapp)*1.0)*[magn;0; 0;]));
     FL = distrib_loads(efemm, sysvec_assembler, geom, 0*u, fi, 2);
     % Update displacement
@@ -100,9 +100,10 @@ while t <tend
     % Bring the the displacement and velocity fields up to date
     v = scatter_sysvec(v, V1);
     if graphics && (mod(step,100) == 0)
+        disp(['Time ' num2str(t)])
         gv=reset(gv,[]);    draw(femm,gv, struct ('x', geom,'u',u, 'facecolor','none'));
-            figure (gcf); pause(0.05); cam =camget(gv);
-        end
+        figure (gcf); pause(0.05); cam =camget(gv);
+    end
     % Switch the temporary vectors for the next step.
     U0 = U1;
     V0 = V1;

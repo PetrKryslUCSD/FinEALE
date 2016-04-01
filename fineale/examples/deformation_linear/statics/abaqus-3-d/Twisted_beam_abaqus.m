@@ -270,7 +270,7 @@ function  Twisted_beam_abaqus
                     AE.END_STEP();
                     AE.close();
                     %                 delete([AE.filename '.dat']);
-                    system(['abaqus job=' [AE.filename ]]);
+                    abaqus_job([AE.filename ]);
                     AW=Abaqus_lck_watcher();
                     AW.wait([AE.filename '.lck']);
                     try

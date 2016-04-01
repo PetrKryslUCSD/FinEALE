@@ -205,7 +205,7 @@ eix=eix+1;
             AE.END_STEP();
             AE.close();
             %                 delete([AE.filename '.dat']);
-            system(['abaqus job=' [AE.filename ]]);
+            abaqus_job([AE.filename ]);
             pause(15);
             try
                 d= extract_buckling_from_abaqus_dat([AE.filename '.dat'],...

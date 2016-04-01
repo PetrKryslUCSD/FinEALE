@@ -141,8 +141,9 @@ for thickness = 0.1;
             AE.END_STEP();
             AE.close();
             %                 delete([AE.filename '.dat']);
-            system(['abaqus job=' [AE.filename ]]);
-            pause(5);
+            abaqus_job([AE.filename ]);
+            AW=Abaqus_lck_watcher();
+            AW.wait([AE.filename '.lck']);
             try
                 d= extract_displacement_from_abaqus_dat([AE.filename '.dat'],...
                     'THE FOLLOWING TABLE IS PRINTED FOR NODES BELONGING TO NODE SET ASSEM1_INSTNC1_CENTER',...
