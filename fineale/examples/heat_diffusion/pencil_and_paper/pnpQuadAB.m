@@ -29,7 +29,7 @@ K4 =subs(gradN)*subs(gradN)';
 %Intermediate result: we still need to multiply with  the thermal
 %conductivity  and the thickness of the slice, but we do include the
 %constant Jacobian here
-K=simple(det(J)*(K1+K2+K3+K4))
+K=simplify(det(J)*(K1+K2+K3+K4))
 
 matrix2latex((6*A*B)*K,struct('precision' ,4, 'separator',','))
 end
