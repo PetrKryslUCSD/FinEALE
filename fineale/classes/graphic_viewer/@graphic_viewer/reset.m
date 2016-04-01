@@ -105,7 +105,10 @@ function self = reset (self, context)
         else
             view(2); pos=get(self.axes,'position');
             set(self.axes,'XLim',context.limits(1:2));
-            set(self.axes,'YLim',context.limits(3:4));
+            if (length(context.limits)>=4)
+                set(self.axes,'YLim',context.limits(3:4));
+            else
+            end
             set(self.axes,'position',pos);
             set(self.axes,'cameraviewanglemode','auto');
         end
