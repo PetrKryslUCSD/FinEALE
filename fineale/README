@@ -36,30 +36,6 @@ The finite elements include linear and quadratic triangles and
 tetrahedra, linear to cubic quadrangles and hexahedra, and of 
 course linear to cubic curve elements. 
 
-The author appreciates feedback and interaction/collaboration. 
-Please don't hesitate to e-mail pkrysl@ucsd.edu.
-
-Enjoy!
-
-CONTRIBUTORS
-=================================================================
-Petr Krysl
-
-These are the contributors to the toolkit FAESOR  which was the source
-for the current toolkit (alphabetically):
-
-Jemuel Balangco
-Giovanni Castellazzi
-Richard Crozier
-Ivana Escobar
-Carolina Jauregui
-Henry Kagey
-Christopher Lifgren
-Tamara Martinez
-Poorya Mirkhosravi
-Luis Monterrrubio-Salazar     
-Steve Oberrecht
-
 USAGE
 =================================================================
 To use, type "fineale_init" at the Matlab prompt (your working 
@@ -81,6 +57,24 @@ The verification suite of the toolkit consists of the directories
 listed in the function run_verification(). 
 
 Help is available, just type help fineale (or, doc fineale).
+
+The author appreciates feedback and interaction/collaboration. 
+Please don't hesitate to e-mail pkrysl@ucsd.edu.
+
+Enjoy!
+
+THIRD-PARTY APPLICATIONS
+=================================================================
+There are a few are applications that may be called from within 
+FinEALE. The applications are called from within "runners"
+in the util\runners folder:
+
+- Abaqus, runner abaqus_job()
+- Paraview, runners paraview() and pvpython()
+
+You may have to update the paths to the executables in order to use
+these third-party applications. Please edit the runners appropriately
+for your particular computer configuration.
 
 THIRD-PARTY SOURCE
 =================================================================
@@ -137,3 +131,28 @@ Fully functional with R2011b, R2012b.
 BUG REPORTS AND FEEDBACK
 =================================================================
 Please report any problems and/or bugs to: pkrysl@ucsd.edu
+
+
+CONTRIBUTORS
+=================================================================
+Petr Krysl
+
+These are the contributors to the toolkit FAESOR  which was the predecessor
+of the current toolkit (alphabetically):
+
+Jemuel Balangco
+Giovanni Castellazzi
+Richard Crozier
+Carolina Jauregui
+Henry Kagey
+Christopher Lifgren
+Tamara Martinez
+Poorya Mirkhosravi
+Luis Monterrrubio-Salazar     
+Steve Oberrecht
+
+The following are contributors to the toolkit FinEALE (alphabetically):
+
+Ivana Escobar
+Steve Oberrecht
+
