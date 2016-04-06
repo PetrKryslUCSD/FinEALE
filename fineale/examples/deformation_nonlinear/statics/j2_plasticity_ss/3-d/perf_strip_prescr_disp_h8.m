@@ -1,27 +1,30 @@
-function perforated_strip_prescribed_displacement_h8
-    disp('Perforated_strip, prescribed displacement: ss J2 plasticity');
+function perf_strip_prescr_disp_h8
+    disp('Perforated_strip, prescribed displacement: ss J2 plasticity.');
+    pu= physical_units_machine;
     % Parameters:
-    E=7000;
+    E=70000*pu('MPa');
     nu=0.3;
-    sigma_y=24.3;
-    L= 360; % Length of the beam
-    W = 10; % Thickness of the plate
-    H = 200; % Width
-    R= 100;
-    nL=2*8;nH=2*4;nR=2*4;
-    umag=2.5;
+    sigma_y=243*pu('MPa');
+    %     The following dimensions are for one quarter of the geometry.
+    %     We are using three planes of symmetry.
+    L= 36/2*pu('mm'); % Length of the plate
+    W = 2/2*pu('mm'); % Thickness of the plate
+    H = 20/2*pu('mm'); % Width
+    R= 5*pu('mm');% Radius of the hole
+    nL=2*8; nH=2*4; nR=2*4;% Number of edges
+    umag=0.1*pu('mm');% Magnitude of the displacement
     scale=20;
     stressscale=scale/20;
     epscale=2*scale;
     nincr =2*15;
     utol = 10e-7;
-    graphics = true;
+    graphics = ~true;
 maxdu_tol = W/1e7;
     
     
     %  Create the mesh and initialize the geometry
     [fens,fes]=Q4_elliphole(R,R,L,H,nL,nH,nR,[]);
-    [fens,fes] = H8_extrude_Q4(fens,fes,2,@(x,i)([x,0]+[0,0,W*i]));
+    [fens,fes] = H8_extrude_Q4(fens,fes,2,@(x,i)([x,0]+[0,0,W*i/2]));
     
     
     
@@ -60,7 +63,8 @@ maxdu_tol = W/1e7;
     clear essential
     essential.component= [1];
     essential.fixed_value= @(lambda)lambda*umag;
-    essential.node_list = fenode_select (fens,struct('box',[L,L,-Inf,Inf,-Inf,Inf],'inflate',W/1000));
+    movingl=fenode_select (fens,struct('box',[L,L,-Inf,Inf,-Inf,Inf],'inflate',W/1000));
+    essential.node_list = movingl;
     model_data.boundary_conditions.essential{4} = essential;
     
       % If online graphics  is needed, initialize some variables
@@ -79,7 +83,7 @@ maxdu_tol = W/1e7;
     model_data.maxdu_tol  =maxdu_tol;;
     model_data.line_search  = true;
     model_data.iteration_observer =@iteration_observer;
-    us={};
+    us={}; Ux=[]; Rx=[];
     model_data.load_increment_observer =@load_increment_observer;
     % Call the nonlinear deformation solver
     model_data =deformation_nonlinear_statics(model_data);
@@ -94,7 +98,7 @@ maxdu_tol = W/1e7;
     
     % Observer function to be called when convergence is reached.
     function load_increment_observer(lambda,model_data)
-        fprintf(1,'\n');
+        fprintf(1,'lambda=%g\n',lambda);
         if 0 && graphics
             gv=reset(clear(gv,[]),[]);
             draw(sfemm,gv, struct ('x', model_data.geom, 'u', 0*model_data.u,'facecolor','none', 'shrink',1.0));
@@ -103,47 +107,57 @@ maxdu_tol = W/1e7;
             interact(gv);
             pause(0.5); Cam =camget(gv);
         end
+         Ux=[ Ux,mean(model_data.u.values(movingl,1))]; 
+         Rx=[Rx,sum(model_data.reactions.values(movingl,1))];
+         if (~graphics)
+             plot(Ux,Rx)
+             pause (0.1)
+         end
+         
+        
         us{end+1} =model_data.u;
     end
     
     % Iteration of observer can be called as the solution is being computed.
     function iteration_observer(lambda,iter,du,model_data)
-        fprintf(1,'%d: %g\n',iter,norm(du));
-        %         if 1 && graphics
-        %             gv=reset(clear(gv,[]),[]);
-        %             draw(sfemm,gv, struct ('x', model_data.geom, 'u', 0*model_data.u,'facecolor','none', 'shrink',1.0));
-        %             draw(sfemm,gv, struct ('x', model_data.geom, 'u', scale*model_data.u,'facecolor','y', 'shrink',1.0));
-        %             camset (gv,Cam);
-        %             interact(gv);
-        %             pause(0.5); Cam =camget(gv);
-        %         end
-        id.comp= 1;
-        id.container=-Inf;
-        id=inspect_integration_points(model_data.region{1}.femm, model_data.geom, model_data.u, [],...
-            (1:length (fes)), struct ('output',['equiv_pl_def']),...
-            @mx,id);
-        max_equiv_pl_def=id.container;
-        id.container=Inf;
-        id=inspect_integration_points(model_data.region{1}.femm, model_data.geom, model_data.u, [], ...
-            (1:length (fes)), struct ('output',['equiv_pl_def']),...
-            @mn,id);
-        min_equiv_pl_def =id.container;
-        dcm=data_colormap(struct ('range',[min_equiv_pl_def,max_equiv_pl_def], 'colormap',jet));
-        gv=reset(clear(gv,[]),[]);
-        title (['Iteration ' num2str(iter)  ])
-        camset (gv,1.0e+003 *[ -2.1416   -1.4296    3.3375    0.1981    0.1191   -0.0063    0.0006    0.0004    0.0006 0.0039]);
-        draw(model_data.region{1}.femm,gv, struct ('x', model_data.geom,...
-            'u',scale*model_data.u, 'facecolor','none'));
-        draw_integration_points(model_data.region{1}.femm,gv,struct ('x',model_data.geom,...
-            'u',model_data.u,'u_scale',scale, 'scale',epscale,'output',['equiv_pl_def'],'component',1,'data_cmap', dcm));
-        drawnow; 
-        pause(0.1)
+                fprintf(1,'%d: %g\n',iter,norm(du));
+                %         if 1 && graphics
+                %             gv=reset(clear(gv,[]),[]);
+                %             draw(sfemm,gv, struct ('x', model_data.geom, 'u', 0*model_data.u,'facecolor','none', 'shrink',1.0));
+                %             draw(sfemm,gv, struct ('x', model_data.geom, 'u', scale*model_data.u,'facecolor','y', 'shrink',1.0));
+                %             camset (gv,Cam);
+                %             interact(gv);
+                %             pause(0.5); Cam =camget(gv);
+                %         end
+                if (graphics)
+                    id.comp= 1;
+                    id.container=-Inf;
+                    id=inspect_integration_points(model_data.region{1}.femm, model_data.geom, model_data.u, [],...
+                        (1:length (fes)), struct ('output',['equiv_pl_def']),...
+                        @mx,id);
+                    max_equiv_pl_def=id.container;
+                    id.container=Inf;
+                    id=inspect_integration_points(model_data.region{1}.femm, model_data.geom, model_data.u, [], ...
+                        (1:length (fes)), struct ('output',['equiv_pl_def']),...
+                        @mn,id);
+                    min_equiv_pl_def =id.container;
+                    dcm=data_colormap(struct ('range',[min_equiv_pl_def,max_equiv_pl_def], 'colormap',jet));
+                    gv=reset(clear(gv,[]),[]);
+                    title (['Iteration ' num2str(iter)  ])
+                    %                 camset (gv,1.0e+002 *[ -2.1416   -1.4296    3.3375    0.1981    0.1191   -0.0063    0.0006    0.0004    0.0006 0.0039]);
+                    draw(model_data.region{1}.femm,gv, struct ('x', model_data.geom,...
+                        'u',scale*model_data.u, 'facecolor','none'));
+                    draw_integration_points(model_data.region{1}.femm,gv,struct ('x',model_data.geom,...
+                        'u',model_data.u,'u_scale',scale, 'scale',epscale,'output',['equiv_pl_def'],'component',1,'data_cmap', dcm));
+                    drawnow;
+                    pause(0.1)
+                end
         
         function id= mn(id,out,xyz,U,pc)
             id.container=min(out(id.comp), id.container);
         end
         
-        function id= mx(id,out,xyz,U,pc)
+        function id= mx(id,out,xyz,~,pc)
             id.container=max(out(id.comp), id.container);
         end
     end
