@@ -133,7 +133,8 @@ function model_data = deformation_nonlinear_statics(model_data)
 % model_data =  structure that was given on input updated with:
 % The struct model_data on output incorporates in addition to the input the fields
 %     geom = geometry field
-%     u = computed displacement field
+%     u = computed displacement nodal field
+%     reactions = computed reaction nodal field
 %
 
 
@@ -279,6 +280,10 @@ for incr =1:length(load_multipliers) % Load-implementation loop
     u1 = apply_ebc(u1); % Apply EBC
     du = 0*u; % Displacement increment
     du = apply_ebc(du);
+    uAllfree=u1;% This field will hold the displacements for all notes and degrees of freedom.
+    uAllfree.is_fixed(:)=0;% all displacements will be free
+    uAllfree = numberdofs (uAllfree);
+        
     
     % Iteration loop
     iter=1;
@@ -402,6 +407,16 @@ for incr =1:length(load_multipliers) % Load-implementation loop
     model_data.u = u1;
  
     if ~isempty(load_increment_observer)% report the progress
+        uAllfree.values=u1.values;% This field holds the current converged displacements; 
+        % since all the degrees of freedom are free, the restoring forces
+        % can be used to compute the reactions. Note the negative sign: the
+        % reactions are the opposite of the resisting forces of the
+        % material.
+        FR =zeros(uAllfree.nfreedofs,1);
+        for i=1:length(model_data.region)% Compute the resisting forces of the material
+            FR = FR - restoring_force(model_data.region{i}.femm, sysvec_assembler, geom, uAllfree, uAllfree); 
+        end
+        model_data.reactions=scatter_sysvec(uAllfree,FR);
         load_increment_observer (lambda,model_data);
     end
     
