@@ -59,15 +59,19 @@ classdef  fe_set
     methods % access methods
         
         function self=set.label(self,val)
-            %             Get the label of this set.
+% Set the label for the set.
+%
+% val =either a single value for the entire set, or an array of values one for each connectivity.  
             if (length(val)==size(self.conn,1))
                 self.label=reshape(val,size(self.conn,1),1);
             elseif (length(val)==1)
                 self.label=val+zeros(size(self.conn,1),1, class(val));
             else
                 % No label intended;
+                self.label=[];
             end
         end
+        
         
         function self=set.conn(self,val)
             %             Get the connectivity of this set.
