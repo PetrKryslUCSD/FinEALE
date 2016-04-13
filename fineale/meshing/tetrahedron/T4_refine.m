@@ -15,8 +15,13 @@ function [fens,fes] = T4_refine(fens,fes)
 % figure; drawmesh({fens,fes},'fes','facecolor','b'); hold on
 
     [fens,fes] = T4_to_T10(fens,fes);
-    conn=fes.conn;
+    conn=fes.conn; label=fes.label;
     nconn=zeros(8*size(conn,1),4);
+    nlabel=[];
+    if (~isempty(label))
+        nlabel=reshape(repmat(label',8,1),[],1);
+    end
+    
     nc=1;
     for i= 1:size(conn,1)
         conn10=conn(i,:);
@@ -30,4 +35,8 @@ function [fens,fes] = T4_refine(fens,fes)
         nconn(nc,:) =conn10([7,9,10,8]);        nc= nc+ 1;
     end
     fes=fe_set_T4(struct('conn',nconn));
+    if (~isempty(label))
+        fes.label=nlabel;
+    end
+    
 end
