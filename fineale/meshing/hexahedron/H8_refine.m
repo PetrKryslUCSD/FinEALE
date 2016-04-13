@@ -18,8 +18,12 @@ function [fens,fes] = H8_refine(fens,fes)
 %     drawmesh({fens,fes},'fes','facecolor','m');
 
     [fens,fes] = H8_to_H27(fens,fes);
-    conn=fes.conn;
+    conn=fes.conn; label=fes.label;
     nconn=zeros(8*size(conn,1),8);
+    nlabel=[];
+    if (~isempty(label))
+        nlabel=reshape(repmat(label',8,1),[],1);
+    end
     nc=1;
     for i= 1:size(conn,1)
         conn27=conn(i,:);
@@ -33,4 +37,7 @@ function [fens,fes] = H8_refine(fens,fes)
         nconn(nc,:) =conn27([25,27,24,20,16,26,15,8]);        nc= nc+ 1;
     end
     fes=fe_set_H8(struct('conn',nconn));
+    if (~isempty(label))
+        fes.label=nlabel;
+    end
 end

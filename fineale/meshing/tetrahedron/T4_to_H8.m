@@ -20,7 +20,11 @@ function [fens,fes] = T4_to_H8(fens,fes)
         5,2,6,11,12,9,13,15;
         12,9,13,15,8,4,10,14;
         7,11,6,3,14,15,13,10];
-    conns = fes.conn;
+    conns = fes.conn; label=fes.label;
+    nlabel=[];
+    if (~isempty(label))
+        nlabel=reshape(repmat(label',4,1),[],1);
+    end
     n=count(fens);
     tid=(1:count(fens))';
     txyz=fens.xyz;
@@ -132,6 +136,9 @@ function [fens,fes] = T4_to_H8(fens,fes)
     %Create new data structures
     fens=fenode_set(struct('xyz',txyz(1:cn,:)));
     fes =fe_set_H8(struct ('conn',nconns));
+    if (~isempty(label))
+        fes.label=nlabel;
+    end
     return;
 end
 

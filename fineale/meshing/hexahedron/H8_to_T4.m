@@ -7,8 +7,11 @@ function [fens,fes] = H8_to_T4(fens,fes,sxy,sxz,syz)
 % Output:
 % fens= finite element node set
 % fes = finite element set
-% sx,sy,sz=
-%
+% sxy,sxz,syz=amount of shear to be applied to make  it possible to
+%   triangulate a regular arrangement of nodes with the Delaunay
+%   triangulation.
+% 
+% Note: the labels of the original hexahedra are not transferred to the resulting tetrahedra.
 M=[0,sxy,sxz; sxy,0,syz; sxz,syz,0];
 X=fens.xyz;
 X(:,:)=X(:,:)+X(:,:)*M;
