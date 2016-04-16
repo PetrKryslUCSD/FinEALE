@@ -48,7 +48,7 @@ function K = stiffness (self, assembler, geom, u)
             end
             Ndersp = Nders_v{j}/J;% derivatives wrt global coor
             Jac = Jacobian_volume(fes,conn, Ns_v{j}, J, x);
-            if (Jac<=0),error('Non-positive Jacobian');end
+            %if (Jac<=0),error('Non-positive Jacobian');end
             B = self.hBlmat(self,Ns_v{j},Ndersp*Rm,c,Rm);% strain-displacement
             if (~D_constant)
                 D_constrained = tangent_moduli(mat,struct('xyz',c,'kind',self.split));
@@ -64,7 +64,7 @@ function K = stiffness (self, assembler, geom, u)
             end
             Ndersp = Nders_s{j}/J;% derivatives wrt global coor
             Jac = Jacobian_volume(fes,conn, Ns_s{j}, J, x);
-            if (Jac<=0),error('Non-positive Jacobian');end
+            %if (Jac<=0),error('Non-positive Jacobian');end
             B = self.hBlmat(self,Ns_s{j},Ndersp*Rm,c,Rm);% strain-displacement
             if (~D_constant)
                 D_unconstrained = tangent_moduli(mat,struct('xyz',c,'kind',[self.split '_shear']));

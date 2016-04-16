@@ -46,7 +46,7 @@ function K = stiffness (self, assembler, geom, u)
             end
             Ndersp = Nders{j}/J;% derivatives wrt global coor
             Jac = Jacobian_volume(fes,conn, Ns{j}, J, x);
-            if (Jac<=0),error('Non-positive Jacobian');end
+            %if (Jac<=0),error('Non-positive Jacobian');end
             B=self.hBlmat(self,Ns{j},Ndersp*Rm,c,Rm);%  strains in material coordinates, displacements in global coordinates
             if (~D_constant)% Need to compute the material stiffness at c
                 D = tangent_moduli(mat,struct('xyz',c));%  Moduli in material orientation

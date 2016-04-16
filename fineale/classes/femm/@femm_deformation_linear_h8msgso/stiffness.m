@@ -45,7 +45,7 @@ for i=1:size(conns,1)
     for j=1:npts % loop over all quadrature points
         J = X' * gradNparams{j};% Jacobian matrix wrt reference coordinates
         gradN{j} = gradNparams{j}/J;% derivatives wrt global reference coor
-        Jac{j} = det(J);        if (Jac{j}<=0),error('Non-positive Jacobian');end
+        Jac{j} = det(J);       % if (Jac{j}<=0),error('Non-positive Jacobian');end
         dV=(Jac{j}*w(j));
         gradN_mean =gradN_mean+gradN{j}*dV;
         V =V+dV;
