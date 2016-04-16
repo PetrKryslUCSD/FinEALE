@@ -21,6 +21,7 @@ function [fens,fes] = T10_to_H8(fens,fes)
         5,2,6,11,12,9,13,15;
         12,9,13,15,8,4,10,14;
         7,11,6,3,14,15,13,10];
+    nfe=[5,6,7; 5,9,8; 6,10,9; 7,10,8];
     conns = fes.conn; label=fes.label;
     nlabel=[];
     if (~isempty(label))
@@ -87,7 +88,7 @@ function [fens,fes] = T10_to_H8(fens,fes)
     nconns=zeros(4*count(fes),8);
     nc=1;
     for i= 1:size(conns,1)
-        conn = [conns(i,:),zeros(1,4)];
+        conn = [conns(i,:),zeros(1,5)];
         ix=5;
         for J = 1:nedges
             conn(ix)= conn(emn(J));
@@ -96,9 +97,15 @@ function [fens,fes] = T10_to_H8(fens,fes)
         for J = 1:nfaces
             fv=conn(fc(J,:));
             conn(ix)=find_face_node(fv);
+            %             Compute the position of the face node from the three edge nodes
+            vxyz =mean(txyz(conn(nfe(J,:)),:));
+            txyz(conn(ix),:)=vxyz;
             ix=ix+1;
         end
         conn(ix)=find_volume_node(i);
+        % Compute the position of the interior node from the six edge nodes
+        vxyz =mean(txyz(conn(end-6:end-1),:));
+        txyz(conn(end),:)=vxyz;
         for J=1:4
             nconns(nc,:) =conn(Volumes(J,:));
             nc= nc+ 1;
