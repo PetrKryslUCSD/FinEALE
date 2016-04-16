@@ -10,6 +10,7 @@ function model_data=deformation_plot_modes(model_data)
 %           and returned in options.gv
 %      u_scale = deflection scale, default 1.0;
 %      modelist= default is 1:model_data.neigvs.
+%      draw_mesh= should the mesh be rendered?  Boolean.  Default true.
 %      save_frame= should we save images for the modes displayed? default false;
 %      frame_name= name for the mode images; default 'frame_name';
 %      camera  = camera, default is [] which means use the default orientation 
@@ -43,6 +44,12 @@ function model_data=deformation_plot_modes(model_data)
     if (isfield(model_data, 'postprocessing'))
         if (isfield(model_data.postprocessing, 'modelist'))
             modelist = model_data.postprocessing.modelist;
+        end
+    end
+    draw_mesh  = true;
+    if (isfield(model_data, 'postprocessing'))
+        if (isfield(model_data.postprocessing, 'draw_mesh'))
+            draw_mesh = model_data.postprocessing.draw_mesh;
         end
     end
     save_frame  = false;
@@ -120,8 +127,10 @@ function model_data=deformation_plot_modes(model_data)
                 %     For speed, the deformation is drawn using only the
                 %     surface of the solid
                 boundaryfes = mesh_boundary (region.femm.fes,[]);
-                draw(boundaryfes, gv, struct ('x',geom, 'u',0*model_data.u, ...
-                    'facecolor','none'));
+                if (draw_mesh)
+                    draw(boundaryfes, gv, struct ('x',geom, 'u',0*model_data.u, ...
+                        'facecolor','none'));
+                end
                 draw(boundaryfes, gv, struct ('x',geom, 'u',xscale*model_data.u,...
                     'colorfield',colorfield, 'shrink',1.0));
                 %                 The code below would draw the entire mesh, including the interior.
