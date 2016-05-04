@@ -10,7 +10,7 @@ function model_data=deformation_plot_steady_vibration(model_data)
 %           and returned in options.gv
 %      u_scale = deflection scale, default 1.0;
 %      frequencylist= default is 1:model_data.neigvs.
-%      save_movie= should we save images for the animation frames displayed? default false;
+%      save_movie= should we save the animation as a movie? default false;
 %      movie_name= name for the frame images; default 'movie';
 %      draw_mesh= should the mesh be rendered?  Boolean.  Default false.
 %      camera  = camera, default is [] which means use the default orientation 
@@ -153,9 +153,11 @@ function model_data=deformation_plot_steady_vibration(model_data)
             % Interact with the plot
             interact(gv);
             camera=camget(gv);
+            pause(0.05);
             if save_movie % Should we save a movie?
-                imn =frame_name('.',[movie_name '-f' num2str(Jj) '-'],frame,'png');
-                saveas(gv.figure, imn,'png');
+                gif_animation_add_frame(gv.figure,frame,[movie_name '-f' num2str(Jj) '.gif'],40);
+                %                 imn =frame_name('.',[movie_name '-f' num2str(Jj) '-'],frame,'png');
+                %                 saveas(gv.figure, imn,'png');
             end
             frame=frame+1;
         end
