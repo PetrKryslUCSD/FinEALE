@@ -1,4 +1,7 @@
-- The stress output is inconsistent for 2-D surface elements embedded in 3-D.
+% - The surface damper implementation was incorrect for the normal being a row vector.
+% Check similar classes. 05/12/2016
+%
+% - The stress output is inconsistent for 2-D surface elements embedded in 3-D.
 
 % –  Evaluate stresses for selective reduced integration by passing
 %  context to the update method that will request the appropriate 

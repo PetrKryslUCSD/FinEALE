@@ -21,12 +21,13 @@ function C = surface_damper_abc(self, assembler, geom, u)
     conns = fes.conn; % connectivity
     labels = fes.label; % connectivity
     xs =geom.values;
-   % damping coefficient 
+    % damping coefficient
     h = self.damping_abc_impedance;
-     % Prepare assembler
-     dim=u.dim;
+    % Prepare assembler
+    dim=u.dim;
     Cedim =u.dim*fes.nfens;
     start_assembly(assembler, Cedim, Cedim, size(conns,1), u.nfreedofs, u.nfreedofs);
+    ns=zeros(fes.nfens*dim,1);
     % Now loop over all fes in the block
     for i=1:size(conns,1)
         conn =conns(i,:);
@@ -44,7 +45,7 @@ function C = surface_damper_abc(self, assembler, geom, u)
             if (Jac<=0),error('Non-positive Jacobian');end
             n=normal(self,c,J);
             for k= 1:fes.nfens 
-                ns((k-1)*dim+1:k*dim)=n*Ns{j}(k);
+                ns((k-1)*dim+1:k*dim,1)=n*Ns{j}(k);
             end 
             Ce = Ce + ns*ns' * (h* Jac * w(j));
         end
