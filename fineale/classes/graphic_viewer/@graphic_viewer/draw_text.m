@@ -31,12 +31,8 @@ function draw_text(self, xyz, txt, context)
     if isfield(context,'fontsize')
         fontsize=context.fontsize;
     end
-    annotate=0;
-    if isfield(context,'annotate')
-        annotate=context.annotate;
-    end
     xyz=xyz + offset;
-    xyz=[xyz 0 0];% just in case the node is in one- or two a dimensions
+    xyz=[xyz 0 0];% just in case the node is in one- or two  dimensions
     if isfield(context,'length_units')
         xyz=xyz/context.length_units;
     end

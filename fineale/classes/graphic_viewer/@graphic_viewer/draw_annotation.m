@@ -17,6 +17,10 @@ function draw_annotation(self, xywh, txt, context)
     if isfield(context,'color')
         color=context.color;
     end
+    edgecolor ='black';
+    if isfield(context,'edgecolor')
+        edgecolor=context.edgecolor;
+    end
     offset = 0;
     if isfield(context,'offset')
         offset=context.offset;
@@ -25,7 +29,7 @@ function draw_annotation(self, xywh, txt, context)
     if isfield(context,'fontname')
         fontName=context.fontname;
     end
-    h=annotation('textbox',xywh, 'String',txt,'Color', color);
+    h=annotation('textbox',xywh, 'String',txt,'Color', color,'edgecolor',edgecolor);
     if isfield(context,'backgroundcolor')
        set(h,'backgroundcolor',context.backgroundcolor);
     end
