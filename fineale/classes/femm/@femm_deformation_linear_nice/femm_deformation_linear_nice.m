@@ -154,11 +154,12 @@ classdef femm_deformation_linear_nice < femm_deformation_linear
                         Nspdavg=Nspdavg/ Vpatch_dim;
                     else
                         Nspdavg=0*Nspdavg;
-                        Vpatch=0;
+                        %                         error('Negative nodal volume')
                     end
-                    if (Vpatch<0) %!  Symbolic only
-                        Vpatch=0;% If negative volume, ignore it.   However,  at some point we might wish to check for this and raise an error.
-                    end
+%                     if (Vpatch<0) %!  Symbolic only
+%                         error
+%                         Vpatch=0;% If negative volume, ignore it.   However,  at some point we might wish to check for this and raise an error.
+%                     end
                     bfun_gradients{nix}.Nspd=Nspdavg;
                     bfun_gradients{nix}.Vpatch=Vpatch;
                     bfun_gradients{nix}.patchconn=patchconn;
