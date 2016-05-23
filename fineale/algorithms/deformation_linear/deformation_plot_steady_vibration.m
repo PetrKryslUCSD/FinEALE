@@ -10,12 +10,32 @@ function model_data=deformation_plot_steady_vibration(model_data)
 %           and returned in options.gv
 %      u_scale = deflection scale, default 1.0;
 %      frequencylist= default is 1:model_data.neigvs.
-%      save_movie= should we save the animation as a movie? default false;
+%      save_movie= should we save images for the animation frames displayed? default false;
 %      movie_name= name for the frame images; default 'movie';
 %      draw_mesh= should the mesh be rendered?  Boolean.  Default false.
 %      camera  = camera, default is [] which means use the default orientation 
 %           of the view;
 %      cmap= colormap (default: jet)
+%      add_to_scene= function handle, function with signature
+%             function gv=add_to_scene(gv);
+%          which can be used to add graphics to the viewer (such as spatial cues, or
+%          immovable objects)
+%      map_to_color_fun= function handle, function with signature
+%             function v=fun(fld, cmap)
+%          where fld= displacement field, cmap=colormap, and the 
+%          output v= nodal_field color field (field with three colors per node)
+%          or a color  specification (for instance 'y' or [0.8, 0.4, 0.3]).
+%          This is optional: default is 
+%             temp =magnitude(model_data.u); u_magn=temp.values; clear temp
+%             dcm=data_colormap(struct('range',[min(u_magn),max(u_magn)],'colormap',cmap));
+%             thecolors=nodal_field(struct ('name', ['thecolors'], 'data',map_data(dcm, u_magn)));
+%          The magnitude should be  sqrt(sum(fld.values.*conj(fld.values),2)) for
+%          complex-valued fields.
+%      add_decorations=function handle, function with signature
+%             gv=add_decorations(gv,frequency,axis_length);
+%          where gv= graphic viewer, frequency= current frequency, axis_length=
+%          an appropriate length for the axes.  Default: display the
+%          frequency information with an annotation.
  %
 % Output
 % model_data = structure on input updated with
@@ -58,6 +78,12 @@ function model_data=deformation_plot_steady_vibration(model_data)
             cmap = model_data.postprocessing.cmap;
         end
     end
+    map_to_color_fun = [];
+    if (isfield(model_data, 'postprocessing'))
+        if (isfield(model_data.postprocessing, 'map_to_color_fun'))
+            map_to_color_fun = model_data.postprocessing.map_to_color_fun;
+        end
+    end
     draw_mesh  = false;
     if (isfield(model_data, 'postprocessing'))
         if (isfield(model_data.postprocessing, 'draw_mesh'))
@@ -70,6 +96,19 @@ function model_data=deformation_plot_steady_vibration(model_data)
             ncycles = model_data.postprocessing.ncycles;
         end
     end
+    add_to_scene  = [];
+    if (isfield(model_data, 'postprocessing'))
+        if (isfield(model_data.postprocessing, 'add_to_scene'))
+            add_to_scene = model_data.postprocessing.add_to_scene;
+        end
+    end
+    add_decorations  = [];
+    if (isfield(model_data, 'postprocessing'))
+        if (isfield(model_data.postprocessing, 'add_decorations'))
+            add_decorations = model_data.postprocessing.add_decorations;
+        end
+    end
+    
     b=update_box([],model_data.fens.xyz);
     axis_length=mean([diff(b(1:2)),diff(b(3:4)),diff(b(5:6))])/4;
     
@@ -97,9 +136,9 @@ function model_data=deformation_plot_steady_vibration(model_data)
         % Scatter the eigenvector   
         model_data.u.values=  model_data.u_values{i};
         % Update the range of the amplitudes
-        u_magnitude =magnitude(model_data.u,2);
-        umi=min(abs(u_magnitude.values));
-        uma=max(abs(u_magnitude.values));
+        u_magn =magnitude(model_data.u);
+        umi=min(u_magn.values);
+        uma=max(u_magn.values);
         range=[min([range(1),umi]), max([range(2),uma])]
     end
     max_u_magn = max( range );
@@ -108,15 +147,22 @@ function model_data=deformation_plot_steady_vibration(model_data)
         frame=1;
         frequency=model_data.frequencies(Jj);% harmonic forcing
         clf; gv=clear (gv,[]); gv=reset (gv,[]);
+        if (~isempty(add_to_scene))
+            gv=add_to_scene(gv);
+        end
         disp(['Frequency ' num2str(Jj) '= ' num2str(frequency) ' Hz']);
         model_data.u.values= model_data.u_values{Jj};
-        u_magnitude =magnitude(model_data.u,2);
-        u_magn = max(abs(u_magnitude.values));
-        dcm=data_colormap(struct('range',[min(abs(u_magnitude.values)),max(abs(u_magnitude.values))],'colormap',cmap));
-        % Create the color field
-        colorfield=nodal_field(struct ('name', ['colorfield'], 'data',...
-            map_data(dcm, u_magnitude.values)));
-        phscale=u_scale*Characteristic_dimension/10*abs(log10(max_u_magn))/abs(log10(u_magn))*max_u_magn/u_magn;
+        if (~isempty(map_to_color_fun))
+            thecolors=map_to_color_fun(model_data.u);
+        else
+            % Default: Create the color field from the magnitude of the
+            % displacement field
+            temp =magnitude(model_data.u); u_magn=temp.values; clear temp
+            dcm=data_colormap(struct('range',[min(abs(u_magn)),max(abs(u_magn))],'colormap',cmap));
+            thecolors=nodal_field(struct ('name', ['thecolors'], 'data',map_data(dcm, u_magn)));
+        end
+        % Compute the physical scale to be used for display
+        phscale=u_scale*Characteristic_dimension/10*abs(log10(max_u_magn))/abs(log10(norm(u_magn,inf)))*max_u_magn/norm(u_magn,inf);
         ReW=real(model_data.u_values{Jj});
         ImW=imag(model_data.u_values{Jj});
         phases=(0:1:(21*ncycles-1))/21*2*pi;
@@ -124,6 +170,9 @@ function model_data=deformation_plot_steady_vibration(model_data)
             ph=phases(k123);
             model_data.u.values= cos(ph)*ReW-sin(ph)*ImW;
             gv=reset (gv,[]);
+            if (~isempty(add_to_scene))
+                gv=add_to_scene(gv);
+            end
             if (~isempty( camera ))
                 camset(gv,camera);
             end
@@ -136,18 +185,24 @@ function model_data=deformation_plot_steady_vibration(model_data)
                     draw(boundaryfes, gv, struct ('x',geom, 'u',0*model_data.u, ...
                         'facecolor','none'));
                 end
+                if (strcmp(class(thecolors),'nodal_field'))
+                    draw(boundaryfes, gv, struct ('x',geom, 'u',phscale*model_data.u,...
+                        'colorfield',thecolors, 'edgecolor','none','shrink',1.0));
+                else
                 draw(boundaryfes, gv, struct ('x',geom, 'u',phscale*model_data.u,...
-                    'colorfield',colorfield, 'edgecolor','none','shrink',1.0));
-                %                 The code below would draw the entire mesh, including the interior.
-                %                 draw(region.femm.fes, gv, struct ('x',geom, 'u',xscale*model_data.u,...
-                %                     'facecolor','none'));
+                        'facecolor',thecolors, 'edgecolor','none','shrink',1.0));
+                end
             end
             set_presentation_defaults
             axis off
+            if (~isempty(add_decorations))
+                gv=add_decorations(gv,frequency,axis_length);
+            else
             draw_annotation(gv, [0.01,0.01,0.6,0.1], ...
                 ['Freq=' num2str(frequency) ' Hz'], ...
-                struct('color','k','backgroundcolor','w','fontsize',20));
-            %             draw_axes (gv,struct('length',axis_length));
+                    struct('color','w','backgroundcolor','w','fontsize',20));
+                draw_axes (gv,struct('length',axis_length));
+            end
             headlight(gv);
             pause(0.05);
             % Interact with the plot

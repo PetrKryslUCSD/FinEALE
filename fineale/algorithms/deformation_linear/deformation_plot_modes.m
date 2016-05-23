@@ -17,6 +17,26 @@ function model_data=deformation_plot_modes(model_data)
 %           of the view;
 %      cmap= colormap (default: jet)
 %      animate= should the mode shape be animated? true or false (default)
+%      add_to_scene= function handle, function with signature
+%             function gv=add_to_scene(gv);
+%          which can be used to add graphics to the viewer (such as spatial cues, or
+%          immovable objects)
+%      map_to_color_fun= function handle, function with signature
+%             function v=fun(fld, cmap)
+%          where fld= displacement field, cmap=colormap, and the 
+%          output v= nodal_field color field (field with three colors per node)
+%          or a color  specification (for instance 'y' or [0.8, 0.4, 0.3]).
+%          This is optional: default is 
+%             temp =magnitude(model_data.u); u_magn=temp.values; clear temp
+%             dcm=data_colormap(struct('range',[min(u_magn),max(u_magn)],'colormap',cmap));
+%             thecolors=nodal_field(struct ('name', ['thecolors'], 'data',map_data(dcm, u_magn)));
+%          The magnitude should be  sqrt(sum(fld.values.*conj(fld.values),2)) for
+%          complex-valued fields.
+%      add_decorations=function handle, function with signature
+%             gv=add_decorations(gv,frequency,axis_length);
+%          where gv= graphic viewer, frequency= current frequency, axis_length=
+%          an appropriate length for the axes.  Default: display the
+%          frequency information with an annotation.
  %
 % Output
 % model_data = structure on input updated with
@@ -70,6 +90,25 @@ function model_data=deformation_plot_modes(model_data)
             cmap = model_data.postprocessing.cmap;
         end
     end
+    map_to_color_fun = [];
+    if (isfield(model_data, 'postprocessing'))
+        if (isfield(model_data.postprocessing, 'map_to_color_fun'))
+            map_to_color_fun = model_data.postprocessing.map_to_color_fun;
+        end
+    end
+    add_to_scene  = [];
+    if (isfield(model_data, 'postprocessing'))
+        if (isfield(model_data.postprocessing, 'add_to_scene'))
+            add_to_scene = model_data.postprocessing.add_to_scene;
+        end
+    end
+    add_decorations  = [];
+    if (isfield(model_data, 'postprocessing'))
+        if (isfield(model_data.postprocessing, 'add_decorations'))
+            add_decorations = model_data.postprocessing.add_decorations;
+        end
+    end
+    
     b=update_box([],model_data.fens.xyz);
     axis_length=mean([diff(b(1:2)),diff(b(3:4)),diff(b(5:6))])/4;
     
@@ -109,8 +148,15 @@ function model_data=deformation_plot_modes(model_data)
         model_data.u= scatter_sysvec(model_data.u, model_data.W(:,Jj));
         u_magnitude =magnitude(model_data.u,2);
         % Create the color field
-        colorfield=nodal_field(struct ('name', ['colorfield'], 'data',...
-            map_data(dcm, u_magnitude.values)));
+        if (~isempty(map_to_color_fun))
+            thecolors=map_to_color_fun(model_data.u);
+        else
+            % Default: Create the color field from the magnitude of the
+            % displacement field
+            temp =magnitude(model_data.u); u_magn=temp.values; clear temp
+            dcm=data_colormap(struct('range',[min(abs(u_magn)),max(abs(u_magn))],'colormap',cmap));
+            thecolors=nodal_field(struct ('name', ['thecolors'], 'data',map_data(dcm, u_magn)));
+        end
         if animate
             xscales=u_scale*Characteristic_dimension/10/max( range )*sin((0:1:42)/21*2*pi);
         else
@@ -124,6 +170,9 @@ function model_data=deformation_plot_modes(model_data)
             % Plot the surface for each region
             for i=1:length(model_data.region)
                 region =model_data.region{i};
+                if (~isempty(add_to_scene))
+                    gv=add_to_scene(gv);
+                end
                 %     For speed, the deformation is drawn using only the
                 %     surface of the solid
                 boundaryfes = mesh_boundary (region.femm.fes,[]);
@@ -131,8 +180,13 @@ function model_data=deformation_plot_modes(model_data)
                     draw(boundaryfes, gv, struct ('x',geom, 'u',0*model_data.u, ...
                         'facecolor','none'));
                 end
+                if (strcmp(class(thecolors),'nodal_field'))
                 draw(boundaryfes, gv, struct ('x',geom, 'u',xscale*model_data.u,...
-                    'colorfield',colorfield, 'shrink',1.0));
+                        'colorfield',thecolors, 'shrink',1.0));
+                else
+                    draw(boundaryfes, gv, struct ('x',geom, 'u',xscale*model_data.u,...
+                        'facecolor',thecolors, 'shrink',1.0));
+                end
                 %                 The code below would draw the entire mesh, including the interior.
                 %                 draw(region.femm.fes, gv, struct ('x',geom, 'u',xscale*model_data.u,...
                 %                     'facecolor','none'));
@@ -140,7 +194,14 @@ function model_data=deformation_plot_modes(model_data)
 %             draw_text(gv, annloc,['  Eigenvector ' num2str(i) '\newline     ' num2str(sqrt(Omega(ix(i),ix(i)))/2/pi) ' [Hz]'],...
 %                 struct('fontsize', 18));
             axis off
+            if (~isempty(add_decorations))
+                gv=add_decorations(gv,frequency,axis_length);
+            else
+                draw_annotation(gv, [0.01,0.01,0.98,0.08], ...
+                    ['Mode ' num2str(Jj) ': f=' num2str(model_data.Omega(Jj)/2/pi) ' Hz'], ...
+                    struct('color','k','edgecolor','w','backgroundcolor','w','fontsize',18));
             draw_axes (gv,struct('length',axis_length));
+            end
             pause(0.005);
         end
         
