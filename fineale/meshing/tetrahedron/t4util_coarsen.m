@@ -186,6 +186,7 @@ function [t,v,tmid] = t4util_coarsen(t,v,tmid,options)
     end
     % % Cleanup
     fprintf(1,['\n'])
+    
     [t,v,tmid] =  delete_ent (t,v,tmid);
     
     function [Success] = collapse_e (dei)
@@ -368,6 +369,17 @@ function bul =any_negative_volume(t,v,vi2,v1)
 end
 
 function [t,v,tmid] =  delete_ent (t,v,tmid)
+% Volumes = 0*double(t(:,1));
+%     for iS1 =1:size(t,1)
+%         c=t(iS1,:);
+%         if (~any(c<1))
+%         Volumes (iS1) =tetvol(v(c,:));
+%         end
+%     end
+% if (any(Volumes<0))
+% disp( 'Negative volume' )
+% end
+    
     nn =zeros(size(v,1),1);
     nv =0*v;
     k=1;
@@ -419,3 +431,7 @@ function [t,v,tmid] =  delete_ent (t,v,tmid)
     end
     tmid=ntmid(1:k-1);
 end
+
+% function vol = tetvol(X)
+%         vol = det([X(2,:)-X(1,:);X(3,:)-X(1,:);X(4,:)-X(1,:)])/6;
+%     end
