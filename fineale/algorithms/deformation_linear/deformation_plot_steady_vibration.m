@@ -11,6 +11,7 @@ function model_data=deformation_plot_steady_vibration(model_data)
 %      u_scale = deflection scale, default 1.0;
 %      frequencylist= default is 1:model_data.neigvs.
 %      save_movie= should we save images for the animation frames displayed? default false;
+%      save_frames= save the individual frames?  Default is false;
 %      movie_name= name for the frame images; default 'movie';
 %      draw_mesh= should the mesh be rendered?  Boolean.  Default false.
 %      camera  = camera, default is [] which means use the default orientation 
@@ -36,7 +37,7 @@ function model_data=deformation_plot_steady_vibration(model_data)
 %          where gv= graphic viewer, frequency= current frequency, axis_length=
 %          an appropriate length for the axes.  Default: display the
 %          frequency information with an annotation.
- %
+%
 % Output
 % model_data = structure on input updated with
 % model_data.postprocessing.gv=graphic viewer used to display the data
@@ -63,6 +64,12 @@ function model_data=deformation_plot_steady_vibration(model_data)
     if (isfield(model_data, 'postprocessing'))
         if (isfield(model_data.postprocessing, 'save_movie'))
             save_movie = model_data.postprocessing.save_movie;
+        end
+    end
+    save_frames  =false;
+    if (isfield(model_data, 'postprocessing'))
+        if (isfield(model_data.postprocessing, 'save_frames'))
+            save_frames = model_data.postprocessing.save_frames;
         end
     end
     delay=20;
@@ -189,7 +196,7 @@ function model_data=deformation_plot_steady_vibration(model_data)
                     draw(boundaryfes, gv, struct ('x',geom, 'u',phscale*model_data.u,...
                         'colorfield',thecolors, 'edgecolor','none','shrink',1.0));
                 else
-                draw(boundaryfes, gv, struct ('x',geom, 'u',phscale*model_data.u,...
+                    draw(boundaryfes, gv, struct ('x',geom, 'u',phscale*model_data.u,...
                         'facecolor',thecolors, 'edgecolor','none','shrink',1.0));
                 end
             end
@@ -198,8 +205,8 @@ function model_data=deformation_plot_steady_vibration(model_data)
             if (~isempty(add_decorations))
                 gv=add_decorations(gv,frequency,axis_length);
             else
-            draw_annotation(gv, [0.01,0.01,0.6,0.1], ...
-                ['Freq=' num2str(frequency) ' Hz'], ...
+                draw_annotation(gv, [0.01,0.01,0.6,0.1], ...
+                    ['Freq=' num2str(frequency) ' Hz'], ...
                     struct('color','w','backgroundcolor','w','fontsize',20));
                 draw_axes (gv,struct('length',axis_length));
             end
@@ -211,8 +218,10 @@ function model_data=deformation_plot_steady_vibration(model_data)
             pause(0.05);
             if save_movie % Should we save a movie?
                 gif_animation_add_frame(gv.figure,frame,[movie_name '-f' num2str(Jj) '.gif'],40);
-                %                 imn =frame_name('.',[movie_name '-f' num2str(Jj) '-'],frame,'png');
-                %                 saveas(gv.figure, imn,'png');
+                if (save_frames)
+                    imn =frame_name('.',[movie_name '-f' num2str(Jj) '-'],frame,'png');
+                    saveas(gv.figure, imn,'png');
+                end
             end
             frame=frame+1;
         end

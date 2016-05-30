@@ -145,11 +145,16 @@ function model_data = deformation_linear_steady_state_vibration(model_data)
 %           at a certain  frequency, the stiffness-proportional damping
 %           coefficient may be estimated as
 %                Rayleigh_stiffness = 2*loss_tangent/(2*pi*frequency);
+%           Default is 0.0.
 %      Rayleigh_mass= multiplier of the mass matrix to obtain
 %           the mass-proportional damping matrix. For a given loss factor
 %           at a certain  frequency, the mass-proportional damping
 %           coefficient may be estimated as
 %                Rayleigh_mass = 2*loss_tangent*(2*pi*frequency);
+%           Default is 0.0.
+%      hysteretic_damping= constant of proportionality for hysteretic
+%           damping: K*(1+i*hysteretic_damping).  For light damping one
+%           could assume hysteretic_damping=2*damping_ratio; default is 0.0
 %      renumber = true or false flag (default is true)
 %      renumbering_method = optionally choose the renumbering
 %           method  ('symrcm' or 'symamd')
@@ -172,6 +177,10 @@ end
 Rayleigh_mass =0;
 if ( isfield(model_data,'Rayleigh_mass'))
     Rayleigh_mass  =model_data.Rayleigh_mass;;
+end
+hysteretic_damping =0;
+if ( isfield(model_data,'hysteretic_damping'))
+    hysteretic_damping  =model_data.hysteretic_damping;;
 end
 observer =@(t,model_data) disp(['Time ' num2str(t)]);
 if ( isfield(model_data,'observer'))
@@ -300,10 +309,8 @@ for i=1:length(model_data.region)
     clear region Q prop mater Rm  femm
 end
 % At this point Rayleigh damping matrix might have been defined as
-% C=  Rayleigh_stiffness*K + Rayleigh_mass*M;%  Compute the damping matrix
-% For computational efficiency we use a slightly different formula  below.
-% The damping matrix  assembled as C includes only the damping ABC.
-% C =  sparse(model_data.u.nfreedofs,model_data.u.nfreedofs);
+% C=  Rayleigh_stiffness*K + Rayleigh_mass*M;
+% For computational efficiency we use a slightly different approach  below.
 
 % This is the frequency-independent load vector
 F0 = zeros(size(K,1),1);% Zero out the load
@@ -456,24 +463,22 @@ for k=1:length(frequencies)
     end
     
     % Solve  for the complex displacement amplitude.
-    % Note:  the final expression is equivalent to
-    %     U1 = (-omega^2*M + 1i*omega*C + K)\F1;
+    % Note: For Rayleigh damping the final expression is equivalent to
+    %     U1 = (-omega^2*M + 1i*omega*Cc + K)\F1;
     % where
-    %     C=  Rayleigh_stiffness*K + Rayleigh_mass*M;%  Compute the damping matrix
-    U1 = ((-omega^2+1i*omega*Rayleigh_mass)*M + 1i*omega*C + (1+1i*omega*Rayleigh_stiffness)*K)\F1;
-    %     [userview, systemview] = memory;      % << add this line
-    %     U1 = mldivide( ((-omega^2+1i*omega*Rayleigh_mass)*M + 1i*omega*C + (1+1i*omega*Rayleigh_stiffness)*K), F1 );
-    %     if (sum(isnan(U1))>0)%  This shouldn't happen, unfortunately it sometimes does as there seems to be a bug  in the Matlab engine
-    %         save('nanDataSet.mat', 'omega', 'Rayleigh_mass', 'M', 'C', 'Rayleigh_stiffness', ...
-    %             'K', 'F1', 'U1', 'userview', 'systemview');     % <<  add this line
-    %         error('Failure of the complex-linear-equations solver'  )
-    %     end
-    
-    %     The system is unraveled into purely real solution, and the components of the complex solution are then recombined.
+    %     Cc=  Rayleigh_stiffness*K + Rayleigh_mass*M + C
+    %     where C includes other damping effects, such as the ABC.
+    U1 = ((-omega^2+1i*omega*Rayleigh_mass)*M + 1i*omega*C + (1+1i*omega*Rayleigh_stiffness+1i*hysteretic_damping)*K)\F1;
+    %     The complex system may be unraveled into purely real solution,
+    %     and the components of the complex solution are then recombined.
 %     rU1 = [-omega^2*M+K, -omega*C-omega*Rayleigh_mass*M-omega*Rayleigh_stiffness*K;
 %         -omega*C-omega*Rayleigh_mass*M-omega*Rayleigh_stiffness*K, +omega^2*M-K]\[real(F1); -imag(F1)];
 %     U1=rU1(1:length(F1))+1i*rU1(length(F1)+1:end);
-    if (sum(isnan(U1))>0)%  This shouldn't happen, unfortunately it sometimes does as there seems to be a bug  in the Matlab engine
+    
+    
+    %  This shouldn't happen, unfortunately it sometimes does as there
+    %  seems to be a bug  in the Matlab engine 
+    if (sum(isnan(U1))>0)
         save('nanDataSet.mat');     % <<  add this line
         error('Failure of the complex-linear-equations solver'  )
     end
