@@ -22,7 +22,6 @@ classdef property_heat_diffusion < property_base
 %                  a function handle, that returns the conductivity 
 %                  as a function of temperature. 
 %                  For instance v=cp_function(T)
-%     source=source of heat: function handle or a constant
 %
 % See discussion of constructors in <a href="matlab:helpwin 'fineale/classes/Contents'">classes/Contents</a>.
         
