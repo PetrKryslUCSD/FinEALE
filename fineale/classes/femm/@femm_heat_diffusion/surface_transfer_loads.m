@@ -12,15 +12,7 @@ function F = surface_transfer_loads (self, assembler, geom, temp, amb)
 % Return the assembled system vector F.
     fes = self.fes;
     % Integration rule
-    integration_rule = self.integration_rule;
-    pc = integration_rule.param_coords;
-    w  =  integration_rule.weights ;
-    npts_per_fe = integration_rule.npts;
-    % Precompute basis f. values + basis f. gradients wrt parametric coor
-    for j=1:npts_per_fe
-        Ns{j} = bfun(fes,pc(j,:));
-        Nders{j} = bfundpar(fes,pc(j,:));
-    end
+    [npts Ns Nders w] = integration_data (self);
     % surface transfer coefficient
     h = self.surface_transfer;
     % Prepare some data: 
@@ -36,7 +28,7 @@ function F = surface_transfer_loads (self, assembler, geom, temp, amb)
             x=xs(conn,:);
             He =zeros(Hedim);;
             dofnums =reshape (temp,gather_dofnums(temp,conn));
-            for j=1:npts_per_fe
+            for j=1:npts
                 J = Jacobian_matrix(fes,Nders{j},x);
                 Jac = Jacobian_surface(fes,conn, Ns{j}, J, x);
                 He = He + ((h*Jac*w(j))*Ns{j})*Ns{j}';%'
