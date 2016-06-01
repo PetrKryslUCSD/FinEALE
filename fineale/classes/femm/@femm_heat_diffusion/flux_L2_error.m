@@ -23,7 +23,6 @@ function elerrs = flux_L2_error (self, geom, Temp, nodal_flux)
     [npts Ns Nders w pc] = integration_data (self);
     % Material
     mat = self.material;
-    matstates=self.matstates;
     % Note that the thermal conductivity matrix is in the 
     % local  material orientation coordinates.
     kappa_bar =  mat.property.thermal_conductivity;
@@ -58,7 +57,7 @@ function elerrs = flux_L2_error (self, geom, Temp, nodal_flux)
             Ndersp = Nders{j}/(Rm'*J);% gradient WRT the material coordinates
             context.xyz=Ns{j}'*x;
             context.gradtheta = T'* Ndersp;
-            [sig,ignore] = update(mat, matstates{i,j}, context);
+            [sig,ignore] = update(mat, [], context);
             errors(:,i)=errors(:,i)+(sig-(Ns{j}'*nodsig)').^2 * Jac * w(j);
         end
     end

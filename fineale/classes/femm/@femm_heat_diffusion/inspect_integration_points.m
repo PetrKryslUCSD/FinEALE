@@ -31,7 +31,6 @@ function idat = inspect_integration_points(self, ...
     [npts Ns Nders w pc] = integration_data (self);
     % Material
     mat = self.material;
-    matstates=self.matstates;
     % Note that the thermal conductivity matrix is in the 
     % local  material orientation coordinates.
     kappa_bar =  mat.property.thermal_conductivity;
@@ -66,7 +65,7 @@ function idat = inspect_integration_points(self, ...
             context.Rm  =Rm;% material orientation matrix
             % Now use the material update method to compute the requested
             % quantity ...
-            [out,ignore] = update(mat, matstates{i,j}, context);
+            [out,ignore] = update(mat, [], context);
             %  ... and call the callback to allow for its processing
             if ~isempty (inspector)
                 idat =feval(inspector,idat,out,context.xyz,[],pc(j,:));
