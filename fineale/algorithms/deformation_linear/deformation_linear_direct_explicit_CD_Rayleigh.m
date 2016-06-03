@@ -190,7 +190,7 @@ implicit_solve = false;
 if ( isfield(model_data,'implicit_solve'))
     implicit_solve  =model_data.implicit_solve;;
 end
-maxit =18;%  Number of iterations in the solution for accelerations
+maxit =3;%  Number of iterations in the solution for accelerations
 %     Accelerations are computed  with tolerance equal to
 %     acceleration_tolerance*( norm of initial guess of acceleration)
 acceleration_tolerance =1e-3;%
@@ -246,6 +246,7 @@ K=  sparse(model_data.u.nfreedofs,model_data.u.nfreedofs);
 M=  sparse(model_data.u.nfreedofs,model_data.u.nfreedofs);
 for i=1:length(model_data.region)
     region =model_data.region{i};
+    if (~isfield( region, 'femm'))
     if (isfield(region, 'property' ))
         if (strcmp( region.  property, 'orthotropic' ))
             prop = property_deformation_linear_ortho (...
@@ -276,6 +277,9 @@ for i=1:length(model_data.region)
     region.femm = femm_deformation_linear (struct ('material',mater,...
         'fes',region.fes,...
         'integration_rule',region.integration_rule,'Rm',Rm));
+    end
+    % Give the  FEMM a chance  to precompute  geometry-related quantities
+    region.femm = associate_geometry(region.femm,model_data.geom);
     K = K + stiffness(region.femm, sysmat_assembler_sparse, model_data.geom, model_data.u);
     M = M + lumped_mass(region.femm, sysmat_assembler_sparse, model_data.geom, model_data.u);
     model_data.region{i}=region;
@@ -295,7 +299,7 @@ if (isfield(model_data.boundary_conditions, 'traction' ))
             'fes',traction.fes,...
             'integration_rule',traction.integration_rule));
         % If the traction boundary condition is to be time-dependent, the
-        % values must be supplied by a function.   Find out…
+        % values must be supplied by a function.   Find out!
         traction.time_dependent =(isa(traction.traction,'function_handle'));
         model_data.boundary_conditions.traction{j}=traction;
     end
@@ -330,10 +334,10 @@ if isempty(dt)
 end
 model_data.dt=dt;
 
-b=is_diagonally_dominant((M+dt/2*C));
-if (~b)
-    warning ('Fixed iteration is  probably not going to work as M+dt/2*C is not diagonally dominant');
-end
+% b=is_diagonally_dominant((M+dt/2*C));
+% if (~b)
+%     warning ('Fixed iteration is  probably not going to work as M+dt/2*C is not diagonally dominant');
+% end
 
 % Let us begin:
 t=0;
@@ -342,6 +346,43 @@ U0 = gather_sysvec(model_data.u);
 V0= gather_sysvec(model_data.v);
 A0 =[];% The acceleration will be computed from the initial loads.
 F0 = 0*U0;% Zero out the load
+% Process the time-independent traction boundary condition
+if (isfield(model_data.boundary_conditions, 'traction' ))
+    for j=1:length(model_data.boundary_conditions.traction)
+        traction =model_data.boundary_conditions.traction{j};
+        if (~traction.time_dependent)
+            fi= force_intensity(struct('magn',traction.traction));
+            F0 = F0 + distrib_loads(traction.femm, sysvec_assembler, model_data.geom, model_data.u, fi, 2);
+        end
+    end
+    clear traction fi
+end
+%         % Process time-dependent essential boundary conditions:
+if ( isfield(model_data,'boundary_conditions')) && ...
+        (isfield(model_data.boundary_conditions, 'essential' ))
+    for j=1:length(model_data.boundary_conditions.essential)
+        essential =model_data.boundary_conditions.essential{j};
+        if (~essential.time_dependent)% this needs to be computed
+            % only for truly time-independent EBC. The field needs to be
+            % cleared of fixed values for each specification of the
+            % essential boundary conditions in order not to apply them
+            % twice.
+            fixed_value =essential.fixed_value;
+            for k=1:length(essential.component)
+                model_data.u = set_ebc(model_data.u, essential.fenids, ...
+                    essential.is_fixed, essential.component(k), fixed_value);
+            end
+            model_data.u = apply_ebc (model_data.u);
+            for i=1:length(model_data.region)
+                F0 = F0 + nz_ebc_loads(model_data.region{i}.femm, sysvec_assembler, model_data.geom, model_data.u);
+            end
+            model_data.u.fixed_values(:)=0;% Zero out the fixed values for the next load
+        end
+    end
+    clear essential
+end
+% This is the time-independent load vector
+F0indep=F0;
 %     First output is the initial condition
 if ~isempty(observer)% report the progress
     observer (t,model_data);
@@ -351,6 +392,7 @@ while t <tend
     t=t+dt;
     step = step  +1;
     F0 = 0*F0;% Zero out the load
+    F0 = F0 + F0indep;% Add on the time-independent load vector
     %         % Process time-dependent essential boundary conditions:
     if ( isfield(model_data,'boundary_conditions')) && ...
             (isfield(model_data.boundary_conditions, 'essential' ))
@@ -422,7 +464,8 @@ while t <tend
             end
         end
         if npA1A1 > acceleration_tolerance*nA1
-            error(['Fixed-point iteration did not converge, try reducing the time step']);
+            %             warning(['Fixed-point iteration did not converge, implicit solve used']);
+            A1 = (M +(dt/2)*C)\(F0-K*U1-C*(V0+(dt/2)*A0));
         end
     end
     % Update the velocity

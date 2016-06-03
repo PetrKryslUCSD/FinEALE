@@ -25,7 +25,7 @@
 
 %% Solution
 %
-function pub_TEST13H_vibration
+function test_TEST13H_vibration
     
     %%
     % Define the material properties.
