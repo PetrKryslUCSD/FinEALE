@@ -30,3 +30,15 @@
 %     - Model-dimension reduction to 2-D with axial symmetry.
 %     - Using the transient trapezoidal-rule implicit analysis solver.
 %
+% <a href="matlab:showdemo 'pub_13TNAFEMS_transient'">Suddenly applied uniform load on a thin square plate; 3-D model with explicit integration.</a> 
+%     Features:
+%     - Transient vibration benchmark.
+%     - Rayleigh damping.
+%     - Using the transient centered difference explicit analysis solver.
+%
+% <a href="matlab:showdemo 'pub_21TNAFEMS_transient'">Suddenly applied uniform load on a thick square plate; 3-D model with explicit integration.</a> 
+%     Features:
+%     - Transient vibration benchmark.
+%     - Rayleigh damping.
+%     - Using the transient centered difference explicit analysis solver.
+%

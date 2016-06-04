@@ -1,0 +1,379 @@
+
+<!DOCTYPE html
+  PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html><head>
+      <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+   <!--
+This HTML was auto-generated from MATLAB code.
+To make changes, update the MATLAB code and republish this document.
+      --><title>Transient dynamic analysis of simply-supported thick square plate</title><meta name="generator" content="MATLAB 9.0"><link rel="schema.DC" href="http://purl.org/dc/elements/1.1/"><meta name="DC.date" content="2016-06-03"><meta name="DC.source" content="pub_21TNAFEMS_transient.m"><style type="text/css">
+html,body,div,span,applet,object,iframe,h1,h2,h3,h4,h5,h6,p,blockquote,pre,a,abbr,acronym,address,big,cite,code,del,dfn,em,font,img,ins,kbd,q,s,samp,small,strike,strong,sub,sup,tt,var,b,u,i,center,dl,dt,dd,ol,ul,li,fieldset,form,label,legend,table,caption,tbody,tfoot,thead,tr,th,td{margin:0;padding:0;border:0;outline:0;font-size:100%;vertical-align:baseline;background:transparent}body{line-height:1}ol,ul{list-style:none}blockquote,q{quotes:none}blockquote:before,blockquote:after,q:before,q:after{content:'';content:none}:focus{outine:0}ins{text-decoration:none}del{text-decoration:line-through}table{border-collapse:collapse;border-spacing:0}
+
+html { min-height:100%; margin-bottom:1px; }
+html body { height:100%; margin:0px; font-family:Arial, Helvetica, sans-serif; font-size:10px; color:#000; line-height:140%; background:#fff none; overflow-y:scroll; }
+html body td { vertical-align:top; text-align:left; }
+
+h1 { padding:0px; margin:0px 0px 25px; font-family:Arial, Helvetica, sans-serif; font-size:1.5em; color:#d55000; line-height:100%; font-weight:normal; }
+h2 { padding:0px; margin:0px 0px 8px; font-family:Arial, Helvetica, sans-serif; font-size:1.2em; color:#000; font-weight:bold; line-height:140%; border-bottom:1px solid #d6d4d4; display:block; }
+h3 { padding:0px; margin:0px 0px 5px; font-family:Arial, Helvetica, sans-serif; font-size:1.1em; color:#000; font-weight:bold; line-height:140%; }
+
+a { color:#005fce; text-decoration:none; }
+a:hover { color:#005fce; text-decoration:underline; }
+a:visited { color:#004aa0; text-decoration:none; }
+
+p { padding:0px; margin:0px 0px 20px; }
+img { padding:0px; margin:0px 0px 20px; border:none; }
+p img, pre img, tt img, li img, h1 img, h2 img { margin-bottom:0px; } 
+
+ul { padding:0px; margin:0px 0px 20px 23px; list-style:square; }
+ul li { padding:0px; margin:0px 0px 7px 0px; }
+ul li ul { padding:5px 0px 0px; margin:0px 0px 7px 23px; }
+ul li ol li { list-style:decimal; }
+ol { padding:0px; margin:0px 0px 20px 0px; list-style:decimal; }
+ol li { padding:0px; margin:0px 0px 7px 23px; list-style-type:decimal; }
+ol li ol { padding:5px 0px 0px; margin:0px 0px 7px 0px; }
+ol li ol li { list-style-type:lower-alpha; }
+ol li ul { padding-top:7px; }
+ol li ul li { list-style:square; }
+
+.content { font-size:1.2em; line-height:140%; padding: 20px; }
+
+pre, code { font-size:12px; }
+tt { font-size: 1.2em; }
+pre { margin:0px 0px 20px; }
+pre.codeinput { padding:10px; border:1px solid #d3d3d3; background:#f7f7f7; }
+pre.codeoutput { padding:10px 11px; margin:0px 0px 20px; color:#4c4c4c; }
+pre.error { color:red; }
+
+@media print { pre.codeinput, pre.codeoutput { word-wrap:break-word; width:100%; } }
+
+span.keyword { color:#0000FF }
+span.comment { color:#228B22 }
+span.string { color:#A020F0 }
+span.untermstring { color:#B20000 }
+span.syscmd { color:#B28C00 }
+
+.footer { width:auto; padding:10px 0px; margin:25px 0px 0px; border-top:1px dotted #878787; font-size:0.8em; line-height:140%; font-style:italic; color:#878787; text-align:left; float:none; }
+.footer p { margin:0px; }
+.footer a { color:#878787; }
+.footer a:hover { color:#878787; text-decoration:underline; }
+.footer a:visited { color:#878787; }
+
+table th { padding:7px 5px; text-align:left; vertical-align:middle; border: 1px solid #d6d4d4; font-weight:bold; }
+table td { padding:7px 5px; text-align:left; vertical-align:top; border:1px solid #d6d4d4; }
+
+
+
+
+
+  </style></head><body><div class="content"><h1>Transient dynamic analysis of simply-supported thick square plate</h1><!--introduction--><!--/introduction--><h2>Contents</h2><div><ul><li><a href="#2">Description</a></li><li><a href="#6">Solution</a></li></ul></div><p>Link to the  <a href="matlab:edit('pub_21TNAFEMS_transient')">m-file</a>.</p><h2>Description<a name="2"></a></h2><p>Transient vibration problem is solved for a homogeneous simply-supported square plate. This is a test recommended by the National Agency for Finite Element Methods and Standards (U.K.): Test 21T from NAFEMS &#8220;Selected Benchmarks for Forced Vibration,&#8221; R0016, March 1993.</p><p>The plate is loaded by suddenly-applied uniformly distributed traction on the top surface.</p><p>The reference solution for the displacement of the center of the plate is 4.524mm at the time instant	t=0.0108sec. However, I suspect that the reference solution was produced without taking into account shear deformations.  Solid elements tends to produce larger deflection, on the order of 6% more (4.795mm); both the static analysis and the explicit analysis are affected in the same way.</p><p>The plate is discretized with solid elements. The solver is centered-difference explicit with iterative or implicit solution for Rayleigh damping.</p><h2>Solution<a name="6"></a></h2><pre class="codeinput"><span class="keyword">function</span> pub_21TNAFEMS_transient
+</pre><p>Define the material properties.</p><pre class="codeinput">pu=physical_units_struct;
+<span class="comment">% Parameters:</span>
+E = 200e3*pu.MEGA*pu.PA;
+nu = 0.3;
+rho= 8000*pu.KG/pu.M^3;
+</pre><p>Dimensions of the plate: this is for a one quarter of the entire plate.</p><pre class="codeinput">L =5*pu.M;<span class="comment">% half of the span of the plate</span>
+t =1.0*pu.M;<span class="comment">% thickness of the plate</span>
+</pre><p>Traction load.</p><pre class="codeinput">Trac =1*pu.MEGA*pu.NT/pu.M^2;
+</pre><p>Specification of damping: it is based on the value of the damping ratio at one particular frequency.</p><pre class="codeinput">zeta= 0.02;<span class="comment">% [2% of critical damping in the dominant first mode with analytical Angular frequency value  288.379 (sec&#8211;1)].</span>
+omega= 288.379;<span class="comment">% Damping ratio known at this frequency</span>
+Rayleigh_stiffness = zeta/omega;
+Rayleigh_mass = zeta*omega;
+</pre><p>The chosen mesh parameters. For the number of layers through the thickness of the plate less than 2, the deflection is much too large.</p><pre class="codeinput">nL= 8;<span class="comment">% number of elements span wise</span>
+nt = 2;<span class="comment">% number of elements through the thickness</span>
+</pre><p>Geometrical tolerance for searching</p><pre class="codeinput">tol=t/nt/1000;
+</pre><p>The end-time is 0.45 seconds in the benchmark, but if were interested only in the peak value of displacement after the first swing, 0.25 seconds is enough.</p><pre class="codeinput">tend= 0.013*pu.SEC;
+
+graphics=false;
+igraphics=(1:10:4000);
+plots = true;
+</pre><p>The mesh is generated</p><pre class="codeinput">[fens,fes] = H8_block(L,L,t,nL,nL,nt);;
+</pre><p>We are ready to bundle up the model data so they can be passed to the solver.</p><pre class="codeinput">clear <span class="string">model_data</span>
+model_data.fens =fens;<span class="comment">% the finite element node set</span>
+</pre><p>Note that we are specifying the finite element model machine directly. The selected element is high-performance stabilized mean-strain hexahedron.</p><pre class="codeinput">clear <span class="string">region</span>
+prop = property_deformation_linear_iso (struct(<span class="string">'E'</span>,E,<span class="string">'nu'</span>,nu,<span class="string">'rho'</span>,rho));
+region.femm=  femm_deformation_linear_h8msgso(<span class="keyword">...</span>
+    struct (<span class="string">'material'</span>,material_deformation_linear_triax(struct(<span class="string">'property'</span>,prop)),<span class="keyword">...</span>
+    <span class="string">'fes'</span>,fes, <span class="keyword">...</span>
+    <span class="string">'integration_rule'</span>,gauss_rule(struct(<span class="string">'dim'</span>,3,<span class="string">'order'</span>,2))));
+model_data.region{1} =region;
+</pre><p>The essential boundary conditions implement the two symmetry planes and the zero displacement transversely to the plate at the faces on the circumference to implement the simple support.</p><pre class="codeinput">clear <span class="string">essential</span>
+essential.component= [1];
+essential.fixed_value= 0;
+essential.node_list = fenode_select(fens,struct(<span class="string">'box'</span>,[0 0 0 L 0 t],<span class="string">'inflate'</span>,tol));
+model_data.boundary_conditions.essential{1} = essential;
+clear <span class="string">essential</span>
+essential.component= [2];
+essential.fixed_value= 0;
+essential.node_list = fenode_select(fens,struct(<span class="string">'box'</span>,[0 L 0 0 0 t],<span class="string">'inflate'</span>,tol));
+model_data.boundary_conditions.essential{2} = essential;
+clear <span class="string">essential</span>
+essential.component= [3];
+essential.fixed_value= 0;
+essential.node_list = [fenode_select(fens,struct(<span class="string">'box'</span>,[L L 0 L 0 t],<span class="string">'inflate'</span>,tol)),<span class="keyword">...</span>
+    fenode_select(fens,struct(<span class="string">'box'</span>,[0 L L L 0 t],<span class="string">'inflate'</span>,tol))];
+model_data.boundary_conditions.essential{3} = essential;
+</pre><p>Define the traction load of  100 N/m^2  over the entire top surface.  This traction load has harmonic dependence but its distribution does not change as a function of frequency.</p><pre class="codeinput">clear <span class="string">traction</span>
+traction.traction = [0;0;Trac];
+bfes= mesh_boundary(fes,[]);
+topl =fe_select (fens,bfes,struct(<span class="string">'box'</span>, [-Inf,Inf,-Inf,Inf,t,t],<span class="keyword">...</span>
+    <span class="string">'inflate'</span>,tol));
+traction.fes= subset(bfes,topl);
+traction.integration_rule =gauss_rule(struct(<span class="string">'dim'</span>,2, <span class="string">'order'</span>,2));
+model_data.boundary_conditions.traction{1} = traction;
+</pre><p>This node is at the bottom of the plate, at the center.</p><pre class="codeinput">midp=fenode_select (fens,struct(<span class="string">'box'</span>,[0 0 0 0 0 0],<span class="string">'inflate'</span>,tol));
+</pre><p>First we compute the static deflection.  The dynamic deflection should be roughly a double of the static deflection.</p><pre class="codeinput">model_data = deformation_linear_statics(model_data);
+</pre><p>Extract the deflection of the midpoint from the field.</p><pre class="codeinput">Um=model_data.u.reshape(gather_values(model_data.u, midp));
+</pre><p>The midpoint deflection under static loading is according to the reference 2.333 mm.  We obtained</p><pre class="codeinput">Um(3)/pu.MM
+</pre><pre class="codeoutput">
+ans =
+
+    2.4589
+
+</pre><p>or in percent</p><pre class="codeinput">(Um(3))/(2.333*pu.MM)*100
+</pre><pre class="codeoutput">
+ans =
+
+  105.3974
+
+</pre><p>Now we proceed with a dynamic solution.  First we define the initial condition.</p><pre class="codeinput">x=fens.xyz;
+clear <span class="string">initial_condition</span>
+initial_condition.u_fixed_value= @(x)0*x;
+initial_condition.v_fixed_value= @(x)0*x;
+model_data.initial_condition = initial_condition;
+</pre><p>These are the parameters  supplied to the solver.</p><pre class="codeinput">model_data.Rayleigh_stiffness =Rayleigh_stiffness;
+model_data.Rayleigh_mass =Rayleigh_mass;
+model_data.tend = tend;
+model_data.step_reduction = 0.99;
+model_data.observer  =@output;
+
+
+<span class="keyword">if</span> plots
+    pf = figure(gcf);
+<span class="keyword">end</span>
+</pre><p>The centered difference analysis solver is now ready to be invoked. The midpoint deflections are going to be collected in the array <tt>midpu</tt>.</p><pre class="codeinput">midpu  = [];
+
+model_data = deformation_linear_direct_explicit_CD_Rayleigh(model_data);
+
+<span class="comment">% This is the observer function: it is called for all computed time steps.</span>
+<span class="comment">% The solution is going to be collected only for some of those time steps.</span>
+<span class="keyword">function</span> output(t, model_data)
+    midpu= [midpu    model_data.u.reshape(gather_values(model_data.u, midp))];
+    <span class="keyword">if</span> (~isempty(igraphics) &amp;&amp; (igraphics(1)==round(t/model_data.dt)))
+        figure (pf);
+        plot(t,midpu(3,end),<span class="string">'b+'</span>,<span class="string">'Markersize'</span>,4); hold <span class="string">on</span>
+        pause(0.01)
+        igraphics= igraphics(2:end);
+    <span class="keyword">end</span>
+    <span class="comment">%         end</span>
+<span class="keyword">end</span>
+</pre><img vspace="5" hspace="5" src="pub_21TNAFEMS_transient_01.png" alt=""> <pre class="codeinput"><span class="keyword">end</span>
+</pre><p class="footer"><br><a href="http://www.mathworks.com/products/matlab/">Published with MATLAB&reg; R2016a</a><br></p></div><!--
+##### SOURCE BEGIN #####
+%% Transient dynamic analysis of simply-supported thick square plate
+%
+
+%%
+% Link to the  <matlab:edit('pub_21TNAFEMS_transient') m-file>.
+%
+
+%% Description
+%
+% Transient vibration problem is solved for a homogeneous simply-supported
+% square plate. This is a test recommended by the National Agency for
+% Finite Element Methods and Standards (U.K.): Test 21T from NAFEMS
+% “Selected Benchmarks for Forced Vibration,” R0016, March 1993.
+
+
+%%
+% The plate is loaded by suddenly-applied uniformly distributed traction on the top surface.
+
+%%
+%
+% The reference solution for the displacement of the center of the plate is
+% 4.524mm at the time instant	t=0.0108sec. However, I suspect that the
+% reference solution was produced without taking into account shear
+% deformations.  Solid elements tends to produce larger deflection, on the
+% order of 6% more (4.795mm); both the static analysis and the explicit
+% analysis are affected in the same way.
+
+%%
+% The plate is discretized with solid elements. The solver is
+% centered-difference explicit with iterative or implicit solution for
+% Rayleigh damping.
+
+%% Solution
+%
+function pub_21TNAFEMS_transient
+
+%%
+% Define the material properties.
+pu=physical_units_struct;
+% Parameters:
+E = 200e3*pu.MEGA*pu.PA;
+nu = 0.3;
+rho= 8000*pu.KG/pu.M^3;
+
+%%
+% Dimensions of the plate: this is for a one quarter of the entire plate.
+L =5*pu.M;% half of the span of the plate
+t =1.0*pu.M;% thickness of the plate
+
+%% 
+% Traction load.
+Trac =1*pu.MEGA*pu.NT/pu.M^2;
+
+%% 
+% Specification of damping: it is based on the value of the damping ratio
+% at one particular frequency.
+zeta= 0.02;% [2% of critical damping in the dominant first mode with analytical Angular frequency value  288.379 (sec–1)].
+omega= 288.379;% Damping ratio known at this frequency
+Rayleigh_stiffness = zeta/omega;
+Rayleigh_mass = zeta*omega;
+
+
+%%
+% The chosen mesh parameters. For the number of layers through the
+% thickness of the plate less than 2, the deflection is much too large.
+nL= 8;% number of elements span wise
+nt = 2;% number of elements through the thickness
+
+
+%%
+% Geometrical tolerance for searching
+tol=t/nt/1000;
+
+%%
+% The end-time is 0.45 seconds in the benchmark, but if were interested
+% only in the peak value of displacement after the first swing, 0.25
+% seconds is enough.
+tend= 0.013*pu.SEC;
+
+graphics=false;
+igraphics=(1:10:4000);
+plots = true;
+
+%%
+% The mesh is generated
+[fens,fes] = H8_block(L,L,t,nL,nL,nt);;
+
+
+%%
+% We are ready to bundle up the model data so they can be passed to the solver.
+clear model_data
+model_data.fens =fens;% the finite element node set
+
+%%
+% Note that we are specifying the finite element model machine directly.
+% The selected element is high-performance stabilized mean-strain
+% hexahedron.
+clear region
+prop = property_deformation_linear_iso (struct('E',E,'nu',nu,'rho',rho));
+region.femm=  femm_deformation_linear_h8msgso(...
+    struct ('material',material_deformation_linear_triax(struct('property',prop)),...
+    'fes',fes, ...
+    'integration_rule',gauss_rule(struct('dim',3,'order',2))));
+model_data.region{1} =region;
+
+%% 
+% The essential boundary conditions implement the two symmetry planes and
+% the zero displacement transversely to the plate at the faces on the
+% circumference to implement the simple support.
+clear essential
+essential.component= [1];
+essential.fixed_value= 0;
+essential.node_list = fenode_select(fens,struct('box',[0 0 0 L 0 t],'inflate',tol));
+model_data.boundary_conditions.essential{1} = essential;
+clear essential
+essential.component= [2];
+essential.fixed_value= 0;
+essential.node_list = fenode_select(fens,struct('box',[0 L 0 0 0 t],'inflate',tol));
+model_data.boundary_conditions.essential{2} = essential;
+clear essential
+essential.component= [3];
+essential.fixed_value= 0;
+essential.node_list = [fenode_select(fens,struct('box',[L L 0 L 0 t],'inflate',tol)),...
+    fenode_select(fens,struct('box',[0 L L L 0 t],'inflate',tol))];
+model_data.boundary_conditions.essential{3} = essential;
+
+%%
+% Define the traction load of  100 N/m^2  over the entire top surface.  This traction load has harmonic
+% dependence but its distribution does not change as a function of
+% frequency.
+clear traction
+traction.traction = [0;0;Trac];
+bfes= mesh_boundary(fes,[]);
+topl =fe_select (fens,bfes,struct('box', [-Inf,Inf,-Inf,Inf,t,t],...
+    'inflate',tol));
+traction.fes= subset(bfes,topl);
+traction.integration_rule =gauss_rule(struct('dim',2, 'order',2));
+model_data.boundary_conditions.traction{1} = traction;
+
+
+%% 
+% This node is at the bottom of the plate, at the center.
+midp=fenode_select (fens,struct('box',[0 0 0 0 0 0],'inflate',tol));
+
+%% 
+% First we compute the static deflection.  The dynamic deflection should be
+% roughly a double of the static deflection.
+model_data = deformation_linear_statics(model_data);
+
+%% 
+% Extract the deflection of the midpoint from the field.
+Um=model_data.u.reshape(gather_values(model_data.u, midp));
+
+%%
+% The midpoint deflection under static loading is according to the
+% reference 2.333 mm.  We obtained
+Um(3)/pu.MM
+
+%%
+% or in percent
+(Um(3))/(2.333*pu.MM)*100
+
+%%
+% Now we proceed with a dynamic solution.  First we define the initial
+% condition.
+x=fens.xyz;
+clear initial_condition
+initial_condition.u_fixed_value= @(x)0*x;
+initial_condition.v_fixed_value= @(x)0*x;
+model_data.initial_condition = initial_condition;
+
+%% 
+% These are the parameters  supplied to the solver.
+model_data.Rayleigh_stiffness =Rayleigh_stiffness;
+model_data.Rayleigh_mass =Rayleigh_mass;
+model_data.tend = tend;
+model_data.step_reduction = 0.99;
+model_data.observer  =@output;
+
+
+if plots
+    pf = figure(gcf);
+end
+
+
+%%
+% The centered difference analysis solver is now ready to be invoked. The
+% midpoint deflections are going to be collected in the array |midpu|.
+midpu  = [];
+
+model_data = deformation_linear_direct_explicit_CD_Rayleigh(model_data);
+
+% This is the observer function: it is called for all computed time steps.
+% The solution is going to be collected only for some of those time steps.
+function output(t, model_data)
+    midpu= [midpu    model_data.u.reshape(gather_values(model_data.u, midp))];
+    if (~isempty(igraphics) && (igraphics(1)==round(t/model_data.dt)))
+        figure (pf);
+        plot(t,midpu(3,end),'b+','Markersize',4); hold on
+        pause(0.01)
+        igraphics= igraphics(2:end);
+    end
+    %         end
+end
+end
+##### SOURCE END #####
+--></body></html>
