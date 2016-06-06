@@ -2,10 +2,16 @@ function [midstep_D,midstep_W]=compute_midstep_rate_of_def (rel_F, dt)
 % Compute the mid-step rate of deformation sensor.
 %
 % function [midstep_D,midstep_W]=compute_midstep_rate_of_def (rel_F, dt)
-s= (eye(3)+ rel_F)/2;
-q= rel_F-eye(3);
-r=s\q;
+%
+% rel_F= relative deformation gradient  (d x_n+1/d x_n)
+%
+% rel_F= relative deformation gradient,  (d x_n+1/d x_n)
+% dt= time step
 
-midstep_D = 0.5/dt * (r + r');
-midstep_W = 0.5/dt * (r - r');
+rel_F_mid= (eye(3)+ rel_F)/2;
+du_dxn= rel_F-eye(3);
+h=du_dxn/rel_F_mid;% Relative incremental displacement gradient
+
+midstep_D = 0.5/dt * (h + h');
+midstep_W = 0.5/dt * (h - h');
 end
