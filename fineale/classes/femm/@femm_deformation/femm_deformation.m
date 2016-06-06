@@ -15,6 +15,9 @@ classdef femm_deformation < femm_base
         hvgradmat=[];
     end
     
+    properties (Access = protected)
+        e=kinem_var_type_enum(); % Enumeration of kinematic quantities.
+    end
     
     methods % constructor
         
