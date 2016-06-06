@@ -220,6 +220,9 @@ for i=1:length(model_data.region)
     if (~isfield(region, 'femm' ))
         error('Must supply the finite element machine');
     end
+    % Give the  FEMM a chance  to precompute  geometry-related quantities
+    region.femm = associate_geometry(region.femm,model_data.geom);
+    region.femm = update(region.femm,  model_data.geom, model_data.u, model_data.u);
     K = K + stiffness(region.femm, sysmat_assembler_sparse, model_data.geom, model_data.u, model_data.u);
     M = M + lumped_mass(region.femm, sysmat_assembler_sparse, model_data.geom, model_data.u);
     model_data.region{i}=region;
@@ -253,7 +256,7 @@ if (isfield(model_data, 'boundary_conditions' ))&&(isfield(model_data.boundary_c
             'fes',traction.fes,...
             'integration_rule',traction.integration_rule));
         % If the traction boundary condition is to be time-dependent, the
-        % values must be supplied by a function.   Find out…
+        % values must be supplied by a function.   Find out!
         traction.time_dependent =(isa(traction.traction,'function_handle'));
         model_data.boundary_conditions.traction{j}=traction;
     end
@@ -276,6 +279,43 @@ U0 = gather_sysvec(model_data.u);
 V0= gather_sysvec(model_data.v);
 A0 =[];% The acceleration will be computed from the initial loads.
 F0 = 0*U0;% Zero out the load
+% Process the time-independent traction boundary condition
+if (isfield(model_data.boundary_conditions, 'traction' ))
+    for j=1:length(model_data.boundary_conditions.traction)
+        traction =model_data.boundary_conditions.traction{j};
+        if (~traction.time_dependent)
+            fi= force_intensity(struct('magn',traction.traction));
+            F0 = F0 + distrib_loads(traction.femm, sysvec_assembler, model_data.geom, model_data.u, fi, 2);
+        end
+    end
+    clear traction fi
+end
+%         % Process time-dependent essential boundary conditions:
+if ( isfield(model_data,'boundary_conditions')) && ...
+        (isfield(model_data.boundary_conditions, 'essential' ))
+    for j=1:length(model_data.boundary_conditions.essential)
+        essential =model_data.boundary_conditions.essential{j};
+        if (~essential.time_dependent)% this needs to be computed
+            % only for truly time-independent EBC. The field needs to be
+            % cleared of fixed values for each specification of the
+            % essential boundary conditions in order not to apply them
+            % twice.
+            fixed_value =essential.fixed_value;
+            for k=1:length(essential.component)
+                model_data.u = set_ebc(model_data.u, essential.fenids, ...
+                    essential.is_fixed, essential.component(k), fixed_value);
+            end
+            model_data.u = apply_ebc (model_data.u);
+            for i=1:length(model_data.region)
+                F0 = F0 + nz_ebc_loads(model_data.region{i}.femm, sysvec_assembler, model_data.geom, model_data.u);
+            end
+            model_data.u.fixed_values(:)=0;% Zero out the fixed values for the next load
+        end
+    end
+    clear essential
+end
+% This is the time-independent load vector
+F0indep=F0;
 %     First output is the initial condition
 if ~isempty(observer)% report the progress
     observer (t,model_data);
@@ -284,6 +324,7 @@ step =0;
 while t <tend
     step = step  +1;
     F0 = 0*F0;% Zero out the load
+    F0 = F0 + F0indep;% Add on the time-independent load vector
     %         % Process time-dependent essential boundary conditions:
     if ( isfield(model_data,'boundary_conditions')) && ...
             (isfield(model_data.boundary_conditions, 'essential' ))
