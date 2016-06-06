@@ -1,5 +1,5 @@
 function idat = inspect_integration_points(self, ...
-        geom, u, dT, fe_list, context,...
+        geom, un1, un, dt, dT, fe_list, context,...
         inspector, idat)
 % Inspect the integration point quantities.
 %
@@ -9,7 +9,10 @@ function idat = inspect_integration_points(self, ...
 %
 % Input arguments
 %    geom - reference geometry field
-%    u - displacement field
+%     un1      - displacement field at the end of time step t_n+1
+%     un       - displacement field at the end of time step t_n
+%     dt       - time step from  t_n to t_n+1; needed only by some
+%                materials
 %    dT - temperature difference field
 %    fe_list - indexes of the finite elements that are to be inspected:
 %          The fes to be included are: fes(fe_list).
@@ -57,8 +60,9 @@ function idat = inspect_integration_points(self, ...
     conns = fes.conn; % connectivity
     labels = fes.label; % finite element labels
     Xs =geom.values;
-    Us =u.values;
-    context.F= [];
+    Uns = un.values; % displacement in step n
+    Un1s = un1.values; % displacement in step n+1
+    context.Fn1 = []; context.Fn = []; context.dt=dt;
     if isempty(dT)
         dTs=zeros(geom.nfens,1);
     else
@@ -70,12 +74,15 @@ function idat = inspect_integration_points(self, ...
         conn = conns(i,:); % connectivity
         conn =conns(i,:);
         X=Xs(conn,:);
-        U=gather_values(u,conn);
+        Un=Uns(conn,:);
+        Un1=Un1s(conn,:);
+        xn = X + Un; % previous known coordinates
+        xn1 = X + Un1; % current coordinates
         dT =dTs(conn,:);
         % Loop over all integration points
         for j=1:npts
             c =Ns{j}'*X;% physical location
-            u_c = transpose(Ns{j})*Us(conn,:);
+            u_c = transpose(Ns{j})*Un1s(conn,:);% Current displacement of quadrature point
             J = X' * Nders{j};
             if (~Rm_constant)% do I need to evaluate the local material orientation?
                 if (~isempty(labels )),  Rm =Rmh(c,J,labels(i));
@@ -87,12 +94,14 @@ function idat = inspect_integration_points(self, ...
             end
             gradNX = Nders{j}/J;% derivatives wrt global coor
             Jac = Jacobian_volume(fes,conn, Ns{j}, J, X);
-            F1 = (X+U)'*gradNX;% Current deformation gradient
+            Fn1 = xn1'*gradNX;% Current deformation gradient
+            context.Fn1=Rm'*Fn1*Rm;%  deformation gradient  in material coordinates
+            Fn = xn'*gradNX;% Current deformation gradient
+            context.Fn=Rm'*Fn*Rm;%  deformation gradient  in material coordinates
             context.dT = transpose(Ns{j})*dT;
             context.xyz =c;
-            context.F=Rm'*F1*Rm;%  deformation gradient  in material coordinates
             context.ms=self.matstates{i,j};
-            [out,ignore] = update(mat, context.ms, context);
+            [out,~] = update(mat, context.ms, context);
             switch context.output
                 case 'Cauchy'
                     if (~outputRm_constant)

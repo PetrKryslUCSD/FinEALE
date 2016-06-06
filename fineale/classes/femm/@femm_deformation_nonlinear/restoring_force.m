@@ -1,16 +1,24 @@
-function [F,self] = restoring_force(self, assembler, geom, u1, u)
+function [F,self] = restoring_force(self, assembler, geom, un1, un, dt)
 % Compute the restoring force vector.
 %
 %  Call as
 %     geom     - geometry field
-%     u1       - displacement field at the end of time step t_n+1
-%     u        - displacement field at the end of time step t_n
+%     un1      - displacement field at the end of time step t_n+1
+%     un       - displacement field at the end of time step t_n
+%     dt       - time step from  t_n to t_n+1; needed only by some
+%                materials
 %
 % Note: This method *UPDATES* the state of the FEMM object.  In
 %       particular, the material state gets updated.  If this gets
 %       called for converged u1, the FEMM must be assigned to itself
 %       on return; otherwise the second return value must be ignored!
 %
+if (~exist('dt','var'))
+    % If the time step is needed, this will cause trouble.  Which indicates
+    % it should have been supplied. 
+    dt=[];
+end
+
 F=[]; % This is the global vector of restoring forces
 % Integration rule
 [npts Ns gradNs w] = integration_data (self);;
@@ -25,21 +33,22 @@ end
 conns = self.fes.conn; % connectivity
 labels = self.fes.label; % connectivity
 Xs = geom.values; % reference coordinates
-% Us = u.values; % displacement in step n
-U1s = u1.values; % displacement in step n+1
-context.F = [];
+Uns = un.values; % displacement in step n
+Un1s = un1.values; % displacement in step n+1
+context.Fn1 = []; context.Fn = []; context.dt=dt;
 context.output='Cauchy';
+context.get_kinem_var=@get_kinem_var;
 % Prepare assembler
-Kedim =u.dim*self.fes.nfens;
-start_assembly(assembler, u.nfreedofs);
+Kedim =un1.dim*self.fes.nfens;
+start_assembly(assembler, un1.nfreedofs);
 for i=1:size(conns,1)
     conn =conns(i,:); % connectivity
-    dofnums =reshape(u1,gather_dofnums(u1,conn));
+    dofnums =reshape(un1,gather_dofnums(un1,conn));
     X=Xs(conn,:);
-%     U=Us(conn,:);
-    U1=U1s(conn,:);
-    %     x = X + U; % previous known coordinates
-    x1 = X + U1; % current coordinates
+    Un=Uns(conn,:);
+    Un1=Un1s(conn,:);
+    xn = X + Un; % previous known coordinates
+    xn1 = X + Un1; % current coordinates
     context.dT = 0;
     Fe=zeros(Kedim,1);
     for j=1:npts
@@ -52,14 +61,25 @@ for i=1:size(conns,1)
         gradNX = gradNs{j}/J;% derivatives wrt global coor
         Jac = Jacobian_volume(self.fes, conn, Ns{j}, J, X);
         if (Jac<=0),error('Non-positive Jacobian');end
-        F1 = X'*gradNX + U1'*gradNX;% Current deformation gradient
-        context.F=Rm'*F1*Rm;%  deformation gradient  in material coordinates
+        Fn1 = xn1'*gradNX;% Current deformation gradient
+        context.Fn1=Rm'*Fn1*Rm;%  deformation gradient  in material coordinates
+        Fn = xn'*gradNX;% Current deformation gradient
+        context.Fn=Rm'*Fn*Rm;%  deformation gradient  in material coordinates
         [cauchy,self.matstates{i,j}] = update(self.material, self.matstates{i,j}, context);
         gcauchy =self.material.stress_vector_rotation(Rm')*cauchy; % material to global
-        B = self.hBlmat(self,Ns{j},gradNX/F1,c,[]);% strain-displacement
-        Fe = Fe - B'* (gcauchy * (Jac * w(j) * det(F1))); % note the sign
+        B = self.hBlmat(self,Ns{j},gradNX/Fn1,c,[]);% strain-displacement
+        Fe = Fe - B'* (gcauchy * (Jac * w(j) * det(Fn1))); % note the sign
     end
     assemble(assembler, Fe, dofnums);
 end
 F = make_vector (assembler);
+return
+% 
+function T=get_kinem_var(type)
+    switch (type)
+        otherwise
+            T=[];
+    end
+end
+
 end

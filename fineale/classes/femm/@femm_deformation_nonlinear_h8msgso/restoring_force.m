@@ -1,10 +1,12 @@
-function [F,self] = restoring_force(self, assembler, geom, u1, u)
+function [F,self] = restoring_force(self, assembler, geom, un1, un, dt)
 % Compute the restoring force vector.
 %
 %  Call as
 %     geom     - geometry field
-%     u1       - displacement field at the end of time step t_n+1
-%     u        - displacement field at the end of time step t_n
+%     un1      - displacement field at the end of time step t_n+1
+%     un       - displacement field at the end of time step t_n
+%     dt       - time step from  t_n to t_n+1; needed only by some
+%                materials
 %
 % Note: This method *UPDATES* the state of the FEMM object.  In
 %       particular, the material state gets updated.  If this gets
@@ -27,26 +29,25 @@ end
 conns = self.fes.conn; % connectivity
 labels = self.fes.label; % connectivity
 Xs = geom.values; % reference coordinates
-% Us = u.values; % displacement in step n
-U1s = u1.values; % displacement in step n+1
+Uns = un.values; % displacement in step n
+Un1s = un1.values; % displacement in step n+1
 context.dT = 0;
-context.F = [];
 context.output='Cauchy';
     % Prepare assembler
-Kedim =u.dim*self.fes.nfens;
-start_assembly(assembler, u.nfreedofs);
+Kedim =un1.dim*self.fes.nfens;
+start_assembly(assembler, un1.nfreedofs);
 for i=1:size(conns,1)
     conn =conns(i,:); % connectivity
-    dofnums =reshape(u1,gather_dofnums(u1,conn));
+    dofnums =reshape(un1,gather_dofnums(un1,conn));
     X=Xs(conn,:);
-    %     U=Us(conn,:);
-    U1=U1s(conn,:);
-    %     x = X + U; % previous known coordinates
-    x1 = X + U1; % current coordinates
+    Un=Uns(conn,:);
+    Un1=Un1s(conn,:);
+    xn = X + Un; % previous known coordinates
+    xn1 = X + Un1; % current coordinates
     context.dT = 0;
     Fe=zeros(Kedim,1);
     % First we calculate  the mean basis function gradient matrix and the volume of the element
-    gradN_mean =zeros(self.fes.nfens,u.dim); V=0;
+    gradN_mean =zeros(self.fes.nfens,un1.dim); V=0;
     for j=1:npts % loop over all quadrature points
         J = X' * gradNparams{j};% Jacobian matrix wrt reference coordinates
         gradN{j} = gradNparams{j}/J;% derivatives wrt reference coor
@@ -63,23 +64,25 @@ for i=1:size(conns,1)
         else,                    Rm =Rmh(c,[],[]);                end
     end
     % Now we calculate the mean deformation gradient dx/dX   
-    F1bar =x1'*gradN_mean;% wrt global material coordinates
-    context.F =Rm'*F1bar*Rm;% Deformation gradient wrt  material orientation 
+    Fn1bar = xn1'*gradN_mean;% Current deformation gradient
+    context.Fn1=Rm'*Fn1bar*Rm;%  deformation gradient  in material coordinates
+    Fnbar = xn'*gradN_mean;% Current deformation gradient
+    context.Fn=Rm'*Fnbar*Rm;%  deformation gradient  in material coordinates
     % Update the stress for the real material
     [cauchy,self.matstates{i}] = update(self.material, self.matstates{i}, context);
     % Update the stress for the stabilization material
     [stabcauchy,~] = update(self.stabilization_material, [], context);
-    Bbar = self.hBlmat(self,[],gradN_mean/F1bar,[],[]);% strain-displacement d/dx
+    Bbar = self.hBlmat(self,[],gradN_mean/Fn1bar,[],[]);% strain-displacement d/dx
     gcauchy =self.material.stress_vector_rotation(Rm')*(cauchy-self.phis(i)*stabcauchy); % to global
-    Fe =  - Bbar'* (gcauchy * (V* det(F1bar))) ; % note the sign
+    Fe =  - Bbar'* (gcauchy * (V* det(Fn1bar))) ; % note the sign
     %     Now we update the stress for the stabilization material for the second time; this time for the full quadrature  rule
     for j=1:npts
-        F1 =x1'*gradN{j};
-        context.F = Rm'*F1*Rm;% Current deformation gradient wrt material orientation
+        Fn1 =xn1'*gradN{j};
+        context.Fn1 = Rm'*Fn1*Rm;% Current deformation gradient wrt material orientation
         [stabcauchy,~] = update(self.stabilization_material, [], context);
-        B = self.hBlmat(self,[],gradN{j}/F1,[],[]);% strain-displacement
+        B = self.hBlmat(self,[],gradN{j}/Fn1,[],[]);% strain-displacement
         gcauchy =self.material.stress_vector_rotation(Rm')*(self.phis(i)*stabcauchy); % to global
-        Fe = Fe - B'* (gcauchy * (Jac{j} * w(j)* det(F1))) ; % note the sign
+        Fe = Fe - B'* (gcauchy * (Jac{j} * w(j)* det(Fn1))) ; % note the sign
     end
     assemble(assembler, Fe, dofnums);
 end

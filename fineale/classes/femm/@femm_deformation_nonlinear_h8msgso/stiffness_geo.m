@@ -1,4 +1,4 @@
-function K = stiffness_geo (self, assembler, geom, u1,u)
+function K = stiffness_geo (self, assembler, geom, un1, un, dt)
 % Compute the geometric stiffness matrix by computing and assembling the
 % matrices of the individual FEs.
 %
@@ -7,9 +7,16 @@ function K = stiffness_geo (self, assembler, geom, u1,u)
 % Return a stiffness matrix.
 %     assembler = descendent of the sysmat_assembler class
 %     geom=geometry field
-%     u1=displacement field, the current configuration
-%     u=displacement field, the last known configuration
+%     un1      - displacement field at the end of time step t_n+1
+%     un       - displacement field at the end of time step t_n
+%     dt       - time step from  t_n to t_n+1; needed only by some
+%                materials
 
+if (~exist('dt','var'))
+    % If the time step is needed, this will cause trouble.  Which indicates
+    % it should have been supplied. 
+    dt=[];
+end
 % Integration rule
 [npts, Ns, gradNparams, w] = integration_data (self);;
 gradN =cell(8,1); Jac=cell(8,1);
@@ -21,31 +28,30 @@ else
     Rm = self.Rm;
 end
 %  Indexing vector
-idx = (1:u.dim:(self.fes.nfens-1)*u.dim+1);
+idx = (1:un1.dim:(self.fes.nfens-1)*un1.dim+1);
 % Retrieve data for efficiency
 conns = self.fes.conn; % connectivity
 labels = self.fes.label; % connectivity
 Xs = geom.values; % reference coordinates
-Us = u.values; % displacement in step n
-U1s = u1.values; % displacement in step n+1
+Uns = un.values; % displacement in step n
+Un1s = un1.values; % displacement in step n+1
 context.dT = [];
-context.F = [];
 context.output='Cauchy';
 % Prepare assembler
-Kedim =u.dim*self.fes.nfens;
-start_assembly(assembler, Kedim, Kedim, size(conns,1), u.nfreedofs, u.nfreedofs);
+Kedim =un1.dim*self.fes.nfens;
+start_assembly(assembler, Kedim, Kedim, size(conns,1), un1.nfreedofs, un1.nfreedofs);
 for i=1:size(conns,1)
     conn =conns(i,:); % connectivity
     X=Xs(conn,:);
-    U=Us(conn,:);
-    U1=U1s(conn,:);
-    x = X + U; % previous known coordinates
-    x1 = X + U1; % current coordinates
-    dofnums =reshape(u1,gather_dofnums(u1,conn));
+    Un=Uns(conn,:);
+    Un1=Un1s(conn,:);
+    xn = X + Un; % previous known coordinates
+    xn1 = X + Un1; % current coordinates
+    dofnums =reshape(un1,gather_dofnums(un1,conn));
     Ke =zeros(Kedim);;
     K1 =zeros(Kedim);;
     % First we calculate  the mean basis function gradient matrix and the volume of the element
-    gradN_mean =zeros(self.fes.nfens,u.dim); V=0;
+    gradN_mean =zeros(self.fes.nfens,un1.dim); V=0;
     for j=1:npts % loop over all quadrature points
         J = X' * gradNparams{j};% Jacobian matrix wrt reference coordinates
         gradN{j} = gradNparams{j}/J;% derivatives wrt global coor
@@ -62,9 +68,11 @@ for i=1:size(conns,1)
         else,                    Rm =Rmh(c,[],[]);                end
     end
     % Now we calculate the mean deformation gradient
-    F1bar =x1' * gradN_mean;% With respect to reference coordinates
-    gradN_x1_mean= gradN_mean/F1bar; %...  and the b.f. gradients with respect to current conf
-    context.F =Rm'*F1bar*Rm;% Deformation gradient wrt  material orientation 
+    Fnbar =xn' * gradN_mean;
+    Fn1bar =xn1' * gradN_mean;
+    gradN_x1_mean= gradN_mean/Fn1bar; %...  and the b.f. gradients with respect to current conf
+    context.Fn=Rm'*Fnbar*Rm;%  Deformation gradient in material coordinates
+    context.Fn1=Rm'*Fn1bar*Rm;%  Deformation gradient in material coordinates
     [cauchy,~] = update(self.material, self.matstates{i}, context);
     [stabcauchy,~] = update(self.stabilization_material, [], context);
     gcauchy =self.material.stress_vector_rotation(Rm')*(cauchy-self.phis(i)*stabcauchy); % to global
@@ -75,12 +83,12 @@ for i=1:size(conns,1)
     K1(idx+2,idx+2) = c1;
     Ke = K1*V;
     for j=1:npts       % Loop over all integration points
-        F1 = x1'*gradN{j};% Current deformation gradient
-        context.F = Rm'*F1*Rm;% Current deformation gradient wrt material orientation
+        Fn1 = xn1'*gradN{j};% Current deformation gradient
+        context.Fn1=Rm'*Fn1*Rm;
         [stabcauchy,~] = update(self.stabilization_material, [], context);
         gcauchy =self.material.stress_vector_rotation(Rm')*(self.phis(i)*stabcauchy); % to global
         sigma = stress_6v_to_3x3t(self.stabilization_material,gcauchy);
-        gradNx1 =gradN{j}/F1;
+        gradNx1 =gradN{j}/Fn1;
         c1 = gradNx1*sigma*gradNx1';
         K1(idx,idx)     = c1;
         K1(idx+1,idx+1) = c1;

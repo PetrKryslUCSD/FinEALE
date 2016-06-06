@@ -1,4 +1,4 @@
-function K = stiffness_geo (self, assembler, geom, u1,u)
+function K = stiffness_geo (self, assembler, geom, un1, un, dt)
 % Compute the geometric stiffness matrix by computing and assembling the
 % matrices of the individual FEs.
 %
@@ -7,9 +7,16 @@ function K = stiffness_geo (self, assembler, geom, u1,u)
 % Return a stiffness matrix.
 %     assembler = descendent of the sysmat_assembler class
 %     geom=geometry field
-%     u1=displacement field, the current configuration
-%     u=displacement field, the last known configuration
+%     un1      - displacement field at the end of time step t_n+1
+%     un       - displacement field at the end of time step t_n
+%     dt       - time step from  t_n to t_n+1; needed only by some
+%                materials
 
+if (~exist('dt','var'))
+    % If the time step is needed, this will cause trouble.  Which indicates
+    % it should have been supplied. 
+    dt=[];
+end
 % Integration rule
 [npts Ns gradNs w] = integration_data (self);;
 % Material orientation
@@ -20,27 +27,27 @@ else
     Rm = self.Rm;
 end
 %  Indexing vector
-idx = (1:u.dim:(self.fes.nfens-1)*u.dim+1);
+idx = (1:un1.dim:(self.fes.nfens-1)*un1.dim+1);
 % Retrieve data for efficiency
 conns = self.fes.conn; % connectivity
 labels = self.fes.label; % connectivity
 Xs = geom.values; % reference coordinates
-Us = u.values; % displacement in step n
-U1s = u1.values; % displacement in step n+1
-context.F = [];
+Uns = un.values; % displacement in step n
+Un1s = un1.values; % displacement in step n+1
+context.Fn1 = []; context.Fn = []; context.dt=dt;
 context.dT = [];
 context.output='Cauchy';
 % Prepare assembler
-Kedim =u.dim*self.fes.nfens;
-start_assembly(assembler, Kedim, Kedim, size(conns,1), u.nfreedofs, u.nfreedofs);
+Kedim =un1.dim*self.fes.nfens;
+start_assembly(assembler, Kedim, Kedim, size(conns,1), un1.nfreedofs, un1.nfreedofs);
 for i=1:size(conns,1)
     conn =conns(i,:); % connectivity
     X=Xs(conn,:);
-    U=Us(conn,:);
-    U1=U1s(conn,:);
-    x = X + U; % previous known coordinates
-    x1 = X + U1; % current coordinates
-    dofnums =reshape(u1,gather_dofnums(u1,conn));
+    Un=Uns(conn,:);
+    Un1=Un1s(conn,:);
+    xn = X + Un; % previous known coordinates
+    xn1 = X + Un1; % current coordinates
+    dofnums =reshape(un1,gather_dofnums(un1,conn));
     Ke =zeros(Kedim);;
     K1 =zeros(Kedim);;
     for j=1:npts       % Loop over all integration points
@@ -53,17 +60,19 @@ for i=1:size(conns,1)
         gradNX = gradNs{j}/J;% derivatives wrt global coor
         Jac = Jacobian_volume(self.fes, conn, Ns{j}, J, X);
         if (Jac<=0),error('Non-positive Jacobian');end
-        F1 = x1'*gradNX;% Current deformation gradient
-        gradNx1 =gradNX/F1;
-        context.F=Rm'*F1*Rm;%  deformation gradient  in material coordinates
+        Fn1 = xn1'*gradNX;% Current deformation gradient
+        context.Fn1=Rm'*Fn1*Rm;%  deformation gradient  in material coordinates
+        Fn = xn'*gradNX;% Current deformation gradient
+        context.Fn=Rm'*Fn*Rm;%  deformation gradient  in material coordinates
         [cauchy,self.matstates{i,j}] = update(self.material, self.matstates{i,j}, context);
         gcauchy =self.material.stress_vector_rotation(Rm')*cauchy; % material to global
         sigma = stress_6v_to_3x3t(self.material,gcauchy);
+        gradNx1 =gradNX/Fn1;
         c1 = gradNx1*sigma*gradNx1';
         K1(idx,idx)     = c1;
         K1(idx+1,idx+1) = c1;
         K1(idx+2,idx+2) = c1;
-        Ke = Ke + K1*(Jac*w(j)*det(F1));
+        Ke = Ke + K1*(Jac*w(j)*det(Fn1));
     end
     assemble_symmetric(assembler, Ke, dofnums);
 end
