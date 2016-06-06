@@ -190,7 +190,7 @@ geom = nodal_field(struct('name',['geom'], 'dim', fens.dim, 'fens', fens));
 model_data.geom = geom;
             
 % Construct the displacement field
-u = nodal_field(struct('name',['u'], 'dim', geom.dim, 'nfens', geom.nfens));
+un = nodal_field(struct('name',['un1'], 'dim', geom.dim, 'nfens', geom.nfens));
 
 % Apply the essential boundary conditions on the displacement field
 if (isfield(model_data.boundary_conditions, 'essential' ))
@@ -209,7 +209,7 @@ if (isfield(model_data.boundary_conditions, 'essential' ))
             component= essential.component;
         end
         if (isempty(component))
-            component =1:u.dim;
+            component =1:un.dim;
         end
         fixed_value =0;
         % If the essential boundary condition is not  supplied by a
@@ -219,9 +219,9 @@ if (isfield(model_data.boundary_conditions, 'essential' ))
         end
         val=zeros(length(essential.node_list),1)+fixed_value;
         for k=1:length( component)
-            u = set_ebc(u, essential.node_list, is_fixed, component(k), val);
+            un = set_ebc(un, essential.node_list, is_fixed, component(k), val);
         end
-        u = apply_ebc (u);
+        un = apply_ebc (un);
         % If the essential boundary condition is to be load-factor-dependent, the
         % values must be supplied by a function.   Find out.
         essential.load_factor_dependent =(isa(essential.fixed_value,'function_handle'));
@@ -231,7 +231,7 @@ if (isfield(model_data.boundary_conditions, 'essential' ))
 end
 
 % Number the equations
-u = numberdofs (u, Renumbering_options);
+un = numberdofs (un, Renumbering_options);
 
 % Create the necessary FEMMs
 for i=1:length(model_data.region)
@@ -247,16 +247,20 @@ for i=1:length(model_data.region)
             'fes',region.fes,...
             'integration_rule',region.integration_rule,'Rm',Rm));
     end
-    region.femm  =update(region.femm,geom,u,u);
+    % Give the  FEMM a chance  to precompute  geometry-related quantities
+    region.femm = associate_geometry(region.femm,geom);
     model_data.region{i}=region;
     clear region prop mater Rm  femm
 end
 
+% Increment magnitudes
+load_increments=diff([0,load_multipliers]);
 
 % For all  load increments
-for incr =1:length(load_multipliers) % Load-implementation loop
+for incr =1:length(load_increments) % Load-implementation loop
     
-    lambda =load_multipliers(incr);;
+    lambda =sum(load_increments(1:incr));
+    dlambda=load_increments(incr);
     
     % Process load-factor-dependent essential boundary conditions:
     if ( isfield(model_data,'boundary_conditions')) && ...
@@ -266,23 +270,23 @@ for incr =1:length(load_multipliers) % Load-implementation loop
                 essential =model_data.boundary_conditions.essential{j};
                 fixed_value =essential.fixed_value(lambda);
                 for k=1:length(essential.component)
-                    u = set_ebc(u, essential.node_list, ...
+                    un = set_ebc(un, essential.node_list, ...
                         essential.is_fixed, essential.component(k), fixed_value(k));
                 end
-                u = apply_ebc (u);
+                un = apply_ebc (un);
             end
             clear essential
         end
     end
     
     % Initialization
-    u1 = u; % Solution  in the next step
-    u1 = apply_ebc(u1); % Apply EBC
-    du = 0*u; % Displacement increment
+    un1 = un; % Solution  in the next step
+    un1 = apply_ebc(un1); % Apply EBC
+    du = 0*un; % Displacement increment
     du = apply_ebc(du);
-    uAllfree=u1;% This field will hold the displacements for all notes and degrees of freedom.
-    uAllfree.is_fixed(:)=0;% all displacements will be free
-    uAllfree = numberdofs (uAllfree);
+    un1Allfree=un1;% This field will hold the displacements for all notes and degrees of freedom.
+    un1Allfree.is_fixed(:)=0;% all displacements will be free
+    un1Allfree = numberdofs (un1Allfree);
         
     
     % Iteration loop
@@ -290,13 +294,13 @@ for incr =1:length(load_multipliers) % Load-implementation loop
     while true %  Iteration loop
         
         % Initialize the loads vector
-        F =zeros(u.nfreedofs,1);
+        F =zeros(un1.nfreedofs,1);
         
         % Construct the system stiffness matrix
-        K=  sparse(u.nfreedofs,u.nfreedofs);
+        K=  sparse(un1.nfreedofs,un1.nfreedofs);
         for i=1:length(model_data.region)
-            K = K + stiffness(model_data.region{i}.femm, sysmat_assembler_sparse, geom, u1, u);
-            K = K + stiffness_geo(model_data.region{i}.femm, sysmat_assembler_sparse, geom, u1, u);
+            K = K + stiffness(model_data.region{i}.femm, sysmat_assembler_sparse, geom, un1, un, dlambda);
+            K = K + stiffness_geo(model_data.region{i}.femm, sysmat_assembler_sparse, geom, un1, un, dlambda);
         end
         
         % Process the body load
@@ -307,7 +311,7 @@ for incr =1:length(load_multipliers) % Load-implementation loop
                     'fes',body_load.fes,...
                     'integration_rule',body_load.integration_rule));
                 fi= force_intensity(struct('magn',body_load.force));
-                F = F + distrib_loads(femm, sysvec_assembler, geom, u, fi, 3);
+                F = F + distrib_loads(femm, sysvec_assembler, geom, un1, fi, 3);
             end
             clear body_load fi  femm
         end
@@ -320,7 +324,7 @@ for incr =1:length(load_multipliers) % Load-implementation loop
                     'fes',traction.fes,...
                     'integration_rule',traction.integration_rule));
                 fi= force_intensity(struct('magn',traction.traction));
-                F = F + distrib_loads(femm, sysvec_assembler, geom, u, fi, 2);
+                F = F + distrib_loads(femm, sysvec_assembler, geom, un1, fi, 2);
             end
             clear traction fi  femm
         end
@@ -333,7 +337,7 @@ for incr =1:length(load_multipliers) % Load-implementation loop
                     'fes',fe_set_P1(struct('conn',reshape(nodal_force.node_list,[],1))),...
                     'integration_rule',point_rule));
                 fi= force_intensity(struct('magn',nodal_force.force));
-                F = F + distrib_loads(femm, sysvec_assembler, geom, u, fi, 0);
+                F = F + distrib_loads(femm, sysvec_assembler, geom, un1, fi, 0);
             end
             clear nodal_force fi femm
         end
@@ -342,9 +346,9 @@ for incr =1:length(load_multipliers) % Load-implementation loop
         FL = lambda * F;
         
         % The restoring  force vector
-        FR =zeros(u.nfreedofs,1);
+        FR =zeros(un1.nfreedofs,1);
         for i=1:length(model_data.region)
-            FR = FR + restoring_force(model_data.region{i}.femm, sysvec_assembler, geom, u1, u); 
+            FR = FR + restoring_force(model_data.region{i}.femm, sysvec_assembler, geom, un1, un, dlambda); 
         end
 
         % Solve the system of linear algebraic equations
@@ -358,9 +362,9 @@ for incr =1:length(load_multipliers) % Load-implementation loop
         eta= 1.0;
         if (line_search)
             R0 = dot(F,gather_sysvec(du));
-            FR =zeros(u.nfreedofs,1);
+            FR =zeros(un1.nfreedofs,1);
             for i=1:length(model_data.region)
-                FR = FR + restoring_force(model_data.region{i}.femm, sysvec_assembler, geom, u1+du, u);
+                FR = FR + restoring_force(model_data.region{i}.femm, sysvec_assembler, geom, un1+du, un, dlambda);
             end
             F = FL + FR;    
             R1 = dot(F,dusol);
@@ -374,7 +378,7 @@ for incr =1:length(load_multipliers) % Load-implementation loop
         end
         
         % Increment the displacements
-        u1 = u1 + eta*du;  
+        un1 = un1 + eta*du;  
         
         % Compute the increment data
         ndu=norm(du);
@@ -382,7 +386,9 @@ for incr =1:length(load_multipliers) % Load-implementation loop
         
         % Report  iteration results?
         if (~isempty(iteration_observer))
-            model_data.u = u1;
+            model_data.un = un;
+            model_data.un1 = un1;
+            model_data.dt = dlambda;
             iteration_observer (lambda,iter,du,model_data);
         end
         
@@ -398,30 +404,36 @@ for incr =1:length(load_multipliers) % Load-implementation loop
     % Converged
     % Update the FEMMs
     for i=1:length(model_data.region)
-        model_data.region{i}.femm  =update(model_data.region{i}.femm,geom,u1,u);
+       [~,model_data.region{i}.femm]  =...
+           restoring_force(model_data.region{i}.femm, sysvec_assembler, ...
+           geom, un1, un, dlambda); 
     end
     
     % Report results
     
     % Update the model data
-    model_data.u = u1;
+    model_data.un = un;
+    model_data.un1 = un1;
+    model_data.dt = dlambda;
  
     if ~isempty(load_increment_observer)% report the progress
-        uAllfree.values=u1.values;% This field holds the current converged displacements; 
+        un1Allfree.values=un1.values;% This field holds the current converged displacements; 
+        unAllfree=un1Allfree;
+        unAllfree.values=un.values;% This field holds the current converged displacements; 
         % since all the degrees of freedom are free, the restoring forces
         % can be used to compute the reactions. Note the negative sign: the
         % reactions are the opposite of the resisting forces of the
         % material.
-        FR =zeros(uAllfree.nfreedofs,1);
+        FR =zeros(un1Allfree.nfreedofs,1);
         for i=1:length(model_data.region)% Compute the resisting forces of the material
-            FR = FR - restoring_force(model_data.region{i}.femm, sysvec_assembler, geom, uAllfree, uAllfree); 
+            FR = FR - restoring_force(model_data.region{i}.femm, sysvec_assembler, geom, un1Allfree, unAllfree, dlambda); 
         end
-        model_data.reactions=scatter_sysvec(uAllfree,FR);
+        model_data.reactions=scatter_sysvec(un1Allfree,FR);
         load_increment_observer (lambda,model_data);
     end
     
     % Reset  the displacement field for the next load step
-    u = u1;
+    un = un1;
     
 end % Load-incrementation loop
 
