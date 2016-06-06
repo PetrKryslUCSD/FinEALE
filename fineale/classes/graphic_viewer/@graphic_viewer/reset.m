@@ -99,15 +99,19 @@ function self = reset (self, context)
             view(3); axis equal vis3d;
             %             axis on;
             %             axis off; 
-            set(self.axes,'XLim',context.limits(1:2));
-            set(self.axes,'YLim',context.limits(3:4));
-            set(self.axes,'ZLim',context.limits(5:6));
+            l=sort(context.limits(1:2)); if (diff(l)==0), l=l+[-eps,+eps];        end
+            set(self.axes,'XLim',l);
+            l=sort(context.limits(3:4)); if (diff(l)==0), l=l+[-eps,+eps];        end
+            set(self.axes,'YLim',l);
+            l=sort(context.limits(5:6)); if (diff(l)==0), l=l+[-eps,+eps];        end
+            set(self.axes,'ZLim',l);
         else
             view(2); pos=get(self.axes,'position');
-            set(self.axes,'XLim',context.limits(1:2));
+            l=sort(context.limits(1:2)); if (diff(l)==0), l=l+[-eps,+eps];        end
+            set(self.axes,'XLim',l);
             if (length(context.limits)>=4)
-                set(self.axes,'YLim',context.limits(3:4));
-            else
+                l=sort(context.limits(3:4)); if (diff(l)==0), l=l+[-eps,+eps];        end
+                set(self.axes,'YLim',l);
             end
             set(self.axes,'position',pos);
             set(self.axes,'cameraviewanglemode','auto');
