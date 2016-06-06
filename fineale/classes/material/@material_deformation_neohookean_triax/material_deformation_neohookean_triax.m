@@ -50,7 +50,7 @@ classdef material_deformation_neohookean_triax < material_deformation_triax
             nu = self.property.nu;
             lambda = E * nu / (1 + nu) / (1 - 2*(nu));          % Lame constant #1
             mu     = E / (2 * (1 + nu));                        % shear modulus
-            F1 = context.F;
+            F1 = context.Fn1;
             % Finger deformation tensor
             b=F1*F1';
             J=det(F1);
@@ -103,7 +103,7 @@ classdef material_deformation_neohookean_triax < material_deformation_triax
                 case 'Eulerian'
                     E = self.property.E;
                     nu = self.property.nu;
-                    J =det(context.F);
+                    J =det(context.Fn1);
                     lambda = E * nu / (1 + nu) / (1 - 2*(nu));          % Lame constant #1
                     mu     = E / (2 * (1 + nu));                        % shear modulus
                     kappa  = E / 3 / (1 - 2*nu);                        % bulk modulus
