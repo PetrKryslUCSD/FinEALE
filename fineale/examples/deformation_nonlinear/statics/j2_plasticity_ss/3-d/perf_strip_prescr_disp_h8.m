@@ -107,7 +107,7 @@ maxdu_tol = W/1e7;
             interact(gv);
             pause(0.5); Cam =camget(gv);
         end
-         Ux=[ Ux,mean(model_data.u.values(movingl,1))]; 
+         Ux=[ Ux,mean(model_data.un1.values(movingl,1))]; 
          Rx=[Rx,sum(model_data.reactions.values(movingl,1))];
          if (~graphics)
              plot(Ux,Rx)
@@ -115,7 +115,7 @@ maxdu_tol = W/1e7;
          end
          
         
-        us{end+1} =model_data.u;
+        us{end+1} =model_data.un1;
     end
     
     % Iteration of observer can be called as the solution is being computed.

@@ -13,7 +13,7 @@ nc=20;nT=1;nW=3;
 nincr = 100;
 graphics = ~false;
 scale=1;
-utol = Thickness/100;
+utol = Thickness/1e3;
 
 prop = property_deformation_neohookean (struct('E',E,'nu',nu));
 mater = material_deformation_neohookean_triax(struct('property',prop));

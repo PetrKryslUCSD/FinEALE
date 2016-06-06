@@ -32,9 +32,8 @@ maxdu_tol = W/1e7;
     
     
     clear region
-    prop = property_deformation_linear_iso (struct('E',E,'nu',nu));
-    prop = property_deformation_plastic_perf_j2_iso(struct('E',E,'nu',nu,'sigma_y',sigma_y));
-    mater = material_deformation_ss_plastic_perf_j2_triax(struct('property',prop));
+    prop = property_deformation_plasticity_linear_hardening(struct('E',E,'nu',nu,'sigma_y',sigma_y,'Hi',0.0));
+    mater = material_deformation_ifr_j2(struct('property',prop));
     region.femm= femm_deformation_nonlinear(...
         struct ('material',mater,...
         'fes',fes, ...

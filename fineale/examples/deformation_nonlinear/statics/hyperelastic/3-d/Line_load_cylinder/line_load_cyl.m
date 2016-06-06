@@ -11,7 +11,7 @@ L = 15;
 R = 9;
 thickness = 2.0;
 n=16; nt=1;
-graphics = ~true;
+graphics = true;
 utol = thickness/1e9;
 nincr  =1;
 gtol = thickness/100;
@@ -97,7 +97,7 @@ nffemm2 = femm_deformation_linear (struct ('material',[],...
 lA = fenode_select (fens,struct ('box',[0 0 0 0 +R+thickness/2 +R+thickness/2],'inflate',gtol));
 
 u1s=[0]; lambdas=[0];
-femm  =update(femm,geom,u,u); 
+femm  =associate_geometry(femm,geom); 
 incr=1;
 while (incr <= nincr)
     t = incr* tup / nincr;
@@ -141,7 +141,7 @@ while (incr <= nincr)
         if (max(abs(du.values)) < utol) break; end;                    % convergence check
         iter=iter+1;
     end
-    femm  =update(femm,geom,u1,u);
+    [~,femm]  =restoring_force(femm,sysvec_assembler,geom,u1,u);
     disp(['    Converged for t=' num2str(t)]); % pause
     u = u1;                                               % update the displacement
     if graphics

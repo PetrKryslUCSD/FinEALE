@@ -61,6 +61,7 @@ gv=graphic_viewer;
 dt= 1/nincr;
 t=0; % time=load magnitude
 incr=1;
+femm  =associate_geometry(femm,geom); 
 while (incr <= nincr)
     t=t+ dt;
     disp(['Increment ' num2str(incr) ]); % pause
@@ -110,7 +111,7 @@ while (incr <= nincr)
         end
         iter=iter+1;
     end
-    [ignore,femm] = restoring_force(femm,sysvec_assembler,geom,u1,u);        % final update
+    [~,femm] = restoring_force(femm,sysvec_assembler,geom,u1,u);        % final update
     disp(['    Converged for t=' num2str(t)]); % pause
     u = u1;       % update the displacement
     incr = incr + 1;

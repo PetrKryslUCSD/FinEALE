@@ -82,7 +82,7 @@ if (graphics),
 end
 
 lambdas = []; uAs = []; uBs = []; niters=[];
-femm  =update(femm,geom,u,u);
+femm  =associate_geometry(femm,geom); 
 incr=1;
 while (incr <= nincr)
     t = incr* tup / nincr;
@@ -129,7 +129,7 @@ while (incr <= nincr)
         prevndu =ndu;
         iter=iter+1;
     end
-    femm  =update(femm,geom,u1,u);
+   [~,femm]  =restoring_force(femm1,sysvec_assembler,geom,u1,u);
     disp(['    Converged for t=' num2str(t)]); % pause
     u = u1;                                               % update the displacement
     if graphics

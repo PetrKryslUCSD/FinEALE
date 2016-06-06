@@ -82,6 +82,7 @@ nffemm2 = femm_deformation_linear (struct ('material',[],...
     'integration_rule',point_rule));
 
 u1s=[0];u2s=[0];lambdas=[0];
+femm  =associate_geometry(femm,geom); 
 incr=1;
 while (incr <= nincr)
     t = incr* tup / nincr;
@@ -124,7 +125,7 @@ while (incr <= nincr)
         if (max(abs(du.values)) < utol) break; end;                    % convergence check
         iter=iter+1;
     end
-    [ignore,femm] = restoring_force(femm,sysvec_assembler,geom,u1,u);        % final update
+    [~,femm] = restoring_force(femm,sysvec_assembler,geom,u1,u);        % final update
     disp(['    Converged for t=' num2str(t)]); % pause
     u = u1;                                               % update the displacement
     if graphics

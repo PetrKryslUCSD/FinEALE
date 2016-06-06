@@ -104,7 +104,7 @@ maxdu_tol = W/1e7;
             interact(gv);
             pause(0.5); Cam =camget(gv);
         end
-        us{end+1} =model_data.u;
+        us{end+1} =model_data.un1;
     end
     
     % Iteration of observer can be called as the solution is being computed.
@@ -120,12 +120,12 @@ maxdu_tol = W/1e7;
         %         end
         id.comp= 1;
         id.container=-Inf;
-        id=inspect_integration_points(model_data.region{1}.femm, model_data.geom, model_data.u, [],...
+        id=inspect_integration_points(model_data.region{1}.femm, model_data.geom, model_data.un1, model_data.un, model_data.dt, [],...
             (1:length (fes)), struct ('output',['equiv_pl_def']),...
             @mx,id);
         max_equiv_pl_def=id.container;
         id.container=Inf;
-        id=inspect_integration_points(model_data.region{1}.femm, model_data.geom, model_data.u, [], ...
+        id=inspect_integration_points(model_data.region{1}.femm, model_data.geom, model_data.un1, model_data.un, model_data.dt, [], ...
             (1:length (fes)), struct ('output',['equiv_pl_def']),...
             @mn,id);
         min_equiv_pl_def =id.container;
@@ -134,9 +134,10 @@ maxdu_tol = W/1e7;
         title (['Iteration ' num2str(iter)  ])
         camset (gv,1.0e+003 *[ -2.1416   -1.4296    3.3375    0.1981    0.1191   -0.0063    0.0006    0.0004    0.0006 0.0039]);
         draw(model_data.region{1}.femm,gv, struct ('x', model_data.geom,...
-            'u',scale*model_data.u, 'facecolor','none'));
+            'u',scale*model_data.un1, 'facecolor','none'));
         draw_integration_points(model_data.region{1}.femm,gv,struct ('x',model_data.geom,...
-            'u',model_data.u,'u_scale',scale, 'scale',epscale,'output',['equiv_pl_def'],'component',1,'data_cmap', dcm));
+            'un1',model_data.un1,'un',model_data.un,'dt',model_data.dt,...
+            'u_scale',scale, 'scale',epscale,'output',['equiv_pl_def'],'component',1,'data_cmap', dcm));
         drawnow; 
         pause(0.1)
         

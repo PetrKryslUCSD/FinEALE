@@ -148,7 +148,7 @@ for eix = 1:length(eltyd)
         t=0; % time=load magnitude
         incr=1;
         % Update the FEMM
-        femm  =update(femm,geom,u,u);
+        femm  =associate_geometry(femm,geom);
         while (incr <= nincr)
             t = t + tup / nincr;
             disp(['Increment ' num2str(incr) ]); % pause
@@ -176,7 +176,7 @@ for eix = 1:length(eltyd)
                 iter=iter+1;
             end %while 1 % Iteration loop
             % Update the FEMM
-            femm1  =update(femm1,geom,u1,u);
+            [~,femm1]  =restoring_force(femm1,sysvec_assembler,geom,u1,u);
             u = u1;                                               % update the displacement
             if (graphics)
                 gv=reset(clear(gv,[]),[]);

@@ -1,4 +1,4 @@
-function hourglassing_in_compression(ntmult)
+function kin_hyper_block_3d_upsetting(ntmult)
 if ~exist('ntmult','var'), ntmult=5; end
 % A new locking-free brick element technique for large
 % deformation problems in elasticity p
@@ -11,7 +11,7 @@ umag= 0.5;
 gtol=1e-6;
 utol = 1e-12;
 maxiter=12;
-tup = 1; dt= 0.1;
+tup = 1; dt= 0.01;
 graphics = ~false;
 scale=1;
 nt = [ntmult*[2,1,2]];
@@ -90,7 +90,7 @@ eix=eix+1;
         t=0; % time=load magnitude
         ts={t};
         us={u};
-        femm  =update(femm,geom,u,u);
+        femm  =associate_geometry(femm,geom);
         while (t <= tup)
             disp(['Time ' num2str(t) ]); % pause
             % Initialization
@@ -128,7 +128,7 @@ eix=eix+1;
                 disp(['   It. ' num2str(iter) ': ||du||=' num2str(norm(du))]);
                 %                 draw(sfemm,gv, struct ('x', geom, 'u', u1,'facecolor','none'));
                 if (max(abs(du.values)) < utol)
-                    femm  =update(femm,geom,u1,u);
+                    [~,femm]  =restoring_force(femm,sysvec_assembler,geom,u1,u);
                     disp(['    Converged for t=' num2str(t)]); % pause
                     u = u1;       % update the displacement
                     dt=dt*maxiter/iter;

@@ -89,7 +89,7 @@ end
 
 u1s=[]; lambdas=[];
 % Update the FEMM
-femm  =update(femm,geom,u,u); 
+femm  =associate_geometry(femm,geom); 
 incr=1;
 while (incr <= nincr)
    lambda = incr* tup / nincr;
@@ -130,7 +130,7 @@ while (incr <= nincr)
         iter=iter+1;
     end
     % Update the FEMM
-    femm1  =update(femm1,geom,u1,u);
+    [~,femm1]  =restoring_force(femm1,sysvec_assembler,geom,u1,u);
     disp(['    Converged for lambda=' num2str(lambda)]); % pause
     u = u1;                                               % update the displacement
     if graphics

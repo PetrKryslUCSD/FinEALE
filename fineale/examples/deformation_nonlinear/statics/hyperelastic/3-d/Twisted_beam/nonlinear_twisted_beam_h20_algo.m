@@ -102,21 +102,21 @@ function [u1s]=nonlinear_twisted_beam_h20_algo
     function load_increment_observer(lambda,model_data)
         if graphics
             gv=reset(clear(gv,[]),[]);
-            draw(sfemm,gv, struct ('x', model_data.geom, 'u', 0*model_data.u,'facecolor','none', 'shrink',1.0));
-            draw(sfemm,gv, struct ('x', model_data.geom, 'u', model_data.u,'facecolor','y', 'shrink',1.0));
+            draw(sfemm,gv, struct ('x', model_data.geom, 'u', 0*model_data.un1,'facecolor','none', 'shrink',1.0));
+            draw(sfemm,gv, struct ('x', model_data.geom, 'u', model_data.un1,'facecolor','y', 'shrink',1.0));
             camset (gv,Cam);
             interact(gv);
             pause(0.5); Cam =camget(gv);
         end
-        us{end+1} =model_data.u;
+        us{end+1} =model_data.un1;
     end
     
     % Iteration of observer can be called as the solution is being computed.
     function iteration_observer(lambda,iter,model_data)
         if graphics
             gv=reset(clear(gv,[]),[]);
-            draw(sfemm,gv, struct ('x', model_data.geom, 'u', 0*model_data.u,'facecolor','none', 'shrink',1.0));
-            draw(sfemm,gv, struct ('x', model_data.geom, 'u', model_data.u,'facecolor','y', 'shrink',1.0));
+            draw(sfemm,gv, struct ('x', model_data.geom, 'u', 0*model_data.un1,'facecolor','none', 'shrink',1.0));
+            draw(sfemm,gv, struct ('x', model_data.geom, 'u', model_data.un1,'facecolor','y', 'shrink',1.0));
             camset (gv,Cam);
             interact(gv);
             pause(0.5); Cam =camget(gv);
