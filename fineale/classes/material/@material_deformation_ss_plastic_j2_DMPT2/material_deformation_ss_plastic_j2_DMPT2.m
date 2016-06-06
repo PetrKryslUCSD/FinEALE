@@ -38,7 +38,7 @@ classdef material_deformation_ss_plastic_j2_DMPT2 < material_deformation_linear_
             if (isfield(context,'strain'))
                 Ev = context.strain;% strain in material coordinates
             else% This is an approximation valid only for small displacements
-                gradu=context.F-eye(3);
+                gradu=context.Fn1-eye(3);
                 Ev = strain_3x3t_to_6v (self,(gradu+gradu')/2);
             end
             E = self.property.E;
@@ -97,7 +97,7 @@ classdef material_deformation_ss_plastic_j2_DMPT2 < material_deformation_linear_
             if (isfield(context,'strain'))
                 Ev = context.strain;% strain in material coordinates
             else% This is an approximation valid only for small displacements
-                gradu=context.F-eye(3);
+                gradu=context.Fn1-eye(3);
                 Ev = strain_3x3t_to_6v (self,(gradu+gradu')/2);
             end
             E = self.property.E;
@@ -228,7 +228,7 @@ classdef material_deformation_ss_plastic_j2_DMPT2 < material_deformation_linear_
             %
             nnal_diad_nnal = (nnal*nnal');
             %     nnal_diad_nnal(:,4:6) = 2*nnal_diad_nnal(:,4:6);
-            nnal_diad_nnal(:,4:6) = nnal_diad_nnal(:,4:6);
+            %             nnal_diad_nnal(:,4:6) = nnal_diad_nnal(:,4:6);
             %
             F=sy0+Hi*gammaal;
             dif=Sigaltr_norm-F;

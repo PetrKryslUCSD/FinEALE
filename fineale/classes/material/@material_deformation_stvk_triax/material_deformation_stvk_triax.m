@@ -49,29 +49,29 @@ classdef material_deformation_stvk_triax < material_deformation_triax
             %           the material state newms must be assigned and stored.  Otherwise
             %           the material update is lost!
             %
-            F1 = context.F;
+            Fn1 = context.Fn1;
             % Cauchy-Green deformation tensor
-            C=F1'*F1;
+            C=Fn1'*Fn1;
             % Green-Lagrange strain
             Egl=self.strain_3x3t_to_6v(1/2*(C-eye(3,3)));;
             S = self.D*Egl;
             if isfield(context,'output')
                 switch context.output
                     case 'Cauchy'
-                        J=det(F1);
-                        sigma=F1*(self.stress_6v_to_3x3t(S)/J)*F1';
+                        J=det(Fn1);
+                        sigma=Fn1*(self.stress_6v_to_3x3t(S)/J)*Fn1';
                         out = self.stress_3x3t_to_6v(sigma);
                     case'strain_energy'
                         out = 1/2*S'*Egl;
                     case '2ndPK'
                         out= S;
                     case 'pressure'
-                        J=det(F1);
-                        sigma=F1*(self.stress_6v_to_3x3t(S)/J)*F1';
+                        J=det(Fn1);
+                        sigma=Fn1*(self.stress_6v_to_3x3t(S)/J)*Fn1';
                         out = -(sum(diag(sigma))/3);
                     otherwise
-                        J=det(F1);
-                        sigma=F1*(self.stress_6v_to_3x3t(S)/J)*F1';
+                        J=det(Fn1);
+                        sigma=Fn1*(self.stress_6v_to_3x3t(S)/J)*Fn1';
                         out = self.stress_3x3t_to_6v(sigma);
                 end
             else
@@ -119,7 +119,7 @@ classdef material_deformation_stvk_triax < material_deformation_triax
                     %                         end
                     %                     end
                     %                     D= (D+D')/2;
-                    D = Lagrangean_to_Eulerian(self, self.D, context.F);
+                    D = Lagrangean_to_Eulerian(self, self.D, context.Fn1);
                     return;
                 otherwise
                     error('Cannot handle');
