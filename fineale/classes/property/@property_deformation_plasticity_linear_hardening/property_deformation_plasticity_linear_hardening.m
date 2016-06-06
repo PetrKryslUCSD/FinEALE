@@ -41,20 +41,20 @@ classdef property_deformation_plasticity_linear_hardening < property_deformation
             end
             if isfield(Parameters,'Hi')
                 self.Hi = Parameters.Hi;
-                if (self.Hi <= 0)
-                    error('Non-positive Hi!');
+                if (self.Hi < 0)
+                    error('Negative Hi!');
                 end
             end
-			    if isfield(Parameters,'Hk')
+            if isfield(Parameters,'Hk')
                 self.Hk = Parameters.Hk;
-                if (self.Hk <= 0)
-                    error('Non-positive Hk!');
+                if (self.Hk < 0)
+                    error('Negative Hk!');
                 end
             end
-			if isfield(Parameters,'Hn')
+            if isfield(Parameters,'Hn')
                 self.Hn = Parameters.Hn;
-                if (self.Hn <= 0)
-                    error('Non-positive Hn!');
+                if (self.Hn < 0)
+                    error('Negative Hn!');
                 end
             end
         end
