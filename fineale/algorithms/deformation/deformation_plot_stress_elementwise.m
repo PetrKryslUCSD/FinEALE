@@ -4,7 +4,8 @@ function model_data=deformation_plot_stress_elementwise(model_data)
 % function model_data=deformation_plot_stress_elementwise(model_data)
 %
 % Arguments
-% model_data= model data as produced by deformation_linear_statics()
+% model_data= model data as produced by deformation_linear_statics() or by
+% a nonlinear solver, for instance deformation_nonlinear_statics().
 % model_data.postprocessing = optional struct with optional attributes
 %      gv = graphic viewer; if not supplied, a graphic viewer is created
 %           and returned in model_data.postprocessing.gv
