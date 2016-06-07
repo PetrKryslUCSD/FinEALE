@@ -17,6 +17,11 @@ if (~exist('dt','var'))
     % it should have been supplied. 
     dt=[];
 end
+if (~exist('un','var'))
+    % When this method gets called in linear problems, no previous
+    % deformation is supplied: make one up.
+    un=0*un1;
+end
 if isempty(self.phis)%  Do we need to calculate the form factors?
     error('Need the stabilization parameters');
 end
