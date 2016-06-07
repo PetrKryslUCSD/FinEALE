@@ -33,6 +33,7 @@ Uns = un.values; % displacement in step n
 Un1s = un1.values; % displacement in step n+1
 context.dT = 0;
 context.output='Cauchy';
+context.dt=dt;% time step
     % Prepare assembler
 Kedim =un1.dim*self.fes.nfens;
 start_assembly(assembler, un1.nfreedofs);

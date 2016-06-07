@@ -44,6 +44,7 @@ Xs = geom.values; % reference coordinates
 Uns = un.values; % displacement in step n
 Un1s = un1.values; % displacement in step n+1
 context.stiff_type='Eulerian';
+context.dt=dt;% time step
 % Prepare assembler
 Kedim =un1.dim*self.fes.nfens;
 start_assembly(assembler, Kedim, Kedim, size(conns,1), un1.nfreedofs, un1.nfreedofs);
