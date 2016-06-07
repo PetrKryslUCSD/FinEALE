@@ -214,8 +214,7 @@ model_data.v = model_data.un1;
 model_data.un = model_data.un1;
 clear un1 un
 
-% Construct the system stiffness and mass matrix
-K=  sparse(model_data.un1.nfreedofs,model_data.un1.nfreedofs);
+% Associate geometry and compute the mass matrix
 M=  sparse(model_data.un1.nfreedofs,model_data.un1.nfreedofs);
 for i=1:length(model_data.region)
     region =model_data.region{i};
@@ -224,9 +223,7 @@ for i=1:length(model_data.region)
     end
     % Give the  FEMM a chance  to precompute  geometry-related quantities
     region.femm = associate_geometry(region.femm,model_data.geom);
-    K = K + stiffness(region.femm, sysmat_assembler_sparse, model_data.geom, model_data.un1, model_data.un, dt);
-    M = M + lumped_mass(region.femm, sysmat_assembler_sparse, model_data.geom, model_data.un1);
-    model_data.region{i}=region;
+    M = M + lumped_mass(region.femm, sysmat_assembler_sparse, model_data.geom, model_data.un1); model_data.region{i}=region;
     clear region Q prop mater Rm  femm
 end
 
@@ -265,9 +262,20 @@ if (isfield(model_data, 'boundary_conditions' ))&&(isfield(model_data.boundary_c
 end
 
 % Solve
-% Find the stable time step.  Compute the largest eigenvalue (angular
-% frequency of vibration), and determine the time step from it.
+
+
+
 if isempty(dt)
+    % Construct the system stiffness and mass matrix
+    K=  sparse(model_data.un1.nfreedofs,model_data.un1.nfreedofs);
+    for i=1:length(model_data.region)
+        region =model_data.region{i};
+        K = K + stiffness(region.femm, sysmat_assembler_sparse, model_data.geom, model_data.un1, model_data.un, dt);
+        model_data.region{i}=region;
+        clear region Q prop mater Rm  femm
+    end
+    % Find the stable time step.  Compute the largest eigenvalue (angular
+% frequency of vibration), and determine the time step from it.
     o2=eigs(K,M,1,'LM');
     dt= 0.99* 2/sqrt(o2);
 end
