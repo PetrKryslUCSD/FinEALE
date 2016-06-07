@@ -83,8 +83,8 @@ classdef tensprod_nq_rule
                     otherwise
                         error('Unsupported Dimension');
                 end
-            elseif (self.order== 3)
-                switch self.dim
+            elseif (order== 3)
+                switch dim
                     case 1
                         self.param_coords = [-1; -1/3; 1/3; 1];
                         self.weights = 2/3*[1, 3, 3, 1]*3/8;
