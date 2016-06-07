@@ -1,5 +1,5 @@
 function idat = inspect_integration_points(self, ...
-    geom, u, dT, fe_list, context,...
+    geom, un1, un, dt, dT, fe_list, context,...
     inspector, idat)
 % Inspect the integration point quantities.
 %
@@ -9,7 +9,10 @@ function idat = inspect_integration_points(self, ...
 %
 % Input arguments
 %    geom - reference geometry field
-%    u - displacement field
+%    un1      - displacement field at the end of time step t_n+1
+%    un       - displacement field at the end of time step t_n
+%    dt       - time step from  t_n to t_n+1; needed only by some
+%                materials
 %    dT - temperature difference field
 %    fe_list - indexes of the finite elements that are to be inspected:
 %          The fes to be included are: fes(fe_list).
@@ -57,8 +60,9 @@ end
 conns = fes.conn; % connectivity
 labels = fes.label; % finite element labels
 Xs =geom.values;
-Us =u.values;
-context.F= [];
+Uns = un.values; % displacement in step n
+Un1s = un1.values; % displacement in step n+1
+context.Fn1= [];
 if isempty(dT)
     dTs=zeros(geom.nfens,1);
 else
@@ -69,11 +73,13 @@ for m=1:length(fe_list)
     i=fe_list(m);
     conn = conns(i,:); % connectivity
     X=Xs(conn,:);
-    U=Us(conn,:);
-    x1 = X + U; % current coordinates
+    Un=Uns(conn,:);
+    Un1=Un1s(conn,:);
+    xn = X + Un; % previous known coordinates
+    xn1 = X + Un1; % current coordinates
     dT =dTs(conn,:);
     % First we calculate  the mean basis function gradient matrix and the volume of the element
-    gradN_mean =zeros(self.fes.nfens,u.dim); V=0;
+    gradN_mean =zeros(self.fes.nfens,un1.dim); V=0;
     for j=1:npts % loop over all quadrature points
         J = X' * gradNparams{j};% Jacobian matrix wrt reference coordinates
         gradN{j} = gradNparams{j}/J;% derivatives wrt reference coor
@@ -89,9 +95,11 @@ for m=1:length(fe_list)
         if (~isempty(labels )),  Rm =Rmh(c,[],labels(i));%  No Jacobian matrix?
         else,                    Rm =Rmh(c,[],[]);                end
     end
-    % Now we calculate the mean deformation gradient dx/dX   
-    F1bar =x1'*gradN_mean;% wrt global material coordinates
-    context.F =Rm'*F1bar*Rm;% Deformation gradient wrt  material orientation 
+    % Now we calculate the mean deformation gradient dx/dX
+    Fnbar =xn' * gradN_mean;
+    Fn1bar =xn1' * gradN_mean;
+    context.Fn=Rm'*Fnbar*Rm;%  Deformation gradient in material coordinates
+    context.Fn1=Rm'*Fn1bar*Rm;%  Deformation gradient in material coordinates
     context.dT = transpose(Ns{j})*dT;
     context.xyz =mean(X);
     [out,ignore] = update(self.material, self.matstates{i}, context);
@@ -108,7 +116,7 @@ for m=1:length(fe_list)
             end
     end
     if ~isempty (inspector)
-        idat =feval(inspector,idat,out,mean(X),transpose(Ns{j})*U,[0,0,0]);
+        idat =feval(inspector,idat,out,mean(X),transpose(Ns{j})*Un1,[0,0,0]);
     end
 end
 return;

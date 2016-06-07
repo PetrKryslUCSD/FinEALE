@@ -1,5 +1,5 @@
 function fld = field_from_integration_points_spr(self, ...
-        geom, u, dT, output, component,  options)
+        geom, un1, un, dt, dT, output, component,  options)
 % Create a field from quantities at integration points using 
 % the Superconvergent Patch Recovery (SPR).
 %
@@ -8,7 +8,12 @@ function fld = field_from_integration_points_spr(self, ...
 %
 % Input arguments
 %     geom     - reference geometry field
-%     u        - displacement field
+%     un1      - displacement field at the end of time step t_n+1; for
+%                linear problems this is the linear displacement field
+%     un       - displacement field at the end of time step t_n; for linear
+%                problems this field is ignored
+%     dt       - time step from  t_n to t_n+1; needed only by some
+%                materials; for linear  problems the time step is ignored
 %     dT       - temperature difference field
 %     output   - this is what you would assign to the 'output' attribute of
 %                the context argument of the material update() method.
@@ -30,7 +35,7 @@ function fld = field_from_integration_points_spr(self, ...
     % Container of intermediate results
     sum_inv_dist =0*(1:length(gmap))';
     sum_quant_inv_dist =zeros(length(gmap),length(component));
-    fld =nodal_field(struct ('name',['fld'], 'dim', length(component), 'data',zeros(u.nfens,length(component))));
+    fld =nodal_field(struct ('name',['fld'], 'dim', length(component), 'data',zeros(un1.nfens,length(component))));
     nvals = fld.values;
     % connectivity
     conns = fes.conn; % connectivity
@@ -55,7 +60,7 @@ function fld = field_from_integration_points_spr(self, ...
         for k=1:length(pgl)
             conn = conns(pgl(k),:);
             x=xs(conn,:);
-            idat = inspect_integration_points(self, geom, u, dT, ...
+            idat = inspect_integration_points(self, geom, un1, un, dt, dT, ...
                 pgl(k), context, @idi, idat);
         end
         nvals(i,:)=spr(spr_data,spr_data_idx,xc);
