@@ -207,13 +207,13 @@ function  pub_Floyd
 %% 
 % First we calculate the four nodal fields, one for each component.
     fld1 = field_from_integration_points_spr(model_data.region{1}.femm, ...
-        model_data.geom, model_data.u, [], 'Cauchy',1);
+        model_data.geom, model_data.u, [], [], [], 'Cauchy',1);
     fld2 = field_from_integration_points_spr(model_data.region{1}.femm, ...
-        model_data.geom, model_data.u, [], 'Cauchy',2);
+        model_data.geom, model_data.u, [], [], [], 'Cauchy',2);
     fld3 = field_from_integration_points_spr(model_data.region{1}.femm, ...
-        model_data.geom, model_data.u, [], 'Cauchy',3);
+        model_data.geom, model_data.u, [], [], [], 'Cauchy',3);
     fld4 = field_from_integration_points_spr(model_data.region{1}.femm, ...
-        model_data.geom, model_data.u, [], 'Cauchy',4);
+        model_data.geom, model_data.u, [], [], [], 'Cauchy',4);
     
 
 %% 
@@ -283,7 +283,7 @@ function  pub_Floyd
     % Therefore, requesting the third principal stress produces the same
     % plot of the minimum principal stress as above.
     stressf = field_from_integration_points_spr (model_data.region{1}.femm, ...
-        model_data.geom, model_data.u, [], 'princCauchy',3, ...
+        model_data.geom, model_data.u, [], [], [], 'princCauchy',3, ...
         struct('outputRm',eye(3)));
     fxi = simplex_grid_interpolation(model_data.geom.values,stressf.values,tri,xi);
     figure;

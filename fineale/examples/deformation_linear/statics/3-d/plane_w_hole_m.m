@@ -98,7 +98,7 @@ function plane_w_hole
     gv=reset (gv,struct ([]));
     scale=10000;
     cmap = jet;
-    fld = field_from_integration_points(model_data.region{1}.femm, model_data.geom, model_data.u, [], 'Cauchy',1);
+    fld = field_from_integration_points(model_data.region{1}.femm, model_data.geom, model_data.u, [],  [], [], 'Cauchy',1);
     nvals=fld.values/(U.MEGA*U.PA);%min(nvals),max(nvals)
     nvalsrange=[min(nvals),max(nvals)];
     dcm=data_colormap(struct ('range',nvalsrange, 'colormap',cmap));

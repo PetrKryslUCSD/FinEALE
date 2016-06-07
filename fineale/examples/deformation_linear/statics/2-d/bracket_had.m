@@ -70,7 +70,7 @@ for Adapt=1:3
     u = scatter_sysvec(u, K\F);
     
     
-    nodal_stress = field_from_integration_points_spr(femm, geom, u, [], 'Cauchy', 1:3);
+    nodal_stress = field_from_integration_points_spr(femm, geom, u, [], [], [], 'Cauchy', 1:3);
     elerrs = flux_L2_error (femm, geom, u, [], nodal_stress);
     total_err=sqrt(sum(elerrs.^2));
     targeterr=sqrt(total_err^2/Targetnel);
@@ -115,7 +115,7 @@ for Adapt=1:3
             gv=graphic_viewer;
             gv=reset (gv,struct('limits', [-0.1*a,1.1*a,-0.1*b,1.1*b]));
             cmap=jet;
-            fld = field_from_integration_points_spr(femm, geom, u, [], 'Cauchy', sigj);
+            fld = field_from_integration_points_spr(femm, geom, u, [], [], [], 'Cauchy', sigj);
             nvals=fld.values;
             dcm=data_colormap(struct ('range',[min(nvals),max(nvals)], 'colormap',cmap));%[min(nvals),max(nvals)]
             colorfield=nodal_field(struct ('name', ['colorfield'], 'data',map_data(dcm, nvals)));

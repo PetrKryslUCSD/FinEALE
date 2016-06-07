@@ -51,7 +51,7 @@ function doit
         figure; gv=graphic_viewer;
         gv=reset (gv,[]);
         % Continuous stress
-        fld = field_from_integration_points(feb, geom, u, [], 'Cauchy', comp);
+        fld = field_from_integration_points(feb, geom, u, 0*u, 0, [], 'Cauchy', comp);
         nvals=fld.values; [min(nvals),max(nvals)]
         dcm=data_colormap(struct ('range', [min(nvals),max(nvals)], 'colormap',jet));
         colorfield=nodal_field(struct ('name', ['colorfield'], 'data',map_data(dcm, nvals)));
@@ -64,17 +64,17 @@ function doit
         draw(feb, gv, struct ('x',geom,'u', uscale*u, 'facecolor','none'));
         id.comp=comp;
         id.container=-Inf;
-        id=inspect_integration_points(feb, geom, u, [],...
+        id=inspect_integration_points(feb, geom, u, 0*u, 0, [],...
             (1:count(fes)), struct ('output',['Cauchy']),...
             @mx,id)
         max_stress=id.container
         id.container=Inf;
-        id=inspect_integration_points(feb, geom, u, [], ...
+        id=inspect_integration_points(feb, geom, u, 0*u, 0, [], ...
             (1:count(fes)), struct ('output',['Cauchy']),...
             @mn,id)
         min_stress =id.container
         dcm=data_colormap(struct ('range',[min(nvals),max(nvals)], 'colormap',jet));
-        draw_integration_points(feb,gv,struct ('x',geom,'u',u,'u_scale',uscale,'dT',[],...
+        draw_integration_points(feb,gv,struct ('x',geom,'un1',u,'un',0*u,'dt',[],'u_scale',uscale,'dT',[],...
             'scale',0.05,'component',comp,'data_cmap', dcm,'cheap_arrow',0, 'linewidth',2));
         camset(gv, [ 37.2735  -21.7348 25.3973    1.8154 1.7344   -0.1523  -0.4295    0.2843 0.8572    4.1432])
 
@@ -85,7 +85,7 @@ function doit
         for i=1:count(fes)
             feb = femm_deformation_linear (struct('material',mater,'fes',subset(fes,i),...
                 'integration_rule',tensprod_nq_rule(struct('dim',3,'order',2))));
-            fld = field_from_integration_points(feb, geom, u, [], 'Cauchy', comp);
+            fld = field_from_integration_points(feb, geom, u, 0*u, 0, [], 'Cauchy', comp);
             colorfield=nodal_field(struct ('name', ['colorfield'], 'data',map_data(dcm, fld.values)));
             draw(feb, gv, struct ('x',geom,'u', uscale*u, 'colorfield',colorfield, 'shrink',1));
         end
@@ -98,7 +98,7 @@ function doit
         for i=1:count(fes)
             feb = femm_deformation_linear(struct('material',mater,'fes',subset(fes,i),...
                 'integration_rule',gauss_rule(struct('dim',3, 'order',2))));
-            fld = field_from_integration_points(feb, geom, u, [], 'Cauchy', comp);
+            fld = field_from_integration_points(feb, geom, u, 0*u, 0, [], 'Cauchy', comp);
             nv=fld.values;
             ix=find(nv~=0);
             nv(ix)=mean(nv(ix));

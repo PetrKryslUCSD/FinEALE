@@ -146,7 +146,7 @@ function pub_R0031NAFEMS_1_region
     function Rm = LayerRm(XYZ, ts, label)% label equals the layer number here
         Rm= rotmat(angles(label)/180*pi* [0,0,1]);
     end
-    region.Rm =@LayerRm
+    region.Rm =@LayerRm;
     model_data.region{1} =region;
     
     
@@ -281,7 +281,7 @@ function pub_R0031NAFEMS_1_region
     % Note that the orientation matrix for the output of the stress is specified
      % as the global Cartesian coordinate system (identity matrix).
     stressf = field_from_integration_points_spr (pfemm, model_data.geom, ...
-        model_data.u, [], 'Cauchy',1,struct('outputRm',eye(3)));
+        model_data.u, [],  [], [], 'Cauchy',1,struct('outputRm',eye(3)));
     sigma11C= gather_values(stressf,nC);
     sigma11D1= gather_values(stressf,nD);
     sigma11E= gather_values(stressf,nE);
@@ -291,7 +291,7 @@ function pub_R0031NAFEMS_1_region
     % orientation lamina.
     pfemm.fes=subset(fes,region2list);;
     stressf = field_from_integration_points_spr (pfemm, model_data.geom, ...
-        model_data.u, [], 'Cauchy',1,struct('outputRm',eye(3)));
+        model_data.u, [],  [],  [], 'Cauchy',1,struct('outputRm',eye(3)));
     sigma11D2= gather_values(stressf,nD);
     %%
     % The axial stress is reported:
@@ -313,7 +313,7 @@ function pub_R0031NAFEMS_1_region
     %
     pfemm= model_data.region{1}.femm;
     stressf = field_from_integration_points_spr (pfemm, model_data.geom, ...
-        model_data.u, [], 'Cauchy',5,struct('outputRm',eye(3)));
+        model_data.u, [],  [],  [], 'Cauchy',5,struct('outputRm',eye(3)));
     sigma13C= gather_values(stressf,nC);
     sigma13D= gather_values(stressf,nD);
     sigma13E= gather_values(stressf,nE);

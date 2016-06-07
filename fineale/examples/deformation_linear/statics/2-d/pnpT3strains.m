@@ -41,4 +41,4 @@ u1=rot([x1;y1])
 u2=rot([x2;y2])
 u3=rot([x3;y3])
 e=B1*u1+B2*u2+B3*u3
-simple(e)
+simplify(e)

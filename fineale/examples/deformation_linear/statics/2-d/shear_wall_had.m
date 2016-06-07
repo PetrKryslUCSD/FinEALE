@@ -71,7 +71,7 @@ function [utip]=shear_wall_had
         u = scatter_sysvec(u, K\F);
         
         
-        nodal_stress = field_from_integration_points_spr(femm, geom, u, [], 'Cauchy', 1:3);
+        nodal_stress = field_from_integration_points_spr(femm, geom, u, [], [], [], 'Cauchy', 1:3);
         elerrs = flux_L2_error (femm, geom, u, [], nodal_stress);
         total_err=sqrt(sum(elerrs.^2));
         targeterr=sqrt(total_err^2/Targetnel);
@@ -103,7 +103,7 @@ function [utip]=shear_wall_had
                 set(get(cbh,'XLabel'),'String',['Error']);
             else
                 %                             Plots stresses
-                fld = field_from_integration_points_spr(femm, geom, u, [], 'Cauchy', sigj);
+                fld = field_from_integration_points_spr(femm, geom, u, [], [], [], 'Cauchy', sigj);
                 nvals=fld.values;
                 zeta=linspace(0,1,100)';
                 p1=[0,1.001*c]; p2=p1+ [a+b,0];

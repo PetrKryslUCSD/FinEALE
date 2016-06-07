@@ -84,7 +84,7 @@ for n=ns;% number of elements through the thickness
         scale=1000;
         cmap = jet;
     end
-    fld = field_from_integration_points(femm, geom, u, [], 'Cauchy',2);
+    fld = field_from_integration_points(femm, geom, u, 0*u, 0,  [], 'Cauchy',2);
     corner=fenode_select (fens,struct('box',1000*[2.0 2.0 0 0],'inflate',1/10000));
     Approx_sigma_yD =gather_values (fld, corner);
     disp( ['n=' num2str(n) ',  Corner stress sigma_y=' num2str(Approx_sigma_yD) ' MPa'])

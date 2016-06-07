@@ -30,9 +30,9 @@ syms DeltaT CTE E nu t real
 D=E/(1-nu^2)*[1,nu,0; nu,1,0; 0,0,(1-nu)/2]
 eth=DeltaT*CTE*[1;1;0];
 Se=det(J)/2
-F1=simple(Se*t*B1'*D*eth)
-F2=simple(Se*t*B2'*D*eth)
-F3=simple(Se*t*B3'*D*eth)
+F1=simplify(Se*t*B1'*D*eth)
+F2=simplify(Se*t*B2'*D*eth)
+F3=simplify(Se*t*B3'*D*eth)
 
 figure
 patch('xdata',x(conn,1),'ydata',x(conn,2), 'facecolor','y', 'linewidth',3);;

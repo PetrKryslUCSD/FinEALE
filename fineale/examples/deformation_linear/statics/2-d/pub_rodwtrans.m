@@ -334,7 +334,7 @@ gv=reset (gv,struct ('limits',[0 1.06*R1 0 1.1*(L1+L2)]/pu.MM));
 set_graphics_defaults;
 scale=1;
 cmap = jet;
-fld = field_from_integration_points(femm, geom, u, [], 'princCauchy',1);
+fld = field_from_integration_points(femm, geom, u, [], [], [], 'princCauchy',1);
 nvals=fld.values/(pu.MEGA*pu.PA);
 nvalsrange=[0,600];
 dcm=data_colormap(struct ('range',nvalsrange, 'colormap',cmap));

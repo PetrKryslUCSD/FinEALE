@@ -68,7 +68,7 @@ for Adapt=1:7
     cu=gather_values(u,cn);
     disp(['Displacement under the force =', num2str(cu(1))])
     
-    nodal_stress = field_from_integration_points_spr(femm, geom, u, [], 'Cauchy', 1:3);
+    nodal_stress = field_from_integration_points_spr(femm, geom, u, [], [], [], 'Cauchy', 1:3);
     elerrs = flux_L2_error (femm, geom, u, [], nodal_stress);
     total_err=sqrt(sum(elerrs.^2));
     targeterr=sqrt(total_err^2/Targetnel);

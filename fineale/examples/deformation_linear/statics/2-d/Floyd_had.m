@@ -87,14 +87,14 @@ function  Floyd_had
         for q=1:count(fes)
             conn = conns(q,:);
             x=gather_values(geom,conn);
-            Cauchy = inspect_integration_points(femm, geom, u, [], ...
+            Cauchy = inspect_integration_points(femm, geom, u, [], [], [], ...
                 q, struct ('output','Cauchy'), @idi,  []);
         end
         maxP12d=-Inf; maxP22d=-Inf;  maxxy2d=0;
         for q=1:count(fes)
             conn = conns(q,:);
             x=gather_values(geom,conn);
-            Cauchy = inspect_integration_points(femm, geom, u, [], ...
+            Cauchy = inspect_integration_points(femm, geom, u, [], [], [], ...
                 q, struct ('output','Cauchy'), @idi2d,  []);
         end
         disp([' Mesh size: ' num2str(mesh_size)]);
@@ -102,7 +102,7 @@ function  Floyd_had
         disp([' Location 2d:  [' num2str(maxxy2d) '],  Principal stresses 2d: [' num2str(maxP12d) ',' num2str(maxP22d) ']' ]);
         %     return
         
-        nodal_stress = field_from_integration_points_spr(femm, geom, u, [], 'Cauchy', 1:4);
+        nodal_stress = field_from_integration_points_spr(femm, geom, u, [], [], [], 'Cauchy', 1:4);
         elerrs = flux_L2_error (femm, geom, u, [], nodal_stress);
         total_err=sqrt(sum(elerrs.^2));
         targeterr=sqrt(total_err^2/Targetnel);
@@ -114,10 +114,10 @@ function  Floyd_had
             gv=reset (gv,struct ('limits',[0 1.06*R1 -0.5*L1 1.1*L1]));
             scale=5;
             cmap = jet;
-            fld1 = field_from_integration_points(femm, geom, u, [], 'Cauchy',1);
-            fld2 = field_from_integration_points(femm, geom, u, [], 'Cauchy',2);
-            fld3 = field_from_integration_points(femm, geom, u, [], 'Cauchy',3);
-            fld4 = field_from_integration_points(femm, geom, u, [], 'Cauchy',4);
+            fld1 = field_from_integration_points(femm, geom, u, [], [], [], 'Cauchy',1);
+            fld2 = field_from_integration_points(femm, geom, u, [], [], [], 'Cauchy',2);
+            fld3 = field_from_integration_points(femm, geom, u, [], [], [], 'Cauchy',3);
+            fld4 = field_from_integration_points(femm, geom, u, [], [], [], 'Cauchy',4);
             stresses = [fld1.values,fld2.values,fld3.values,fld4.values];
             Ps=zeros(size(stresses,1),3);
             maxP1=-Inf;

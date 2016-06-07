@@ -64,14 +64,14 @@ function  THICK_ss_plate_pl_had
         % get(u,'values')
         
         
-        nodal_stress = field_from_integration_points_spr(femm, geom, u, [], 'Cauchy', 1:4);
+        nodal_stress = field_from_integration_points_spr(femm, geom, u, 0*u, 0, [], 'Cauchy', 1:4);
         elerrs = flux_L2_error (femm, geom, u, [], nodal_stress);
         total_err=sqrt(sum(elerrs.^2));
         targeterr=sqrt(total_err^2/Targetnel);
         
         [hcurs, hests] =T3_mesh_sizes(fes.conn,geom.values,targeterr,elerrs,convergence_rate);
         
-        fld1 = field_from_integration_points(femm, geom, u, [], 'Cauchy',sigj);
+        fld1 = field_from_integration_points(femm, geom, u, 0*u, 0, [], 'Cauchy',sigj);
         nvals=fld1.values;%min(nvals),max(nvals)
         
         if (graphics)
