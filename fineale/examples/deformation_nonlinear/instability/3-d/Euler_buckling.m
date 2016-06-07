@@ -106,7 +106,7 @@ eix=eix+1;
         u = u*0; % zero out the displacement
         
        
-        femm  =update(femm,geom,u,u);
+        femm  =associate_geometry(femm,geom); 
         femm1=femm;                                           % Make a copy of the state
         fi=force_intensity(struct('magn', [0;0; -magn]));
         F =  distrib_loads(efemm, sysvec_assembler, geom, u, fi, 2);

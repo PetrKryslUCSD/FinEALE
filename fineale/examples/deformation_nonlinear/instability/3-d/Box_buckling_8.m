@@ -63,7 +63,7 @@ function Box_buckling_8
     disp([num2str(u.nfreedofs) ' degrees of freedom'])
     
     % Update the FEMM
-    femm  =update(femm,geom,u,u);
+    femm  =associate_geometry(femm,geom); 
     % Assemble the system matrix
     K = stiffness(femm, sysmat_assembler_sparse, geom, u,0*u);;
     
@@ -83,7 +83,7 @@ function Box_buckling_8
     gv=graphic_viewer;
     cmap = cadcolors2;
     gv=reset(clear(gv,[]),[]);
-    fld = field_from_integration_points(femm, geom, u, [], 'Cauchy', 3);
+    fld = field_from_integration_points(femm, geom, u, 0*u, 0, [], 'Cauchy', 3);
     nvals=fld.values; %[min(nvals),max(nvals)]
     dcm=data_colormap(struct ('range', [min(nvals),max(nvals)], 'colormap',jet));
     colorfield=nodal_field(struct ('name', ['colorfield'], 'data',map_data(dcm, nvals)));

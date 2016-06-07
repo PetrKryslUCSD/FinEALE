@@ -133,7 +133,7 @@ eix=eix+1;
         
         
         
-        femm  =update(femm,geom,u,u);
+        femm  =associate_geometry(femm,geom); 
         femm1=femm;                                           % Make a copy of the state
         Traction=zeros(3,1); Traction(1) =Fmag/t/w;
         fi=force_intensity(struct('magn', Traction));

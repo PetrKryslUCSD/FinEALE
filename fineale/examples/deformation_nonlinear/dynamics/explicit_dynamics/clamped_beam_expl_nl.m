@@ -34,7 +34,7 @@ function clamped_beam_expl_nl
     mater = material_deformation_stvk_triax(struct('property',prop));
     
     %     Mesh
-    if (0)% Choose hexahedral mesh
+    if (1)% Choose hexahedral mesh
         [fens,fes] = H8_block(L,W,H, 4,1,2);
         femm = femm_deformation_nonlinear_h8msgso(struct ('material',mater, 'fes',fes, ...
             'integration_rule',gauss_rule(struct('dim',3,'order',2))));
@@ -113,7 +113,7 @@ function clamped_beam_expl_nl
     toc
     
     function output(t, model_data)
-        midpu= [midpu    model_data.u.reshape(gather_values(model_data.u, midp))];
+        midpu= [midpu    model_data.un1.reshape(gather_values(model_data.un1, midp))];
         if (~isempty(igraphics) && (igraphics(1)==round(t/model_data.dt)))
             figure (pf);
             plot(t/(u.MILLI*u.SEC),midpu(3,end)/u.IN,'rx','Markersize',4); hold on

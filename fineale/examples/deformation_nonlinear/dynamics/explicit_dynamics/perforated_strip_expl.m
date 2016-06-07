@@ -28,27 +28,28 @@ femm = femm_deformation_nonlinear_h8msgso(struct ('material',mater, 'fes',fes, .
 % Geometry
 geom = nodal_field(struct ('name',['geom'], 'dim', 3, 'fens',fens));
 % Define the displacement field
-u   = clone(geom,'u');
-u   = u*0; % zero outfunction five
+un   = clone(geom,'un');
+un  = un*0; % zero outfunction five
 % Apply EBC's
 ebc_fenids=fenode_select (fens,struct('box',[0,0,-Inf,Inf,-Inf,Inf],'inflate',1/1000));
 ebc_prescribed=ones(1,length (ebc_fenids));
 ebc_comp=ones(1,length (ebc_fenids))*1;
 ebc_val=ebc_fenids*0;
-u   = set_ebc(u, ebc_fenids, ebc_prescribed, ebc_comp, ebc_val);
+un  = set_ebc(un, ebc_fenids, ebc_prescribed, ebc_comp, ebc_val);
 ebc_fenids=fenode_select (fens,struct('box',[-Inf,Inf,0,0,-Inf,Inf],'inflate',1/1000));
 ebc_prescribed=ones(1,length (ebc_fenids));
 ebc_comp=ones(1,length (ebc_fenids))*2;
 ebc_val=ebc_fenids*0;
-u   = set_ebc(u, ebc_fenids, ebc_prescribed, ebc_comp, ebc_val);
+un = set_ebc(un, ebc_fenids, ebc_prescribed, ebc_comp, ebc_val);
 ebc_fenids=fenode_select (fens,struct('box',[-Inf,Inf,-Inf,Inf,0,0],'inflate',1/1000));
 ebc_prescribed=ones(1,length (ebc_fenids));
 ebc_comp=ones(1,length (ebc_fenids))*3;
 ebc_val=ebc_fenids*0;
-u   = set_ebc(u, ebc_fenids, ebc_prescribed, ebc_comp, ebc_val);
-u   = apply_ebc (u);
+un  = set_ebc(un, ebc_fenids, ebc_prescribed, ebc_comp, ebc_val);
+un = apply_ebc (un);
 % Number equations
-u   = numberdofs (u);
+un  = numberdofs (un);
+un1 = un;
 % loaded boundary
 bdry_fes = mesh_boundary(fes, []);
 bcl = fe_select(fens, bdry_fes, ...
@@ -56,8 +57,9 @@ bcl = fe_select(fens, bdry_fes, ...
 efemm = femm_deformation_nonlinear(struct ('material',mater, 'fes',subset(bdry_fes,bcl),...
     'integration_rule',gauss_rule(struct('dim',2,'order',4))));
 
-M =lumped_mass(femm, sysmat_assembler_sparse, geom, u);
-K = stiffness(femm, sysmat_assembler_sparse, geom, u,u);
+femm  =associate_geometry(femm,geom); 
+M =lumped_mass(femm, sysmat_assembler_sparse, geom, un1);
+K = stiffness(femm, sysmat_assembler_sparse, geom, un1, un, 1);
 
     o2=eigs(K,M,1,'LM');
     dt= 0.99* 2/sqrt(o2) / 20 % compensate for serious reduction in thickness
@@ -71,16 +73,16 @@ end
 
 
 %     Velocity field
-v=0*u;
+v=0*un;
 
 % Solve
-[femm] = update(femm,  geom, u, u);
 t=0;
-U0= gather_sysvec(u);
+U0= gather_sysvec(un);
 V0= gather_sysvec(v);
 fi= force_intensity(struct ('magn',[magn;0; 0;]));
-FL = distrib_loads(efemm, sysvec_assembler, geom, 0*u, fi, 2);
-F1 = FL + restoring_force(femm,sysvec_assembler, geom,u,u);       % Internal forces
+FL = distrib_loads(efemm, sysvec_assembler, geom, 0*un1, fi, 2);
+ [FR,~]  =restoring_force(femm,sysvec_assembler,geom,un1,un,dt); % Internal forces
+F1 = FL + FR;       % Internal forces
 A1=M\(F1);
 A0 =A1;
 step =0;
@@ -88,11 +90,12 @@ while t <tend
     step = step  +1;
      t=t+dt;
     fi= force_intensity(struct ('magn',((t<tapp)*(t/tapp)+(t>=tapp)*1.0)*[magn;0; 0;]));
-    FL = distrib_loads(efemm, sysvec_assembler, geom, 0*u, fi, 2);
+    FL = distrib_loads(efemm, sysvec_assembler, geom, 0*un1, fi, 2);
     % Update displacement
     U1 = U0 +dt*V0+(dt^2)/2*A0;% displacement update
-    u = scatter_sysvec(u, U1);
-    F1 = FL + restoring_force(femm,sysvec_assembler, geom,u,u);       % Internal forces
+    un1 = scatter_sysvec(un1, U1);
+    [FR,femm]  =restoring_force(femm,sysvec_assembler,geom,un1,un,dt); % Internal forces
+    F1 = FL + FR;
     % Compute the new acceleration.
     A1=M\(F1);
     % Update the velocity
@@ -101,13 +104,14 @@ while t <tend
     v = scatter_sysvec(v, V1);
     if graphics && (mod(step,100) == 0)
         disp(['Time ' num2str(t)])
-        gv=reset(gv,[]);    draw(femm,gv, struct ('x', geom,'u',u, 'facecolor','none'));
+        gv=reset(gv,[]);    draw(femm,gv, struct ('x', geom,'u',un1, 'facecolor','none'));
         figure (gcf); pause(0.05); cam =camget(gv);
     end
     % Switch the temporary vectors for the next step.
     U0 = U1;
     V0 = V1;
     A0 = A1;
+    un = un1;
     if (t==tend)
         break;
     end
