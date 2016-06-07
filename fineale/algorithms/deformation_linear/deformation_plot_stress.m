@@ -95,7 +95,14 @@ if (isfield(model_data, 'postprocessing'))
     end
 end
 
-u =model_data.u;
+% Retrieve displacement fields: either for a linear model (u) or for a nonlinear model
+if (isfield(model_data,'u'))
+    un1 =model_data.u;    un =0*model_data.u;  dt=[];
+elseif (isfield(model_data,'un1'))
+    un1 =model_data.un1;    un =model_data.un;  dt =model_data.dt;
+end
+
+
 geom =model_data.geom;
 
 % Initialize the graphic viewer
@@ -129,10 +136,10 @@ for i=1:length(model_data.region)
     % Create the color field
     if (use_spr)
         fld = field_from_integration_points_spr (region.femm, ...
-            geom, u, [], output,stress_component,context);
+            geom, un1, un, dt, [], output,stress_component,context);
     else
         fld = field_from_integration_points (region.femm, ...
-            geom, u, [], output,stress_component, context);
+            geom, un1, un, dt, [], output,stress_component, context);
     end
     fld = (1/stress_units)*fld;
     if ~isempty(observer)% report the progress
@@ -146,10 +153,10 @@ for i=1:length(model_data.region)
         map_data(dcm, fld.values)));
     if boundary_only
         boundaryfes = mesh_boundary (region.femm.fes,[]);
-        draw(boundaryfes, gv, struct ('x',geom, 'u',u_scale*u,...
+        draw(boundaryfes, gv, struct ('x',geom, 'u',u_scale*un1,...
             'colorfield',colorfield, 'shrink',1.0));
     else
-        draw(region.femm.fes, gv, struct ('x',geom, 'u',u_scale*u,...
+        draw(region.femm.fes, gv, struct ('x',geom, 'u',u_scale*un1,...
             'colorfield',colorfield, 'shrink',1.0));
     end
 end

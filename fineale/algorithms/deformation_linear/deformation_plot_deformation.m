@@ -74,9 +74,15 @@ function model_data=deformation_plot_deformation(model_data)
         end
     end
     
-    u =model_data.u;
+    % Retrieve displacement fields: either for a linear model (u) or for a nonlinear model
+    if (isfield(model_data,'u'))
+        un1 =model_data.u;    un =0*model_data.u;  dt=[];
+    elseif (isfield(model_data,'un1'))
+        un1 =model_data.un1;    un =model_data.un;  dt =model_data.dt;
+    end
+
     geom =model_data.geom;
-    u_magnitude =magnitude(u);
+    u_magnitude =magnitude(un1);
     
     % Initialize the graphic viewer
     gv = [];
@@ -96,19 +102,19 @@ function model_data=deformation_plot_deformation(model_data)
     % Create the color field
     if (strcmp( quantity, 'U1'))
         % Create the color mapping
-        dcm=data_colormap(struct('range',[min(u.values(:,1)),max(u.values(:,1))],'colormap',cmap));
+        dcm=data_colormap(struct('range',[min(un1.values(:,1)),max(un1.values(:,1))],'colormap',cmap));
         colorfield=nodal_field(struct ('name', ['colorfield'], 'data',...
-            map_data(dcm, u.values(:,1))));
+            map_data(dcm, un1.values(:,1))));
     elseif (strcmp( quantity, 'U2'))
         % Create the color mapping
-        dcm=data_colormap(struct('range',[min(u.values(:,2)),max(u.values(:,2))],'colormap',cmap));
+        dcm=data_colormap(struct('range',[min(un1.values(:,2)),max(un1.values(:,2))],'colormap',cmap));
         colorfield=nodal_field(struct ('name', ['colorfield'], 'data',...
-            map_data(dcm, u.values(:,2))));
+            map_data(dcm, un1.values(:,2))));
     elseif (strcmp( quantity, 'U3'))
         % Create the color mapping
-        dcm=data_colormap(struct('range',[min(u.values(:,3)),max(u.values(:,3))],'colormap',cmap));
+        dcm=data_colormap(struct('range',[min(un1.values(:,3)),max(un1.values(:,3))],'colormap',cmap));
         colorfield=nodal_field(struct ('name', ['colorfield'], 'data',...
-            map_data(dcm, u.values(:,3))));
+            map_data(dcm, un1.values(:,3))));
     else
         % Create the color mapping
         dcm=data_colormap(struct('range',[0,max(u_magnitude.values)],'colormap',cmap));
@@ -121,17 +127,17 @@ function model_data=deformation_plot_deformation(model_data)
         region =model_data.region{i};
         if boundary_only
             if (draw_mesh)
-                draw(mesh_boundary(region.fes,[]), gv, struct ('x',geom, 'u',0*u, ...
+                draw(mesh_boundary(region.fes,[]), gv, struct ('x',geom, 'u',0*un1, ...
                     'facecolor','none','edgecolor',edgecolor));
             end
-            draw(mesh_boundary(region.fes,[]), gv, struct ('x',geom, 'u',u_scale*u,...
+            draw(mesh_boundary(region.fes,[]), gv, struct ('x',geom, 'u',u_scale*un1,...
                 'colorfield',colorfield, 'shrink',1.0));
         else
             if (draw_mesh)
-                draw(region.fes, gv, struct ('x',geom, 'u',0*u, ...
+                draw(region.fes, gv, struct ('x',geom, 'u',0*un1, ...
                     'facecolor','none','edgecolor',edgecolor));
             end
-            draw(region.fes, gv, struct ('x',geom, 'u',u_scale*u,...
+            draw(region.fes, gv, struct ('x',geom, 'u',u_scale*un1,...
                 'colorfield',colorfield,'edgecolor',edgecolor, 'shrink',1.0));
         end
     end

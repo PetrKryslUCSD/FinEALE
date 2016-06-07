@@ -79,7 +79,13 @@ if (isfield(model_data, 'postprocessing'))
     end
 end
 
-u =model_data.u;
+% Retrieve displacement fields: either for a linear model (u) or for a nonlinear model
+if (isfield(model_data,'u'))
+    un1 =model_data.u;    un =0*model_data.u;  dt=[];
+elseif (isfield(model_data,'un1'))
+    un1 =model_data.un1;    un =model_data.un;  dt =model_data.dt;
+end
+
 geom =model_data.geom;
 
 % Initialize the graphic viewer
@@ -127,7 +133,7 @@ for i=1:length(model_data.region)
         if (~boundary_only) || (boundary_only)&&(sum(oon_boundary(region.femm.fes.conn(:)))>0)
             % Create the color field
             fld = field_from_integration_points (region.femm, ...
-                geom, u, [], output,stress_component, context);
+                geom, un1, un, dt, [], output,stress_component, context);
             fld = (1/stress_units)*fld;
             minmin=min([minmin,min(fld.values)]);
             maxmax=max([maxmax,max(fld.values)]);
@@ -137,7 +143,7 @@ for i=1:length(model_data.region)
             end
             colorfield=nodal_field(struct ('name', ['colorfield'], 'data',...
                 map_data(dcm, fld.values)));
-            draw(region.femm, gv, struct ('x',geom, 'u',u_scale*u,...
+            draw(region.femm, gv, struct ('x',geom, 'u',u_scale*un1,...
                 'colorfield',colorfield, 'shrink',1.0));
         end
     end
