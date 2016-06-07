@@ -172,7 +172,7 @@ fens =model_data.fens;
 model_data.geom = nodal_field(struct('name',['geom'], 'dim', fens.dim, 'fens', fens));
 
 % Construct the displacement field
-model_data.u = nodal_field(struct('name',['u'], 'dim', model_data.geom.dim, 'nfens', model_data.geom.nfens));
+model_data.un1 = nodal_field(struct('name',['un1'], 'dim', model_data.geom.dim, 'nfens', model_data.geom.nfens));
 
 % Apply the essential boundary conditions on the displacement field
 if isfield(model_data,'boundary_conditions')...
@@ -188,7 +188,7 @@ if isfield(model_data,'boundary_conditions')...
             essential.is_fixed=ones(length(essential.fenids),1);
         end
         if (~isfield( essential, 'component' )) || isempty(essential.component)
-            essential.component =1:model_data.u.dim;
+            essential.component =1:model_data.un1.dim;
         end
         fixed_value =0;
         if (isfield( essential, 'fixed_value' ))
@@ -196,9 +196,9 @@ if isfield(model_data,'boundary_conditions')...
         end
         val=zeros(length(essential.fenids),1)+fixed_value;
         for k=1:length( essential.component)
-            model_data.u = set_ebc(model_data.u, essential.fenids, essential.is_fixed, essential.component(k), val);
+            model_data.un1 = set_ebc(model_data.un1, essential.fenids, essential.is_fixed, essential.component(k), val);
         end
-        model_data.u = apply_ebc (model_data.u);
+        model_data.un1 = apply_ebc (model_data.un1);
         % If the essential boundary condition is to be time-dependent, the
         % values must be supplied by a function.   Find out…
         essential.time_dependent =(isa(essential.fixed_value,'function_handle'));
@@ -208,13 +208,15 @@ if isfield(model_data,'boundary_conditions')...
 end
 
 % Number the equations: The displacements may be prescribed
-model_data.u = numberdofs (model_data.u);
+model_data.un1 = numberdofs (model_data.un1);
 % and that would also be reflected in the velocity vector..
-model_data.v = model_data.u;
+model_data.v = model_data.un1;
+model_data.un = model_data.un1;
+clear un1 un
 
 % Construct the system stiffness and mass matrix
-K=  sparse(model_data.u.nfreedofs,model_data.u.nfreedofs);
-M=  sparse(model_data.u.nfreedofs,model_data.u.nfreedofs);
+K=  sparse(model_data.un1.nfreedofs,model_data.un1.nfreedofs);
+M=  sparse(model_data.un1.nfreedofs,model_data.un1.nfreedofs);
 for i=1:length(model_data.region)
     region =model_data.region{i};
     if (~isfield(region, 'femm' ))
@@ -222,9 +224,8 @@ for i=1:length(model_data.region)
     end
     % Give the  FEMM a chance  to precompute  geometry-related quantities
     region.femm = associate_geometry(region.femm,model_data.geom);
-    region.femm = update(region.femm,  model_data.geom, model_data.u, model_data.u);
-    K = K + stiffness(region.femm, sysmat_assembler_sparse, model_data.geom, model_data.u, model_data.u);
-    M = M + lumped_mass(region.femm, sysmat_assembler_sparse, model_data.geom, model_data.u);
+    K = K + stiffness(region.femm, sysmat_assembler_sparse, model_data.geom, model_data.un1, model_data.un, dt);
+    M = M + lumped_mass(region.femm, sysmat_assembler_sparse, model_data.geom, model_data.un1);
     model_data.region{i}=region;
     clear region Q prop mater Rm  femm
 end
@@ -232,10 +233,10 @@ end
 %     Set the initial condition
 if isfield(model_data,'initial_condition')
     if (isa(model_data.initial_condition.u_fixed_value,'function_handle'))
-        model_data.u.values = model_data.initial_condition.u_fixed_value(model_data.geom.values);
+        model_data.un1.values = model_data.initial_condition.u_fixed_value(model_data.geom.values);
     else
-        uval=gather_sysvec(model_data.u)*0+model_data.initial_condition.u_fixed_value;
-        model_data.u = scatter_sysvec(model_data.u,uval);
+        uval=gather_sysvec(model_data.un1)*0+model_data.initial_condition.u_fixed_value;
+        model_data.un1 = scatter_sysvec(model_data.un1,uval);
     end
     if (isa(model_data.initial_condition.v_fixed_value,'function_handle'))
         model_data.v.values = model_data.initial_condition.v_fixed_value(model_data.geom.values);
@@ -244,7 +245,7 @@ if isfield(model_data,'initial_condition')
         model_data.v = scatter_sysvec(model_data.v,uval);
     end
 else % no initial conditions were supplied, assume  all displacements and velocities are zero.
-    model_data.u=gather_sysvec(model_data.u)*0;
+    model_data.un1=gather_sysvec(model_data.un1)*0;
     model_data.v=gather_sysvec(model_data.v)*0;
 end
 
@@ -275,7 +276,7 @@ model_data.dt=dt;
 % Let us begin:
 t=0;
 % Initial displacement, velocity, and acceleration.
-U0 = gather_sysvec(model_data.u);
+U0 = gather_sysvec(model_data.un1);
 V0= gather_sysvec(model_data.v);
 A0 =[];% The acceleration will be computed from the initial loads.
 F0 = 0*U0;% Zero out the load
@@ -285,7 +286,7 @@ if (isfield(model_data.boundary_conditions, 'traction' ))
         traction =model_data.boundary_conditions.traction{j};
         if (~traction.time_dependent)
             fi= force_intensity(struct('magn',traction.traction));
-            F0 = F0 + distrib_loads(traction.femm, sysvec_assembler, model_data.geom, model_data.u, fi, 2);
+            F0 = F0 + distrib_loads(traction.femm, sysvec_assembler, model_data.geom, model_data.un1, fi, 2);
         end
     end
     clear traction fi
@@ -302,14 +303,14 @@ if ( isfield(model_data,'boundary_conditions')) && ...
             % twice.
             fixed_value =essential.fixed_value;
             for k=1:length(essential.component)
-                model_data.u = set_ebc(model_data.u, essential.fenids, ...
+                model_data.un1 = set_ebc(model_data.un1, essential.fenids, ...
                     essential.is_fixed, essential.component(k), fixed_value);
             end
-            model_data.u = apply_ebc (model_data.u);
+            model_data.un1 = apply_ebc (model_data.un1);
             for i=1:length(model_data.region)
-                F0 = F0 + nz_ebc_loads(model_data.region{i}.femm, sysvec_assembler, model_data.geom, model_data.u);
+                F0 = F0 + nz_ebc_loads(model_data.region{i}.femm, sysvec_assembler, model_data.geom, model_data.un1);
             end
-            model_data.u.fixed_values(:)=0;% Zero out the fixed values for the next load
+            model_data.un1.fixed_values(:)=0;% Zero out the fixed values for the next load
         end
     end
     clear essential
@@ -318,6 +319,7 @@ end
 F0indep=F0;
 %     First output is the initial condition
 if ~isempty(observer)% report the progress
+    model_data.dt=dt;
     observer (t,model_data);
 end
 step =0;
@@ -340,17 +342,17 @@ while t <tend
                     fixed_value =essential.fixed_value;
                 end
                 for k=1:length(essential.component)
-                    model_data.u = set_ebc(model_data.u, essential.fenids, ...
+                    model_data.un1 = set_ebc(model_data.un1, essential.fenids, ...
                         essential.is_fixed, essential.component(k), fixed_value);
                 end
-                model_data.u = apply_ebc (model_data.u);
+                model_data.un1 = apply_ebc (model_data.un1);
             end
         end
         clear essential
         % Add the loads due to fixed displacements
         if (Any_essential_time_dependent)% Only if any time-dependent
             for i=1:length(model_data.region)
-                F0 = F0 + nz_ebc_loads(model_data.region{i}.femm, sysvec_assembler, model_data.geom, model_data.u);
+                F0 = F0 + nz_ebc_loads(model_data.region{i}.femm, sysvec_assembler, model_data.geom, model_data.un1);
             end
         end
     end
@@ -360,7 +362,7 @@ while t <tend
             traction =model_data.boundary_conditions.traction{j};
             if (traction.time_dependent)
                 fi= force_intensity(struct('magn',traction.traction(t)));
-                F0 = F0 + distrib_loads(traction.femm, sysvec_assembler, model_data.geom, model_data.u, fi, 2);
+                F0 = F0 + distrib_loads(traction.femm, sysvec_assembler, model_data.geom, model_data.un1, fi, 2);
             end
         end
         clear traction fi
@@ -371,11 +373,12 @@ while t <tend
     end
     % Add  time-dependent traction loads [to be done]
     U1 = U0 +dt*V0+(dt^2)/2*A0;% displacement update
-    model_data.u = scatter_sysvec(model_data.u, U1);
+    model_data.un1 = scatter_sysvec(model_data.un1, U1);
     % Add the restoring forces
     for i=1:length(model_data.region)
         region =model_data.region{i};
-        F1 = F0 + restoring_force(region.femm,sysvec_assembler, model_data.geom,model_data.u,model_data.u);
+        [FR,region.femm]=restoring_force(region.femm,sysvec_assembler, model_data.geom,model_data.un1,model_data.un,dt);
+        F1 = F0 + FR;
         model_data.region{i}=region;
         clear region
     end
@@ -389,6 +392,7 @@ while t <tend
     U0 = U1;
     V0 = V1;
     A0 = A1;
+    model_data.un =  model_data.un1;
     if (t==tend)
         break;
     end
@@ -397,6 +401,7 @@ while t <tend
     end
     t=t+dt;
     if ~isempty(observer)% report the progress
+        model_data.dt=dt;
         observer (t,model_data);
     end
 end
