@@ -87,7 +87,7 @@ classdef material_deformation_linear_triax < material_deformation_triax
         if (isfield(context,'strain'))
             Ev = context.strain;% strain in material coordinates
         else% This is an approximation valid only for small displacements
-            gradu=context.F-eye(3);
+            gradu=context.Fn1-eye(3);
             Ev = strain_3x3t_to_6v (self,(gradu+gradu')/2);
         end
             D  = tangent_moduli (self, context);% local material stiffness
