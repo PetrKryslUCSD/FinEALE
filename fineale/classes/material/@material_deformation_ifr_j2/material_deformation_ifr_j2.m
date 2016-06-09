@@ -27,37 +27,64 @@ classdef material_deformation_ifr_j2 < material_deformation_triax
             self = self@material_deformation_triax(Parameters);
         end
         
-        function [out, newms] = update (self, ms, context)
-            % Update material state.  Return the updated material state, and the
-            % requested quantity (default is the stress).
-            %   Call as:
-            %     [out,newms] = update(m, ms, context)
-            %  where
-            %     m=material
-            %     ms = material state
-            %     context=structure
-            %        with mandatory fields
-            %           F= deformation gradient
-            %        and optional fields
-            %           output=type of quantity to output, and interpreted by the
-            %           particular material; [] is returned when the material does not
-            %           recognize the requested quantity to indicate uninitialized
-            %           value.  It can be tested with isempty ().
-            %              output ='Cauchy' - Cauchy stress; this is the default
-            %                      when output type is not specified.
-            %              output ='2ndPK' - 2nd Piola-Kirchhoff stress;
-            %                  It is assumed that stress is output in 6-component vector form.
-            %              output ='strain_energy'
-            %   The output arguments are
-            %     out=requested quantity
-            %     newms=new material state; don't forget that if the update is final
-            %           the material state newms must be assigned and stored.  Otherwise
-            %           the material update is lost!
+        function [out, newms] = state(self, ms, context)
+            % Retrieve material state. 
             %
-           
+            %   function [out, newms] = state(self, ms, context)
+            %
+            % The method is used with either one output argument or with
+            % two output arguments.
+            % 1.  With only "out" as output argument:  Retrieve the
+            %     the requested variable from the material state. 
+            % 2.  With both output arguments: Update the material state,
+            %     and return the requested variable from the material state 
+            %     and the updated material state.
+            %
+            %     The requested quantity may or may not be supported by
+            %     the particular material model.(default is the stress). 
+            %
+            %   Input arguments:
+            % self=material
+            % ms = material state
+            % context=structure
+            %    with mandatory fields
+            %       Fn1= current deformation gradient (at time t_n+1)
+            %       Fn=  previous converged deformation gradient (at time t_n)
+            %       dt= time step, t_n+1-t_n
+            %    and optional fields
+            %       output=type of quantity to output, and interpreted by the
+            %           particular material; [] is returned when the material 
+            %           does not recognize the requested quantity to indicate 
+            %           uninitialized value.  It can be tested with isempty().
+            %           output ='Cauchy' - Cauchy stress; this is the default
+            %              when output type is not specified.
+            %           output ='2ndPK' - 2nd Piola-Kirchhoff stress;
+            %                  
+            %              output ='strain_energy'
+            %    It is assumed that stress is output in 6-component vector
+            %    form. 
+            %
+            %   Output arguments:
+            % out=requested quantity
+            % newms=new material state; don't forget that if the update is
+            %       final the material state newms must be assigned and
+            %       stored.  Otherwise the material update is lost!
+            %
+            
+            % Get the basic kinematic variables
+            Fn1 = context.Fn1;
+            Fn  = context.Fn;
+            dt  = context.dt;
+            
+            if nargout == 1 % Pure retrieval,  no update
+                out =get_var(); return
+            end
+            
+            % This is the case were the material state needs to be updated
+            % and then the variable requested needs to be returned.
+            
             E = self.property.E;
             nu = self.property.nu;
-            sigma_y = self.property.sigma_y;
             Hi = self.property.Hi;% Isotropic hardening modulus
             Hk = self.property.Hk;% Kinematic hardening modulus
             mu     = E / (2 * (1 + nu));                % shear modulus
@@ -67,9 +94,6 @@ classdef material_deformation_ifr_j2 < material_deformation_triax
             
             cauchy_prev = ms.cauchy;
             
-            Fn1 = context.Fn1;
-            Fn  = context.Fn;
-            dt  = context.dt;  
             rel_F=compute_rel_def_grad(Fn1,Fn);
             [rel_R,rel_U] = polardecomp(rel_F);
             ln_rel_U=compute_ln_U (rel_U);
@@ -83,7 +107,7 @@ classdef material_deformation_ifr_j2 < material_deformation_triax
             %   /* elastic predictor: corotational */
             curr_press      = sum(diag(ms.cauchy))/3;
             press_predictor = curr_press + bulk_mod * ln_rel_J;
-            dev_sig_corot= ms.cauchy - curr_press*eye(3) + twomu * ln_rel_U;
+            dev_sig_corot= ms.cauchy - curr_press*eye(3) + twomu * (ln_rel_U);%-ms.plastic_ln_rel_U);
             
             alpha_corot = ms.back_stress;
             
@@ -91,15 +115,15 @@ classdef material_deformation_ifr_j2 < material_deformation_triax
             dev_sig_predictor=rel_R*dev_sig_corot*rel_R';
             alpha_predictor=rel_R*alpha_corot*rel_R';
             N=dev_sig_predictor - alpha_predictor;
-            effective_stress = sum(sum(N.*N));% Double contraction
-            effective_stress = sqrt(effective_stress);
+            effective_stress = sqrt(sum(sum(N.*N)));% Double contraction
             
+            f1_trial=(effective_stress - SQRT_2_OVER_3 * ms.curr_sigma_y) ;
             %   /* plasticity criterion */
-            if (effective_stress > SQRT_2_OVER_3 * ms.curr_sigma_y)
+            if (f1_trial > 0) 
                 N= N / effective_stress;  %  /* normal unit */
                 %     /* linear hardening */
-                Gamma = (effective_stress - SQRT_2_OVER_3 * ms.curr_sigma_y) / (twomu * (1 + (Hi+Hk) / 3 / mu));
-                dev_sig = dev_sig_predictor -twomu * Gamma*N;
+                Gamma = f1_trial / (twomu * (1 + (Hi+Hk) / 3 / mu));
+                dev_sig = dev_sig_predictor - twomu * Gamma*N;
                 ms.equiv_pl_def = ms.equiv_pl_def + SQRT_2_OVER_3 * Gamma;
                 alpha = alpha_predictor + N * (2 / 3 * Hk * Gamma);
                 ms.curr_sigma_y = ms.curr_sigma_y+ SQRT_2_OVER_3 * Hi * Gamma;
@@ -115,9 +139,13 @@ classdef material_deformation_ifr_j2 < material_deformation_triax
             
             [msD,~]=compute_midstep_rate_of_def (rel_F, dt);
             ms.deform_energy_density = ms.deform_energy_density ...
-                + dt*0.5*(sum(sum(cauchy_prev.*msD))+sum(sum(cauchy_prev.*ms.cauchy)))*det(Fn1);
+                + dt*0.5*(sum(sum(cauchy_prev.*msD))+sum(sum(msD.*ms.cauchy)))*det(Fn1);
             
-            if isfield(context,'output')
+            out =get_var();
+            newms = ms;
+            return;
+            
+            function out =get_var()
                 switch context.output
                     case 'Cauchy'
                         out = self.stress_3x3t_to_6v(ms.cauchy);
@@ -133,14 +161,13 @@ classdef material_deformation_ifr_j2 < material_deformation_triax
                         out = sqrt(1/2*((s1-s2)^2+(s1-s3)^2+(s2-s3)^2+6*(s4^2+s5^2+s6^2)));
                     case 'equiv_pl_def'
                         out =ms.equiv_pl_def;
+                    case'strain_energy'
+                        out = ms.deform_energy_density;
                     otherwise
                         out = [];
                 end
-            else
-                out = self.stress_3x3t_to_6v(ms.cauchy);
             end
-            newms = ms;
-            return;
+           
         end
         
         function D = tangent_moduli(self, context)
@@ -173,12 +200,12 @@ classdef material_deformation_ifr_j2 < material_deformation_triax
                     ix=[1,4,5,;0,2,6;0,0,3];
                     ctx.Fn1 = context.Fn1; ctx.Fn = context.Fn; 
                     ctx.dt = context.dt; ctx.dT = []; ctx.output='Cauchy';;
-                    [sigmav0, ~] = update (self, ms, ctx);
+                    [sigmav0, ~] = state(self, ms, ctx);
                     for i=1:3
                         for j=i:3
                             Finc=zeros(3); Finc(i,j)=Finc(i,j)+dep/2; Finc(j,i)=Finc(j,i)+dep/2;
                             ctx.Fn1 = Fn1 + Finc*Fn1;
-                            [sigmav, ~] = update (self, ms, ctx);
+                            [sigmav, ~] = state(self, ms, ctx);
                             D(:,ix(i,j)) =(sigmav-sigmav0)/dep;
                         end
                     end

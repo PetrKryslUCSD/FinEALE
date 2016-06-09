@@ -63,6 +63,7 @@ Xs =geom.values;
 Uns = un.values; % displacement in step n
 Un1s = un1.values; % displacement in step n+1
 context.Fn1= [];
+context.dt=dt;% time step
 if isempty(dT)
     dTs=zeros(geom.nfens,1);
 else
@@ -102,7 +103,7 @@ for m=1:length(fe_list)
     context.Fn1=Rm'*Fn1bar*Rm;%  Deformation gradient in material coordinates
     context.dT = transpose(Ns{j})*dT;
     context.xyz =mean(X);
-    [out,ignore] = update(self.material, self.matstates{i}, context);
+    out = state(self.material, self.matstates{i}, context);
     switch context.output
         case 'Cauchy'
             out =self.material.stress_vector_rotation(Rm')*out;%  To global coordinate system

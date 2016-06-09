@@ -48,61 +48,65 @@ classdef material_deformation_linear_uniax < material_deformation_uniax
             D=D(1,1)-D(1,2:3)*(D(2:3,2:3)\D(2:3,1));
         end
         
-        % Update material state.
-        %
-        % function [out, newms] = update (self, ms, context)
-        %
-        % Update material state.  Return the updated material state, and the
-        % requested quantity (default is the stress).
-        %   Call as:
-        %     [out,newms] = update(m, ms, context)
-        %  where
-        %     m=material
-        %     ms = material state
-        %     context=structure
-        %        with mandatory fields
-        %           strain=strain vector  in the local material
-        %               directions (which may be the same as the global coordinate
-        %               directions)
-        %        and optional fields
-        %           output=type of quantity to output, and interpreted by the
-        %               particular material; [] is returned when the material does not
-        %               recognize the requested quantity to indicate uninitialized
-        %               value.  It can be tested with isempty ().
-        %                  output ='Cauchy' - Cauchy stress; this is the default
-        %                      when output type is not specified.
-        %                  output ='2ndPK' - 2nd Piola-Kirchhoff stress;
-        %           It is assumed that stress is output in 6-component vector form.
-        %
-        %   The output arguments are
-        %     out=requested quantity
-        %           Remember: the output is expressed in the local material 
-        %           orientation  coordinates.
-        %     newms=new material state; don't forget that if the update is final
-        %           the material state newms must be assigned and stored.  Otherwise
-        %           the material update is lost!
-        %
-        function [out, newms] = update (self, ms, context)
+        function [out, newms] = state(self, ms, context)
+            % Retrieve material state. 
+            %
+            %   function [out, newms] = state(self, ms, context)
+            %
+            % The method is used with either one output argument or with
+            % two output arguments.
+            % 1.  With only "out" as output argument:  Retrieve the
+            %     the requested variable from the material state. 
+            % 2.  With both output arguments: Update the material state,
+            %     and return the requested variable from the material state 
+            %     and the updated material state.
+            %
+            %     The requested quantity may or may not be supported by
+            %     the particular material model.(default is the stress). 
+            %
+            %   Input arguments:
+            % self=material
+            % ms = material state
+            % context=structure
+            %    with mandatory fields
+            %       Fn1= current deformation gradient (at time t_n+1)
+            %       Fn=  previous converged deformation gradient (at time t_n)
+            %    and optional fields
+            %       output=type of quantity to output, and interpreted by the
+            %           particular material; [] is returned when the material 
+            %           does not recognize the requested quantity to indicate 
+            %           uninitialized value.  It can be tested with isempty().
+            %           output ='Cauchy' - Cauchy stress; this is the default
+            %              when output type is not specified.
+            %           output ='2ndPK' - 2nd Piola-Kirchhoff stress;
+            %                  
+            %              output ='strain_energy'
+            %    It is assumed that stress is output in 6-component vector
+            %    form. 
+            %
+            %   Output arguments:
+            % out=requested quantity
+            % newms=new material state; don't forget that if the update is
+            %       final the material state newms must be assigned and
+            %       stored.  Otherwise the material update is lost!
+            %
+            
             Ev = context.strain;% strain in local coordinates
             D  = tangent_moduli (self, context);% local material stiffness
             tSigma = thermal_stress(self,context);% stress in local coordinates
             stress = D * Ev + tSigma;
-            if isfield(context,'output')
-                switch context.output
-                    case 'Cauchy'
-                        out = stress;
-                    case 'vol_strain'
-                        out = sum(Ev(1:3));
-                    case 'pressure'
-                        out = -(sum(stress(1:3))/3);
-                    otherwise
-                        out = [];
-                end
-            else
-                out = stress;
+            
+            newms=ms;
+            switch context.output
+                case 'Cauchy'
+                    out = stress;
+                case 'vol_strain'
+                    out = sum(Ev(1:3));
+                case 'pressure'
+                    out = -(sum(stress(1:3))/3);
+                otherwise
+                    out = [];
             end
-            newms = ms;
-            return;
         end
         
         

@@ -44,148 +44,92 @@ classdef material_deformation_linear_triax < material_deformation_triax
             D= self.property.tangent_moduli(context);
         end
         
-        function [out, newms] = update (self, ms, context)
-        % Update material state.
-        %
-        % function [out, newms] = update (self, ms, context)
-        %
-        % Update material state.  Return the updated material state, and the
-        % requested quantity (default is the stress).
-        %   Call as:
-        %     [out,newms] = update(m, ms, context)
-        %  where
-        %     m=material
-        %     ms = material state
-        %     context=structure
-        %        with mandatory fields
-        %           strain=strain vector  in the local material
-        %               directions (which may be the same as the global coordinate
-        %               directions)
-        %        and optional fields
-        %           output=type of quantity to output, and interpreted by the
-        %               particular material; [] is returned when the material does not
-        %               recognize the requested quantity to indicate uninitialized
-        %               value.  It can be tested with isempty ().
-        %                  output ='Cauchy' - Cauchy stress; this is the default
-        %                      when output type is not specified.
-        %                  output ='princCauchy' - principal Cauchy stress;
-        %                  output ='pressure' - pressure;
-        %                  output ='vol_strain' - volumetric strain;
-        %                  output ='vonMises' - von Mises stress;  
-        %           outputRm=optional orientation matrix in which output should 
-        %               supplied   
-        %
-        %   It is assumed that stress is output in 6-component vector form.
-        %   The output arguments are
-        %     out=requested quantity
-        %           Remember: the output is expressed in the local material 
-        %           orientation  coordinates.
-        %     newms=new material state; don't forget that if the update is final
-        %           the material state newms must be assigned and stored.  Otherwise
-        %           the material update is lost!
-        %
-        if (isfield(context,'strain'))
-            Ev = context.strain;% strain in material coordinates
-        else% This is an approximation valid only for small displacements
-            gradu=context.Fn1-eye(3);
-            Ev = strain_3x3t_to_6v (self,(gradu+gradu')/2);
-        end
+        function [out, newms] = state(self, ms, context)
+            % Retrieve material state. 
+            %
+            %   function [out, newms] = state(self, ms, context)
+            %
+            % The method is used with either one output argument or with
+            % two output arguments.
+            % 1.  With only "out" as output argument:  Retrieve the
+            %     the requested variable from the material state. 
+            % 2.  With both output arguments: Update the material state,
+            %     and return the requested variable from the material state 
+            %     and the updated material state.
+            %
+            %     The requested quantity may or may not be supported by
+            %     the particular material model.(default is the stress). 
+            %
+            %   Input arguments:
+            % self=material
+            % ms = material state
+            % context=structure
+            %    with mandatory fields
+            %       Fn1= current deformation gradient (at time t_n+1)
+            %       Fn=  previous converged deformation gradient (at time t_n)
+            %    and optional fields
+            %       output=type of quantity to output, and interpreted by the
+            %           particular material; [] is returned when the material 
+            %           does not recognize the requested quantity to indicate 
+            %           uninitialized value.  It can be tested with isempty().
+            %           output ='Cauchy' - Cauchy stress; this is the default
+            %              when output type is not specified.
+            %           output ='2ndPK' - 2nd Piola-Kirchhoff stress;
+            %                  
+            %              output ='strain_energy'
+            %    It is assumed that stress is output in 6-component vector
+            %    form. 
+            %
+            %   Output arguments:
+            % out=requested quantity
+            % newms=new material state; don't forget that if the update is
+            %       final the material state newms must be assigned and
+            %       stored.  Otherwise the material update is lost!
+            %
+            
+            % Get the basic kinematic variables
+            if (isfield(context,'strain'))
+                Ev = context.strain;% strain in material coordinates
+            else% This is an approximation valid only for small displacements
+                gradu=context.Fn1-eye(3);
+                Ev = strain_3x3t_to_6v (self,(gradu+gradu')/2);
+            end
+            
+            % This is the case were the material state needs to be updated
+            % and then the variable requested needs to be returned.
+            
             D  = tangent_moduli (self, context);% local material stiffness
             tSigma = thermal_stress(self,context);% stress in local coordinates
             stress = D * Ev + tSigma;
-            if isfield(context,'output')
+            
+            out =get_var();
+            newms = ms;
+            return;
+            
+            function out =get_var()
                 switch context.output
                     case 'Cauchy'
                         out = stress;
-                    case 'vol_strain'
-                        out = sum(Ev(1:3));
                     case 'pressure'
-                        out = -(sum(stress(1:3))/3);
+                        out = -(sum(diag(stress))/3);
                     case 'princCauchy'
-                        t = stress_6v_to_3x3t (self,stress);
-                        [V,D]=eig(t);
+                        [V,D]=eig(self.stress_6v_to_3x3t(stress));
                         out =sort(diag(D),'descend');
                     case {'vonMises','vonmises','von_mises','vm'}
                         s1=stress(1);s2=stress(2);s3=stress(3);
                         s4=stress(4);s5=stress(5);s6=stress(6);
                         out = sqrt(1/2*((s1-s2)^2+(s1-s3)^2+(s2-s3)^2+6*(s4^2+s5^2+s6^2)));
+                    case 'vol_strain'
+                        out = sum(Ev(1:3));
+                    case 'equiv_pl_def'
+                        out =0.0;
+                    case'strain_energy'
+                        out = (stress-tSigma)'*Ev/2;
                     otherwise
                         out = [];
                 end
-            else
-                out = stress;
             end
-            newms = ms;
-            return;
         end
-        
-        %
-        %         function [out] = output (self, ms, stress, context)
-        %         % Output material state.
-        %         %
-        %         % function [out] = output (self, ms, stress, context)
-        %         %
-        %         % Output material state.  Return the
-        %         % requested quantity (default is the stress).
-        %         %
-        %         % Here
-        %         %     m=material
-        %         %     ms = material state
-        %         %     context=structure
-        %         %        with mandatory fields
-        %         %           strain=strain vector  in the local material
-        %         %               directions (which may be the same as the global coordinate
-        %         %               directions)
-        %         %        and optional fields
-        %         %           output=type of quantity to output, and interpreted by the
-        %         %               particular material; [] is returned when the material does not
-        %         %               recognize the requested quantity to indicate uninitialized
-        %         %               value.  It can be tested with isempty ().
-        %         %                  output ='Cauchy' - Cauchy stress; this is the default
-        %         %                      when output type is not specified.
-        %         %                  output ='princCauchy' - principal Cauchy stress;
-        %         %                  output ='pressure' - pressure;
-        %         %                  output ='vol_strain' - volumetric strain;
-        %         %                  output ='vonMises' - von Mises stress;
-        %         %           outputRm=optional orientation matrix in which output should
-        %         %               supplied
-        %         %
-        %         %   It is assumed that stress is output in 6-component vector form.
-        %         %   The output arguments are
-        %         %     out=requested quantity
-        %         %           Remember: the output is expressed in the local material
-        %         %           orientation  coordinates.
-        %         %     newms=new material state; don't forget that if the update is final
-        %         %           the material state newms must be assigned and stored.  Otherwise
-        %         %           the material update is lost!
-        %         %
-        %             stress = self.orient(stress,context);
-        %             if isfield(context,'output')
-        %                 switch context.output
-        %                     case 'Cauchy'
-        %                         out = stress;
-        %                     case 'vol_strain'
-        %                         out = sum(Ev(1:3));
-        %                     case 'pressure'
-        %                         out = -(sum(stress(1:3))/3);
-        %                     case 'princCauchy'
-        %                         t = stress_6v_to_3x3t (self,stress);
-        %                         [V,D]=eig(t);
-        %                         out =sort(diag(D),'descend');
-        %                     case {'vonMises','vonmises','von_mises','vm'}
-        %                         s1=stress(1);s2=stress(2);s3=stress(3);
-        %                         s4=stress(4);s5=stress(5);s6=stress(6);
-        %                         out = sqrt(1/2*((s1-s2)^2+(s1-s3)^2+(s2-s3)^2+6*(s4^2+s5^2+s6^2)));
-        %                     otherwise
-        %                         out = [];
-        %                 end
-        %             else
-        %                 out = stress;
-        %             end
-        %             newms = ms;
-        %             return;
-        %         end
-        %
         
         function v = thermal_stress(self,context)
         % Calculate vector of thermal stress components.

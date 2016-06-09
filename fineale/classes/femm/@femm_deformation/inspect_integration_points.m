@@ -1,15 +1,19 @@
 function idat = inspect_integration_points(self, ...
-        geom, u, dT, fe_list, context,...
+        geom, un1, un, dt, dT, fe_list, context,...
         inspector, idat)
 % Inspect the integration point quantities.
 %
-% function idat = inspect_integration_points(self, ...
-        % geom, u, dT, fe_list, context,...
-        % inspector, idat)
+%     function idat = inspect_integration_points(self, ...
+%             geom, u, dT, fe_list, context, inspector, idat)
 %
 % Input arguments
 %    geom - reference geometry field
-%    u - displacement field
+%    un1      - displacement field at the end of time step t_n+1; This is
+%               the linear displacement field for linear problems
+%    un       - displacement field at the end of time step t_n; This field
+%               is ignored for linear problems
+%    dt       - time step from  t_n to t_n+1; needed only by some
+%                materials
 %    dT - temperature difference field
 %    fe_list - indexes of the finite elements that are to be inspected:
 %          The fes to be included are: fes(fe_list).

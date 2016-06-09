@@ -304,15 +304,52 @@ classdef material_deformation < material_base
             error('Base class does not implement this behaviour!');
         end
         
-        function [out, newms] = update (self, ms, context)
-        % Update material state.
-        %
-        % function [out, newms] = update (self, ms, context)
-        %
-        % Update material state.  Return the updated material state, and the
-        % requested quantity (default is the stress).
-        %   Call as:
-        %     [out,newms] = update(m, ms, context)
+        function [out, newms] = state(self, ms, context)
+            % Retrieve material state. 
+            %
+            %   function [out, newms] = state(self, ms, context)
+            %
+            % The method is used with either one output argument or with
+            % two output arguments.
+            % 1.  With only "out" as output argument:  Retrieve the
+            %     the requested variable from the material state. 
+            % 2.  With both output arguments: Update the material state,
+            %     and return the requested variable from the material state 
+            %     and the updated material state.
+            %
+            %     The requested quantity may or may not be supported by
+            %     the particular material model.(default is the stress). 
+            %
+            %   Input arguments:
+            % self=material
+            % ms = material state
+            % context=structure
+            %    with mandatory fields
+            %       Fn1= current deformation gradient (at time t_n+1)
+            %       Fn=  previous converged deformation gradient (at time t_n)
+            %       dt= time step, t_n+1-t_n
+            %    and optional fields
+            %       output=type of quantity to output, and interpreted by the
+            %           particular material; [] is returned when the material 
+            %           does not recognize the requested quantity to indicate 
+            %           uninitialized value.  It can be tested with isempty().
+            %           output ='Cauchy' - Cauchy stress; this is the default
+            %              when output type is not specified.
+            %           output ='2ndPK' - 2nd Piola-Kirchhoff stress;
+            %                  
+            %              output ='strain_energy'
+            %    It is assumed that stress is output in 6-component vector
+            %    form. 
+            %
+            %   Output arguments:
+            % out=requested quantity
+            % newms=new material state; don't forget that if the update is
+            %       final the material state newms must be assigned and
+            %       stored.  Otherwise the material update is lost!
+            %
+            
+            % This is the case were the material state needs to be updated
+            % and then the variable requested needs to be returned.
         error('Base class does not implement this behaviour!');
         end
         

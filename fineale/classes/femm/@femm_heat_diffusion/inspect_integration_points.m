@@ -63,9 +63,9 @@ function idat = inspect_integration_points(self, ...
             context.xyz=Ns{j}'*x;% 'location in global coordinates
             context.gradtheta = T'* Ndersp;%  gradient in mat. orient. coord
             context.Rm  =Rm;% material orientation matrix
-            % Now use the material update method to compute the requested
+            % Now use the material state() method to compute the requested
             % quantity ...
-            [out,ignore] = update(mat, [], context);
+            out = state(mat, [], context);
             %  ... and call the callback to allow for its processing
             if ~isempty (inspector)
                 idat =feval(inspector,idat,out,context.xyz,[],pc(j,:));

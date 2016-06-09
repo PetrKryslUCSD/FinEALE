@@ -1,15 +1,19 @@
 function idat = inspect_integration_points(self, ...
-        geom, u, dT, fe_list, context,...
+        geom, un1, un, dt, dT, fe_list, context,...
         inspector, idat)
 % Inspect the integration point quantities.
 %
-% function idat = inspect_integration_points(self, ...
-        % geom, u, dT, fe_list, context,...
-        % inspector, idat)
+%     function idat = inspect_integration_points(self, ...
+%             geom, u, dT, fe_list, context, inspector, idat)
 %
 % Input arguments
 %    geom - reference geometry field
-%    u - displacement field
+%    un1      - displacement field at the end of time step t_n+1; This is
+%               the linear displacement field for linear problems
+%    un       - displacement field at the end of time step t_n; This field
+%               is ignored for linear problems
+%    dt       - time step from  t_n to t_n+1; needed only by some
+%                materials
 %    dT - temperature difference field
 %    fe_list - indexes of the finite elements that are to be inspected:
 %          The fes to be included are: fes(fe_list).
@@ -61,11 +65,11 @@ function idat = inspect_integration_points(self, ...
     end
     PVdim=size(Ns_pv_c{1},1);
     Ddim=size(D,1);;
-    Kedim =u.dim*fes.nfens;
+    Kedim =un1.dim*fes.nfens;
     % Retrieve data for efficiency
     conns = fes.conn; % connectivity
     xs =geom.values;
-    Us =u.values;
+    Us =un1.values;
     context.strain= [];
     if isempty(dT)
         dTs=zeros(geom.nfens,1);
@@ -77,7 +81,7 @@ function idat = inspect_integration_points(self, ...
         i=fe_list(m);
         conn = conns(i,:); % connectivity
         x=xs(conn,:);
-        U=reshape(u, gather_values(u,conn));
+        U=reshape(un1, gather_values(un1,conn));
         dT =dTs(conn,:);
         % Loop over all integration points
         CT =zeros(PVdim,Kedim);
@@ -125,7 +129,7 @@ function idat = inspect_integration_points(self, ...
             context.strain = Bbar*U;% strain in material coordinates
             context.dT = transpose(Ns_u{j})*dT;
             context.xyz =c;
-            [out,ignore] = update(mat, [], context);
+            out = state(mat, [], context);
             switch context.output
                 case 'Cauchy'
                     if (~outputRm_constant)

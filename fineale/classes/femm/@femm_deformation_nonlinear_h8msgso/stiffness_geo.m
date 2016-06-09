@@ -37,6 +37,7 @@ Uns = un.values; % displacement in step n
 Un1s = un1.values; % displacement in step n+1
 context.dT = [];
 context.output='Cauchy';
+context.dt=dt;% time step
 % Prepare assembler
 Kedim =un1.dim*self.fes.nfens;
 start_assembly(assembler, Kedim, Kedim, size(conns,1), un1.nfreedofs, un1.nfreedofs);
@@ -73,8 +74,8 @@ for i=1:size(conns,1)
     gradN_x1_mean= gradN_mean/Fn1bar; %...  and the b.f. gradients with respect to current conf
     context.Fn=Rm'*Fnbar*Rm;%  Deformation gradient in material coordinates
     context.Fn1=Rm'*Fn1bar*Rm;%  Deformation gradient in material coordinates
-    [cauchy,~] = update(self.material, self.matstates{i}, context);
-    [stabcauchy,~] = update(self.stabilization_material, [], context);
+    [cauchy,~] = state(self.material, self.matstates{i}, context);
+    [stabcauchy,~] = state(self.stabilization_material, [], context);
     gcauchy =self.material.stress_vector_rotation(Rm')*(cauchy-self.phis(i)*stabcauchy); % to global
     sigma = stress_6v_to_3x3t(self.material,gcauchy);
     c1 = gradN_x1_mean*sigma*gradN_x1_mean';
@@ -85,7 +86,7 @@ for i=1:size(conns,1)
     for j=1:npts       % Loop over all integration points
         Fn1 = xn1'*gradN{j};% Current deformation gradient
         context.Fn1=Rm'*Fn1*Rm;
-        [stabcauchy,~] = update(self.stabilization_material, [], context);
+        [stabcauchy,~] = state(self.stabilization_material, [], context);
         gcauchy =self.material.stress_vector_rotation(Rm')*(self.phis(i)*stabcauchy); % to global
         sigma = stress_6v_to_3x3t(self.stabilization_material,gcauchy);
         gradNx1 =gradN{j}/Fn1;

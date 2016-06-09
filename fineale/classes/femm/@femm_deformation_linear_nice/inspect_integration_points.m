@@ -1,12 +1,19 @@
+function idat = inspect_integration_points(self, ...
+        geom, un1, un, dt, dT, fe_list, context,...
+        inspector, idat)
 % Inspect the integration point quantities.
 %
-% function idat = inspect_integration_points(self, ...
-%         geom, u, dT, gcell_list, context,...
-%         inspector, idat)
+%     function idat = inspect_integration_points(self, ...
+%             geom, u, dT, fe_list, context, inspector, idat)
 %
 % Input arguments
-%    x - reference geometry field
-%    u - displacement field
+%    geom - reference geometry field
+%    un1      - displacement field at the end of time step t_n+1; This is
+%               the linear displacement field for linear problems
+%    un       - displacement field at the end of time step t_n; This field
+%               is ignored for linear problems
+%    dt       - time step from  t_n to t_n+1; needed only by some
+%                materials
 %    dT - temperature difference field
 %    gcell_list - indexes of the geometric cells that are to be inspected:
 %          The gcells to be included are: gcells(gcell_list).
@@ -23,9 +30,7 @@
 % Output arguments
 %     idat - see the description of the input argument
 %
-function idat = inspect_integration_points(self, ...
-        geom, u, dT, list, context,...
-        inspector, idat)
+
     fes = self.fes;% grab the finite elements to work on
     %     Evaluate the nodal basis function gradients
     bfun_gradients = nodal_bfun_gradients (self, geom);
@@ -67,8 +72,7 @@ function idat = inspect_integration_points(self, ...
                 s=D_constrained*context.strain;
                 context.dT = [];% To do: collect temperatures
                 context.xyz =c;
-                [out,ignore] = update(mat, [], context);
-                out =mean(s(1:3) );
+                out = state(mat, [], context);
                 if ~isempty (inspector)
                     idat =feval(inspector,idat,out,c,[]);% To do: do I need the parametric coordinates?
                 end

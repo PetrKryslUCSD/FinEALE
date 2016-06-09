@@ -1,15 +1,19 @@
 function idat = inspect_integration_points(self, ...
-    geom, u, dT, fe_list, context,...
-    inspector, idat)
+        geom, un1, un, dt, dT, fe_list, context,...
+        inspector, idat)
 % Inspect the integration point quantities.
 %
-% function idat = inspect_integration_points(self, ...
-% geom, u, dT, fe_list, context,...
-% inspector, idat)
+%     function idat = inspect_integration_points(self, ...
+%             geom, u, dT, fe_list, context, inspector, idat)
 %
 % Input arguments
 %    geom - reference geometry field
-%    u - displacement field
+%    un1      - displacement field at the end of time step t_n+1; This is
+%               the linear displacement field for linear problems
+%    un       - displacement field at the end of time step t_n; This field
+%               is ignored for linear problems
+%    dt       - time step from  t_n to t_n+1; needed only by some
+%                materials
 %    dT - temperature difference field
 %    fe_list - indexes of the finite elements that are to be inspected:
 %          The fes to be included are: fes(fe_list).
@@ -58,7 +62,7 @@ end
 conns = fes.conn; % connectivity
 labels = fes.label; % finite element labels
 Xs =geom.values;
-Us =u.values;
+Us =un1.values;
 context.F= [];
 if isempty(dT)
     dTs=zeros(geom.nfens,1);
@@ -70,10 +74,10 @@ for m=1:length(fe_list)
     i=fe_list(m);
     conn = conns(i,:); % connectivity
     X=Xs(conn,:);
-    U=reshape(u, gather_values(u,conn));
+    U=reshape(un1, gather_values(un1,conn));
     dT =dTs(conn,:);
     % First we calculate  the mean basis function gradient matrix and the volume of the element
-    gradN_mean =zeros(self.fes.nfens,u.dim); V=0;
+    gradN_mean =zeros(self.fes.nfens,un1.dim); V=0;
     for j=1:npts % loop over all quadrature points
         J = X' * gradNparams{j};% Jacobian matrix wrt reference coordinates
         gradN{j} = gradNparams{j}/J;% derivatives wrt reference coor
@@ -94,7 +98,7 @@ for m=1:length(fe_list)
     context.strain =Bbar*U;% Strain wrt  material orientation 
     context.dT = transpose(Ns{j})*dT;
     context.xyz =mean(X);
-    [out,ignore] = update(self.material, [], context);
+    out = state(self.material, [], context);
     switch context.output
         case 'Cauchy'
             out =self.material.stress_vector_rotation(Rm')*out;%  To global coordinate system

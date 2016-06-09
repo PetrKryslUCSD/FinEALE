@@ -99,7 +99,7 @@ function idat = inspect_integration_points(self, ...
             context.dT = transpose(Ns_v{j})*dT;
             context.xyz =c;
             context.Rm =Rm;
-            [out,ignore] = update(mat, [], context);
+            out = state(mat, [], context);
             switch context.output
                 case 'Cauchy'
                     if (~outputRm_constant)

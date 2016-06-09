@@ -70,9 +70,9 @@ for i=1:size(conns,1)
     Fnbar = xn'*gradN_mean;% Current deformation gradient
     context.Fn=Rm'*Fnbar*Rm;%  deformation gradient  in material coordinates
     % Update the stress for the real material
-    [cauchy,self.matstates{i}] = update(self.material, self.matstates{i}, context);
+    [cauchy,self.matstates{i}] = state(self.material, self.matstates{i}, context);
     % Update the stress for the stabilization material
-    [stabcauchy,~] = update(self.stabilization_material, [], context);
+    [stabcauchy,~] = state(self.stabilization_material, [], context);
     Bbar = self.hBlmat(self,[],gradN_mean/Fn1bar,[],[]);% strain-displacement d/dx
     gcauchy =self.material.stress_vector_rotation(Rm')*(cauchy-self.phis(i)*stabcauchy); % to global
     Fe =  - Bbar'* (gcauchy * (V* det(Fn1bar))) ; % note the sign
@@ -80,7 +80,7 @@ for i=1:size(conns,1)
     for j=1:npts
         Fn1 =xn1'*gradN{j};
         context.Fn1 = Rm'*Fn1*Rm;% Current deformation gradient wrt material orientation
-        [stabcauchy,~] = update(self.stabilization_material, [], context);
+        [stabcauchy,~] = state(self.stabilization_material, [], context);
         B = self.hBlmat(self,[],gradN{j}/Fn1,[],[]);% strain-displacement
         gcauchy =self.material.stress_vector_rotation(Rm')*(self.phis(i)*stabcauchy); % to global
         Fe = Fe - B'* (gcauchy * (Jac{j} * w(j)* det(Fn1))) ; % note the sign

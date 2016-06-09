@@ -3,9 +3,8 @@ function idat = inspect_integration_points(self, ...
         inspector, idat)
 % Inspect the integration point quantities.
 %
-% function idat = inspect_integration_points(self, ...
-        % geom, u, dT, fe_list, context,...
-        % inspector, idat)
+%     function idat = inspect_integration_points(self, ...
+%             geom, u, dT, fe_list, context, inspector, idat)
 %
 % Input arguments
 %    geom - reference geometry field
@@ -97,7 +96,7 @@ function idat = inspect_integration_points(self, ...
             context.dT = transpose(Ns{j})*dT;
             context.xyz =c;
             context.ms=ms;
-            [out,ignore] = update(mat, context.ms, context);
+            out = state(mat, context.ms, context);
             switch context.output
                 case 'Cauchy'
                     if (~outputRm_constant)
