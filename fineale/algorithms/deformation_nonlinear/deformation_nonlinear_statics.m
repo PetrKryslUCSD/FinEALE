@@ -190,7 +190,7 @@ geom = nodal_field(struct('name',['geom'], 'dim', fens.dim, 'fens', fens));
 model_data.geom = geom;
             
 % Construct the displacement field
-un = nodal_field(struct('name',['un1'], 'dim', geom.dim, 'nfens', geom.nfens));
+un1 = nodal_field(struct('name',['un1'], 'dim', geom.dim, 'nfens', geom.nfens));
 
 % Apply the essential boundary conditions on the displacement field
 if (isfield(model_data.boundary_conditions, 'essential' ))
@@ -209,7 +209,7 @@ if (isfield(model_data.boundary_conditions, 'essential' ))
             component= essential.component;
         end
         if (isempty(component))
-            component =1:un.dim;
+            component =1:un1.dim;
         end
         fixed_value =0;
         % If the essential boundary condition is not  supplied by a
@@ -219,9 +219,9 @@ if (isfield(model_data.boundary_conditions, 'essential' ))
         end
         val=zeros(length(essential.node_list),1)+fixed_value;
         for k=1:length( component)
-            un = set_ebc(un, essential.node_list, is_fixed, component(k), val);
+            un1 = set_ebc(un1, essential.node_list, is_fixed, component(k), val);
         end
-        un = apply_ebc (un);
+        un1 = apply_ebc (un1);
         % If the essential boundary condition is to be load-factor-dependent, the
         % values must be supplied by a function.   Find out.
         essential.load_factor_dependent =(isa(essential.fixed_value,'function_handle'));
@@ -231,7 +231,8 @@ if (isfield(model_data.boundary_conditions, 'essential' ))
 end
 
 % Number the equations
-un = numberdofs (un, Renumbering_options);
+un1 = numberdofs (un1, Renumbering_options);
+un =un1;
 
 % Create the necessary FEMMs
 for i=1:length(model_data.region)
@@ -254,13 +255,16 @@ for i=1:length(model_data.region)
 end
 
 % Increment magnitudes
-load_increments=diff([0,load_multipliers]);
+load_increments=diff(unique(sort([0,load_multipliers])));
 
 % For all  load increments
 for incr =1:length(load_increments) % Load-implementation loop
     
     lambda =sum(load_increments(1:incr));
     dlambda=load_increments(incr);
+    
+    % Initial value of the displacement  in the current step
+    un1 =un;
     
     % Process load-factor-dependent essential boundary conditions:
     if ( isfield(model_data,'boundary_conditions')) && ...
@@ -270,19 +274,18 @@ for incr =1:length(load_increments) % Load-implementation loop
                 essential =model_data.boundary_conditions.essential{j};
                 fixed_value =essential.fixed_value(lambda);
                 for k=1:length(essential.component)
-                    un = set_ebc(un, essential.node_list, ...
+                    un1 = set_ebc(un1, essential.node_list, ...
                         essential.is_fixed, essential.component(k), fixed_value(k));
                 end
-                un = apply_ebc (un);
+                un1 = apply_ebc (un1);
             end
             clear essential
         end
     end
     
     % Initialization
-    un1 = un; % Solution  in the next step
     un1 = apply_ebc(un1); % Apply EBC
-    du = 0*un; % Displacement increment
+    du = 0*un1; % Displacement increment
     du = apply_ebc(du);
     un1Allfree=un1;% This field will hold the displacements for all notes and degrees of freedom.
     un1Allfree.is_fixed(:)=0;% all displacements will be free
@@ -401,6 +404,25 @@ for incr =1:length(load_increments) % Load-implementation loop
         
     end %  Iteration loop
     
+     
+    % Update the model data
+    model_data.un = un;
+    model_data.un1 = un1;
+    model_data.dt = dlambda;
+    %  Now the reactions
+    un1Allfree.values=un1.values;% This field holds the current converged displacements;
+    unAllfree=un1Allfree;
+    unAllfree.values=un.values;% This field holds the current converged displacements;
+    % since all the degrees of freedom are free, the restoring forces
+    % can be used to compute the reactions. Note the negative sign: the
+    % reactions are the opposite of the resisting forces of the
+    % material.
+    FR =zeros(un1Allfree.nfreedofs,1);
+    for i=1:length(model_data.region)% Compute the resisting forces of the material
+        FR = FR - restoring_force(model_data.region{i}.femm, sysvec_assembler, geom, un1Allfree, unAllfree, dlambda);
+    end
+    model_data.reactions=scatter_sysvec(un1Allfree,FR);
+        
     % Converged
     % Update the FEMMs
     for i=1:length(model_data.region)
@@ -410,25 +432,7 @@ for incr =1:length(load_increments) % Load-implementation loop
     end
     
     % Report results
-    
-    % Update the model data
-    model_data.un = un;
-    model_data.un1 = un1;
-    model_data.dt = dlambda;
- 
-    if ~isempty(load_increment_observer)% report the progress
-        un1Allfree.values=un1.values;% This field holds the current converged displacements; 
-        unAllfree=un1Allfree;
-        unAllfree.values=un.values;% This field holds the current converged displacements; 
-        % since all the degrees of freedom are free, the restoring forces
-        % can be used to compute the reactions. Note the negative sign: the
-        % reactions are the opposite of the resisting forces of the
-        % material.
-        FR =zeros(un1Allfree.nfreedofs,1);
-        for i=1:length(model_data.region)% Compute the resisting forces of the material
-            FR = FR - restoring_force(model_data.region{i}.femm, sysvec_assembler, geom, un1Allfree, unAllfree, dlambda); 
-        end
-        model_data.reactions=scatter_sysvec(un1Allfree,FR);
+   if ~isempty(load_increment_observer)% report the progress
         load_increment_observer (lambda,model_data);
     end
     
