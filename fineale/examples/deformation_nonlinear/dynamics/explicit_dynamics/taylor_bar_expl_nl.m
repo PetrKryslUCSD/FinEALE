@@ -6,16 +6,16 @@ function taylor_bar_expl_nl
     E=117000*u.MEGA*u.PA;
     nu=0.35;
     rho  = 8930*u.KG/u.M^3;
-    sigma_y=400*u.MEGA*u.PA; Hi=100*u.MEGA*u.PA;
+    sigma_y=400*u.MEGA*u.PA; Hi=0*u.MEGA*u.PA;
     iv=227000*u.MM/u.SEC;
     Radius =  3.2*u.MM;
     Length = 32.4*u.MM;
-    nperradius=4; nL=8;
+    nperradius=4; nL=28;
     tolerance  =Radius/1000;
-    tend = 80e-3*u.SEC;
+    tend = 80e-6*u.SEC;
     scale=4000;
     graphics = true;
-    igraphics=5;
+    igraphics=10;
     plots = true;
     
     prop = property_deformation_plasticity_linear_hardening(struct('E',E,'nu',nu,'rho',rho,'sigma_y',sigma_y,'Hi',0.0));
