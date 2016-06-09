@@ -242,10 +242,10 @@ model_data.Omega  = model_data.Omega(4:end);
     clear fldR fldI fld
     U = model_data.u; U.values = real(model_data.u.values);
     fldR = field_from_integration_points_spr (femm, ...
-        model_data.geom, U, [], 'Cauchy', 1, context);
+        model_data.geom, U, [], [], [], 'Cauchy', 1, context);
     U = model_data.u; U.values = imag(model_data.u.values);
     fldI = field_from_integration_points_spr (femm, ...
-        model_data.geom, U, [], 'Cauchy', 1, context);
+        model_data.geom, U, [], [], [], 'Cauchy', 1, context);
     max_tensile_stress(end+1)=max(sqrt(fldR.values(:,1).^2 + fldI.values(:,1).^2));
     end
     model_data.observer  =@output_max_tensile_stress;

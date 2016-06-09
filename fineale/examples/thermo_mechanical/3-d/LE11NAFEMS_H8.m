@@ -95,7 +95,7 @@ function  LE11NAFEMS
     cmap=jet;
     cmpn=2;
     % flda = dT; nvalsa=flda.values;
-    flda = field_from_integration_points(femma, geom, u, dT, 'Cauchy', cmpn);
+    flda = field_from_integration_points(femma, geom, u, [], [], dT, 'Cauchy', cmpn);
     nvalsa=flda.values/(pu.MEGA*pu.PA);
     nvalmin =min(nvalsa);
     nvalmax =max(nvalsa);

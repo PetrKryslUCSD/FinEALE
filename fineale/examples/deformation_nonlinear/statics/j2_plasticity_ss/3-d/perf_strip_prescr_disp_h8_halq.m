@@ -1,6 +1,6 @@
-function perf_strip_prescr_disp_h8
-disp('Perforated_strip, prescribed displacement: ss J2 perfect plasticity.');
-
+function perf_strip_prescr_disp_h8_halq
+    disp('Perforated_strip, prescribed displacement: Hallquist J2 perfect plasticity.');
+    
 pu= physical_units_machine;
 % Parameters:
 E=70000*pu('MPa');
@@ -35,8 +35,8 @@ model_data.fens =fens;
 
 
 clear region
-prop = property_deformation_plastic_perf_j2_iso(struct('E',E,'nu',nu,'sigma_y',sigma_y));
-mater = material_deformation_ss_plastic_perf_j2_triax(struct('property',prop));
+prop = property_deformation_plasticity_linear_hardening(struct('E',E,'nu',nu,'sigma_y',sigma_y,'Hi',0.0));
+mater = material_deformation_halq_j2(struct('property',prop));
 region.femm= femm_deformation_nonlinear_h8msgso(...
     struct ('material',mater,...
     'fes',fes, ...

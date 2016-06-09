@@ -27,7 +27,7 @@ function clamped_beam_expl_nl
     W = 25.4/2*u.MM;
     Force= 2846.7/4*u.NT;% We are modeling just one quarter
     tolerance  =H/1000;
-    tend = 5e-3*u.SEC;
+    tend taylor_bar_expl_nl= 5e-3*u.SEC;
     scale=4000;
     
     prop = property_deformation_linear_iso (struct('E',E,'nu',nu,'rho',rho));

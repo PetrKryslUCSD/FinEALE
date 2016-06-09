@@ -241,7 +241,7 @@ function  pub_LE11NAFEMS_H20
     % the Super convergent Patch Recovery (SPR) to compute the nodal stress from the
     % quadrature-point stresses.
     cmpn=3;% this is the axial stress (sigma_Z)
-    flda = field_from_integration_points_spr(femma, geom, u, dT, 'Cauchy', cmpn);
+    flda = field_from_integration_points_spr(femma, geom, u, [], [], dT, 'Cauchy', cmpn);
     
     %%
     % Now that we have the nodal field  for the axial stress, we can plot

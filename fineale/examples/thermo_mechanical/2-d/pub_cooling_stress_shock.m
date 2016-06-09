@@ -272,7 +272,7 @@ function pub_cooling_stress_shock
         % Plot the deflected shape with the stress distribution.
         cmap=cadcolors2;
         fld = field_from_integration_points(mechfemm, geom,...
-            u, tempn-Tini, 'Cauchy', 2);
+            u, [], [], tempn-Tini, 'Cauchy', 2);
         nvals=fld.values/(pu.MEGA*pu.PA);
         nvalsrange=[-5 15];
         dcm=data_colormap(struct ('range',nvalsrange, 'colormap',cmap));

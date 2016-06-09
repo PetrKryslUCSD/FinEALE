@@ -190,7 +190,7 @@ function  pub_LE11NAFEMS_Q8
     % inverse-distance interpolation to compute the nodal stress from the
     % quadrature-point stresses.
     cmpn=2;% this is the axial stress
-    flda = field_from_integration_points(femma, geom, u, dT, 'Cauchy', cmpn);
+    flda = field_from_integration_points(femma, geom, u, [], [], dT, 'Cauchy', cmpn);
     
     %%
     % Now that we have the nodal field  for the axial stress, we can plot

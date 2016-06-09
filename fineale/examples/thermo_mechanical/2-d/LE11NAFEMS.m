@@ -81,7 +81,7 @@ gv=reset (gv,struct ('limits', [0, 2, 0, 1.8]));
 set(gca,'FontSize', 12)
 cmap=jet;
 cmpn=2;
-flda = field_from_integration_points(femma, geom, u, dT, 'Cauchy', cmpn);
+flda = field_from_integration_points(femma, geom, u, [], [], dT, 'Cauchy', cmpn);
 nvalsa=flda.values/(pu.MEGA*pu.PA);
 nvalmin =min(nvalsa);
 nvalmax =max(nvalsa);

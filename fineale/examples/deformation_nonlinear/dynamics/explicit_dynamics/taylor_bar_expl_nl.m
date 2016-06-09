@@ -1,16 +1,24 @@
 function taylor_bar_expl_nl
     
-    
+%     INTERNATIONAL JOURNAL FOR NUMERICAL METHODS IN ENGINEERING
+% Int. J. Numer. Meth. Engng 2005; 63:159–196
+% Published online 14 February 2005 in Wiley InterScience (www.interscience.wiley.com). DOI: 10.1002/nme.1270
+%
+% Computational issues in large strain elasto-plasticity:
+% an algorithm for mixed hardening and plastic spin
+%
+% Francisco Javier Montáns‡ and Klaus-Jürgen Bathe?,†
     % Parameters:
     u=physical_units_struct;
-    E=117000*u.MEGA*u.PA;
-    nu=0.35;
+    E=130000*u.MEGA*u.PA;
+    G=50000*u.MEGA*u.PA;
+    nu=E/2/G-1;
     rho  = 8930*u.KG/u.M^3;
-    sigma_y=400*u.MEGA*u.PA; Hi=0*u.MEGA*u.PA;
+    sigma_y=400*u.MEGA*u.PA; Hi=100*u.MEGA*u.PA;
     iv=227000*u.MM/u.SEC;
     Radius =  3.2*u.MM;
     Length = 32.4*u.MM;
-    nperradius=4; nL=28;
+    nperradius=4; nL=36;
     tolerance  =Radius/1000;
     tend = 80e-6*u.SEC;
     scale=4000;
@@ -18,14 +26,21 @@ function taylor_bar_expl_nl
     igraphics=10;
     plots = true;
     
-    prop = property_deformation_plasticity_linear_hardening(struct('E',E,'nu',nu,'rho',rho,'sigma_y',sigma_y,'Hi',0.0));
-    mater = material_deformation_ifr_j2(struct('property',prop));
-    
+    prop = property_deformation_plasticity_linear_hardening(struct('E',E,'nu',nu,'rho',rho,'sigma_y',sigma_y,'Hi',Hi));
+    %     mater = material_deformation_ifr_j2(struct('property',prop));
+    mater = material_deformation_unrotated_j2(struct('property',prop));
+        Stabprop = property_deformation_linear_iso(struct('E',E/2,'nu',nu));
+    %     Stabprop = property_deformation_plasticity_linear_hardening(struct('E',E,'nu',nu,'rho',rho,'sigma_y',E,'Hi',Hi));
+    %     stabilization_material = material_deformation_unrotated_j2(struct('property',prop));
+                            stabilization_material = material_deformation_neohookean_triax(struct('property',Stabprop));
+    %                         stabilization_material = material_deformation_stvk_triax(struct('property',Stabprop));
     %     Mesh
     if (1)% Choose hexahedral mesh
        [fens,fes] = H8_quarter_cylinder_n(Radius, Length, nperradius, nL);
         femm = femm_deformation_nonlinear_h8msgso(struct ('material',mater, 'fes',fes, ...
-            'integration_rule',gauss_rule(struct('dim',3,'order',2))));
+            'integration_rule',gauss_rule(struct('dim',3,'order',2)),'stabilization_material',stabilization_material));
+        %                  femm = femm_deformation_nonlinear(struct ('material',mater, 'fes',fes, ...
+        %                     'integration_rule',gauss_rule(struct('dim',3,'order',2))));
         Surface_integration_rule =gauss_rule(struct('dim',2, 'order',2));
     else% Choose tetrahedral mesh
         [fens,fes] = T10_blockb(L,W,H, 4,1,2);
