@@ -1,4 +1,5 @@
 fineale: Finite Element Analysis Learning Environment
+    fineale 8.0 (C) 06/13/2016, Petr Krysl.
     fineale 7.0 (C) 03/31/2016, Petr Krysl.
     fineale 6.0 (C) 12/13/2015, Petr Krysl.
     fineale 5.0 (C) 11/13/2014, Petr Krysl.
@@ -19,7 +20,7 @@ The fineale toolkit is a companion of the book
 
    Thermal and Stress Analysis with the  Finite Element Method
 
-published online (2014) with Lulu.com.
+published online (2015) with Lulu.com.
 
 The fineale toolkit and PDF versions of the book are
 distributed as open-source from
@@ -29,12 +30,14 @@ distributed as open-source from
 
 The toolkit includes finite element tools for linear steady-state and 
 transient thermal analysis and linear static, transient or modal stress 
-analysis. Also included are some examples of geometrically nonlinear 
-analysis, including buckling, and material-nonlinear analysis (plasticity).
+analysis. Also included are some examples of static and dynamic 
+geometrically nonlinear analysis, including hyperelasticity, buckling, 
+and material-nonlinear analysis (plasticity).
 
 The finite elements include linear and quadratic triangles and
 tetrahedra, linear to cubic quadrangles and hexahedra, and of 
-course linear to cubic curve elements. 
+course linear to cubic curve elements. Included are also advanced
+stress analysis elements based on the assumed-strain technique.
 
 USAGE
 =================================================================
@@ -48,7 +51,7 @@ simulation has its own script/function file. There is no graphical user
 interface that can be used to run the simulations: They are executed 
 as regular Matlab scripts/functions.
 
-The toolkit comes with a suite of tutorials (over 30 as of December 2013). 
+The toolkit comes with a suite of tutorials (almost 40 as of June 2016). 
 Use the command "doc fineale"  and follow the "tutorials" link. The 
 tutorials themselves are published Matlab functions or scripts, 
 and the published versions are included in the distribution of the toolkit.
@@ -97,9 +100,9 @@ with various versions of Matlab (see below).
 
 The executable for the automatic generator of triangle
 meshes is at this point distributed only for 
-–Windows (computer==PCWIN: XP, Vista), 
-–Intel-based Mac (computer==MACI), and 
-–Linux (computer==GLNX86); 
+- Windows (computer==PCWIN: XP, Vista), 
+- Intel-based Mac (computer==MACI), and 
+- Linux (computer==GLNX86); 
 however, the generator may be built from the sources, since it too 
 is open-source (http://hogwarts.ucsd.edu/~pkrysl/software.html).
 
@@ -155,4 +158,5 @@ The following are contributors to the toolkit FinEALE (alphabetically):
 
 Ivana Escobar
 Steve Oberrecht
+Alireza Pakravan
 
