@@ -16,13 +16,13 @@ function necking_bar_h8_unrot
     sigma_y=0.3*u.MEGA*u.PA; Hi=0.7*u.MEGA*u.PA;
     Radius = 6.413*u.MM;
     Length = 53.334/2*u.MM;
-    nperradius=4; nL=16;
+    nperradius=2; nL=8;
     gtolerance  =Radius/1000;
-   nincr= 20;
+   nincr= 50;
     scale=1;
     stressscale=0.001;
     epscale=0.0002*scale;
-    graphics = ~true;
+    graphics = true;
     igraphics=10;
     plots = true;
      maxdu_tol = Length/1e4;
