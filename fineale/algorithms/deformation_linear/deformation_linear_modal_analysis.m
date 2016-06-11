@@ -251,6 +251,8 @@ function model_data = deformation_linear_modal_analysis(model_data)
             end       
         end
         if isfield(region,'femm')
+            % Give the  FEMM a chance  to precompute  geometry-related quantities
+            region.femm = associate_geometry(region.femm,geom);
             K = K + stiffness(region.femm, sysmat_assembler_sparse, geom, u);
             if (use_lumped_mass)
                 M = M + lumped_mass(region.femm, sysmat_assembler_sparse, geom, u);
@@ -258,6 +260,8 @@ function model_data = deformation_linear_modal_analysis(model_data)
                 M = M + mass(region.femm, sysmat_assembler_sparse, geom, u);
             end
         else
+            % Give the  FEMM a chance  to precompute  geometry-related quantities
+            region.femm_stiffness = associate_geometry(region.femm,geom);
             K = K + stiffness(region.femm_stiffness, sysmat_assembler_sparse, geom, u);
             if (use_lumped_mass)
                 M = M + lumped_mass(region.femm_mass, sysmat_assembler_sparse, geom, u);
