@@ -62,8 +62,8 @@ end
 conns = fes.conn; % connectivity
 labels = fes.label; % finite element labels
 Xs =geom.values;
-Us =un1.values;
-context.F= [];
+Un1s =un1.values;
+context.Fn1= [];
 if isempty(dT)
     dTs=zeros(geom.nfens,1);
 else
@@ -112,7 +112,7 @@ for m=1:length(fe_list)
             end
     end
     if ~isempty (inspector)
-        idat =feval(inspector,idat,out,mean(X),transpose(Ns{j})*Us(conn,:),[0,0,0]);
+        idat =feval(inspector,idat,out,mean(X),transpose(Ns{j})*Un1s(conn,:),[0,0,0]);
     end
 end
 return;
