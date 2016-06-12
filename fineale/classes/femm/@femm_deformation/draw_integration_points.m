@@ -40,9 +40,9 @@ end
 if ~isfield(context,'cheap_arrow')
     context.cheap_arrow = true;
 end
-    context.ms=[];
-    context.F=[];
-        context.dT=[];
+context.ms=[];
+context.F=[];
+context.dT=[];
 
     function idat=inspector(idat, out, xyz, u, pc)
         switch (output)
