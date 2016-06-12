@@ -39,51 +39,14 @@ clear eltyd
 eix=1;
 
 
-        eltyd(eix).description='H8MSGSO(U)';
-        eltyd(eix).mf =@H8_block_u;
-        eltyd(eix).femmf =@(fes)femm_deformation_linear_h8msgso(struct ('material',mater, 'fes',fes, ...
-            'integration_rule',gauss_rule(struct('dim',3,'order',2))));
-        eltyd(eix).surface_integration_rule=gauss_rule(struct('dim',2,'order',2));
-        eix=eix+1;
-    
-        %         eltyd(eix).description ='C8MS';% tetrahedron
-        %         eltyd(eix).mf =@C8_block;
-        %         eltyd(eix).femmf =@(fes)femm_deformation_linear_c8ms(struct('fes',fes,'material',mater,...
-        %         'integration_rule',tet_rule(struct('npts',1))));
-        %         eltyd(eix).surface_integration_rule=tri_rule(struct('npts',1));
-        %         eltyd(eix).styl='b^-';
-        %         eix=eix+1;
-        %
-%
-% stabscheme='L';
-% eltyd(eix).description =['THEX-' stabscheme];% tetrahedron
-% eltyd(eix).mf =@T15_block_u;
-% eltyd(eix).femmf =@(fes)femm_deformation_linear_thex(struct('fes',fes,'material',mater,...
-%     'stabfact',1e-2*E,'stabscheme',stabscheme));
-% eltyd(eix).surface_integration_rule=gauss_rule(struct('dim',2, 'order',2));
-% eix=eix+1;
-% stabscheme='Q10';
-% eltyd(eix).description =['THEX-' stabscheme];% tetrahedron
-% eltyd(eix).mf =@T15_block_u;
-% eltyd(eix).femmf =@(fes)femm_deformation_linear_thex(struct('fes',fes,'material',mater,...
-%     'stabfact',1e-2*E,'stabscheme',stabscheme));
-% eltyd(eix).surface_integration_rule=gauss_rule(struct('dim',2, 'order',2));
-% eix=eix+1;
+eltyd(eix).description='H8MSGSO(U)';
+eltyd(eix).mf =@H8_block_u;
+eltyd(eix).femmf =@(fes)femm_deformation_linear_h8msgso(struct ('material',mater, 'fes',fes, ...
+    'integration_rule',gauss_rule(struct('dim',3,'order',2))));
+eltyd(eix).surface_integration_rule=gauss_rule(struct('dim',2,'order',2));
+eix=eix+1;
 
-%
-% eltyd(eix).description ='H8NIS-GSRI';% tetrahedron
-% eltyd(eix).mf =@H8_block;
-% eltyd(eix).femmf =@(fes)femm_deformation_linear_nice_1pt_h8_gsri(struct('fes',fes,'material',mater, 'nice_fraction',0.15));
-% eltyd(eix).surface_integration_rule=gauss_rule(struct('dim',2, 'order',2));
-% eix=eix+1;
 
-%                     eltyd(eix).description ='NICE-H8';% tetrahedron
-%                     eltyd(eix).mf =@H8_block;
-%                     eltyd(eix).femmf =@(fes)femm_deformation_linear_nice(struct('fes',fes,'material',mater,...
-%                         'integration_rule',tensprod_nq_rule(struct('dim',3, 'order',1))));
-%                     eltyd(eix).surface_integration_rule=gauss_rule(struct('dim',2, 'order',2));
-%                     eix=eix+1;
-%
 eltyd(eix).description ='H8-Bbar';% tetrahedron
 eltyd(eix).mf =@H8_block;
 eltyd(eix).femmf =@(fes)femm_deformation_linear_bbar(struct('fes',fes,'material',mater,...
