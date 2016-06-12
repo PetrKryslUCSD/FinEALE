@@ -1,4 +1,4 @@
-classdef material_deformation_halq_j2 < material_deformation_triax
+classdef material_deformation_hallq_j2 < material_deformation_triax
     % Class that represents deformable nonlinear material "Hallquist" J2 plasticity.
     %
     % Reference
@@ -14,7 +14,7 @@ classdef material_deformation_halq_j2 < material_deformation_triax
     
     methods
         
-        function self = material_deformation_halq_j2(Parameters)
+        function self = material_deformation_hallq_j2(Parameters)
             % Constructor.
             % Parameters:
             % none
@@ -106,7 +106,7 @@ classdef material_deformation_halq_j2 < material_deformation_triax
             dtjaum =dtl*tr_msD*eye(3) + dttm * msD;
             
             sigma=ms.cauchy;
-            elsig=sigma+msW*sigma+sigma*msW'+dtjaum;
+            elsig=sigma-msW*sigma-sigma*msW'+dtjaum;
             curr_press=sum(diag(elsig)) / 3;
             dev_elsig= elsig - curr_press*eye(3);
             
