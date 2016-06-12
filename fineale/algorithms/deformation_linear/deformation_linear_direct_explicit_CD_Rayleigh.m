@@ -247,36 +247,36 @@ M=  sparse(model_data.u.nfreedofs,model_data.u.nfreedofs);
 for i=1:length(model_data.region)
     region =model_data.region{i};
     if (~isfield( region, 'femm'))
-    if (isfield(region, 'property' ))
-        if (strcmp( region.  property, 'orthotropic' ))
-            prop = property_deformation_linear_ortho (...
-                struct('E1',region.E1,'E2',region.E2,'E3',region.E3,...
-                'G12',region.G12,'G13',region.G13,'G23',region.G23,...
-                'nu12',region.nu12,'nu13',region.nu13,'nu23',region.nu23,'rho',region.rho));
-        elseif (strcmp( region.  property, 'isotropic' ))
-            prop=property_deformation_linear_iso(struct('E',region.E,'nu',region.nu,'rho',region.rho));
-        else% default
-            prop=property_deformation_linear_iso(struct('E',region.E,'nu',region.nu,'rho',region.rho));
+        if (isfield(region, 'property' ))
+            if (strcmp( region.  property, 'orthotropic' ))
+                prop = property_deformation_linear_ortho (...
+                    struct('E1',region.E1,'E2',region.E2,'E3',region.E3,...
+                    'G12',region.G12,'G13',region.G13,'G23',region.G23,...
+                    'nu12',region.nu12,'nu13',region.nu13,'nu23',region.nu23,'rho',region.rho));
+            elseif (strcmp( region.  property, 'isotropic' ))
+                prop=property_deformation_linear_iso(struct('E',region.E,'nu',region.nu,'rho',region.rho));
+            else% default
+                prop=property_deformation_linear_iso(struct('E',region.E,'nu',region.nu,'rho',region.rho));
+            end
+        else
+            prop=property_deformation_linear_iso(struct('E',region.E,'nu',region.nu));
         end
-    else
-        prop=property_deformation_linear_iso(struct('E',region.E,'nu',region.nu));
-    end
-    prop.rho=region.rho;
-    if (model_data.u.dim==1)
-        mater = material_deformation_linear_uniax (struct('property',prop ));
-    elseif (model_data.u.dim==2)
-        mater = material_deformation_linear_biax (struct('property',prop, ...
-            'reduction',region.reduction));
-    else
-        mater = material_deformation_linear_triax (struct('property',prop ));
-    end
-    Rm = [];
-    if (isfield( region, 'Rm'))
-        Rm= region.Rm;
-    end
-    region.femm = femm_deformation_linear (struct ('material',mater,...
-        'fes',region.fes,...
-        'integration_rule',region.integration_rule,'Rm',Rm));
+        prop.rho=region.rho;
+        if (model_data.u.dim==1)
+            mater = material_deformation_linear_uniax (struct('property',prop ));
+        elseif (model_data.u.dim==2)
+            mater = material_deformation_linear_biax (struct('property',prop, ...
+                'reduction',region.reduction));
+        else
+            mater = material_deformation_linear_triax (struct('property',prop ));
+        end
+        Rm = [];
+        if (isfield( region, 'Rm'))
+            Rm= region.Rm;
+        end
+        region.femm = femm_deformation_linear (struct ('material',mater,...
+            'fes',region.fes,...
+            'integration_rule',region.integration_rule,'Rm',Rm));
     end
     % Give the  FEMM a chance  to precompute  geometry-related quantities
     region.femm = associate_geometry(region.femm,model_data.geom);
