@@ -1,6 +1,6 @@
-function perf_strip_prescr_disp_h8_unrot
-    disp('Perforated_strip, prescribed displacement: Unrotated J2 Perfect Plasticity.');
-
+function perf_strip_prescr_disp_h8_hallq
+    disp('Perforated_strip, prescribed displacement: Hallquist J2 perfect plasticity.');
+    
 pu= physical_units_machine;
 % Parameters:
 E=70000*pu('MPa');
@@ -36,7 +36,7 @@ model_data.fens =fens;
 
 clear region
 prop = property_deformation_plasticity_linear_hardening(struct('E',E,'nu',nu,'sigma_y',sigma_y,'Hi',0.0));
-mater = material_deformation_unrotated_j2(struct('property',prop));
+mater = material_deformation_hallq_j2(struct('property',prop));
 region.femm= femm_deformation_nonlinear_h8msgso(...
     struct ('material',mater,...
     'fes',fes, ...
@@ -110,7 +110,7 @@ model_data =deformation_nonlinear_statics(model_data);
         Ux=[ Ux,mean(model_data.un1.values(movingl,1))];
         Rx=[Rx,sum(model_data.reactions.values(movingl,1))];
         if (~graphics)
-            plot(Ux,Rx,'gv-')
+            plot(Ux,Rx,'rh-')
             pause (0.1)
         end
         

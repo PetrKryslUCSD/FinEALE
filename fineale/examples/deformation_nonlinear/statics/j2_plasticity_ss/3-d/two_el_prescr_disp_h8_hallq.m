@@ -1,4 +1,4 @@
-function two_el_prescr_disp_h8_halq
+function two_el_prescr_disp_h8_hallq
     disp('Two elements, prescribed displacement: Hallquist J2 plasticity.');
     pu= physical_units_machine;
     % Parameters:
@@ -29,7 +29,7 @@ function two_el_prescr_disp_h8_halq
     
     clear region
     prop = property_deformation_plasticity_linear_hardening(struct('E',E,'nu',nu,'sigma_y',sigma_y,'Hi',0.0));
-    mater = material_deformation_halq_j2(struct('property',prop));
+    mater = material_deformation_hallq_j2(struct('property',prop));
     region.femm= femm_deformation_nonlinear_h8msgso(...
         struct ('material',mater,...
         'fes',fes, ...
@@ -76,7 +76,7 @@ function two_el_prescr_disp_h8_halq
     model_data.maxdu_tol  =maxdu_tol;;
     model_data.line_search  = true;
     model_data.iteration_observer =@iteration_observer;
-    us={}; Ux=[]; Rx=[];
+    us={}; Ux=[0]; Rx=[0];
     model_data.load_increment_observer =@load_increment_observer;
     % Call the nonlinear deformation solver
     model_data =deformation_nonlinear_statics(model_data);

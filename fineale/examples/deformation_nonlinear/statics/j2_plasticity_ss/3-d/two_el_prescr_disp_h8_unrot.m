@@ -76,7 +76,7 @@ function two_el_prescr_disp_h8_unrot
     model_data.maxdu_tol  =maxdu_tol;;
     model_data.line_search  = true;
     model_data.iteration_observer =@iteration_observer;
-    us={}; Ux=[]; Rx=[];
+    us={}; Ux=[0]; Rx=[0];
     model_data.load_increment_observer =@load_increment_observer;
     % Call the nonlinear deformation solver
     model_data =deformation_nonlinear_statics(model_data);
@@ -156,41 +156,3 @@ function two_el_prescr_disp_h8_unrot
     end
     
 end
-
-%
-%             id.comp= 1;
-%             id.container=-Inf;
-%             id=inspect_integration_points(feb, geom, u, [],...
-%                 (1:length (gcells)), struct ('output',['equiv_pl_def']),...
-%                 @mx,id);
-%             max_equiv_pl_def=id.container
-%             id.container=Inf;
-%             id=inspect_integration_points(feb, geom, u, [], ...
-%                 (1:length (gcells)), struct ('output',['equiv_pl_def']),...
-%                 @mn,id);
-%             min_equiv_pl_def =id.container
-%             dcm=data_colormap(struct ('range',[min_equiv_pl_def,max_equiv_pl_def], 'colormap',jet));
-%             gv=reset(clear(gv,[]),[]);
-%             title (['Increment ' num2str(incr) ': Converged for t=' num2str(t) ])
-%             camset (gv,1.0e+003 *[ -2.1416   -1.4296    3.3375    0.1981    0.1191   -0.0063    0.0006    0.0004    0.0006 0.0039]);
-%             draw(feb,gv, struct ('x', geom,'u',scale*u, 'facecolor','none'));
-%             draw_integration_points(feb,gv,struct ('x',geom,'u',u,'u_displ',scale*u, 'scale',epscale,'quantity',['equiv_pl_def'],'component',1,'data_cmap', dcm));
-%             drawnow; pause(0.1)
-%         end
-%         disp(['Increment ' num2str(incr) ': Converged for t=' num2str(t) ]); % pause
-%         Center_deflection = [Center_deflection,mean(Center_u(:,3))];
-%         incr = incr + 1;
-%     end
-%     Center_deflection
-%     camget (gv)
-% end
-%
-% function id= mn(id,out,xyz,pc)
-%     id.container=min(out(id.comp), id.container);
-% end
-%
-% function id= mx(id,out,xyz,pc)
-%     id.container=max(out(id.comp), id.container);
-% end
-% %draw(gmlin, 'dataidx', 3, 'scale', scale, 'displace_by', [1 2 3], 'facecolor', 'none')and
-%

@@ -19,7 +19,7 @@ stressscale=scale/20;
 epscale=0.001*scale;
 nincr =25;
 utol = 10e-7;
-graphics = true;
+graphics = ~true;
 maxdu_tol = W/1e7;
 
 
@@ -83,7 +83,7 @@ model_data.load_multipliers=(1:nincr)/nincr*1.0;
 model_data.maxdu_tol  =maxdu_tol;;
 model_data.line_search  = true;
 model_data.iteration_observer =@iteration_observer;
-us={}; Ux=[]; Rx=[];
+us={}; Ux=[0]; Rx=[0];
 model_data.load_increment_observer =@load_increment_observer;
 % Call the nonlinear deformation solver
 model_data =deformation_nonlinear_statics(model_data);
@@ -110,7 +110,7 @@ model_data =deformation_nonlinear_statics(model_data);
         Ux=[ Ux,mean(model_data.un1.values(movingl,1))];
         Rx=[Rx,sum(model_data.reactions.values(movingl,1))];
         if (~graphics)
-            plot(Ux,Rx)
+            plot(Ux,Rx,'bo-')
             pause (0.1)
         end
         

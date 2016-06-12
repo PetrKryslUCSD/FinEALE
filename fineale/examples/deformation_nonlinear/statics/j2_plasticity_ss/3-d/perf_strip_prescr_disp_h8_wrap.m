@@ -1,6 +1,6 @@
-function perf_strip_prescr_disp_h8_halq
-    disp('Perforated_strip, prescribed displacement: Hallquist J2 perfect plasticity.');
-    
+function perf_strip_prescr_disp_h8_
+    disp('Perforated_strip, prescribed displacement: Wrapped Unrotated J2 Perfect Plasticity.');
+
 pu= physical_units_machine;
 % Parameters:
 E=70000*pu('MPa');
@@ -19,7 +19,7 @@ stressscale=scale/20;
 epscale=0.001*scale;
 nincr =25;
 utol = 10e-7;
-graphics = true;
+graphics = ~true;
 maxdu_tol = W/1e7;
 
 
@@ -35,8 +35,9 @@ model_data.fens =fens;
 
 
 clear region
-prop = property_deformation_plasticity_linear_hardening(struct('E',E,'nu',nu,'sigma_y',sigma_y,'Hi',0.0));
-mater = material_deformation_halq_j2(struct('property',prop));
+prop = property_deformation_plastic_perf_j2_iso(struct('E',E,'nu',nu,'sigma_y',sigma_y));
+wmater = material_deformation_ss_plastic_perf_j2_triax(struct('property',prop));
+mater = material_deformation_unrot_wrapper(struct('wrapped_material',wmater));
 region.femm= femm_deformation_nonlinear_h8msgso(...
     struct ('material',mater,...
     'fes',fes, ...
@@ -83,7 +84,7 @@ model_data.load_multipliers=(1:nincr)/nincr*1.0;
 model_data.maxdu_tol  =maxdu_tol;;
 model_data.line_search  = true;
 model_data.iteration_observer =@iteration_observer;
-us={}; Ux=[]; Rx=[];
+us={}; Ux=[0]; Rx=[0];
 model_data.load_increment_observer =@load_increment_observer;
 % Call the nonlinear deformation solver
 model_data =deformation_nonlinear_statics(model_data);
@@ -110,7 +111,7 @@ model_data =deformation_nonlinear_statics(model_data);
         Ux=[ Ux,mean(model_data.un1.values(movingl,1))];
         Rx=[Rx,sum(model_data.reactions.values(movingl,1))];
         if (~graphics)
-            plot(Ux,Rx)
+            plot(Ux,Rx,'ms-')
             pause (0.1)
         end
         
