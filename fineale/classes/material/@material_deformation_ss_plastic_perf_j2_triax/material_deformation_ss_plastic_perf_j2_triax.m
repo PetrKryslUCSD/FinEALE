@@ -155,14 +155,14 @@ classdef material_deformation_ss_plastic_perf_j2_triax < material_deformation_li
             context.ms=ms;
             tSigma = thermal_stress(self,context);
             stress = stress + tSigma;
-            ms.Cauchy=stress;
+            ms.cauchy=stress;
             
             out =get_var();
             newms = ms;
             return;
             
             function out =get_var()
-                stress=ms.Cauchy;
+                stress=ms.cauchy;
                 switch context.output
                     case 'Cauchy'
                         out = stress;
