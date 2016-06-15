@@ -164,6 +164,14 @@ dt =[];
 if ( isfield(model_data,'dt'))
     dt  =model_data.dt;;
 end
+steps_between_dt_estimations =10;
+if ( isfield(model_data,'steps_between_dt_estimations'))
+    steps_between_dt_estimations  =model_data.steps_between_dt_estimations;;
+end
+dt_reduction =10;
+if ( isfield(model_data,'dt_reduction'))
+    dt_reduction  =model_data.dt_reduction;;
+end
 
 % Extract the nodes
 fens =model_data.fens;
@@ -266,18 +274,15 @@ end
 
 
 if isempty(dt)
-    % Construct the system stiffness and mass matrix
-    K=  sparse(model_data.un1.nfreedofs,model_data.un1.nfreedofs);
+    % Find the stable time step.  Compute the largest eigenvalue (angular
+    % frequency of vibration), and determine the time step from it.   
+    dt=inf;
     for i=1:length(model_data.region)
         region =model_data.region{i};
-        K = K + stiffness(region.femm, sysmat_assembler_sparse, model_data.geom, model_data.un1, model_data.un, dt);
-        model_data.region{i}=region;
-        clear region Q prop mater Rm  femm
+        stabldt = estimate_stable_step (region.femm, model_data.geom+model_data.un1);
+        dt =dt_reduction * min([dt, stabldt]);
+        clear region
     end
-    % Find the stable time step.  Compute the largest eigenvalue (angular
-% frequency of vibration), and determine the time step from it.
-    o2=eigs(K,M,1,'LM');
-    dt= 0.99* 2/sqrt(o2);
 end
 model_data.dt=dt;
 
@@ -333,6 +338,15 @@ end
 step =0;
 while t <tend
     step = step  +1;
+     % If desired, estimate the stable time step
+    if (mod(step,steps_between_dt_estimations)==0)
+        dt=inf;
+        for i=1:length(model_data.region)
+            stabldt = estimate_stable_step (model_data.region{i}.femm, model_data.geom+model_data.un1);
+            dt =dt_reduction * min([dt, stabldt]);
+        end
+        dt
+    end
     F0 = 0*F0;% Zero out the load
     F0 = F0 + F0indep;% Add on the time-independent load vector
     %         % Process time-dependent essential boundary conditions:
