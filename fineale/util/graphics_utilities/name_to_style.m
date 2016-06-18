@@ -4,8 +4,8 @@ switch description
     case  {'ref','reference'};
         styl='k-';
            
-    case  'H8MSNIS';
-        styl='kh-';
+    case  'QT10MS';
+        styl='rh-';
            
     case  'H8MSGS';
         styl='kx-';
