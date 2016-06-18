@@ -22,7 +22,7 @@ function  Twisted_beam
     %     Loading in the Z direction
     loadv=[0;0;p];dir=3;uzex=0.005424534868469; % Harder: 5.424e-3;
     %     Loading in the Y direction
-        loadv=[0;p;0];dir=2;uzex=0.001753248285256; % Harder: 1.754e-3;
+    %         loadv=[0;p;0];dir=2;uzex=0.001753248285256; % Harder: 1.754e-3;
     graphics = ~true;
     u_scale=1000;
     
@@ -37,8 +37,8 @@ function  Twisted_beam
         eltyd(eix).description ='h8msgso';% tetrahedron
         eltyd(eix).mf =@H8_block;
         eltyd(eix).femmf =@(fes)femm_deformation_linear_h8msgso(struct('fes',fes,'material',mater,...
-        'integration_rule',gauss_rule(struct('dim',3, 'order',2))));
-        eltyd(eix).surface_integration_rule=gauss_rule(struct('dim',2, 'order',2));
+        'integration_rule',gauss_rule(struct('dim',3, 'order',2))));%;%tensprod_nq_rule(struct('dim',3, 'order',1))
+        eltyd(eix).surface_integration_rule= gauss_rule(struct('dim',2, 'order',2));
         eltyd(eix).styl='b^-';
         eix=eix+1;
     
@@ -107,10 +107,9 @@ function  Twisted_beam
     eltyd(eix).styl='md--';
     eix=eix+1;
     
-    mix = 1;
+   mix = 1;
     mesd(mix).ref=1:4; %[1,2,4];
     mix = mix+1;
-    
     
     for eix = 1:length(eltyd)
         ns=[];
