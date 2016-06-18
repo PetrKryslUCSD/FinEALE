@@ -106,7 +106,7 @@ classdef material_deformation_hallq_j2 < material_deformation_triax
             dtjaum =dtl*tr_msD*eye(3) + dttm * msD;
             
             sigma=ms.cauchy;
-            elsig=sigma-msW*sigma-sigma*msW'+dtjaum;
+            elsig=sigma+msW*sigma+sigma*msW'+dtjaum;% What are the correct signs?
             curr_press=sum(diag(elsig)) / 3;
             dev_elsig= elsig - curr_press*eye(3);
             

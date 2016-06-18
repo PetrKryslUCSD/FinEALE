@@ -111,7 +111,7 @@ classdef material_deformation_linear_triax < material_deformation_triax
                     case 'Cauchy'
                         out = stress;
                     case 'pressure'
-                        out = -(sum(diag(stress))/3);
+                        out = -(sum(stress(1:3))/3);
                     case 'princCauchy'
                         [V,D]=eig(self.stress_6v_to_3x3t(stress));
                         out =sort(diag(D),'descend');
