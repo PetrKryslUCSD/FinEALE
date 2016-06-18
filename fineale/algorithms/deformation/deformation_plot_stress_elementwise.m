@@ -19,6 +19,25 @@ function model_data=deformation_plot_stress_elementwise(model_data)
 %     camera  = camera, default is [] which means use the default
 %           orientation of the view;
 %     cmap=colormap, default is jet
+%     add_to_scene= function handle, function with signature
+%             function gv=add_to_scene(gv);
+%          which can be used to add graphics to the viewer (such as spatial cues, or
+%          immovable objects)
+%     map_to_color_fun= function handle, function with signature
+%             function v=fun(fld, cmap)
+%          where fld= displacement field, cmap=colormap, and the 
+%          output v= nodal_field color field (field with three colors per node)
+%          or a color  specification (for instance 'y' or [0.8, 0.4, 0.3]).
+%          This is optional: default is 
+%             temp =magnitude(model_data.u); u_magn=temp.values; clear temp
+%             dcm=data_colormap(struct('range',[min(u_magn),max(u_magn)],'colormap',cmap));
+%             thecolors=nodal_field(struct ('name', ['thecolors'], 'data',map_data(dcm, u_magn)));
+%          The magnitude should be  sqrt(sum(fld.values.*conj(fld.values),2)) for
+%          complex-valued fields.
+%     add_decorations=function handle, function with signature
+%             gv=add_decorations(gv,cmap);
+%          where gv= graphic viewer, cmap= current colormap.
+%          Default: show the color bar and the axes.
 %
 % Output
 % model_data = structure on input is returned updated with
@@ -77,6 +96,24 @@ boundary_only= true;
 if (isfield(model_data, 'postprocessing'))
     if (isfield(model_data.postprocessing, 'boundary_only'))
         boundary_only = model_data.postprocessing.boundary_only;
+    end
+end
+map_to_color_fun = [];
+if (isfield(model_data, 'postprocessing'))
+    if (isfield(model_data.postprocessing, 'map_to_color_fun'))
+        map_to_color_fun = model_data.postprocessing.map_to_color_fun;
+    end
+end
+add_to_scene  = [];
+if (isfield(model_data, 'postprocessing'))
+    if (isfield(model_data.postprocessing, 'add_to_scene'))
+        add_to_scene = model_data.postprocessing.add_to_scene;
+    end
+end
+add_decorations  = [];
+if (isfield(model_data, 'postprocessing'))
+    if (isfield(model_data.postprocessing, 'add_decorations'))
+        add_decorations = model_data.postprocessing.add_decorations;
     end
 end
 
@@ -150,19 +187,28 @@ for i=1:length(model_data.region)
     end
 end
 
-xlabel('X')
-ylabel('Y')
-zlabel('Z')
-
 % Set the camera if supplied
 if (~isempty( camera ))
     camset(gv,camera);
 end
 
-draw_colorbar(gv,struct('colormap',dcm.colormap,...
-    'position',[0.86, 0.1, 0.025, 0.5],...
-    'minmax', dcm.range,...
-    'label',['$\sigma_{' num2str(stress_component) '}$'], 'fontname', 'Times', 'interpreter', 'latex'));
+% If desired, add additional graphics to the scene
+if (~isempty(add_to_scene))
+            gv=add_to_scene(gv);
+end
+      
+% If desired, add decorations (annotation, title, ...)
+if (~isempty(add_decorations))
+    gv=add_decorations(gv,dcm);
+else
+    xlabel('X')
+    ylabel('Y')
+    zlabel('Z')
+    draw_colorbar(gv,struct('colormap',dcm.colormap,...
+        'position',[0.81, 0.1, 0.025, 0.5],...
+        'minmax', dcm.range,...
+        'label',['$\sigma_{' num2str(stress_component) '}$'], 'fontname', 'Times', 'interpreter', 'latex'));
+end
 
 
 % Interact with the plot
