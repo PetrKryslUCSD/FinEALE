@@ -51,7 +51,7 @@ function idat = inspect_integration_points(self, ...
     conns = fes.conn; % connectivity
     labels = fes.label; % connectivity
     xs =geom.values;
-    listconn=reshape (conns(list,:),1, []);
+    listconn=reshape (conns(fe_list,:),1, []);
     for nix=1:length(bfun_gradients)
         if (ismember (nix,listconn) )
             if bfun_gradients{nix}.Vpatch~=0 % This node has a element patch in this block
@@ -67,7 +67,7 @@ function idat = inspect_integration_points(self, ...
                     D_constrained = tangent_moduli(mat,struct('xyz',c,...
                                         'kind','constrained'));
                 end
-                U = reshape(u,gather_values(u, bfun_gradients{nix}.patchconn)); % displacement
+                U = reshape(un1,gather_values(un1, bfun_gradients{nix}.patchconn)); % displacement
                 context.strain = Bnodal*U ;
                 s=D_constrained*context.strain;
                 context.dT = [];% To do: collect temperatures
