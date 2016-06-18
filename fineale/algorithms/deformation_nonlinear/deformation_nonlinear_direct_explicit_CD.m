@@ -271,8 +271,6 @@ end
 
 % Solve
 
-
-
 if isempty(dt)
     % Find the stable time step.  Compute the largest eigenvalue (angular
     % frequency of vibration), and determine the time step from it.   
@@ -287,7 +285,7 @@ end
 model_data.dt=dt;
 
 % Let us begin:
-t=0;
+t=0; 
 % Initial displacement, velocity, and acceleration.
 U0 = gather_sysvec(model_data.un1);
 V0= gather_sysvec(model_data.v);
@@ -338,7 +336,7 @@ end
 step =0;
 while t <tend
     step = step  +1;
-     % If desired, estimate the stable time step
+    % If desired, estimate the stable time step
     if (mod(step,steps_between_dt_estimations)==0)
         dt=inf;
         for i=1:length(model_data.region)
@@ -347,6 +345,7 @@ while t <tend
         end
         dt
     end
+    
     F0 = 0*F0;% Zero out the load
     F0 = F0 + F0indep;% Add on the time-independent load vector
     %         % Process time-dependent essential boundary conditions:
