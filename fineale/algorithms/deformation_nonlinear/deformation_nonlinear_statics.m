@@ -58,7 +58,12 @@ function model_data = deformation_nonlinear_statics(model_data)
 %           freed? (boolean)
 %     component=which component is affected (if not supplied,
 %           or if supplied as empty default is all components)
-%     fixed_value=fixed (prescribed) displacement (scalar or function handle)
+%     fixed_value=fixed (prescribed) displacement (scalar, array, or function handle)
+%           function v=fixedValue(Lambda)
+%           Lambda=load parameter value,
+%           v =two-dimensional array, one row for each node on the list,
+%           one column for each component specified.
+%
 %     fes = finite element set on the boundary to which
 %                       the condition applies
 %               or alternatively
@@ -275,7 +280,7 @@ for incr =1:length(load_increments) % Load-implementation loop
                 fixed_value =essential.fixed_value(lambda);
                 for k=1:length(essential.component)
                     un1 = set_ebc(un1, essential.node_list, ...
-                        essential.is_fixed, essential.component(k), fixed_value(k));
+                        essential.is_fixed, essential.component(k), fixed_value(:,k));
                 end
                 un1 = apply_ebc (un1);
             end
