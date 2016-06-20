@@ -181,8 +181,13 @@ for i=1:length(model_data.region)
             end
             colorfield=nodal_field(struct ('name', ['colorfield'], 'data',...
                 map_data(dcm, fld.values)));
-            draw(region.femm, gv, struct ('x',geom, 'u',u_scale*un1,...
-                'colorfield',colorfield, 'shrink',1.0));
+            bfes=mesh_boundary(region.femm.fes,[]);
+            for   bix=1:count(bfes)
+                if (sum(oon_boundary(bfes.conn(bix,:)))>0)
+                    draw(subset(bfes,bix), gv, struct ('x',geom, 'u',u_scale*un1,...
+                        'colorfield',colorfield, 'shrink',1.0));
+                end
+            end
         end
     end
 end
