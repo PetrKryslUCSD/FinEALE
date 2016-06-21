@@ -16,10 +16,11 @@ function self = scatter (self, fenids, val)
     if (isempty(fenids))
         fenids = (1:nfens);
     end
-    n = length(fenids);
-    for i=1:n
-        k = fenids(i);
-        self.values(k,:) = val(i,:);
-    end
+    %     n = length(fenids);
+    %     for i=1:n
+    %         k = fenids(i);
+    %         self.values(k,:) = val(i,:);
+    %     end
+    self.values(fenids,:) = val;
 end
 
