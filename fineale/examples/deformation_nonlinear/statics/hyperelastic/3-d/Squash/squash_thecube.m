@@ -1,5 +1,5 @@
 function squash_thecube(ntmult)
-    if ~exist('ntmult','var'), ntmult=7; end
+    if ~exist('ntmult','var'), ntmult=1; end
     % A new locking-free brick element technique for large
     % deformation problems in elasticity p
     % S. Reese a, *, P. Wriggers a , B.D. Reddy
@@ -17,7 +17,7 @@ function squash_thecube(ntmult)
     Fmag= 80*4;
     utol = 1e-9;
     nincr = 40;
-    graphics = false;
+    graphics = ~false;
     scale=1;
     nt = [ntmult*[2,2,2]];
     %     nt = [4*[2,2,2]];
@@ -241,10 +241,10 @@ function squash_thecube(ntmult)
         end
         
         t=0; % time=load magnitude
-        femm  =update(femm,geom,u,u);
-        incr=1;
+        femm  =associate_geometry(femm,geom);
+        incr=1; dt=tup / nincr;
         while (incr <= nincr)
-            t = t + tup / nincr;
+            t = t + dt;
             disp(['Increment ' num2str(incr) ]); % pause
             % Initialization
             u1 = u; % guess
@@ -259,12 +259,12 @@ function squash_thecube(ntmult)
                 Load=zeros(3,1); Load(3) =-Fmag*t;
                 fi=force_intensity(struct('magn',Load));
                 FL = distrib_loads(efemm, sysvec_assembler, geom, 0*u, fi, 2);
-                F = FL + restoring_force(femm1,sysvec_assembler, geom,u1,u);       % Internal forces
-                K = stiffness(femm1, sysmat_assembler_sparse, geom, u1,u) + stiffness_geo(femm1, sysmat_assembler_sparse, geom, u1,u);
+                F = FL + restoring_force(femm1,sysvec_assembler, geom,u1,u,dt);       % Internal forces
+                K = stiffness(femm1, sysmat_assembler_sparse, geom, u1,u,dt) + stiffness_geo(femm1, sysmat_assembler_sparse, geom, u1,u,dt);
                 % Displacement increment
                 du = scatter_sysvec(du, K\F);
                 R0 = dot(F,gather_sysvec(du));
-                F = FL + restoring_force(femm1,sysvec_assembler, geom,u1+du,u);       % Internal forces
+                F = FL + restoring_force(femm1,sysvec_assembler, geom,u1+du,u,dt);       % Internal forces
                 R1 = dot(F,gather_sysvec(du));
                 a = R0/R1;
                 if ( a<0 )
@@ -282,7 +282,7 @@ function squash_thecube(ntmult)
                 if (max(abs(du.values)) < utol) break; end;                    % convergence check
                 iter=iter+1;
             end
-            femm  =update(femm,geom,u1,u);
+            [~,femm]  =restoring_force(femm1,sysvec_assembler, geom,u1,u,dt); 
             disp(['    Converged for t=' num2str(t)]); % pause
             u = u1;                                               % update the displacement
             if graphics
