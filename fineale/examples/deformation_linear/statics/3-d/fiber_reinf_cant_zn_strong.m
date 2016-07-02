@@ -1,28 +1,26 @@
 % Fiber-reinforced cantilever.
 function fiber_reinf_cant_zn_strong
+% @article{
+%    author = {Krysl, P.},
+%    title = {Mean-strain 8-node hexahedron with optimized energy-sampling stabilization},
+%    journal = {Finite Elements in Analysis and Design},
+%    volume = {108},
+%    pages = {41-53},
+%    ISSN = {0168-874X},
+%    DOI = {10.1016/j.finel.2015.09.008},
+%    year = {2016},
+%    type = {Journal Article}
+% }
+
 u= physical_units_struct;
+
 % Anisotropic, but much stronger anisotropy
-E1=20000*u.MEGA*u.PSI; E2=1*u.MEGA*u.PSI; E3=E2; G12=0.5*u.MEGA*u.PSI;  G13=G12; G23=0.2*u.MEGA*u.PSI;
+E1=100000*1e9*u.PA; E2=1e9*u.PA; E3=E2; G12=0.2e9*u.PA;  G13=G12; G23=0.2e9*u.PA;
 nu12= 0.25; nu13= 0.25; nu23= 0.25;
 aangle =-45;
-% %H20R:
-% uz=[
-% -4.0234e-06
-% -4.5516e-06
-% -4.8266e-06
-% -4.9601e-06
-% ]; %H20R
-% hs=[2   4   8  16];
-% %H8-SRI-alt:
-% uz=[
-% -5.2894e-06
-% -5.1632e-06
-% -5.1117e-06
-% -5.0895e-06
-% ]; %H8-SRI-alt
 % hs=[2   4   8  16];
 % [xestim, beta, c, residual] = richextrapol(uz(end-2:end),hs)
-uz_ref =  -5.9189e-06;
+uz_ref =  -1.119145781010554e-05;
 prop = property_deformation_linear_ortho (...
     struct('E1',E1,'E2',E2,'E3',E3,...
     'G12',G12,'G13',G13,'G23',G23,...
@@ -30,7 +28,7 @@ prop = property_deformation_linear_ortho (...
 
 
 a=90*u.MM; b=10*u.MM;  t=20*u.MM;
-q0 = -1*u.PSI;
+q0 = -1000*u.PA;
 
 [na,nb,nt] =adeal(1*[1,1,1]);
 tolerance =t/nt/100;
@@ -44,6 +42,14 @@ mater = material_deformation_linear_triax (struct('property',prop ));
 clear eltyd
 eix=1;
  
+        eltyd(eix).description ='T10MS';% tetrahedron
+        eltyd(eix).mf =@(ref)T10MS_block(a,b,t,ref*na,ref*nb,ref*nt);
+        eltyd(eix).femmf =@(fes)femm_deformation_linear_t10ms(struct('fes',fes,'material',mater,'Rm',Rm,...
+        'integration_rule',tet_rule(struct('npts',1))));
+        eltyd(eix).surface_integration_rule=tri_rule(struct('npts',3));
+        eltyd(eix).styl='b^-';
+        eix=eix+1;
+    
 eltyd(eix).description ='H20R';
 eltyd(eix).mf =@(ref)H20_block(a,b,t,ref*na,ref*nb,ref*nt);
 eltyd(eix).femmf =@(fes)femm_deformation_linear(struct('fes',fes, 'material',mater,...
