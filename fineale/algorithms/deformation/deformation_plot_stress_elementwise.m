@@ -38,6 +38,7 @@ function model_data=deformation_plot_stress_elementwise(model_data)
 %             gv=add_decorations(gv,cmap);
 %          where gv= graphic viewer, cmap= current colormap.
 %          Default: show the color bar and the axes.
+%     edgecolor = color for drawing mesh edges (default black, 'k')
 %
 % Output
 % model_data = structure on input is returned updated with
@@ -116,6 +117,12 @@ if (isfield(model_data, 'postprocessing'))
         add_decorations = model_data.postprocessing.add_decorations;
     end
 end
+edgecolor  = 'k';
+if (isfield(model_data, 'postprocessing'))
+    if (isfield(model_data.postprocessing, 'edgecolor'))
+        edgecolor = model_data.postprocessing.edgecolor;
+    end
+end
 
 % Retrieve displacement fields: either for a linear model (u) or for a nonlinear model
 if (isfield(model_data,'u'))
@@ -140,10 +147,21 @@ if (isempty(gv))
     set_graphics_defaults;
 end
 
-% Create the color mapping
-if (~isempty(stress_range))
-    dcm=data_colormap(struct('range',stress_range,'colormap',cmap));
+% If the stress range is not supplied, compute it from a nodal-averaged
+% stress fields 
+if (isempty(stress_range))
+    stress_range=[-inf,inf];
+    for i=1:length(model_data.region)
+        region =model_data.region{i};
+        fld = field_from_integration_points (region.femm, ...
+            geom, un1, un, dt, [], output,stress_component, context);
+        fld = (1/stress_units)*fld;
+        stress_range(1) =min([stress_range(1),min(fld.values)]);
+        stress_range(2) =max([stress_range(2),max(fld.values)]);
+    end
 end
+% Create the color mapping
+dcm=data_colormap(struct('range',stress_range,'colormap',cmap));
 
 % draw(femm,gv, struct ('x', geom3, 'u', +scale*u3,'colorfield',colorfield, 'edgecolor', 'black','shrink',1.0));
 % %     draw(femm,gv, struct ('x', geom3, 'u', +0*u3,'facecolor','none', 'edgecolor','black'));
@@ -159,7 +177,6 @@ end
 
 
 % Plot the surface for each region
-minmin=inf; maxmax=-inf;
 for i=1:length(model_data.region)
     region =model_data.region{i};
     % Find the finite elements that are exposed on the boundary
@@ -168,27 +185,39 @@ for i=1:length(model_data.region)
     oon_boundary(boundaryfes.conn(:)) =1;
     for feix=1:count(model_data.region{i}.femm.fes)
         region.femm.fes =subset(model_data.region{i}.femm.fes,feix);
-        if (~boundary_only) || (boundary_only)&&(sum(oon_boundary(region.femm.fes.conn(:)))>0)
-            % Create the color field
+        if (boundary_only)&&(sum(oon_boundary(region.femm.fes.conn(:)))>0)
             fld = field_from_integration_points (region.femm, ...
                 geom, un1, un, dt, [], output,stress_component, context);
-            fld = (1/stress_units)*fld;
-            minmin=min([minmin,min(fld.values)]);
-            maxmax=max([maxmax,max(fld.values)]);
-            if (isempty(stress_range))
-                stress_range =[min(fld.values),max(fld.values)];
-                dcm=data_colormap(struct('range',stress_range,'colormap',cmap));
+            % Create the color field
+            if (~isempty(map_to_color_fun))
+                [colorfield,dcm]=map_to_color_fun(fld,dcm);
+            else
+                fld = (1/stress_units)*fld;
+                colorfield=nodal_field(struct ('name', ['colorfield'], 'data',...
+                    map_data(dcm, fld.values)));
             end
-            colorfield=nodal_field(struct ('name', ['colorfield'], 'data',...
-                map_data(dcm, fld.values)));
             bfes=mesh_boundary(region.femm.fes,[]);
             allonllength=size(bfes.conn,2);;
             for   bix=1:count(bfes)
                 if (sum(oon_boundary(bfes.conn(bix,:)))==allonllength)
                     draw(subset(bfes,bix), gv, struct ('x',geom, 'u',u_scale*un1,...
-                        'colorfield',colorfield, 'shrink',1.0));
+                        'colorfield',colorfield, 'edgecolor',edgecolor));
                 end
             end
+        elseif (~boundary_only)
+            % Create the color field
+            fld = field_from_integration_points (region.femm, ...
+                geom, un1, un, dt, [], output,stress_component, context);
+            % Create the color field
+            if (~isempty(map_to_color_fun))
+                [colorfield,dcm]=map_to_color_fun(fld,dcm);
+            else
+                fld = (1/stress_units)*fld;
+                colorfield=nodal_field(struct ('name', ['colorfield'], 'data',...
+                    map_data(dcm, fld.values)));
+            end
+            draw(region.femm, gv, struct ('x',geom, 'u',u_scale*un1,...
+                        'colorfield',colorfield,'edgecolor',edgecolor));
         end
     end
 end
