@@ -31,6 +31,7 @@ labels = self.fes.label; % connectivity
 Xs = geom.values; % reference coordinates
 context.F = [];
 context.stiff_type='Eulerian';
+context.ms=[];
 % Prepare assembler
 Kedim =u1.dim*self.fes.nfens;
 start_assembly(assembler, Kedim, Kedim, size(conns,1), u1.nfreedofs, u1.nfreedofs);
@@ -58,10 +59,7 @@ for i=1:size(conns,1)
         else,                    Rm =Rmh(c,[],[]);                end
     end
     % Now we calculate the mean deformation gradient    
-    F1bar =x1' * gradN_mean;
-    Bbar = self.hBlmat(self,[],gradN_mean/F1bar,[],[]);% strain-displacement d/dX
-    context.ms=[]; 
-    context.F=Rm'*F1bar*Rm;%  Deformation gradient in material coordinates
+    Bbar = self.hBlmat(self,[],gradN_mean,[],[]);% strain-displacement d/dX
     D = tangent_moduli (self.material, context);
     D = rotate_stiffness(self.material,D,Rm');
     Ke = (Bbar'*(D*(V))*Bbar);
@@ -70,9 +68,7 @@ for i=1:size(conns,1)
     Dstab = rotate_stiffness(self.stabilization_material,Dstab,Rm');
     Ke = Ke - (Bbar'*(Dstab*(self.phis(i)*V))*Bbar);
     for j=1:npts       % Loop over all integration points
-        F1 = x1'*gradN{j};% Current deformation gradient
-        B = self.hBlmat(self,[],gradN{j}/F1,[],[]);% strain-displacement
-        context.F=Rm'*F1*Rm;
+        B = self.hBlmat(self,[],gradN{j},[],[]);% strain-displacement
         Dstab = tangent_moduli (self.stabilization_material, context);
         Dstab = rotate_stiffness(self.stabilization_material,Dstab,Rm');
         Ke = Ke + (B'*(Dstab*(self.phis(i)*Jac{j}*w(j)))*B);
