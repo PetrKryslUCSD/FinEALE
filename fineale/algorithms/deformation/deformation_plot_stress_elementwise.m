@@ -147,10 +147,16 @@ if (isempty(gv))
     set_graphics_defaults;
 end
 
+% Should we create context to pass additional arguments?
+context =[];
+if (~isempty(outputRm))
+    context.outputRm=outputRm;
+end
+
 % If the stress range is not supplied, compute it from a nodal-averaged
 % stress fields 
 if (isempty(stress_range))
-    stress_range=[-inf,inf];
+    stress_range=[+inf,-inf];
     for i=1:length(model_data.region)
         region =model_data.region{i};
         fld = field_from_integration_points (region.femm, ...
@@ -169,11 +175,7 @@ dcm=data_colormap(struct('range',stress_range,'colormap',cmap));
 % 'minmax',nvalsrange,'label',['\sigma_{' num2str(sigj) '}']));
 % % view (2)
 
-% Should we create context to pass additional arguments?
-context =[];
-if (~isempty(outputRm))
-    context.outputRm=outputRm;
-end
+
 
 
 % Plot the surface for each region
