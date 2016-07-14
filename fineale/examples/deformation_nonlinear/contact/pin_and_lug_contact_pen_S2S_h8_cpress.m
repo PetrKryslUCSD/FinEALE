@@ -88,6 +88,7 @@ u   = numberdofs (u);
 
 u   = u*0; % zero out
 
+femm = associate_geometry(femm, geom);
 tic;
 Ks = stiffness(femm, sysmat_assembler_sparse, geom, u);
 Ksp =stiffness(Springfemm, sysmat_assembler_sparse, geom, u);
@@ -149,7 +150,7 @@ draw(bdry_fes,gv, struct ('x', geom, 'u', sscale*u,'colorfield',colorfield));
 draw_cylinder(gv, surface_data.center-[0,0,2*H], surface_data.center+[0,0,2*H], surface_data.R, surface_data.R,...
     struct('facecolor','none','tessel',40));
 fldcpress = field_from_integration_points (penetrationfemm, ...
-        geom, u, [], 'cpress', 1, struct([]));
+        geom, u, [], 0, [], 'cpress', 1, struct([]));
     dcm=data_colormap(struct ('range',[min(fldcpress.values),max(fldcpress.values)], 'colormap',jet));
             colorfield=nodal_field(struct ('name', ['colorfield'], 'data',map_data(dcm, fldcpress.values)));
 draw(penetrationfemm,gv, struct ('x', geom, 'u', sscale*u,'colorfield',colorfield));

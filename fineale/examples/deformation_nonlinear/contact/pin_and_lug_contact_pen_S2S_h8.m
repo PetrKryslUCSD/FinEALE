@@ -88,6 +88,7 @@ u   = numberdofs (u);
 
 u   = u*0; % zero out
 
+femm = associate_geometry(femm, geom);
 tic;
 Ks = stiffness(femm, sysmat_assembler_sparse, geom, u);
 Ksp =stiffness(Springfemm, sysmat_assembler_sparse, geom, u);
