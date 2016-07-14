@@ -44,7 +44,7 @@ function idat = inspect_integration_points(self, ...
     conns = fes.conn; % connectivity
     labels = fes.label; % finite element labels
     xs =geom.values;
-    Us=u.values;
+    Us=un1.values;
     context.strain= [];
     if isempty(dT)
         dTs=zeros(geom.nfens,1);
