@@ -10,10 +10,6 @@ function K = stiffness (self, assembler, geom, u1, varargin)
 %     u1=displacement field, the current configuration
 %     u=displacement field, the last known configuration
 
-if isempty(self.phis)%  Do we need to calculate the form factors?
-    self=self.update(geom, u1, u1);
-end
-
 % Integration rule
 [npts, Ns, gradNparams, w] = integration_data (self);;
 gradN =cell(8,1); Jac=cell(8,1);
