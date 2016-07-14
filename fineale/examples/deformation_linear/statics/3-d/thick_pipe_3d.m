@@ -12,7 +12,7 @@
 %
 % Macneal RH, Harder RL (1985) A proposed standard set of problems to test
 % finite element accuracy. Finite Elements in Analysis and Design 1: 3-20. 
-function thick_pipe
+function thick_pipe_3d
     % Thick-walled cylinder (MacNeal, Harder standard test)
     % Parameters:
     E=1000;
@@ -254,7 +254,7 @@ function thick_pipe
                                 for ii=1:count(model_data.region{1}.femm.fes)
                                     idat.r =[]; idat.s =[];
                                     idat = inspect_integration_points(model_data.region{1}.femm, ...
-                                        model_data.geom, model_data.u, [], ii, context,...
+                                        model_data.geom, model_data.u, [], 0, [], ii, context,...
                                         @inspector, idat);
                                     for j  =1:length(idat.r)
                                         plot(idat.r(j),idat.s(j),eltyd(eix).styl,'linewidth',3); hold on
