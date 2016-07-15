@@ -49,9 +49,17 @@ classdef femm_deformation_linear_penetration_aug_lag < femm_deformation_linear
             Us=u.values;
             updatedself=self;
             lm= self.lm;
+            %             Precompute for efficiency
+            dim=u.dim; nfens=fes.nfens; Id =eye(dim); NexpT={};
+            for    qp =1:npts
+                Nexp=zeros(dim,nfens);
+                for l = 1:nfens
+                    Nexp(1:dim,(l-1)*dim+1:(l)*dim)=Id*Ns{qp}(l);
+                end;
+                NexpT{qp}=Nexp';
+            end; clear qp
             % Prepare assembler
             Kedim =u.dim*fes.nfens;
-            dim=u.dim; nfens=fes.nfens; Id =eye(dim); Nexp=zeros(dim,nfens);
             start_assembly(assembler, u.nfreedofs);
             % Now loop over all Finite elements
             for i=1:size(conns,1)
@@ -66,16 +74,13 @@ classdef femm_deformation_linear_penetration_aug_lag < femm_deformation_linear
                     qpx=Ns{qp}'*X;
                     qpu=Ns{qp}'*U;
                     [penetration,normal] = self.get_penetration(self.surface_data,qpx,qpu);
-                    for l = 1:nfens
-                        Nexp(1:dim,(l-1)*dim+1:(l)*dim)=Id*Ns{qp}(l);
-                    end;
                     % Predict the Lagrange multiplier
                     lmpred=lm(i,qp)+(penetration)*Jac*w(qp)*self.penalty;
                     if (lmpred<0) % Macaulay-bracket the Lagrange multiplier
                         lmpred=0.0;
                     end
                     if (lmpred>0)% if there is any contribution to the force, add it now
-                        Fe =  Fe + Nexp'*normal'*lmpred;
+                        Fe =  Fe + NexpT{qp}*normal'*lmpred;
                     end
                     lm(i,qp)=lmpred;
                 end; clear qp
@@ -102,9 +107,18 @@ classdef femm_deformation_linear_penetration_aug_lag < femm_deformation_linear
             xs =geom.values;
             Us=u.values;
             lm= self.lm;
+            %             Precompute for efficiency
+            dim=u.dim; nfens=fes.nfens; Id =eye(dim); NexpS={}; NexpT={};
+            for    qp =1:npts
+                Nexp=zeros(dim,nfens);
+                for l = 1:nfens
+                    Nexp(1:dim,(l-1)*dim+1:(l)*dim)=Id*Ns{qp}(l);
+                end;
+                NexpS{qp}=Nexp;
+                NexpT{qp}=Nexp';
+            end; clear qp
             % Prepare assembler
             Kedim =u.dim*fes.nfens;
-            dim=u.dim; nfens=fes.nfens; Id =eye(dim); Nexp=zeros(dim,nfens);
             start_assembly(assembler, Kedim, Kedim, size(conns,1), u.nfreedofs, u.nfreedofs);
             % Now loop over all fes in the block
             for i=1:size(conns,1)
@@ -122,10 +136,7 @@ classdef femm_deformation_linear_penetration_aug_lag < femm_deformation_linear
                     % Predict the Lagrange multiplier
                     lmcur=lm(i,qp)+(penetration)*Jac*w(qp)*self.penalty;
                     if (lmcur>0)
-                        for l = 1:nfens
-                            Nexp(1:dim,(l-1)*dim+1:(l)*dim)=Id*Ns{qp}(l);
-                        end;
-                        Ke = Ke + Nexp'*(self.penalty*Jac*w(qp)*normal'*normal)*Nexp;
+                        Ke = Ke + NexpT{qp}*(self.penalty*Jac*w(qp)*normal'*normal)*NexpS{qp};
                     end
                 end; clear qp
                 assemble_symmetric(assembler, Ke, dofnums);
