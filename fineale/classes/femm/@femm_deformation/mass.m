@@ -15,10 +15,18 @@ function M = mass (self, assembler, geom, u)
     mat = self.material;
     rho = mat.property.rho;
     nfens=fes.nfens; dim=u.dim;
-    Nexp = zeros(u.dim,u.dim*fes.nfens);
     % Retrieve data for efficiency
     conns = fes.conn; % connectivity
     xs =geom.values;
+    %     Precompute for efficiency
+    Nexp = zeros(u.dim,u.dim*fes.nfens);
+    NexpNexp={};
+    for j=1:npts
+        for l = 1:nfens
+            Nexp(1:dim,(l-1)*dim+1:(l)*dim)=eye(dim)*Ns{j}(l);
+        end;
+        NexpNexp{j}=Nexp'*Nexp;
+    end
     % Prepare assembler
     Medim =u.dim*fes.nfens;
     start_assembly(assembler, Medim, Medim, size(conns,1), u.nfreedofs, u.nfreedofs);
@@ -30,10 +38,7 @@ function M = mass (self, assembler, geom, u)
         for j=1:npts
             J = Jacobian_matrix(fes,Nders{j},x);
             Jac = Jacobian_volume(fes,conn, Ns{j}, J, x);
-            for l = 1:nfens
-                Nexp(1:dim,(l-1)*dim+1:(l)*dim)=eye(dim)*Ns{j}(l);
-            end;
-            Me = Me + (Nexp'*Nexp) * (rho * Jac * w(j));
+            Me = Me + (NexpNexp{j}) * (rho * Jac * w(j));
         end
         assemble_symmetric(assembler, Me, dofnums);
     end
