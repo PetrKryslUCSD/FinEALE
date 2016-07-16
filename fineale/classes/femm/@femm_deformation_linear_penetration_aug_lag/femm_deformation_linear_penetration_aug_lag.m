@@ -80,7 +80,7 @@ classdef femm_deformation_linear_penetration_aug_lag < femm_deformation_linear
                         lmpred=0.0;
                     end
                     if (lmpred>0)% if there is any contribution to the force, add it now
-                        Fe =  Fe + NexpT{qp}*normal'*lmpred;
+                        Fe =  Fe + NexpT{qp}*(normal'*lmpred);
                     end
                     lm(i,qp)=lmpred;
                 end; clear qp
