@@ -5,6 +5,13 @@ classdef material_deformation_neohookean_triax < material_deformation_triax
     properties
     end
     
+    
+    properties (Access = private)
+        mI = diag([1 1 1 0.5 0.5 0.5]);
+        m1     = [1 1 1 0 0 0]';
+        m1m1 =[1 1 1 0 0 0]'*[1 1 1 0 0 0]; %m1 * m1'
+    end
+    
     methods
         
         function self = material_deformation_neohookean_triax(Parameters)
@@ -92,7 +99,7 @@ classdef material_deformation_neohookean_triax < material_deformation_triax
                     case '2ndPK'
                         invF1=inv(Fn1);
                         S = J * (invF1*sigma*invF1');
-                        out= stress_3x3t_to_6v(self.mater,S);
+                        out= self.stress_3x3t_to_6v(S);
                     case 'pressure'
                         out = -(sum(diag(sigma))/3);
                     case 'princCauchy'
@@ -140,9 +147,9 @@ classdef material_deformation_neohookean_triax < material_deformation_triax
                     lambda = E * nu / (1 + nu) / (1 - 2*(nu));          % Lame constant #1
                     mu     = E / (2 * (1 + nu));                        % shear modulus
                     kappa  = E / 3 / (1 - 2*nu);                        % bulk modulus
-                    mI = diag([1 1 1 0.5 0.5 0.5]);
-                    m1     = [1 1 1 0 0 0]';
-                    D = (lambda / J) * m1 * m1' + 2 * (mu - lambda*log(J))/J * mI;
+                    %                     mI = diag([1 1 1 0.5 0.5 0.5]);
+                    %                     m1     = [1 1 1 0 0 0]';
+                    D = (lambda / J) * self.m1m1 + 2 * (mu - lambda*log(J))/J * self.mI;
                     return;
                 otherwise
                     error('Cannot handle');
