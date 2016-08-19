@@ -1,15 +1,15 @@
-function two_el_prescr_disp_h8_mix_stvk_neoh
-    disp('Two elements, prescribed displacement: Neohookean.');
+function two_el_prescr_disp_h8_simo_pister
+    disp('Two elements, prescribed displacement: Simo-Pister.');
     pu= physical_units_machine;
     % Parameters:
     E=7*pu('MPa');
-    nu=0.49;
+    nu=0.3;
     %     The following dimensions are for one quarter of the geometry.
-    %     We are using three planes of symmetry.
+    %     We are using three planes of symmetry. 
     L= 6/2*pu('mm'); % Length of the plate
     H = 2/2*pu('mm'); % Thickness of the plate
     W = 2/2*pu('mm'); % Width
-    umag=+1.5*pu('mm');% Magnitude of the displacement
+    umag=-2.2*pu('mm');% Magnitude of the displacement
     scale=1;
     stressscale=scale/20;
     epscale=0.2*scale;
@@ -27,8 +27,8 @@ function two_el_prescr_disp_h8_mix_stvk_neoh
     model_data.fens =fens;
     
     clear region
-    prop = property_deformation_linear_iso (struct('E',E,'nu',nu));
-    mater = material_deformation_mix_stvk_neoh_triax(struct('property',prop));
+    prop = property_deformation_neohookean (struct('E',E,'nu',nu));
+    mater = material_deformation_simo_pister_triax(struct('property',prop));
     region.femm = femm_deformation_nonlinear_h8msgso(struct ('material',mater, 'fes',fes, ...
         'integration_rule',gauss_rule(struct('dim',3,'order',2))));
     model_data.region{1} =region;
@@ -100,8 +100,8 @@ function two_el_prescr_disp_h8_mix_stvk_neoh
          Ux=[ Ux,mean(model_data.un1.values(movingl,1))]; 
          Rx=[Rx,sum(model_data.reactions.values(movingl,1))];
          if (~graphics)
-             plot(Ux,Rx,'bh-')
-              labels('Displacement', 'Reaction force')
+             plot((L+Ux)/L,Rx,'mv-', 'linewidth',2)
+              labels('Stretch', 'Reaction force')
              pause (0.1)
          end
          

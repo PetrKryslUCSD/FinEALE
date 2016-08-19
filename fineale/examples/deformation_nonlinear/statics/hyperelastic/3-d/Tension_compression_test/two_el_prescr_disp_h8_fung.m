@@ -1,15 +1,15 @@
-function two_el_prescr_disp_h8_mix_stvk_neoh
+function two_el_prescr_disp_h8_unrot
     disp('Two elements, prescribed displacement: Neohookean.');
     pu= physical_units_machine;
     % Parameters:
     E=7*pu('MPa');
-    nu=0.49;
+    nu=0.3;
     %     The following dimensions are for one quarter of the geometry.
     %     We are using three planes of symmetry.
     L= 6/2*pu('mm'); % Length of the plate
     H = 2/2*pu('mm'); % Thickness of the plate
     W = 2/2*pu('mm'); % Width
-    umag=+1.5*pu('mm');% Magnitude of the displacement
+    umag=+1.8*pu('mm');% Magnitude of the displacement
     scale=1;
     stressscale=scale/20;
     epscale=0.2*scale;
@@ -28,7 +28,7 @@ function two_el_prescr_disp_h8_mix_stvk_neoh
     
     clear region
     prop = property_deformation_linear_iso (struct('E',E,'nu',nu));
-    mater = material_deformation_mix_stvk_neoh_triax(struct('property',prop));
+    mater = material_deformation_fung_triax(struct('property',prop));
     region.femm = femm_deformation_nonlinear_h8msgso(struct ('material',mater, 'fes',fes, ...
         'integration_rule',gauss_rule(struct('dim',3,'order',2))));
     model_data.region{1} =region;
@@ -100,8 +100,8 @@ function two_el_prescr_disp_h8_mix_stvk_neoh
          Ux=[ Ux,mean(model_data.un1.values(movingl,1))]; 
          Rx=[Rx,sum(model_data.reactions.values(movingl,1))];
          if (~graphics)
-             plot(Ux,Rx,'bh-')
-              labels('Displacement', 'Reaction force')
+             plot((L+Ux)/L,Rx,'r+-', 'linewidth',2)
+              labels('Stretch', 'Reaction force')
              pause (0.1)
          end
          
@@ -138,8 +138,8 @@ function two_el_prescr_disp_h8_mix_stvk_neoh
                     %                 camset (gv,1.0e+002 *[ -2.1416   -1.4296    3.3375    0.1981    0.1191   -0.0063    0.0006    0.0004    0.0006 0.0039]);
                     draw(model_data.region{1}.femm,gv, struct ('x', model_data.geom,...
                         'u',scale*model_data.un1, 'facecolor','none'));
-                    draw_integration_points(model_data.region{1}.femm,gv,struct ('x',model_data.geom,...
-                        'un1',model_data.un1,'un',model_data.un,'dt',model_data.dt,'u_scale',scale, 'scale',epscale,'output',['equiv_pl_def'],'component',1,'data_cmap', dcm));
+                    %                     draw_integration_points(model_data.region{1}.femm,gv,struct ('x',model_data.geom,...
+                    %                         'un1',model_data.un1,'un',model_data.un,'dt',model_data.dt,'u_scale',scale, 'scale',epscale,'output',['equiv_pl_def'],'component',1,'data_cmap', dcm));
                     drawnow;
                     pause(0.1)
                 end

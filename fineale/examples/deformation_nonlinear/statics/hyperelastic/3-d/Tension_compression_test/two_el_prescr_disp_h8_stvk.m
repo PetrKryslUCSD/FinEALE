@@ -9,7 +9,7 @@ function two_el_prescr_disp_h8_unrot
     L= 6/2*pu('mm'); % Length of the plate
     H = 2/2*pu('mm'); % Thickness of the plate
     W = 2/2*pu('mm'); % Width
-    umag=-1.0*pu('mm');% Magnitude of the displacement
+    umag=1.8*pu('mm');% Magnitude of the displacement
     scale=1;
     stressscale=scale/20;
     epscale=0.2*scale;
@@ -100,8 +100,8 @@ function two_el_prescr_disp_h8_unrot
          Ux=[ Ux,mean(model_data.un1.values(movingl,1))]; 
          Rx=[Rx,sum(model_data.reactions.values(movingl,1))];
          if (~graphics)
-             plot(Ux,Rx,'gv-')
-             labels('Displacement', 'Reaction force')
+             plot((L+Ux)/L,Rx,'gv-', 'linewidth',2)
+              labels('Stretch', 'Reaction force')
              pause (0.1)
          end
          

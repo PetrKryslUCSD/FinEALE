@@ -1,19 +1,19 @@
-function two_el_prescr_disp_h8_mix_stvk_neoh
+function two_el_prescr_disp_h8_mooney_rivlin
     disp('Two elements, prescribed displacement: Neohookean.');
     pu= physical_units_machine;
     % Parameters:
     E=7*pu('MPa');
-    nu=0.49;
+    nu=0.3;
     %     The following dimensions are for one quarter of the geometry.
     %     We are using three planes of symmetry.
     L= 6/2*pu('mm'); % Length of the plate
     H = 2/2*pu('mm'); % Thickness of the plate
     W = 2/2*pu('mm'); % Width
-    umag=+1.5*pu('mm');% Magnitude of the displacement
+    umag=3.2*pu('mm');% Magnitude of the displacement
     scale=1;
     stressscale=scale/20;
     epscale=0.2*scale;
-    nincr =12;
+    nincr =20;
     utol = 10e-7;
     graphics = ~true;
     maxdu_tol = W/1e7;
@@ -28,7 +28,7 @@ function two_el_prescr_disp_h8_mix_stvk_neoh
     
     clear region
     prop = property_deformation_linear_iso (struct('E',E,'nu',nu));
-    mater = material_deformation_mix_stvk_neoh_triax(struct('property',prop));
+    mater = material_deformation_mooney_rivlin_triax(struct('property',prop,'beta',0.97));
     region.femm = femm_deformation_nonlinear_h8msgso(struct ('material',mater, 'fes',fes, ...
         'integration_rule',gauss_rule(struct('dim',3,'order',2))));
     model_data.region{1} =region;
@@ -57,15 +57,15 @@ function two_el_prescr_disp_h8_mix_stvk_neoh
     essential.node_list = movingl;
     model_data.boundary_conditions.essential{4} = essential;
     
-      % If online graphics  is needed, initialize some variables
-      if (graphics),
-          bdry_fes = mesh_boundary(fes, []);
-          sfemm = femm_deformation (struct ('material',[], 'fes',bdry_fes,...
-              'integration_rule',[]));
-          gv=reset(clear(graphic_viewer,[]),[]);
-          cmap = jet;
-          Cam= 1.0e+03 *[-0.9065   -1.3161    1.0356    0.1802    0.1000    0.0050         0         0    0.0010    0.0078
-              ];
+    % If online graphics  is needed, initialize some variables
+    if (graphics),
+        bdry_fes = mesh_boundary(fes, []);
+        sfemm = femm_deformation (struct ('material',[], 'fes',bdry_fes,...
+            'integration_rule',[]));
+        gv=reset(clear(graphic_viewer,[]),[]);
+        cmap = jet;
+        Cam= 1.0e+03 *[-0.9065   -1.3161    1.0356    0.1802    0.1000    0.0050         0         0    0.0010    0.0078
+            ];
     end
     
     % Select the solver options
@@ -89,19 +89,19 @@ function two_el_prescr_disp_h8_mix_stvk_neoh
     % Observer function to be called when convergence is reached.
     function load_increment_observer(lambda,model_data)
         fprintf(1,'lambda=%g\n',lambda);
-        if 0
+        if graphics
             gv=reset(clear(gv,[]),[]);
-            draw(sfemm,gv, struct ('x', model_data.geom, 'u', 0*model_data.u,'facecolor','none', 'shrink',1.0));
-            draw(sfemm,gv, struct ('x', model_data.geom, 'u', model_data.u,'facecolor','y', 'shrink',1.0));
-            camset (gv,Cam);
+            draw(sfemm,gv, struct ('x', model_data.geom, 'u', 0*model_data.un1,'facecolor','none', 'edgecolor','b', 'linewidth',3));
+            draw(sfemm,gv, struct ('x', model_data.geom, 'u', model_data.un1,'facecolor','y', 'shrink',1.0));
+            %             camset (gv,Cam);
             interact(gv);
-            pause(0.5); Cam =camget(gv);
+            pause(0.5); %Cam =camget(gv);
         end
          Ux=[ Ux,mean(model_data.un1.values(movingl,1))]; 
          Rx=[Rx,sum(model_data.reactions.values(movingl,1))];
          if (~graphics)
-             plot(Ux,Rx,'bh-')
-              labels('Displacement', 'Reaction force')
+             plot((L+Ux)/L,Rx,'mx-', 'linewidth',2)
+              labels('Stretch', 'Reaction force')
              pause (0.1)
          end
          
@@ -138,8 +138,8 @@ function two_el_prescr_disp_h8_mix_stvk_neoh
                     %                 camset (gv,1.0e+002 *[ -2.1416   -1.4296    3.3375    0.1981    0.1191   -0.0063    0.0006    0.0004    0.0006 0.0039]);
                     draw(model_data.region{1}.femm,gv, struct ('x', model_data.geom,...
                         'u',scale*model_data.un1, 'facecolor','none'));
-                    draw_integration_points(model_data.region{1}.femm,gv,struct ('x',model_data.geom,...
-                        'un1',model_data.un1,'un',model_data.un,'dt',model_data.dt,'u_scale',scale, 'scale',epscale,'output',['equiv_pl_def'],'component',1,'data_cmap', dcm));
+                    %                     draw_integration_points(model_data.region{1}.femm,gv,struct ('x',model_data.geom,...
+                    %                         'un1',model_data.un1,'un',model_data.un,'dt',model_data.dt,'u_scale',scale, 'scale',epscale,'output',['equiv_pl_def'],'component',1,'data_cmap', dcm));
                     drawnow;
                     pause(0.1)
                 end
