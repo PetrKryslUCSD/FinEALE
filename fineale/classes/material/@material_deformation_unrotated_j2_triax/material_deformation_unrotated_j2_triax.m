@@ -1,21 +1,24 @@
-classdef material_deformation_ifr_j2 < material_deformation_triax
-    % Class that represents deformable nonlinear material "instantaneous final
-    % rotation" J2 plasticity.
+classdef material_deformation_unrotated_j2_triax < material_deformation_triax
+    %     Class that represents deformable nonlinear J2 plasticity in the
+    %     unrotated format.
     %
     % Reference
-    %
+    % WARP3D-­Release 17.6.0
+    % 3-­D Dynamic Nonlinear Fracture Analyses of Solids  Using
+    % Parallel Computers, Brian Healy, Arne Gullerud,  Kyle
+    % Koppenhoefer, Arun Roy, Sushovan RoyChowdhury, Jason Petti, Matt 
+    % Walters, Barron Bichon,  Kristine Cochran, Adam Carlyle,  James 
+    % Sobotka,  Mark Messner  and Robert Dodds University	 of Illinois
+    % at Urbana -­?Champaign, July 2015
     %
     
     properties
-    end
-    
-    properties (Access = private)
-        e=kinem_var_type_enum(); % Enumeration of kinematic quantities.
+        D=[]; % The 6 x 6 constitutive matrix.
     end
     
     methods
         
-        function self = material_deformation_ifr_j2(Parameters)
+        function self = material_deformation_unrotated_j2_triax(Parameters)
             % Constructor.
             % Parameters:
             % none
@@ -25,9 +28,16 @@ classdef material_deformation_ifr_j2 < material_deformation_triax
                 Parameters =struct( [] );
             end
             self = self@material_deformation_triax(Parameters);
+            self.D = tangent_moduli(self.property, []);
         end
         
-        function [out, newms] = state(self, ms, context)
+        function val = are_tangent_moduli_constant (self)
+        % Is the material stiffness matrix independent of location (constant, 
+        % corresponding to a homogeneous material)?
+            val =false;
+        end
+             
+       function [out, newms] = state(self, ms, context)
             % Retrieve material state. 
             %
             %   function [out, newms] = state(self, ms, context)
@@ -50,7 +60,6 @@ classdef material_deformation_ifr_j2 < material_deformation_triax
             %    with mandatory fields
             %       Fn1= current deformation gradient (at time t_n+1)
             %       Fn=  previous converged deformation gradient (at time t_n)
-            %       dt= time step, t_n+1-t_n
             %    and optional fields
             %       output=type of quantity to output, and interpreted by the
             %           particular material; [] is returned when the material 
@@ -75,6 +84,7 @@ classdef material_deformation_ifr_j2 < material_deformation_triax
             Fn1 = context.Fn1;
             Fn  = context.Fn;
             dt  = context.dt;
+            [R,U] = polardecomp(Fn1);
             
             if nargout == 1 % Pure retrieval,  no update
                 out =get_var(); return
@@ -85,89 +95,85 @@ classdef material_deformation_ifr_j2 < material_deformation_triax
             
             E = self.property.E;
             nu = self.property.nu;
+            sigma_y = self.property.sigma_y;
             Hi = self.property.Hi;% Isotropic hardening modulus
             Hk = self.property.Hk;% Kinematic hardening modulus
             mu     = E / (2 * (1 + nu));                % shear modulus
-            bulk_mod  = E / 3 / (1 - 2*nu);             % bulk modulus
             twomu = 2 * mu;
             SQRT_2_OVER_3= 0.81649658092772603272;
+            lambda =E * nu /  (1 + nu) /  (1 - 2* (nu));
+            dtl = lambda * dt; dttm = twomu * dt;
             
-            cauchy_prev = ms.cauchy;
-            
+            midstep_F=compute_midstep_def_grad(Fn1,Fn);
+            [midstep_R,~] = polardecomp(midstep_F);
             rel_F=compute_rel_def_grad(Fn1,Fn);
-            [rel_R,rel_U] = polardecomp(rel_F);
-            ln_rel_U=compute_ln_U (rel_U);
+            [midstep_D,~]=compute_midstep_rate_of_def (rel_F, dt);
             
-            rel_J = det(rel_F);
-            ln_rel_J=log(rel_J);
+            t= ms.t; % previous unrotated stress
+            prevt= t;
+            d = midstep_R'*midstep_D*midstep_R;
             
-            tr_ln_rel_U_3 =sum(diag(ln_rel_U)) / 3;
-            ln_rel_U = ln_rel_U- tr_ln_rel_U_3*eye(3);
+            % compute the increment of unrotated stress
+            lfact = lambda * dt;
+            mfact = 2 * mu * dt;
+            trd = sum(diag(d));
+            incrt = mfact * d + lfact * trd*eye(3);
             
-            %   /* elastic predictor: corotational */
-            curr_press      = sum(diag(ms.cauchy))/3;
-            press_predictor = curr_press + bulk_mod * ln_rel_J;
-            dev_sig_corot= ms.cauchy - curr_press*eye(3) + twomu * (ln_rel_U);%-ms.plastic_ln_rel_U);
+            % total unrotated stress
+            t = t + incrt;
             
-            alpha_corot = ms.back_stress;
+            % elastic predictor
+            pressure = sum(diag(t))/ 3;
+            tdev_predictor = t - pressure*eye(3);
+            N= tdev_predictor;
+            N = N - ms.back_stress;
+            strdevn = sqrt(sum(sum(N.*N)));% Double contraction
             
-            %   /* elastic predictor: after rotation */
-            dev_sig_predictor=rel_R*dev_sig_corot*rel_R';
-            alpha_predictor=rel_R*alpha_corot*rel_R';
-            N=dev_sig_predictor - alpha_predictor;
-            effective_stress = sqrt(sum(sum(N.*N)));% Double contraction
-            
-            f1_trial=(effective_stress - SQRT_2_OVER_3 * ms.curr_sigma_y) ;
-            %   /* plasticity criterion */
-            if (f1_trial > 0) 
-                N= N / effective_stress;  %  /* normal unit */
-                %     /* linear hardening */
-                Gamma = f1_trial / (twomu * (1 + (Hi+Hk) / 3 / mu));
-                dev_sig = dev_sig_predictor - twomu * Gamma*N;
-                ms.equiv_pl_def = ms.equiv_pl_def + SQRT_2_OVER_3 * Gamma;
-                alpha = alpha_predictor + N * (2 / 3 * Hk * Gamma);
-                ms.curr_sigma_y = ms.curr_sigma_y+ SQRT_2_OVER_3 * Hi * Gamma;
-            else
-                %     /* elastic state */
-                dev_sig= dev_sig_predictor;
-                alpha= alpha_predictor;
+            f1_trial=(strdevn - SQRT_2_OVER_3 * ms.sigma_y) ;
+            if (f1_trial > 0)  % if plastic, correct
+                N=N*(1/strdevn);    % normal unit
+                % correct t deviator
+                Gamma = (f1_trial / (2 * mu * (1 + (Hi+Hk) / 3 / mu)));
+                t = tdev_predictor + (-2 * mu * Gamma) * N + pressure*eye(3);
+                % update
+                ms.equiv_pl_def = ms.equiv_pl_def + sqrt(2/3) * Gamma;
+                ms.sigma_y = ms.sigma_y + sqrt(2/3) * Hi * Gamma;
+                ms.back_stress = ms.back_stress + 2 / 3 * Hk * Gamma * N;
             end
             
-            %             /* save state */
-            ms.cauchy = press_predictor*eye(3) + dev_sig;
-            ms.back_stress= alpha;
-            
-            [msD,~]=compute_midstep_rate_of_def (rel_F, dt);
+            % save state: new unrotated stress
+            ms.t = t;
             ms.deform_energy_density = ms.deform_energy_density ...
-                + dt*0.5*(sum(sum(cauchy_prev.*msD))+sum(sum(msD.*ms.cauchy)))*det(Fn1);
+                + dt*0.5*(sum(sum(prevt.*midstep_D))+sum(sum(t.*midstep_D)))*det(Fn1);
             
             out =get_var();
             newms = ms;
             return;
             
-            function out =get_var()
-                switch context.output
-                    case 'Cauchy'
-                        out = self.stress_3x3t_to_6v(ms.cauchy);
-                    case 'pressure'
-                        out = -(sum(diag(ms.cauchy))/3);
-                    case 'princCauchy'
-                        [V,D]=eig(ms.cauchy);
-                        out =sort(diag(D),'descend');
-                    case {'vonMises','vonmises','von_mises','vm'}
-                        stress = self.stress_3x3t_to_6v(ms.cauchy);
-                        s1=stress(1);s2=stress(2);s3=stress(3);
-                        s4=stress(4);s5=stress(5);s6=stress(6);
-                        out = sqrt(1/2*((s1-s2)^2+(s1-s3)^2+(s2-s3)^2+6*(s4^2+s5^2+s6^2)));
-                    case 'equiv_pl_def'
-                        out =ms.equiv_pl_def;
-                    case'strain_energy'
-                        out = ms.deform_energy_density;
-                    otherwise
-                        out = [];
-                end
-            end
-           
+           function out =get_var()
+               % rotate to obtain the Cauchy stress
+               Cauchystress= R*ms.t*R';
+               switch context.output
+                   case 'Cauchy'
+                       out = self.stress_3x3t_to_6v(Cauchystress);
+                   case 'pressure'
+                       out = -(sum(diag(Cauchystress))/3);
+                   case 'princCauchy'
+                       [V,D]=eig(Cauchystress);
+                       out =sort(diag(D),'descend');
+                   case {'vonMises','vonmises','von_mises','vm'}
+                       stress = self.stress_3x3t_to_6v(Cauchystress);
+                       s1=stress(1);s2=stress(2);s3=stress(3);
+                       s4=stress(4);s5=stress(5);s6=stress(6);
+                       out = sqrt(1/2*((s1-s2)^2+(s1-s3)^2+(s2-s3)^2+6*(s4^2+s5^2+s6^2)));
+                   case 'equiv_pl_def'
+                       out =ms.equiv_pl_def;
+                   case'strain_energy'
+                       out = ms.deform_energy_density;
+                   otherwise
+                       out = [];
+               end
+           end
         end
         
         function D = tangent_moduli(self, context)
@@ -200,25 +206,15 @@ classdef material_deformation_ifr_j2 < material_deformation_triax
                     ix=[1,4,5,;0,2,6;0,0,3];
                     ctx.Fn1 = context.Fn1; ctx.Fn = context.Fn; 
                     ctx.dt = context.dt; ctx.dT = []; ctx.output='Cauchy';;
-                    [sigmav0, ~] = state(self, ms, ctx);
+                    [sigmav0, ~] = state (self, ms, ctx);
                     for i=1:3
                         for j=i:3
                             Finc=zeros(3); Finc(i,j)=Finc(i,j)+dep/2; Finc(j,i)=Finc(j,i)+dep/2;
                             ctx.Fn1 = Fn1 + Finc*Fn1;
-                            [sigmav, ~] = state(self, ms, ctx);
+                            [sigmav, ~] = state (self, ms, ctx);
                             D(:,ix(i,j)) =(sigmav-sigmav0)/dep;
                         end
                     end
-                    %                     for i=1:3
-                    %                         for j=i:3
-                    %                             Finc=zeros(3); Finc(i,j)=Finc(i,j)+dep/2; Finc(j,i)=Finc(j,i)+dep/2;
-                    %                             ctx.Fn1 = Fn1 + Finc*Fn1;
-                    %                             [sigmap, ~] = update (self, ms, ctx);
-                    %                             ctx.Fn1 = Fn1 - Finc*Fn1;
-                    %                             [sigman, ~] = update (self, ms, ctx);
-                    %                             D(:,ix(i,j)) =(sigmap-sigman)/2/dep;
-                    %                         end
-                    %                     end
                     D= (D+D')/2;
                     return;
                 otherwise
@@ -231,9 +227,9 @@ classdef material_deformation_ifr_j2 < material_deformation_triax
         % Create a new material state.
         %
         function ms = newmatstate (self)
-            ms.curr_sigma_y = self.property.sigma_y;
-            ms.cauchy = zeros(3);
-            ms.back_stress= zeros(3);
+            ms.sigma_y = self.property.sigma_y;
+            ms.t = zeros(3);
+            ms.back_stress = zeros(3);
             ms.equiv_pl_def = 0;
             ms.deform_energy_density = 0;
         end
@@ -241,5 +237,3 @@ classdef material_deformation_ifr_j2 < material_deformation_triax
     end
     
 end
-
-

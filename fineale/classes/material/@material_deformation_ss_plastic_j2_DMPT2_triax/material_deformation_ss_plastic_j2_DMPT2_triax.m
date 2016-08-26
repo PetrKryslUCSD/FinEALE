@@ -3,7 +3,7 @@
 % Describes material that is isotropically elastic / perfectly plastic.
 % The Mises yield condition is used: hence, this is J-2 plasticity.
 %
-classdef material_deformation_ss_plastic_j2_DMPT2 < material_deformation_linear_triax
+classdef material_deformation_ss_plastic_j2_DMPT2_triax < material_deformation_linear_triax
     %
     
     properties
@@ -12,7 +12,7 @@ classdef material_deformation_ss_plastic_j2_DMPT2 < material_deformation_linear_
     
     methods
         
-        function self = material_deformation_ss_plastic_j2_DMPT2 (Parameters)
+        function self = material_deformation_ss_plastic_j2_DMPT2_triax (Parameters)
             % Constructor.
             % Parameters:
             %     those recognized by material_deformation.
@@ -170,7 +170,7 @@ classdef material_deformation_ss_plastic_j2_DMPT2 < material_deformation_linear_
         % Create a new material state.
         %
         function v = newmatstate (self)
-            v.cauchy = zeros(6,1); % Cauchy stress
+            v.Cauchy = zeros(6,1); % Cauchy stress
             v.eps_p = zeros(6,1); % plastic strains
             v.eps_p9 = zeros(9,1); % plastic strains
             v.strain_energy = 0;  % energy of elastic deformation
