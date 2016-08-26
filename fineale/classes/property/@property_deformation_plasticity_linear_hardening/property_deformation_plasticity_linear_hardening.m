@@ -3,10 +3,10 @@
 classdef property_deformation_plasticity_linear_hardening < property_deformation_linear_iso
     
     properties
-      sigma_y =  []; % Yield stress
-		Hi = 0.0;
-      Hk = 0.0;
-      Hn = 0.0;
+        sigma_y =  []; % Yield stress
+        Hi = 0.0;% isotropic hardening modulus
+        Hk = 0.0;% kinematic hardening modulus
+        Hn = 0.0;% hardening modulus
     end
     
     methods
