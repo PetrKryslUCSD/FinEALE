@@ -10,6 +10,8 @@ classdef material_deformation_neohookean_triax < material_deformation_triax
         mI = diag([1 1 1 0.5 0.5 0.5]);
         m1     = [1 1 1 0 0 0]';
         m1m1 =[1 1 1 0 0 0]'*[1 1 1 0 0 0]; %m1 * m1'
+        lambda= 0;
+        mu=0;
     end
     
     methods
@@ -24,6 +26,10 @@ classdef material_deformation_neohookean_triax < material_deformation_triax
                 Parameters =struct( [] );
             end
             self = self@material_deformation_triax(Parameters);
+            E = self.property.E;
+            nu = self.property.nu;
+            self.lambda = E * nu / (1 + nu) / (1 - 2*(nu));          % Lame constant #1
+            self.mu     = E / (2 * (1 + nu));                        % shear modulus
         end
         
         function [out, newms] = state(self, ms, context)
@@ -73,17 +79,12 @@ classdef material_deformation_neohookean_triax < material_deformation_triax
             % Get the basic kinematic variables
             Fn1 = context.Fn1;
             Fn  = context.Fn;
-            dt  = context.dt;
-            
-            E = self.property.E;
-            nu = self.property.nu;
-            lambda = E * nu / (1 + nu) / (1 - 2*(nu));          % Lame constant #1
-            mu     = E / (2 * (1 + nu));                        % shear modulus
+            dt  = context.dt;                      % shear modulus
         
             % Finger deformation tensor
             b=Fn1*Fn1';
             J=det(Fn1);
-            sigma = (mu/J) * (b - eye(3,3)) + (lambda *log(J)/J) * eye(3,3);
+            sigma = (self.mu/J) * (b - eye(3,3)) + (self.lambda *log(J)/J) * eye(3,3);
             
             out =get_var();
             newms = ms;
@@ -95,7 +96,7 @@ classdef material_deformation_neohookean_triax < material_deformation_triax
                         out = self.stress_3x3t_to_6v(sigma);
                     case'strain_energy'
                         C=Fn1'*Fn1;
-                        out = mu/2*(trace(C)-3) - mu*log(J) + lambda/2*(log(J))^2;
+                        out = self.mu/2*(trace(C)-3) - self.mu*log(J) + self.lambda/2*(log(J))^2;
                     case '2ndPK'
                         invF1=inv(Fn1);
                         S = J * (invF1*sigma*invF1');
