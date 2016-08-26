@@ -27,7 +27,7 @@ maxdu_tol = W/1e7;
 [fens,fes]=Q4_elliphole(R,R,L,H,nL,nH,nR,[]);
 [fens,fes] = H8_extrude_Q4(fens,fes,2,@(x,i)([x,0]+[0,0,W*i/2]));
 
-
+% drawmesh({fens,fes},'fes','facecolor','r'); labels
 
 % Package model data
 clear model_data;

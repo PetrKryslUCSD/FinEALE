@@ -1,11 +1,12 @@
 function perforated_strip
-disp('Perforated_strip, traction loading: ss J2 hardening plasticity');
+disp('Perforated_strip, traction loading: IFR J2 hardening plasticity');
+disp('Watch out!  Hardening appears not to be taken into account correctly.');
 % Parameters:
 E=7000;
 nu=0.3;
 sigma_y=24.3;
 Hi = 100;
-L= 360; % Length of the beam
+L= 360; % Length of the plate
 W = 10; % Thickness of the plate
 H = 200; % Width
 R= 100;
@@ -25,7 +26,7 @@ maxdu_tol = W/1e7;
 [fens,fes] = H8_extrude_Q4(fens,fes,1,@(x,i)([x,0]+[0,0,W*i]));
 [fens,fes] = H8_to_H20(fens,fes);
 
-
+% drawmesh({fens,fes},'fes','facecolor','r'); labels
 
 % Package model data
 clear model_data;
@@ -34,7 +35,7 @@ model_data.fens =fens;
 
 clear region
 prop = property_deformation_plasticity_linear_hardening(struct('E',E,'nu',nu,'sigma_y',sigma_y,'Hi',Hi));
-mater = material_deformation_ifr_j2(struct('property',prop));
+mater = material_deformation_ifr_j2_triax(struct('property',prop));
 region.femm= femm_deformation_nonlinear(...
     struct ('material',mater,...
     'fes',fes, ...
