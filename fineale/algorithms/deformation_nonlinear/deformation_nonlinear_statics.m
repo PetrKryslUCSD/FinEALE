@@ -301,7 +301,7 @@ for incr =1:length(load_increments) % Load-implementation loop
     iter=1;
     while true %  Iteration loop
         
-        % Initialize the loads vector
+        % Initialize the load vector
         F =zeros(un1.nfreedofs,1);
         
         % Construct the system stiffness matrix
