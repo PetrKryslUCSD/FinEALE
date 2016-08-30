@@ -19,9 +19,9 @@ function necking_bar_h8_unrot
     nperradius=2; nL=8;
     gtolerance  =Radius/1000;
    nincr= 50;
-    scale=1;
+    scale=10;
     stressscale=0.001;
-    epscale=0.0002*scale;
+    epscale=0.005*scale;
     graphics = true;
     igraphics=10;
     plots = true;
@@ -29,7 +29,9 @@ function necking_bar_h8_unrot
      umag=Length/4;
 
     prop = property_deformation_plasticity_linear_hardening(struct('E',E,'nu',nu,'rho',rho,'sigma_y',sigma_y,'Hi',Hi));
-    mater = material_deformation_unrotated_j2(struct('property',prop));
+    mater = material_deformation_unrotated_j2_triax(struct('property',prop));
+        mater = material_deformation_neohookean_triax(struct('property',prop));
+    %     mater = material_deformation_ss_plastic_perf_j2_triax(struct('property',prop));
     
     %     Mesh
     if (1)% Choose hexahedral mesh
@@ -55,12 +57,7 @@ function necking_bar_h8_unrot
     model_data.fens =fens;
     
     clear region
-    prop = property_deformation_plasticity_linear_hardening(struct('E',E,'nu',nu,'sigma_y',sigma_y,'Hi',0.0));
-    mater = material_deformation_unrotated_j2(struct('property',prop));
-    region.femm= femm_deformation_nonlinear_h8msgso(...
-        struct ('material',mater,...
-        'fes',fes, ...
-        'integration_rule',gauss_rule(struct('dim',3,'order',2))));;
+    region.femm= femm;
     model_data.region{1} =region;
     
     %  Clamped cross-section
@@ -143,38 +140,38 @@ function necking_bar_h8_unrot
     
     % Iteration of observer can be called as the solution is being computed.
     function iteration_observer(lambda,iter,du,model_data)
-                fprintf(1,'%d: %g\n',iter,norm(du));
-                %         if 1 && graphics
-                %             gv=reset(clear(gv,[]),[]);
-                %             draw(sfemm,gv, struct ('x', model_data.geom, 'u', 0*model_data.u,'facecolor','none', 'shrink',1.0));
-                %             draw(sfemm,gv, struct ('x', model_data.geom, 'u', scale*model_data.u,'facecolor','y', 'shrink',1.0));
-                %             camset (gv,Cam);
-                %             interact(gv);
-                %             pause(0.5); Cam =camget(gv);
-                %         end
-                if (graphics)
-                    id.comp= 1;
-                    id.container=-Inf;
-                    id=inspect_integration_points(model_data.region{1}.femm, model_data.geom, model_data.un1, model_data.un, model_data.dt, [],...
-                        (1:count (fes)), struct ('output',['equiv_pl_def']),...
-                        @mx,id);
-                    max_equiv_pl_def=id.container;
-                    id.container=Inf;
-                    id=inspect_integration_points(model_data.region{1}.femm, model_data.geom, model_data.un1, model_data.un, model_data.dt, [], ...
-                        (1:count (fes)), struct ('output',['equiv_pl_def']),...
-                        @mn,id);
-                    min_equiv_pl_def =id.container;
-                    dcm=data_colormap(struct ('range',[min_equiv_pl_def,max_equiv_pl_def], 'colormap',jet));
-                    gv=reset(clear(gv,[]),[]);
-                    title (['Iteration ' num2str(iter), ', max equiv pl def=',num2str(max_equiv_pl_def) ])
-                    %                 camset (gv,1.0e+002 *[ -2.1416   -1.4296    3.3375    0.1981    0.1191   -0.0063    0.0006    0.0004    0.0006 0.0039]);
-                    draw(model_data.region{1}.femm,gv, struct ('x', model_data.geom,...
-                        'u',scale*model_data.un1, 'facecolor','none'));
-                    draw_integration_points(model_data.region{1}.femm,gv,struct ('x',model_data.geom,...
-                        'un1',model_data.un1,'un',model_data.un,'dt',model_data.dt,'u_scale',scale, 'scale',epscale,'output',['equiv_pl_def'],'component',1,'data_cmap', dcm));
-                    drawnow;
-                    pause(0.1)
-                end
+        fprintf(1,'%d: %g\n',iter,norm(du));
+        %         if 1 && graphics
+        %             gv=reset(clear(gv,[]),[]);
+        %             draw(sfemm,gv, struct ('x', model_data.geom, 'u', 0*model_data.un1,'facecolor','none', 'shrink',1.0));
+        %             draw(sfemm,gv, struct ('x', model_data.geom, 'u', scale*model_data.un1,'facecolor','y', 'shrink',1.0));
+        %             %                     camset (gv,Cam);
+        %             interact(gv);
+        %             pause(0.5); Cam =camget(gv);
+        %         end
+        if (graphics)
+            id.comp= 1;
+            id.container=-Inf;
+            id=inspect_integration_points(model_data.region{1}.femm, model_data.geom, model_data.un1, model_data.un, model_data.dt, [],...
+                (1:count (fes)), struct ('output',['equiv_pl_def']),...
+                @mx,id);
+            max_equiv_pl_def=id.container;
+            id.container=Inf;
+            id=inspect_integration_points(model_data.region{1}.femm, model_data.geom, model_data.un1, model_data.un, model_data.dt, [], ...
+                (1:count (fes)), struct ('output',['equiv_pl_def']),...
+                @mn,id);
+            min_equiv_pl_def =id.container;
+            dcm=data_colormap(struct ('range',[min_equiv_pl_def,max_equiv_pl_def], 'colormap',jet));
+            gv=reset(clear(gv,[]),[]);
+            title (['Iteration ' num2str(iter), ', max equiv pl def=',num2str(max_equiv_pl_def) ])
+            %                 camset (gv,1.0e+002 *[ -2.1416   -1.4296    3.3375    0.1981    0.1191   -0.0063    0.0006    0.0004    0.0006 0.0039]);
+            draw(model_data.region{1}.femm,gv, struct ('x', model_data.geom,...
+                'u',scale*model_data.un1, 'facecolor','none'));
+            draw_integration_points(model_data.region{1}.femm,gv,struct ('x',model_data.geom,...
+                'un1',model_data.un1,'un',model_data.un,'dt',model_data.dt,'u_scale',scale, 'scale',epscale,'output',['equiv_pl_def'],'component',1,'data_cmap', dcm));
+            drawnow;
+            pause(0.1)
+        end
         
         function id= mn(id,out,xyz,U,pc)
             id.container=min(out(id.comp), id.container);
