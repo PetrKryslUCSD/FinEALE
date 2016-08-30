@@ -1,4 +1,4 @@
-function F = nz_ebc_loads(self, assembler, geom, un1, un, dt)
+function F = nz_ebc_loads(self, assembler, geom, un1, un, du, dt)
 % Compute load vector for nonzero essential boundary conditions.
 %
 % function F = nz_ebc_loads(self, assembler, geom, un1, un, dt)
@@ -8,6 +8,7 @@ function F = nz_ebc_loads(self, assembler, geom, un1, un, dt)
 %     geom=geometry field
 %     un1      - displacement field at the end of time step t_n+1
 %     un       - displacement field at the end of time step t_n
+%     du       - displacement increment
 %     dt       - time step from  t_n to t_n+1; needed only by some
 %                materials
 %
@@ -16,11 +17,6 @@ if (~exist('dt','var'))
     % If the time step is needed, this will cause trouble.  Which indicates
     % it should have been supplied. 
     dt=[];
-end
-if (~exist('un','var'))
-    % When this method gets called in linear problems, no previous
-    % deformation is supplied: make one up.
-    un=0*un1;
 end
 if isempty(self.phis)%  Do we need to calculate the form factors?
     error('Need the stabilization parameters');
@@ -49,7 +45,7 @@ Kedim =un1.dim*self.fes.nfens;
 start_assembly(assembler, un1.nfreedofs);
 for i=1:size(conns,1)
     conn =conns(i,:); % connectivity
-    pu = reshape(un1, gather_fixed_values(un1, conn));
+    pu = reshape(du, gather_fixed_values(du, conn));% Retrieve the displacement increment
     if norm (pu) ~= 0
         X=Xs(conn,:);
         Un=Uns(conn,:);
