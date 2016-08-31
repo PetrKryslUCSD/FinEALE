@@ -380,9 +380,11 @@ while t <tend
         end
         clear traction fi
     end
-    % If this is the first step compute the initial acceleration.
+    % Compute the out of balance force.
     R = (M*V0 - C*(dt/2*V0) - K*((dt/2)^2*V0 + dt*U0) + (dt/2)*(F0+F1));
+    % Calculate the new velocities.
     V1 = (M + (dt/2)*C + ((dt/2)^2)*K)\R;%
+    % Update the velocities.
     U1 = U0 +dt/2*(V0+V1);
     % Bring the the displacement and velocity fields up to date
     model_data.u = scatter_sysvec(model_data.u, U1);

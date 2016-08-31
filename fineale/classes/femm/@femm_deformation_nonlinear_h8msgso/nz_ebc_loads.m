@@ -8,7 +8,7 @@ function F = nz_ebc_loads(self, assembler, geom, un1, un, du, dt)
 %     geom=geometry field
 %     un1      - displacement field at the end of time step t_n+1
 %     un       - displacement field at the end of time step t_n
-%     du       - displacement increment
+%     du       - displacement increment imposed at t_n+1
 %     dt       - time step from  t_n to t_n+1; needed only by some
 %                materials
 %

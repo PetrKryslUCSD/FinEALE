@@ -388,18 +388,20 @@ while t <tend
         end
         clear traction fi
     end
+    % Add  time-dependent traction loads [to be done]
     % If this is the first step compute the initial acceleration.
     if (isempty(A0))
         A0=M\F0;
     end
-    % Add  time-dependent traction loads [to be done]
+    %     Update the displacements
     U1 = U0 +dt*V0+(dt^2)/2*A0;% displacement update
     model_data.un1 = scatter_sysvec(model_data.un1, U1);
-    % Add the restoring forces
+    % Add the restoring forces, starting from the time-independent load.
+    F1 = F0;
     for i=1:length(model_data.region)
         region =model_data.region{i};
         [FR,region.femm]=restoring_force(region.femm,sysvec_assembler, model_data.geom,model_data.un1,model_data.un,dt);
-        F1 = F0 + FR;
+        F1 = F1 + FR;
         model_data.region{i}=region;
         clear region
     end
