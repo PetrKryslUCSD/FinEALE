@@ -1,8 +1,8 @@
 function model_data = deformation_nonlinear_direct_implicit_TRAP(model_data)
 % Direct-integration nonlinear implicit solver for mechanical vibration.
 %
-% Algorithm for dynamic nonlinear deformation with implicit  (trapezoidal rule)
-% direct integration.
+% Algorithm for dynamic nonlinear deformation with implicit  (Newmark –
+% generalized trapezoidal – rule) direct integration.
 %
 % function model_data = deformation_nonlinear_direct_implicit_TRAP(model_data)
 %
@@ -412,7 +412,6 @@ while t <tend
         
        
         % Compute the increment data
-        ndu=norm(dchi);
         maxdu  =max(max(abs(dchi.values)));
         maxbal=max(abs(rhs));
         

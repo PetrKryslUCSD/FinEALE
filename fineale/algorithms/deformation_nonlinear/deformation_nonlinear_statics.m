@@ -123,12 +123,12 @@ function model_data = deformation_nonlinear_statics(model_data)
 %     maxdu_tol = Tolerance on the magnitude  of the largest incremental 
 %           displacement component.
 %     iteration_observer = handle to an observer function to be called 
-%           after each iteration increment was computed.  Default is  to do nothing.
+%           after each iteration was computed.  Default is  to do nothing.
 %           The observer function has a signature
-%                     function output(lambda,iter,du,model_data)
+%                     function iteration_observer(lambda,iter,du,model_data)
 %           where lambda is the current load factor, iter is the iteration 
 %           number, du is the nodal field of current displacement increments.
-%     load_increment_observer = handle of an observer function 
+%     increment_observer = handle of an observer function 
 %           to be called after convergence is reached in each step (optional)
 %           The observer function has a signature
 %                     function output(lambda, model_data)
@@ -177,14 +177,22 @@ if ( isfield(model_data,'iteration_observer'))
     iteration_observer  =model_data.iteration_observer;;
 end
 
-load_increment_observer =@(lambda,model_data) disp(['Load multiplier = ' num2str(lambda)]);
-if ( isfield(model_data,'load_increment_observer'))
-    load_increment_observer  =model_data.load_increment_observer;;
+increment_observer =@(lambda,model_data) disp(['Load multiplier = ' num2str(lambda)]);
+if ( isfield(model_data,'load_increment_observer'))% This is an alias
+    increment_observer  =model_data.load_increment_observer;;
+end
+if ( isfield(model_data,'increment_observer'))
+    increment_observer  =model_data.increment_observer;;
 end
 
-maxdu_tol=1000*eps;% Tolerance on the magnitude  of the largest incremental displacement component
+maxdu_tol=0;% Tolerance on the magnitude  of the largest incremental displacement component
 if (isfield(model_data,'maxdu_tol'))
     maxdu_tol  =model_data.maxdu_tol;
+end
+
+maxbal_tol=0;% Tolerance on the magnitude  of the out-of-balance force
+if (isfield(model_data,'maxbal_tol'))
+    maxbal_tol  =model_data.maxbal_tol;
 end
 
 % Extract the nodes
@@ -237,7 +245,8 @@ end
 
 % Number the equations
 un1 = numberdofs (un1, Renumbering_options);
-un =un1;
+un =un1;% Converged displacement at the beginning of the current step, i. e.  u_{n}
+unm1 =un;% Converged displacement one step back, i. e.  u_{n-1}
 
 % Create the necessary FEMMs
 for i=1:length(model_data.region)
@@ -259,6 +268,11 @@ for i=1:length(model_data.region)
     clear region prop mater Rm  femm
 end
 
+% Initially the stiffness matrix is empty.  We can check it  in the
+% treatment of nonzero essential boundary conditions and constructed if
+% needed.
+K =[];
+
 % Increment magnitudes
 load_increments=diff(unique(sort([0,load_multipliers])));
 
@@ -272,6 +286,7 @@ for incr =1:length(load_increments) % Load-implementation loop
     un1 =un;
     
     % Process load-factor-dependent essential boundary conditions:
+    aany_nonzero_EBC = false;
     if ( isfield(model_data,'boundary_conditions')) && ...
             (isfield(model_data.boundary_conditions, 'essential' ))
         for j=1:length(model_data.boundary_conditions.essential)
@@ -281,6 +296,7 @@ for incr =1:length(load_increments) % Load-implementation loop
                 for k=1:length(essential.component)
                     un1 = set_ebc(un1, essential.node_list, ...
                         essential.is_fixed, essential.component(k), fixed_value(:,k));
+                    aany_nonzero_EBC = aany_nonzero_EBC || any(fixed_value(:,k)~=0);
                 end
                 un1 = apply_ebc (un1);
             end
@@ -296,15 +312,37 @@ for incr =1:length(load_increments) % Load-implementation loop
     un1Allfree.is_fixed(:)=0;% all displacements will be free
     un1Allfree = numberdofs (un1Allfree);
         
+    % Initialize the load vector
+    F =zeros(un1.nfreedofs,1);
     
+    % If any boundary conditions are inhomogeneous, calculate  the force
+    % vector due to the displacement increment. Then update the guess of
+    % the new displacement.
+    if (aany_nonzero_EBC)
+        for i=1:length(model_data.region)
+            F = F + nz_ebc_loads(model_data.region{i}.femm, sysvec_assembler, geom, un, unm1, un1-un, dlambda);
+        end
+        % Provided we got converged results  in the last step, we already
+        % have a usable stiffness matrix.
+        if (isempty(K)) % we don't have a stiffness matrix
+            K=  sparse(un1.nfreedofs,un1.nfreedofs);
+            for i=1:length(model_data.region)
+                K = K + stiffness(model_data.region{i}.femm, sysmat_assembler_sparse, geom, un, unm1, dlambda);
+                K = K + stiffness_geo(model_data.region{i}.femm, sysmat_assembler_sparse, geom, un, unm1, dlambda);
+            end
+        end
+        un1 = un1 + scatter_sysvec(du, K\F);
+    end
+    
+        
     % Iteration loop
     iter=1;
     while true %  Iteration loop
         
         % Initialize the load vector
-        F =zeros(un1.nfreedofs,1);
+        F =0*F;
         
-        % Construct the system stiffness matrix
+        % Construct the system stiffness matrix. 
         K=  sparse(un1.nfreedofs,un1.nfreedofs);
         for i=1:length(model_data.region)
             K = K + stiffness(model_data.region{i}.femm, sysmat_assembler_sparse, geom, un1, un, dlambda);
@@ -369,28 +407,30 @@ for incr =1:length(load_increments) % Load-implementation loop
         % Do we need line search?
         eta= 1.0;
         if (line_search)
-            R0 = dot(F,gather_sysvec(du));
-            FR =zeros(un1.nfreedofs,1);
-            for i=1:length(model_data.region)
-                FR = FR + restoring_force(model_data.region{i}.femm, sysvec_assembler, geom, un1+du, un, dlambda);
+            R0 = dot(F,dusol);
+            for  linesrch   =1:1 % How many  searches should we do?
+                FR =zeros(un1.nfreedofs,1);
+                for i=1:length(model_data.region)
+                    FR = FR + restoring_force(model_data.region{i}.femm, sysvec_assembler, geom, un1+eta*du, un, dlambda);
+                end
+                F = FL + FR;
+                R1 = dot(F,dusol);
+                a = R0/R1;
+                if ( a<0 )
+                    eta = a/2 +sqrt((a/2)^2 -a);
+                else
+                    eta =a/2;
+                end
+                eta=min( [eta, 1.0] );
             end
-            F = FL + FR;    
-            R1 = dot(F,dusol);
-            a = R0/R1;
-            if ( a<0 )
-                eta = a/2 +sqrt((a/2)^2 -a);
-            else
-                eta =a/2;
-            end
-            eta=min( [eta, 1.0] );
         end
         
         % Increment the displacements
         un1 = un1 + eta*du;  
         
         % Compute the increment data
-        ndu=norm(du);
-        maxdu  =max(abs(du.values));
+        maxdu  =eta*max(max(abs(du.values)));
+        maxbal=max(abs(F));
         
         % Report  iteration results?
         if (~isempty(iteration_observer))
@@ -401,7 +441,7 @@ for incr =1:length(load_increments) % Load-implementation loop
         end
         
         % Converged?
-        if (maxdu <= maxdu_tol) 
+        if (maxdu <= maxdu_tol)  || (maxbal <= maxbal_tol)
             break; % Breakout of the iteration loop
         end;    
         
@@ -437,12 +477,14 @@ for incr =1:length(load_increments) % Load-implementation loop
     end
     
     % Report results
-   if ~isempty(load_increment_observer)% report the progress
-        load_increment_observer (lambda,model_data);
+   if ~isempty(increment_observer)% report the progress
+        increment_observer (lambda,model_data);
     end
     
     % Reset  the displacement field for the next load step
+    unm1 =un;
     un = un1;
+    F =0*F;
     
 end % Load-incrementation loop
 

@@ -16,10 +16,10 @@ function necking_bar_h8_unrot
     sigma_y=0.3*u.MEGA*u.PA; Hi=0.7*u.MEGA*u.PA;
     Radius = 6.413*u.MM;
     Length = 53.334/2*u.MM;
-    nperradius=2; nL=8;
+    nperradius=4; nL=28;
     gtolerance  =Radius/1000;
-   nincr= 50;
-    scale=10;
+   nincr=20;
+    scale=1;
     stressscale=0.001;
     epscale=0.005*scale;
     graphics = true;
@@ -30,7 +30,7 @@ function necking_bar_h8_unrot
 
     prop = property_deformation_plasticity_linear_hardening(struct('E',E,'nu',nu,'rho',rho,'sigma_y',sigma_y,'Hi',Hi));
     mater = material_deformation_unrotated_j2_triax(struct('property',prop));
-        mater = material_deformation_neohookean_triax(struct('property',prop));
+    %         mater = material_deformation_neohookean_triax(struct('property',prop));
     %     mater = material_deformation_ss_plastic_perf_j2_triax(struct('property',prop));
     
     %     Mesh
@@ -38,13 +38,11 @@ function necking_bar_h8_unrot
        [fens,fes] = H8_quarter_cylinder_n(Radius, Length, nperradius, nL);
          femm = femm_deformation_nonlinear_h8msgso(struct ('material',mater, 'fes',fes, ...
             'integration_rule',gauss_rule(struct('dim',3,'order',2))));
-         Surface_integration_rule =gauss_rule(struct('dim',2, 'order',2));
     else% Choose tetrahedral mesh
         [fens,fes] = T10_blockb(L,W,H, 4,1,2);
         [fens,fes] = T10_to_T10MS(fens,fes);
         femm = femm_deformation_nonlinear_t10ms(struct ('material',mater, 'fes',fes, ...
             'integration_rule',tet_rule(struct('npts',1))));
-        Surface_integration_rule =tri_rule(struct('npts',1));
     end
     corner=fenode_select (fens,struct('box',[Radius,Radius,0,0,0,0],'inflate',gtolerance));
     % Induce necking at the symmetry plane by a small geometrical perturbation
@@ -104,7 +102,7 @@ function necking_bar_h8_unrot
     us={}; Ux=[]; Rx=[]; Lambdas=[];
     model_data.load_increment_observer =@load_increment_observer;
     % Call the nonlinear deformation solver
-    model_data =deformation_nonlinear_statics(model_data);
+    model_data =deformation_nonlinear_statics_alternative(model_data);
     
     %     Report results
     %     Center_fenids=fenode_select (fens,struct('box',[L,L,W/2, W/2,-Inf,Inf],'inflate',1/1000));
