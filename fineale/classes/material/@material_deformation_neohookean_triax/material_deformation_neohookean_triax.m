@@ -12,6 +12,7 @@ classdef material_deformation_neohookean_triax < material_deformation_triax
         m1m1 =[1 1 1 0 0 0]'*[1 1 1 0 0 0]; %m1 * m1'
         lambda= 0;
         mu=0;
+        eye3 =eye(3);
     end
     
     methods
@@ -84,7 +85,7 @@ classdef material_deformation_neohookean_triax < material_deformation_triax
             % Finger deformation tensor
             b=Fn1*Fn1';
             J=det(Fn1);
-            sigma = (self.mu/J) * (b - eye(3,3)) + (self.lambda *log(J)/J) * eye(3,3);
+            sigma = (self.mu/J) * (b - self.eye3) + (self.lambda *log(J)/J) * self.eye3;
             
             out =get_var();
             newms = ms;
