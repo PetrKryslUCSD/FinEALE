@@ -15,16 +15,14 @@ function xy = scan_on_image(image_name)
     [xi,yi,but] = ginput(1);
     ll=[xi,yi];
     %Pick out the upper right corner of the axes
-    disp(['Click with left mouse button to pick uupper-right corner at ' num2str([x_range(2),y_range(2)])])
+    disp(['Click with left mouse button to pick upper-right corner at ' num2str([x_range(2),y_range(2)])])
     [xi,yi,but] = ginput(1);
     ur=[xi,yi];
     xy = [];
-    n = 0;
     % Loop, picking up the points.
     disp('Left mouse button picks points.')
     disp('Right mouse button picks last point.')
-    %y'
-    but = 1;
+    n = 0;
     while true
         [xi,yi,but] = ginput(1);
         %         xi,yi
