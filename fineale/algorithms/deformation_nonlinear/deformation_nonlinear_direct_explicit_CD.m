@@ -307,6 +307,8 @@ if ( isfield(model_data,'boundary_conditions')) && ...
         (isfield(model_data.boundary_conditions, 'essential' ))
     for j=1:length(model_data.boundary_conditions.essential)
         essential =model_data.boundary_conditions.essential{j};
+        du =model_data.un1;
+        du.fixed_values(:)=0;% Zero out the fixed values for the next load
         if (~essential.time_dependent)% this needs to be computed
             % only for truly time-independent EBC. The field needs to be
             % cleared of fixed values for each specification of the
@@ -319,7 +321,7 @@ if ( isfield(model_data,'boundary_conditions')) && ...
             end
             model_data.un1 = apply_ebc (model_data.un1);
             for i=1:length(model_data.region)
-                F0 = F0 + nz_ebc_loads(model_data.region{i}.femm, sysvec_assembler, model_data.geom, model_data.un1);
+                F0 = F0 + nz_ebc_loads(model_data.region{i}.femm, sysvec_assembler, model_data.geom, model_data.un1, model_data.un, du, dt);
             end
             model_data.un1.fixed_values(:)=0;% Zero out the fixed values for the next load
         end
