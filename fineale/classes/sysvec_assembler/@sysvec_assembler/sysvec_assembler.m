@@ -6,6 +6,9 @@ classdef sysvec_assembler < handle
 % class may be changed from the outside –- the variables of this class are passed 
 % by reference not by value.
 %
+% This version,  which uses a "fake" degree of freedom number  for
+% not--valid dof numbers, is much faster than the previous version  with
+% loop-based assembly.
 
 	properties (Constant, GetAccess = public)
 	% Fixed degrees of freedom numbers are given this value:
@@ -15,6 +18,7 @@ classdef sysvec_assembler < handle
     
     properties  (Hidden, GetAccess= protected, SetAccess= protected)
         F_buffer= [];
+        fake_dofnum=[];
     end
     
 	methods
@@ -36,7 +40,8 @@ classdef sysvec_assembler < handle
         % The method makes the buffer for the vector assembly. It must be called before 
         % the first call to the method assemble.
         % ndofs_row= Total number of degrees of freedom.
-            self.F_buffer= zeros(ndofs_row,1)+self.invalid_dofnum;
+            self.F_buffer= zeros(ndofs_row+1,1)+self.invalid_dofnum;
+            self.fake_dofnum =ndofs_row+1;
         end
 
         function assemble(self, vec, dofnums)
@@ -46,12 +51,14 @@ classdef sysvec_assembler < handle
         %
         % The method assembles a column element vector using the vector of 
         % equation numbers for the rows.
-            for i = 1:length(dofnums)
-                    gi = dofnums(i);
-                    if (gi ~= self.invalid_dofnum)
-                        self.F_buffer(gi) = self.F_buffer(gi) + vec(i);
-                    end
-            end
+        dofnums(dofnums==self.invalid_dofnum)=self.fake_dofnum;
+        self.F_buffer(dofnums)=self.F_buffer(dofnums)+vec;
+        %             for i = 1:length(dofnums)
+        %                     gi = dofnums(i);
+        %                     if (gi ~= self.invalid_dofnum)
+        %                         self.F_buffer(gi) = self.F_buffer(gi) + vec(i);
+        %                     end
+        %             end
         end
         
         function F= make_vector (self)
@@ -60,7 +67,9 @@ classdef sysvec_assembler < handle
         % function F= make_vector (self)
         %
         % The method makes a vector from the assembly buffers.
-            F=self.F_buffer;
+        
+        % Eliminate the fake degree of freedom.
+        F=self.F_buffer(1:end-1);
         end
         
     end

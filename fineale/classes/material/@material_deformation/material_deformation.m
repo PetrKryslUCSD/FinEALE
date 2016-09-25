@@ -203,7 +203,8 @@ classdef material_deformation < material_base
             %             v(4,1) = 1/2*(t(1,2) + t(2,1));
             %             v(5,1) = 1/2*(t(1,3) + t(3,1));
             %             v(6,1) = 1/2*(t(3,2) + t(2,3));
-            v = t([1,5,9,2,3,6])';
+            v=zeros(6,1);
+            v(:) = t([1,5,9,2,3,6]);
         end
         
         function t = strain_9v_to_6v (self,v)
