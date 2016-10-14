@@ -80,7 +80,7 @@ classdef material_deformation_neohookean_triax < material_deformation_triax
             % Get the basic kinematic variables
             Fn1 = context.Fn1;
             Fn  = context.Fn;
-            dt  = context.dt;                      % shear modulus
+            dt  = context.dt;               
         
             % Finger deformation tensor
             b=Fn1*Fn1';
@@ -143,15 +143,15 @@ classdef material_deformation_neohookean_triax < material_deformation_triax
             end
             switch (stiff_type)
                 case 'Eulerian'
-                    E = self.property.E;
-                    nu = self.property.nu;
+%                     E = self.property.E;
+%                     nu = self.property.nu;
                     J =det(context.Fn1);
-                    lambda = E * nu / (1 + nu) / (1 - 2*(nu));          % Lame constant #1
-                    mu     = E / (2 * (1 + nu));                        % shear modulus
-                    kappa  = E / 3 / (1 - 2*nu);                        % bulk modulus
+%                     lambda = E * nu / (1 + nu) / (1 - 2*(nu));          % Lame constant #1
+%                     mu     = E / (2 * (1 + nu));                        % shear modulus
+%                     kappa  = E / 3 / (1 - 2*nu);                        % bulk modulus
                     %                     mI = diag([1 1 1 0.5 0.5 0.5]);
                     %                     m1     = [1 1 1 0 0 0]';
-                    D = (lambda / J) * self.m1m1 + 2 * (mu - lambda*log(J))/J * self.mI;
+                    D = (self.lambda / J) * self.m1m1 + 2 * (self.mu - self.lambda*log(J))/J * self.mI;
                     return;
                 otherwise
                     error('Cannot handle');
