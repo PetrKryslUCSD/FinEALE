@@ -247,14 +247,28 @@ classdef material_deformation_unrotated_j2_hard_triax < material_deformation_tri
                     ctx.Fn1 = context.Fn1; ctx.Fn = context.Fn; 
                     ctx.dt = context.dt; ctx.dT = []; ctx.output='Cauchy';;
                     [sigmav0, ~] = state (self, ms, ctx);
+                    Finc=zeros(3); 
                     for i=1:3
                         for j=i:3
-                            Finc=zeros(3); Finc(i,j)=Finc(i,j)+dep/2; Finc(j,i)=Finc(j,i)+dep/2;
+                            Finc(i,j)=Finc(i,j)+dep/2; Finc(j,i)=Finc(j,i)+dep/2;
                             ctx.Fn1 = Fn1 + Finc*Fn1;
                             [sigmav, ~] = state (self, ms, ctx);
-                            D(:,ix(i,j)) =(sigmav-sigmav0)/dep;
+                            D(:,ix(i,j)) =(sigmav-sigmav0)/(dep);
+                            Finc(i,j)=0; Finc(j,i)=0;
                         end
                     end
+%                     [sigmav0, ~] = state (self, ms, ctx);
+%                     for i=1:3
+%                         for j=i:3
+%                             Finc=zeros(3); Finc(i,j)=Finc(i,j)+dep/2; Finc(j,i)=Finc(j,i)+dep/2;
+%                             ctx.Fn1 = Fn1 + Finc*Fn1;
+%                             [sigmavp, ~] = state (self, ms, ctx);
+%                              Finc=zeros(3); Finc(i,j)=Finc(i,j)-dep/2; Finc(j,i)=Finc(j,i)-dep/2;
+%                             ctx.Fn1 = Fn1 + Finc*Fn1;
+%                             [sigmavm, ~] = state (self, ms, ctx);
+%                             D(:,ix(i,j)) =(sigmavp-sigmavm)/2/dep;
+%                         end
+%                     end
                     D= (D+D')/2;
                     return;
                 otherwise
