@@ -245,7 +245,7 @@ classdef material_deformation_bb_transviso_triax < material_deformation_triax
             function out =get_var()
                 switch context.output
                     case 'Cauchy'
-                        out = Cauchy;
+                        out = self.stress_3x3t_to_6v(Cauchy);
                     case 'pressure'
                         out = -(sum(diag(Cauchy))/3);
                     case 'princCauchy'
