@@ -437,6 +437,8 @@ for incr =1:length(load_increments) % Load-implementation loop
             model_data.un = un;
             model_data.un1 = un1;
             model_data.dt = dlambda;
+            model_data.maxdu = maxdu;
+            model_data.maxbal = maxbal;
             iteration_observer (lambda,iter,du,model_data);
         end
         
